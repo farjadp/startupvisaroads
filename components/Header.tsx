@@ -1,15 +1,7 @@
 // ============================================================================
-// Component Source: components/Header.tsx
-// Version: 1.0.0 — Main Site Header with Navigation
-// Why: Consistent site-wide navigation with brand identity and CTA
-// Usage: All pages via root layout
-// Colors: Primary(#1c3b6e), Secondary(#f2b95e), Accent(#a81f93), Bg(#e7e8ec)
-// Features:
-//   - Sticky navigation
-//   - Mobile responsive menu
-//   - Brand logo/name
-//   - Main navigation links
-//   - Prominent CTA button
+// Component: components/Header.tsx
+// Style: Editorial / Art Gallery
+// Behavior: Color inversion on scroll (Ink on Paper -> Paper on Ink)
 // ============================================================================
 
 'use client';
@@ -17,181 +9,168 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { Menu, X, ArrowRight } from 'lucide-react';
 
-/**
- * Header Component
- *
- * Main site navigation header with sticky positioning and mobile-responsive
- * design. Provides clear navigation structure and prominent CTA.
- *
- * Navigation Structure:
- * - Home
- * - Services
- * - Programs (dropdown/mega menu)
- * - Mentorship
- * - About
- * - Blog
- * - Contact (CTA)
- *
- * Design Features:
- * - Sticky header that stays visible on scroll
- * - Mobile hamburger menu
- * - Active page highlighting
- * - Smooth transitions
- * - Brand-aligned styling
- *
- * Accessibility:
- * - Semantic HTML navigation
- * - ARIA labels for mobile menu
- * - Keyboard navigation support
- * - Focus indicators
- */
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
 
-  // Track scroll position for header shadow effect
+  // Handle Scroll Effect
   useEffect(() => {
     const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
+      setScrolled(window.scrollY > 40);
     };
-
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Close mobile menu when route changes
+  // Close mobile menu on route change
   useEffect(() => {
     setMobileMenuOpen(false);
   }, [pathname]);
 
-  // Navigation links configuration
+  // Lock body scroll when mobile menu is open
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+  }, [mobileMenuOpen]);
+
   const navLinks = [
     { href: '/', label: 'Home' },
-    { href: '/services', label: 'Services' },
-    { href: '/mentorship', label: 'Mentorship' },
-    { href: '/about', label: 'About' },
-    { href: '/blog', label: 'Blog' },
+    { href: '/services', label: 'Advisory' },
+    { href: '/programs', label: 'Programs' },
+    { href: '/about', label: 'The Firm' },
   ];
 
-  // Check if link is active
-  const isActive = (href: string) => {
-    if (href === '/') return pathname === '/';
-    return pathname.startsWith(href);
+  // Helper to determine text color based on scroll state
+  const getTextColor = () => {
+    if (mobileMenuOpen) return 'text-[#F2F0E9]'; // Always white in mobile menu
+    if (scrolled) return 'text-[#F2F0E9]'; // White when scrolled (dark bg)
+    return 'text-[#1a1a1a]'; // Black when top (light bg)
   };
 
+  const getHoverColor = () => {
+    if (scrolled || mobileMenuOpen) return 'hover:text-[#CCFF00]';
+    return 'hover:text-[#1a1a1a]/60';
+  };
+
+  const isActive = (href: string) => pathname === href;
+
   return (
-    <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled
-          ? 'bg-white shadow-lg'
-          : 'bg-white/95 backdrop-blur-md shadow-md'
-      }`}
-    >
-      <nav className="container-custom">
-        <div className="flex items-center justify-between h-20">
-          {/* Logo / Brand */}
-          <Link
-            href="/"
-            className="flex items-center gap-3 group"
-          >
-            <div className="text-3xl group-hover:scale-110 transition-transform duration-300">
-              🚀
-            </div>
-            <div>
-              <h1 className="text-xl font-bold text-primary group-hover:text-accent transition-colors duration-300">
-                Startup Visa Roads
-              </h1>
-              <p className="text-xs text-primary-dark/60">
-                Mentorship & Business Readiness
-              </p>
-            </div>
-          </Link>
-
-          {/* Desktop Navigation */}
-          <div className="hidden lg:flex items-center gap-8">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className={`font-medium transition-colors duration-300 link-hover pb-1 ${
-                  isActive(link.href)
-                    ? 'text-accent'
-                    : 'text-primary hover:text-accent'
-                }`}
-              >
-                {link.label}
-              </Link>
-            ))}
-
-            {/* CTA Button */}
-            <Link href="/contact" className="btn-accent">
-              Schedule Consultation
+    <>
+      <header
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ease-[cubic-bezier(0.76,0,0.24,1)] ${
+          scrolled
+            ? 'bg-[#1a1a1a] py-4 shadow-2xl border-b border-[#CCFF00]/20'
+            : 'bg-transparent py-8 md:py-10'
+        }`}
+      >
+        <nav className="container mx-auto px-6 lg:px-12 flex items-center justify-between">
+            
+            {/* 1. BRAND LOGO */}
+            <Link href="/" className="relative z-50 group">
+              <span className={`font-serif text-3xl font-bold tracking-tight transition-colors duration-300 ${getTextColor()}`}>
+                S V R
+                <span className={`text-[#CCFF00] ${scrolled ? 'opacity-100' : 'opacity-0'} transition-opacity`}>.</span>
+              </span>
             </Link>
-          </div>
 
-          {/* Mobile Menu Button */}
-          <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="lg:hidden p-2 text-primary hover:text-accent transition-colors duration-300"
-            aria-label="Toggle mobile menu"
-            aria-expanded={mobileMenuOpen}
-          >
-            <svg
-              className="w-6 h-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              {mobileMenuOpen ? (
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              ) : (
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M4 6h16M4 12h16M4 18h16"
-                />
-              )}
-            </svg>
-          </button>
-        </div>
-
-        {/* Mobile Menu */}
-        {mobileMenuOpen && (
-          <div className="lg:hidden py-4 border-t border-primary/10 animate-fade-in">
-            <div className="flex flex-col gap-4">
+            {/* 2. DESKTOP NAVIGATION */}
+            <div className="hidden lg:flex items-center gap-12">
               {navLinks.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
-                  className={`font-medium py-2 transition-colors duration-300 ${
-                    isActive(link.href)
-                      ? 'text-accent'
-                      : 'text-primary hover:text-accent'
-                  }`}
+                  className={`relative font-sans text-xs font-bold uppercase tracking-[0.15em] transition-colors duration-300 ${getTextColor()} ${getHoverColor()}`}
                 >
                   {link.label}
+                  {isActive(link.href) && (
+                    <span className="absolute -bottom-2 left-0 w-full h-[2px] bg-[#CCFF00]"></span>
+                  )}
                 </Link>
               ))}
-
-              {/* Mobile CTA */}
-              <Link
-                href="/contact"
-                className="btn-accent text-center mt-2"
-              >
-                Schedule Consultation
-              </Link>
             </div>
-          </div>
-        )}
-      </nav>
-    </header>
+
+            {/* 3. CTA & MENU TOGGLE */}
+            <div className="flex items-center gap-6">
+                
+                {/* Desktop CTA */}
+                <Link 
+                    href="/contact" 
+                    className={`hidden lg:flex items-center gap-3 font-sans text-xs font-bold uppercase tracking-widest px-6 py-3 border transition-all duration-300 group
+                    ${scrolled 
+                        ? 'border-[#CCFF00] text-[#1a1a1a] bg-[#CCFF00] hover:bg-white hover:border-white' 
+                        : 'border-[#1a1a1a] text-[#1a1a1a] hover:bg-[#1a1a1a] hover:text-[#CCFF00]'
+                    }`}
+                >
+                    Start
+                    <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                </Link>
+
+                {/* Mobile Hamburger */}
+                <button
+                    onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                    className={`relative z-50 p-1 transition-colors duration-300 ${getTextColor()}`}
+                    aria-label="Toggle menu"
+                >
+                    {mobileMenuOpen ? (
+                        <X className="w-8 h-8 text-[#F2F0E9] hover:text-[#CCFF00] transition-colors" />
+                    ) : (
+                        <Menu className={`w-8 h-8 hover:scale-110 transition-transform`} />
+                    )}
+                </button>
+            </div>
+        </nav>
+      </header>
+
+      {/* 4. MOBILE MENU OVERLAY (The Magazine Cover Look) */}
+      <div 
+        className={`fixed inset-0 z-40 bg-[#1a1a1a] transition-all duration-700 cubic-bezier(0.76, 0, 0.24, 1) ${
+          mobileMenuOpen ? 'clip-path-open' : 'clip-path-closed'
+        }`}
+        style={{
+            clipPath: mobileMenuOpen 
+                ? 'polygon(0 0, 100% 0, 100% 100%, 0% 100%)' 
+                : 'polygon(0 0, 100% 0, 100% 0, 0 0)'
+        }}
+      >
+        <div className="flex flex-col justify-between h-full px-6 pt-32 pb-12 container mx-auto">
+            
+            {/* Links */}
+            <nav className="flex flex-col space-y-2">
+                {navLinks.map((link, idx) => (
+                <Link
+                    key={link.href}
+                    href={link.href}
+                    className="group flex items-baseline gap-4 border-b border-[#F2F0E9]/10 py-6"
+                >
+                    <span className="font-sans text-xs font-bold text-[#CCFF00]">0{idx + 1}</span>
+                    <span className="font-serif text-5xl md:text-7xl text-[#F2F0E9] group-hover:text-[#CCFF00] group-hover:italic transition-all duration-300">
+                        {link.label}
+                    </span>
+                </Link>
+                ))}
+            </nav>
+
+            {/* Bottom Info */}
+            <div className="flex flex-col md:flex-row justify-between items-end gap-8">
+                <div className="text-[#F2F0E9]/50 font-sans text-xs uppercase tracking-widest leading-loose">
+                    Global Advisory<br/>
+                    Est. 2024
+                </div>
+                <Link 
+                    href="/contact"
+                    className="w-full md:w-auto bg-[#CCFF00] text-[#1a1a1a] font-sans text-sm font-bold uppercase tracking-widest px-8 py-4 hover:bg-white transition-colors text-center"
+                >
+                    Book Consultation
+                </Link>
+            </div>
+        </div>
+      </div>
+    </>
   );
 }

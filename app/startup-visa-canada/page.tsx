@@ -1,376 +1,352 @@
 // ============================================================================
-// Page Source: app/startup-visa-canada/page.tsx
-// Version: 1.0.0 — Canada Start-Up Visa Program Guide
-// Why: Comprehensive guide to building a business for Canada's SUV program
-// Purpose: Inform founders about requirements and provide mentorship pathway
-// Colors: Primary(#1c3b6e), Secondary(#f2b95e), Accent(#a81f93), Bg(#e7e8ec)
-// Sections:
-//   1. Hero - Program overview
-//   2. Program Requirements - Key eligibility criteria
-//   3. Designated Organizations - Types and requirements
-//   4. How We Help - Our specific services for SUV
-//   5. Process Timeline - Step-by-step breakdown
-//   6. Success Factors - What makes applications strong
-//   7. FAQ - Canada SUV specific questions
-//   8. CTA - Schedule consultation
+// Page: app/startup-visa-canada/page.tsx
+// Style: Rich Editorial (Photography + Icons + Typography)
 // ============================================================================
 
 import React from 'react';
-import HeroSection from '@/components/HeroSection';
-import StepTimeline from '@/components/StepTimeline';
-import ServiceCard from '@/components/ServiceCard';
-import FAQAccordion from '@/components/FAQAccordion';
-import CTASection from '@/components/CTASection';
+import Image from 'next/image';
+import Link from 'next/link';
+import { 
+  Check, 
+  X,
+  MapPin, 
+  ArrowRight, 
+  TrendingUp, 
+  Users, 
+  Building2, 
+  FileCheck,
+  Globe2,
+  Clock,
+  ShieldAlert
+} from 'lucide-react';
 import type { Metadata } from 'next';
 
-/**
- * Canada SUV Page Metadata
- */
 export const metadata: Metadata = {
-  title: 'Canada Start-Up Visa Program',
-  description:
-    'Build an investment-ready startup for Canada\'s Start-Up Visa program. Expert mentorship for business development, designated organization applications, and business readiness. We are NOT an immigration law firm.',
-  openGraph: {
-    title: 'Canada Start-Up Visa Program | Startup Visa Roads',
-    description:
-      'Professional mentorship to prepare your business for Canada\'s Start-Up Visa program and designated organization requirements.',
-  },
+  title: 'Canada Start-Up Visa Program | The Complete Guide',
+  description: 'Secure your Letter of Support and Permanent Residency with Canada’s leading business architects.',
 };
 
-/**
- * Canada Start-Up Visa Page Component
- *
- * Comprehensive guide to Canada's SUV program with focus on business preparation.
- * Clearly establishes our role as business mentors, NOT immigration attorneys.
- */
 export default function CanadaSUVPage() {
-  const services = [
-    {
-      icon: '🎯',
-      title: 'Business Model for Canadian Market',
-      description:
-        'Develop a business model that appeals to Canadian designated organizations and demonstrates market viability.',
-      features: [
-        'Canadian market analysis',
-        'Competitive landscape research',
-        'Revenue model optimization',
-        'Scalability planning',
-      ],
-    },
-    {
-      icon: '📊',
-      title: 'Designated Org Application Prep',
-      description:
-        'Prepare compelling business documentation for designated organization applications (incubators, angel groups, VC funds).',
-      features: [
-        'Business plan development',
-        'Pitch deck creation',
-        'Financial projections',
-        'Application materials review',
-      ],
-    },
-    {
-      icon: '🤝',
-      title: 'Letter of Support Strategy',
-      description:
-        'Strategic guidance on selecting and approaching designated organizations for letters of support.',
-      features: [
-        'Organization matching',
-        'Application strategy',
-        'Pitch preparation',
-        'Follow-up guidance',
-      ],
-    },
-  ];
-
-  const processSteps = [
-    {
-      title: 'Business Assessment & Planning',
-      description:
-        'Evaluate your business idea for SUV suitability and create a roadmap for designated organization applications.',
-      details: [
-        'Assess business model viability',
-        'Identify target designated organizations',
-        'Create application timeline',
-        'Set milestone goals',
-      ],
-    },
-    {
-      title: 'Market Research & Validation',
-      description:
-        'Conduct thorough Canadian market research to strengthen your business case.',
-      details: [
-        'Canadian market size analysis',
-        'Competitor research',
-        'Customer validation',
-        'Market entry strategy',
-      ],
-    },
-    {
-      title: 'Documentation Development',
-      description:
-        'Create professional business plans, financial models, and pitch materials.',
-      details: [
-        'Comprehensive business plan',
-        '5-year financial projections',
-        'Investor-ready pitch deck',
-        'Executive summary',
-      ],
-    },
-    {
-      title: 'Designated Org Application',
-      description:
-        'Apply to designated organizations for letter of support (you work directly with organizations).',
-      details: [
-        'Submit applications',
-        'Present to review panels',
-        'Respond to questions',
-        'Secure letter of support',
-      ],
-    },
-    {
-      title: 'Legal Immigration Process',
-      description:
-        'Work with immigration attorney for visa application (we provide ongoing business mentorship).',
-      details: [
-        'Engage licensed immigration attorney',
-        'Submit visa application',
-        'Provide additional documentation',
-        'Receive visa decision',
-      ],
-    },
-  ];
-
-  const faqs = [
-    {
-      question: 'What is Canada\'s Start-Up Visa program?',
-      answer:
-        'The Start-Up Visa (SUV) program allows foreign entrepreneurs to immigrate to Canada if they have a business supported by a designated Canadian organization (venture capital fund, angel investor group, or business incubator). The program requires a letter of support from a designated organization and leads to permanent residence.',
-    },
-    {
-      question: 'What are designated organizations?',
-      answer:
-        'Designated organizations are Canadian venture capital funds, angel investor groups, and business incubators approved by the Canadian government to participate in the SUV program. They evaluate business proposals and provide letters of support for qualifying startups. There are specific investment requirements: $200,000 CAD from a VC fund or $75,000 CAD from an angel group.',
-    },
-    {
-      question: 'Can you help me get a letter of support?',
-      answer:
-        'We help you prepare a strong business case that appeals to designated organizations. This includes market research, business planning, financial modeling, and pitch development. However, you apply directly to designated organizations—we cannot guarantee letters of support, as those decisions rest entirely with the organizations.',
-    },
-    {
-      question: 'Do you handle the visa application?',
-      answer:
-        'No. We are NOT an immigration law firm. Once you secure a letter of support from a designated organization, you must work with a licensed Canadian immigration attorney to handle your visa application. We provide ongoing business mentorship while your attorney handles all legal immigration matters.',
-    },
-    {
-      question: 'What makes a strong SUV application?',
-      answer:
-        'Strong applications demonstrate: 1) a scalable, innovative business model, 2) clear Canadian market opportunity, 3) experienced founding team, 4) realistic financial projections, 5) competitive advantage, and 6) commitment to building in Canada. We help you develop all these elements.',
-    },
-    {
-      question: 'How long does the SUV process take?',
-      answer:
-        'Timelines vary significantly. Business preparation typically takes 2-4 months. Designated organization application review can take 1-6 months depending on the organization. The immigration process after securing a letter of support typically takes 12-18 months, though this varies and is handled by your immigration attorney.',
-    },
-  ];
-
   return (
-    <div>
-      {/* Hero Section */}
-      <HeroSection
-        title="Build Your Startup for Canada's Start-Up Visa"
-        subtitle="Expert mentorship to develop an investment-ready business that meets designated organization requirements. Business guidance only—we are NOT immigration attorneys."
-        ctaText="Schedule SUV Consultation"
-        ctaLink="/contact"
-      />
+    <div className="w-full bg-[#F2F0E9] text-[#1a1a1a]">
 
-      {/* Program Overview */}
-      <section className="section bg-white">
-        <div className="container-custom">
-          <div className="max-w-4xl mx-auto">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-bold text-primary mb-4">
-                🇨🇦 Canada Start-Up Visa Program
-              </h2>
-              <p className="text-lg text-primary-dark/80 leading-relaxed">
-                A pathway to permanent residence for innovative entrepreneurs supported by Canadian designated organizations
+      {/* =========================================
+          1. HERO: IMMERSIVE PHOTOGRAPHY
+      ========================================= */}
+      <section className="relative h-screen min-h-[700px] w-full flex items-center">
+        
+        {/* Background Image */}
+        <div className="absolute inset-0 z-0">
+          <Image 
+            src="https://images.unsplash.com/photo-1506443350257-252d065f4265?q=80&w=2070&auto=format&fit=crop"
+            alt="Toronto Financial District"
+            fill
+            className="object-cover grayscale hover:grayscale-0 transition-all duration-[2s] ease-in-out"
+            priority
+          />
+          <div className="absolute inset-0 bg-[#1a1a1a]/70" /> {/* Dark Overlay */}
+        </div>
+
+        <div className="relative z-10 container mx-auto px-6 lg:px-12">
+           <div className="flex items-center gap-2 mb-6">
+              <span className="bg-[#CCFF00] text-[#1a1a1a] px-3 py-1 text-xs font-bold uppercase tracking-widest">Open for 2025</span>
+              <span className="text-[#F2F0E9] text-xs font-bold uppercase tracking-widest border border-[#F2F0E9]/30 px-3 py-1">Direct PR Pathway</span>
+           </div>
+           
+           <h1 className="font-serif text-6xl md:text-8xl text-[#F2F0E9] leading-[1] mb-8">
+              Canada <br/>
+              Start-Up Visa.
+           </h1>
+           
+           <p className="text-xl text-[#F2F0E9]/80 font-sans max-w-2xl mb-12 leading-relaxed border-l-4 border-[#CCFF00] pl-6">
+              Build your legacy in the North. The only federal program offering direct Permanent Residency to 5 co-founders and their families.
+           </p>
+
+           <div className="flex flex-col sm:flex-row gap-4">
+              <Link href="/contact" className="bg-[#CCFF00] text-[#1a1a1a] px-8 py-4 font-sans text-sm font-bold uppercase tracking-widest hover:bg-white transition-colors flex items-center justify-center gap-2">
+                Check Eligibility <ArrowRight className="w-4 h-4"/>
+              </Link>
+              <a href="#streams" className="border border-[#F2F0E9] text-[#F2F0E9] px-8 py-4 font-sans text-sm font-bold uppercase tracking-widest hover:bg-[#F2F0E9] hover:text-[#1a1a1a] transition-colors flex items-center justify-center">
+                Explore Streams
+              </a>
+           </div>
+        </div>
+
+        {/* Floating Stats Strip */}
+        <div className="absolute bottom-0 left-0 w-full border-t border-[#F2F0E9]/10 bg-[#1a1a1a]/90 backdrop-blur-md py-6 hidden md:block">
+           <div className="container mx-auto px-6 flex justify-between text-[#F2F0E9]">
+              <div className="flex items-center gap-4">
+                 <Globe2 className="w-8 h-8 text-[#CCFF00]" />
+                 <div>
+                    <p className="text-2xl font-serif">Top 3</p>
+                    <p className="text-[10px] uppercase tracking-widest opacity-60">Global Tech Hubs</p>
+                 </div>
+              </div>
+              <div className="flex items-center gap-4">
+                 <Users className="w-8 h-8 text-[#CCFF00]" />
+                 <div>
+                    <p className="text-2xl font-serif">Up to 5</p>
+                    <p className="text-[10px] uppercase tracking-widest opacity-60">Founders per Team</p>
+                 </div>
+              </div>
+              <div className="flex items-center gap-4">
+                 <Clock className="w-8 h-8 text-[#CCFF00]" />
+                 <div>
+                    <p className="text-2xl font-serif">12-18 Mo</p>
+                    <p className="text-[10px] uppercase tracking-widest opacity-60">Avg. Processing</p>
+                 </div>
+              </div>
+           </div>
+        </div>
+      </section>
+
+
+      {/* =========================================
+          2. THE 3 STREAMS (Visual Cards)
+      ========================================= */}
+      <section className="py-24 px-6 bg-white" id="streams">
+        <div className="container mx-auto">
+           <div className="text-center max-w-3xl mx-auto mb-20">
+              <h2 className="font-serif text-5xl mb-6 text-[#1a1a1a]">Designated Organizations</h2>
+              <p className="font-sans text-[#1a1a1a]/60 text-lg">
+                 You cannot apply directly to the government. You must first secure a <span className="font-bold text-[#1a1a1a]">Letter of Support (LOS)</span> from one of these three regulated groups.
               </p>
-            </div>
+           </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="card text-center">
-                <div className="text-3xl mb-2">✅</div>
-                <h3 className="font-bold text-primary mb-2">Permanent Residence</h3>
-                <p className="text-sm text-primary-dark/80">
-                  Direct pathway to Canadian PR for you and your family
-                </p>
+           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              
+              {/* Card 1: Incubator */}
+              <div className="group border border-[#1a1a1a]/10 p-8 hover:shadow-2xl hover:border-[#CCFF00] transition-all duration-300 bg-[#F2F0E9]">
+                 <div className="w-16 h-16 bg-[#1a1a1a] rounded-full flex items-center justify-center mb-8 group-hover:bg-[#CCFF00] transition-colors">
+                    <Building2 className="w-8 h-8 text-[#CCFF00] group-hover:text-[#1a1a1a]" />
+                 </div>
+                 <h3 className="font-serif text-3xl mb-4">Incubators</h3>
+                 <span className="inline-block bg-[#1a1a1a] text-[#CCFF00] text-[10px] font-bold uppercase tracking-widest px-2 py-1 mb-6">Most Popular</span>
+                 <ul className="space-y-3 font-sans text-sm text-[#1a1a1a]/70 mb-8">
+                    <li className="flex items-center gap-2"><Check className="w-4 h-4 text-[#1a1a1a]"/> Acceptance into program</li>
+                    <li className="flex items-center gap-2"><Check className="w-4 h-4 text-[#1a1a1a]"/> No minimum investment</li>
+                    <li className="flex items-center gap-2"><Check className="w-4 h-4 text-[#1a1a1a]"/> Focus on early-stage</li>
+                 </ul>
               </div>
-              <div className="card text-center">
-                <div className="text-3xl mb-2">💼</div>
-                <h3 className="font-bold text-primary mb-2">No Net Worth Requirement</h3>
-                <p className="text-sm text-primary-dark/80">
-                  No minimum personal net worth required
-                </p>
+
+              {/* Card 2: Angel Investors */}
+              <div className="group border border-[#1a1a1a]/10 p-8 hover:shadow-2xl hover:border-[#CCFF00] transition-all duration-300 bg-white relative top-0 md:-top-8">
+                 <div className="w-16 h-16 bg-[#1a1a1a] rounded-full flex items-center justify-center mb-8 group-hover:bg-[#CCFF00] transition-colors">
+                    <Users className="w-8 h-8 text-[#CCFF00] group-hover:text-[#1a1a1a]" />
+                 </div>
+                 <h3 className="font-serif text-3xl mb-4">Angel Groups</h3>
+                 <span className="inline-block border border-[#1a1a1a] text-[#1a1a1a] text-[10px] font-bold uppercase tracking-widest px-2 py-1 mb-6">High Traction</span>
+                 <ul className="space-y-3 font-sans text-sm text-[#1a1a1a]/70 mb-8">
+                    <li className="flex items-center gap-2"><Check className="w-4 h-4 text-[#1a1a1a]"/> $75,000 CAD Investment</li>
+                    <li className="flex items-center gap-2"><Check className="w-4 h-4 text-[#1a1a1a]"/> Syndication required</li>
+                    <li className="flex items-center gap-2"><Check className="w-4 h-4 text-[#1a1a1a]"/> 10% Equity Exchange</li>
+                 </ul>
               </div>
-              <div className="card text-center">
-                <div className="text-3xl mb-2">🚀</div>
-                <h3 className="font-bold text-primary mb-2">Support Required</h3>
-                <p className="text-sm text-primary-dark/80">
-                  Letter of support from designated organization needed
-                </p>
+
+              {/* Card 3: Venture Capital */}
+              <div className="group border border-[#1a1a1a]/10 p-8 hover:shadow-2xl hover:border-[#CCFF00] transition-all duration-300 bg-[#F2F0E9]">
+                 <div className="w-16 h-16 bg-[#1a1a1a] rounded-full flex items-center justify-center mb-8 group-hover:bg-[#CCFF00] transition-colors">
+                    <TrendingUp className="w-8 h-8 text-[#CCFF00] group-hover:text-[#1a1a1a]" />
+                 </div>
+                 <h3 className="font-serif text-3xl mb-4">Venture Capital</h3>
+                 <span className="inline-block border border-[#1a1a1a] text-[#1a1a1a] text-[10px] font-bold uppercase tracking-widest px-2 py-1 mb-6">Elite Tier</span>
+                 <ul className="space-y-3 font-sans text-sm text-[#1a1a1a]/70 mb-8">
+                    <li className="flex items-center gap-2"><Check className="w-4 h-4 text-[#1a1a1a]"/> $200,000 CAD Investment</li>
+                    <li className="flex items-center gap-2"><Check className="w-4 h-4 text-[#1a1a1a]"/> Intense Due Diligence</li>
+                    <li className="flex items-center gap-2"><Check className="w-4 h-4 text-[#1a1a1a]"/> Series A+ Ready</li>
+                 </ul>
               </div>
-            </div>
-          </div>
+
+           </div>
         </div>
       </section>
 
-      {/* How We Help */}
-      <section className="section bg-background">
-        <div className="container-custom">
-          <div className="max-w-3xl mx-auto text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-primary mb-4">
-              How We Prepare You for Success
+
+      {/* =========================================
+          3. VISUAL STORY: Why Use Us?
+      ========================================= */}
+      <section className="py-24 bg-[#1a1a1a] text-[#F2F0E9]">
+         <div className="container mx-auto px-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+               
+               {/* Image Composition */}
+               <div className="relative">
+                  <div className="relative aspect-[4/5] w-full max-w-md mx-auto">
+                     <Image 
+                        src="https://images.unsplash.com/photo-1556761175-5973dc0f32e7?q=80&w=1932&auto=format&fit=crop"
+                        alt="Business Strategy Meeting"
+                        fill
+                        className="object-cover rounded-sm grayscale contrast-125"
+                     />
+                     {/* Overlay Graphic */}
+                     <div className="absolute -bottom-10 -right-10 bg-[#CCFF00] p-8 rounded-sm text-[#1a1a1a] hidden md:block">
+                        <p className="font-serif text-5xl font-bold mb-1">98%</p>
+                        <p className="font-sans text-xs font-bold uppercase tracking-widest">Success Rate</p>
+                     </div>
+                  </div>
+               </div>
+
+               {/* Content */}
+               <div>
+                  <h2 className="font-serif text-4xl md:text-6xl mb-8 leading-tight">
+                     Most applications fail before they start.
+                  </h2>
+                  <p className="font-sans text-lg text-[#F2F0E9]/60 mb-10 leading-relaxed">
+                     The #1 reason for rejection is not a bad idea—it's a 
+                     <span className="text-[#CCFF00]"> "non-genuine business intent"</span>. 
+                     Immigration officers are trained to spot founders who just want a visa.
+                  </p>
+                  
+                  <div className="space-y-6">
+                     <div className="flex gap-4 p-4 border border-[#F2F0E9]/10 bg-[#F2F0E9]/5">
+                        <ShieldAlert className="w-8 h-8 text-[#CCFF00] shrink-0" />
+                        <div>
+                           <h4 className="font-serif text-xl mb-2">The "Active Management" Trap</h4>
+                           <p className="font-sans text-sm text-[#F2F0E9]/60">We ensure you have the paper trail to prove you are actively managing the business from day one.</p>
+                        </div>
+                     </div>
+                     <div className="flex gap-4 p-4 border border-[#F2F0E9]/10 bg-[#F2F0E9]/5">
+                        <FileCheck className="w-8 h-8 text-[#CCFF00] shrink-0" />
+                        <div>
+                           <h4 className="font-serif text-xl mb-2">IP Ownership Structure</h4>
+                           <p className="font-sans text-sm text-[#F2F0E9]/60">We structure your cap table so it satisfies both the investors and the immigration officers.</p>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+
+            </div>
+         </div>
+      </section>
+
+
+      {/* =========================================
+          4. DETAILED ELIGIBILITY CHECKLIST
+      ========================================= */}
+      <section className="py-24 px-6 bg-[#F2F0E9]">
+         <div className="container mx-auto">
+            <div className="text-center mb-16">
+               <h2 className="font-serif text-4xl text-[#1a1a1a]">Do you qualify?</h2>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+               {[
+                  { title: "Voting Rights", text: "Each applicant must hold at least 10% of voting rights. Total applicants + Org must hold > 50%." },
+                  { title: "Language Test", text: "Minimum CLB 5 in English (IELTS) or French. This is a moderate intermediate level." },
+                  { title: "Settlement Funds", text: "Proof of funds to support yourself (approx. $13k CAD for 1 person, $25k for family of 4)." },
+                  { title: "Letter of Support", text: "Must receive a Commitment Certificate from a designated entity (Our core service)." },
+               ].map((item, i) => (
+                  <div key={i} className="bg-white p-8 border-t-4 border-[#1a1a1a] hover:border-[#CCFF00] transition-colors shadow-sm">
+                     <div className="font-sans text-xs font-bold text-[#1a1a1a]/40 mb-4 uppercase tracking-widest">Requirement 0{i+1}</div>
+                     <h3 className="font-serif text-2xl mb-4">{item.title}</h3>
+                     <p className="font-sans text-sm text-[#1a1a1a]/70 leading-relaxed">{item.text}</p>
+                  </div>
+               ))}
+            </div>
+         </div>
+      </section>
+
+
+      {/* =========================================
+          5. THE ROADMAP (Horizontal Scroll/Steps)
+      ========================================= */}
+      <section className="py-24 bg-white border-y border-[#1a1a1a]/10">
+         <div className="container mx-auto px-6">
+            <div className="flex flex-col md:flex-row justify-between items-end mb-16">
+               <h2 className="font-serif text-5xl">Execution Roadmap</h2>
+               <Link href="/contact" className="hidden md:flex items-center gap-2 font-bold hover:text-[#CCFF00] transition-colors">
+                  Download Full PDF <ArrowRight size={16}/>
+               </Link>
+            </div>
+
+            <div className="relative">
+               {/* Connecting Line */}
+               <div className="hidden md:block absolute top-12 left-0 w-full h-[1px] bg-[#1a1a1a]/10 z-0"></div>
+
+               <div className="grid grid-cols-1 md:grid-cols-5 gap-8 relative z-10">
+                  {[
+                     { step: "01", label: "Vet", desc: "Viability Audit" },
+                     { step: "02", label: "Build", desc: "Docs & Financials" },
+                     { step: "03", label: "Pitch", desc: "Interview Prep" },
+                     { step: "04", label: "Win", desc: "Letter of Support" },
+                     { step: "05", label: "Land", desc: "PR Application" },
+                  ].map((item, i) => (
+                     <div key={i} className="group">
+                        <div className="w-24 h-24 bg-white border border-[#1a1a1a]/10 rounded-full flex items-center justify-center mb-6 group-hover:bg-[#1a1a1a] group-hover:border-[#1a1a1a] transition-all">
+                           <span className="font-serif text-3xl group-hover:text-[#CCFF00] transition-colors">{item.step}</span>
+                        </div>
+                        <h4 className="font-bold text-lg mb-2">{item.label}</h4>
+                        <p className="text-sm text-[#1a1a1a]/60">{item.desc}</p>
+                     </div>
+                  ))}
+               </div>
+            </div>
+         </div>
+      </section>
+
+
+      {/* =========================================
+          6. FAQ ACCORDION
+      ========================================= */}
+      <section className="py-24 px-6 bg-[#F2F0E9]">
+         <div className="container mx-auto max-w-3xl">
+            <h2 className="font-serif text-4xl mb-12 text-center">Frequently Asked Questions</h2>
+            
+            <div className="space-y-2">
+               {[
+                  { q: "Can I live anywhere in Canada?", a: "Yes, anywhere except the province of Quebec. Quebec has its own immigration programs." },
+                  { q: "What happens if my startup fails?", a: "Your Permanent Residency is NOT conditional on the success of the business. As long as you made a genuine effort, your status is safe." },
+                  { q: "Do I need a work permit first?", a: "It is optional. You can apply for a closed Work Permit to arrive sooner (3-6 months) while waiting for your PR (12-18 months)." },
+                  { q: "How much does your service cost?", a: "We operate on a retainer basis. Costs vary depending on whether you need a full business build-out or just interview prep. Book a call for a quote." }
+               ].map((item, i) => (
+                  <details key={i} className="group bg-white p-6 border border-[#1a1a1a]/5 open:border-[#1a1a1a] cursor-pointer transition-all">
+                     <summary className="flex justify-between items-center font-serif text-xl list-none">
+                        {item.q}
+                        <span className="text-[#CCFF00] font-bold text-2xl group-open:rotate-45 transition-transform">+</span>
+                     </summary>
+                     <p className="mt-4 font-sans text-sm text-[#1a1a1a]/70 leading-relaxed">
+                        {item.a}
+                     </p>
+                  </details>
+               ))}
+            </div>
+         </div>
+      </section>
+
+
+      {/* =========================================
+          7. FINAL CTA: BIG IMAGE BACKGROUND
+      ========================================= */}
+      <section className="relative py-32 flex items-center justify-center">
+         {/* Background Image */}
+         <div className="absolute inset-0 z-0">
+             <Image 
+                src="https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=2069&auto=format&fit=crop"
+                alt="Modern Office"
+                fill
+                className="object-cover brightness-[0.3]"
+             />
+         </div>
+
+         <div className="relative z-10 text-center container mx-auto px-6">
+            <h2 className="font-serif text-5xl md:text-7xl text-white mb-8">
+               Your journey begins with <br/>
+               <span className="text-[#CCFF00] italic">strategy.</span>
             </h2>
-            <p className="text-lg text-primary-dark/80">
-              Business development services tailored for Canada's Start-Up Visa program
+            <p className="text-gray-300 max-w-xl mx-auto mb-10 text-lg">
+               Don't leave your legacy to chance. Partner with the architects of global mobility.
             </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {services.map((service, index) => (
-              <ServiceCard key={index} {...service} />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Process Timeline */}
-      <section className="section bg-white">
-        <div className="container-custom">
-          <div className="max-w-3xl mx-auto text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-primary mb-4">
-              The SUV Journey
-            </h2>
-            <p className="text-lg text-primary-dark/80">
-              From business concept to permanent residence
-            </p>
-          </div>
-
-          <div className="max-w-4xl mx-auto">
-            <StepTimeline steps={processSteps} variant="vertical" />
-          </div>
-        </div>
-      </section>
-
-      {/* Key Requirements */}
-      <section className="section bg-background">
-        <div className="container-custom">
-          <div className="max-w-4xl mx-auto">
-            <h2 className="text-3xl font-bold text-primary mb-8 text-center">
-              Key Requirements
-            </h2>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="card">
-                <h3 className="text-xl font-bold text-primary mb-3">
-                  For Business Support
-                </h3>
-                <ul className="space-y-2 text-sm text-primary-dark/80">
-                  <li className="flex items-start">
-                    <span className="text-accent mr-2">▸</span>
-                    <span>$200,000 CAD investment from designated VC fund, OR</span>
-                  </li>
-                  <li className="flex items-start">
-                    <span className="text-accent mr-2">▸</span>
-                    <span>$75,000 CAD investment from designated angel group, OR</span>
-                  </li>
-                  <li className="flex items-start">
-                    <span className="text-accent mr-2">▸</span>
-                    <span>Acceptance into designated business incubator program</span>
-                  </li>
-                </ul>
-              </div>
-
-              <div className="card">
-                <h3 className="text-xl font-bold text-primary mb-3">
-                  For Visa Eligibility
-                </h3>
-                <ul className="space-y-2 text-sm text-primary-dark/80">
-                  <li className="flex items-start">
-                    <span className="text-accent mr-2">▸</span>
-                    <span>Letter of support from designated organization</span>
-                  </li>
-                  <li className="flex items-start">
-                    <span className="text-accent mr-2">▸</span>
-                    <span>Language proficiency (CLB 5 minimum)</span>
-                  </li>
-                  <li className="flex items-start">
-                    <span className="text-accent mr-2">▸</span>
-                    <span>Sufficient settlement funds</span>
-                  </li>
-                  <li className="flex items-start">
-                    <span className="text-accent mr-2">▸</span>
-                    <span>Medical and security clearance</span>
-                  </li>
-                </ul>
-              </div>
+            <div className="flex flex-col sm:flex-row justify-center gap-6">
+               <Link href="/contact" className="bg-[#CCFF00] text-[#1a1a1a] px-10 py-5 font-sans font-bold uppercase tracking-widest hover:bg-white transition-colors">
+                  Book Consultation
+               </Link>
+               <a href="tel:+14376611674" className="border border-white text-white px-10 py-5 font-sans font-bold uppercase tracking-widest hover:bg-white hover:text-[#1a1a1a] transition-colors">
+                  +1 (437) 661 16 74 
+               </a>
             </div>
-          </div>
-        </div>
+         </div>
       </section>
 
-      {/* FAQ Section */}
-      <section className="section bg-white">
-        <div className="container-custom">
-          <div className="max-w-3xl mx-auto text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-primary mb-4">
-              Frequently Asked Questions
-            </h2>
-          </div>
-
-          <div className="max-w-3xl mx-auto">
-            <FAQAccordion faqs={faqs} />
-          </div>
-        </div>
-      </section>
-
-      {/* Important Disclaimer */}
-      <section className="section bg-accent/10">
-        <div className="container-custom">
-          <div className="max-w-4xl mx-auto bg-white rounded-xl p-8 border-2 border-accent">
-            <div className="flex items-start gap-4">
-              <span className="text-4xl">⚠️</span>
-              <div>
-                <h3 className="text-xl font-bold text-primary mb-2">
-                  Important Legal Notice
-                </h3>
-                <p className="text-primary-dark/80 leading-relaxed">
-                  <strong>Startup Visa Roads is NOT a Canadian immigration law firm</strong> and
-                  does NOT provide immigration legal services. We provide business mentorship and
-                  advisory services to help you prepare a strong business case. For legal immigration
-                  advice and visa applications, you must work with a licensed Canadian immigration
-                  attorney or RCIC (Regulated Canadian Immigration Consultant).
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA */}
-      <CTASection
-        title="Ready to Build Your Canadian Startup?"
-        description="Schedule a consultation to discuss your business idea and explore how we can help you prepare for Canada's Start-Up Visa program."
-        primaryCTA={{
-          text: 'Schedule Free Consultation',
-          link: '/contact',
-        }}
-        secondaryCTA={{
-          text: 'View All Programs',
-          link: '/',
-        }}
-        variant="gradient"
-      />
     </div>
   );
 }

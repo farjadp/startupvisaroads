@@ -1,50 +1,41 @@
 // ============================================================================
-// Component Source: components/CountryCard.tsx
-// Version: 1.0.0 — Country-Specific Visa Program Card
-// Why: Display startup visa programs by country with key information
-// Usage: Homepage, programs overview page
-// Colors: Primary(#1c3b6e), Secondary(#f2b95e), Accent(#a81f93), Bg(#e7e8ec)
-// Props:
-//   - countryName: Name of the country
-//   - programName: Name of the visa/program
-//   - flagEmoji: Country flag emoji
-//   - description: Brief program description
-//   - highlights: Key program highlights
-//   - link: Link to detailed program page
+// Component: components/CountryCard.tsx
+// Style: Cinematic Luxury / Travel Editorial
+// Focus: Visual Appeal, Clear Hierarchy
 // ============================================================================
 
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
+import { ArrowRight, Check } from 'lucide-react';
 
 interface CountryCardProps {
   countryName: string;
   programName: string;
-  flagEmoji: string;
+  flagEmoji?: string; // Kept for compatibility, but we rely on images mainly
   description: string;
   highlights: string[];
   link: string;
+  imageSrc?: string; // Optional: specific image override
 }
 
 /**
- * CountryCard Component
- *
- * Showcases country-specific startup visa programs with essential information.
- * Designed to help founders quickly understand program options and navigate
- * to detailed guidance pages.
- *
- * Design Principles:
- * - Visual hierarchy with flag and country name
- * - Scannable highlights for quick comparison
- * - Clear CTA to detailed program page
- * - Consistent with brand identity
- *
- * Information Architecture:
- * - Country identification (flag + name)
- * - Program name and type
- * - Brief description (1-2 sentences)
- * - 3-5 key highlights
- * - Link to comprehensive guide
+ * Helper to get default luxury images if none provided
  */
+const getCountryImage = (name: string) => {
+  const map: Record<string, string> = {
+    'Canada': 'https://images.unsplash.com/photo-1517935706615-2717063c2225?q=80&w=1965&auto=format&fit=crop',
+    'United Kingdom': 'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?q=80&w=2070&auto=format&fit=crop',
+    'Netherlands': 'https://images.unsplash.com/photo-1512470876302-972faa2aa9a2?q=80&w=2070&auto=format&fit=crop',
+    'Denmark': 'https://images.unsplash.com/photo-1513622470522-26c3c8a854bc?q=80&w=2070&auto=format&fit=crop',
+    'UAE': 'https://images.unsplash.com/photo-1512453979798-5ea904acfb5b?q=80&w=2000&auto=format&fit=crop',
+    'USA': 'https://images.unsplash.com/photo-1485871981535-75a6c71f9d66?q=80&w=2070&auto=format&fit=crop',
+    'Finland': 'https://images.unsplash.com/photo-1548232979-6c557ee14752?q=80&w=2071&auto=format&fit=crop'
+  };
+  // Default fallback image (Abstract architecture)
+  return map[name] || map[Object.keys(map).find(key => name.includes(key)) || ''] || 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=2070&auto=format&fit=crop';
+};
+
 export default function CountryCard({
   countryName,
   programName,
@@ -52,66 +43,68 @@ export default function CountryCard({
   description,
   highlights,
   link,
+  imageSrc
 }: CountryCardProps) {
+  
+  const finalImage = imageSrc || getCountryImage(countryName);
+
   return (
-    <Link href={link} className="block h-full">
-      <div className="card h-full flex flex-col group hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 border border-transparent hover:border-accent/30">
-        {/* Country Header with Flag */}
-        <div className="flex items-center mb-4">
-          <span className="text-5xl mr-4">{flagEmoji}</span>
-          <div>
-            <h3 className="text-2xl font-bold text-primary group-hover:text-accent transition-colors duration-300">
+    <Link href={link} className="block h-full group">
+      <div className="h-full bg-white border border-gray-100 hover:border-[#D4AF37]/50 rounded-sm overflow-hidden transition-all duration-500 hover:shadow-2xl flex flex-col">
+        
+        {/* 1. Image Header (Cinematic) */}
+        <div className="relative h-56 overflow-hidden">
+          <Image 
+            src={finalImage} 
+            alt={`${countryName} Skyline`}
+            fill
+            className="object-cover transition-transform duration-700 group-hover:scale-110"
+          />
+          {/* Gradient Overlay for Text Visibility */}
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0f172a]/90 via-[#0f172a]/20 to-transparent opacity-90" />
+          
+          {/* Floating Label */}
+          <div className="absolute bottom-4 left-6">
+            <div className="text-[#D4AF37] text-[10px] font-bold uppercase tracking-[0.2em] mb-1 flex items-center gap-2">
+              {flagEmoji && <span className="text-sm">{flagEmoji}</span>}
+              {programName}
+            </div>
+            <h3 className="text-white font-serif text-3xl tracking-wide">
               {countryName}
             </h3>
-            <p className="text-sm text-primary-dark/70 font-medium">
-              {programName}
-            </p>
           </div>
         </div>
 
-        {/* Description */}
-        <p className="text-primary-dark/80 mb-4 leading-relaxed">
-          {description}
-        </p>
+        {/* 2. Content Body */}
+        <div className="p-8 flex flex-col flex-grow">
+          <p className="text-gray-500 text-sm leading-relaxed mb-6 line-clamp-3">
+            {description}
+          </p>
 
-        {/* Program Highlights */}
-        <div className="flex-grow mb-4">
-          <h4 className="text-sm font-semibold text-primary mb-2 uppercase tracking-wide">
-            Key Highlights
-          </h4>
-          <ul className="space-y-2">
-            {highlights.map((highlight, index) => (
-              <li
-                key={index}
-                className="flex items-start text-sm text-primary-dark/70"
-              >
-                <span className="text-secondary mr-2 mt-0.5 flex-shrink-0">
-                  ▸
+          {/* Highlights Divider */}
+          <div className="w-10 h-[1px] bg-[#D4AF37]/30 mb-6"></div>
+
+          {/* Highlights List */}
+          <div className="space-y-3 mb-8 flex-grow">
+            {highlights.slice(0, 3).map((highlight, index) => (
+              <div key={index} className="flex items-start gap-3">
+                <div className="mt-1 w-4 h-4 rounded-full border border-[#D4AF37]/30 flex items-center justify-center shrink-0 group-hover:bg-[#D4AF37] transition-colors">
+                  <Check className="w-2.5 h-2.5 text-[#D4AF37] group-hover:text-white" />
+                </div>
+                <span className="text-xs text-gray-600 font-medium">
+                  {highlight}
                 </span>
-                <span>{highlight}</span>
-              </li>
+              </div>
             ))}
-          </ul>
-        </div>
+          </div>
 
-        {/* CTA */}
-        <div className="mt-auto pt-4 border-t border-primary/10">
-          <span className="text-accent font-semibold group-hover:text-accent-light transition-colors duration-300 inline-flex items-center">
-            Explore Program Details
-            <svg
-              className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform duration-300"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M13 7l5 5m0 0l-5 5m5-5H6"
-              />
-            </svg>
-          </span>
+          {/* CTA Footer */}
+          <div className="mt-auto pt-4 border-t border-gray-50 flex items-center justify-between text-[#0f172a] group-hover:text-[#D4AF37] transition-colors">
+            <span className="text-xs font-bold uppercase tracking-widest">
+              View Jurisdiction
+            </span>
+            <ArrowRight className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" />
+          </div>
         </div>
       </div>
     </Link>

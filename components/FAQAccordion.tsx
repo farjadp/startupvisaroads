@@ -1,16 +1,12 @@
 // ============================================================================
-// Component Source: components/FAQAccordion.tsx
-// Version: 1.0.0 — FAQ Accordion Component
-// Why: Display frequently asked questions with expandable answers
-// Usage: All program pages, services pages, homepage
-// Colors: Primary(#1c3b6e), Secondary(#f2b95e), Accent(#a81f93), Bg(#e7e8ec)
-// Props:
-//   - faqs: Array of FAQ objects with question and answer
+// Component: components/FAQAccordion.tsx
+// Style: High-End Editorial (Interactive & Smooth)
 // ============================================================================
 
 'use client';
 
 import React, { useState } from 'react';
+import { Plus, Minus } from 'lucide-react';
 
 interface FAQ {
   question: string;
@@ -21,99 +17,77 @@ interface FAQAccordionProps {
   faqs: FAQ[];
 }
 
-/**
- * FAQAccordion Component
- *
- * Interactive accordion component for displaying FAQs in a space-efficient,
- * user-friendly manner. Helps address common questions and reduce friction
- * in the decision-making process.
- *
- * Features:
- * - Smooth expand/collapse animations
- * - Only one item open at a time (optional)
- * - Clear visual indicators for open/closed states
- * - SEO-friendly semantic HTML
- * - Accessible keyboard navigation
- *
- * Design Considerations:
- * - Clear question/answer hierarchy
- * - Sufficient padding for easy tap targets (mobile)
- * - Smooth transitions for better UX
- * - Brand-aligned styling
- *
- * Accessibility:
- * - Proper ARIA attributes
- * - Keyboard navigation support
- * - Focus indicators
- * - Screen reader friendly
- */
 export default function FAQAccordion({ faqs }: FAQAccordionProps) {
-  // Track which FAQ item is currently open
-  const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const [openIndex, setOpenIndex] = useState<number | null>(0); // Default open first one? or null
 
-  /**
-   * Toggle FAQ item open/closed
-   * If clicking already-open item, close it
-   * Otherwise, close any open item and open clicked item
-   */
   const toggleFAQ = (index: number) => {
     setOpenIndex(openIndex === index ? null : index);
   };
 
   return (
-    <div className="space-y-4">
+    <div className="w-full space-y-4">
       {faqs.map((faq, index) => {
         const isOpen = openIndex === index;
 
         return (
           <div
             key={index}
-            className="card overflow-hidden transition-all duration-300 hover:shadow-xl"
+            className={`
+              group relative overflow-hidden transition-all duration-500
+              bg-white border
+              ${isOpen 
+                ? 'border-[#D4AF37] shadow-[0_10px_40px_-10px_rgba(212,175,55,0.1)]' 
+                : 'border-gray-200 hover:border-gray-300'
+              }
+            `}
           >
+            {/* Active Indicator Strip (Left side) */}
+            <div 
+              className={`absolute left-0 top-0 bottom-0 w-1 bg-[#D4AF37] transition-transform duration-300 ${
+                isOpen ? 'scale-y-100' : 'scale-y-0'
+              }`} 
+            />
+
             {/* Question Button */}
             <button
               onClick={() => toggleFAQ(index)}
-              className="w-full text-left p-6 flex justify-between items-start gap-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+              className="w-full text-left px-8 py-6 flex justify-between items-center gap-6 focus:outline-none"
               aria-expanded={isOpen}
-              aria-controls={`faq-answer-${index}`}
             >
-              {/* Question Text */}
-              <h3 className="text-lg font-semibold text-primary group-hover:text-accent transition-colors duration-300 flex-grow">
+              <h3 
+                className={`
+                  font-serif text-lg md:text-xl transition-colors duration-300 pr-8
+                  ${isOpen ? 'text-[#0f172a]' : 'text-gray-600 group-hover:text-[#0f172a]'}
+                `}
+              >
                 {faq.question}
               </h3>
 
-              {/* Expand/Collapse Icon */}
+              {/* Icon Container */}
               <span
-                className={`flex-shrink-0 w-6 h-6 flex items-center justify-center text-accent transition-transform duration-300 ${
-                  isOpen ? 'rotate-180' : 'rotate-0'
-                }`}
+                className={`
+                  flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full border transition-all duration-300
+                  ${isOpen 
+                    ? 'bg-[#D4AF37] border-[#D4AF37] text-white rotate-180' 
+                    : 'bg-transparent border-gray-300 text-gray-400 group-hover:border-[#D4AF37] group-hover:text-[#D4AF37]'
+                  }
+                `}
               >
-                <svg
-                  className="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M19 9l-7 7-7-7"
-                  />
-                </svg>
+                {isOpen ? <Minus className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
               </span>
             </button>
 
-            {/* Answer (Expandable) */}
+            {/* Answer (Animated Height) */}
             <div
-              id={`faq-answer-${index}`}
-              className={`overflow-hidden transition-all duration-300 ${
-                isOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
-              }`}
+              className={`
+                grid transition-all duration-500 ease-in-out
+                ${isOpen ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'}
+              `}
             >
-              <div className="px-6 pb-6 pt-0">
-                <div className="pt-4 border-t border-primary/10">
-                  <p className="text-primary-dark/80 leading-relaxed">
+              <div className="overflow-hidden">
+                <div className="px-8 pb-8 pt-0">
+                  <div className={`h-px w-full bg-gray-100 mb-6 transition-all duration-500 ${isOpen ? 'w-full' : 'w-0'}`} />
+                  <p className="text-gray-500 leading-relaxed text-sm md:text-base font-light">
                     {faq.answer}
                   </p>
                 </div>

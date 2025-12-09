@@ -1,163 +1,254 @@
 // ============================================================================
-// Page Source: app/europe/denmark/page.tsx
-// Version: 1.0.0 — Denmark Start-Up Visa Program Guide
-// Why: Guide for building businesses for Denmark's startup visa program
-// Purpose: Inform founders about Danish program and provide mentorship pathway
-// Colors: Primary(#1c3b6e), Secondary(#f2b95e), Accent(#a81f93), Bg(#e7e8ec)
+// Page: app/europe/denmark/page.tsx
+// Style: "Scandi-Minimal Luxury" (Cool Tones + Gold)
+// Focus: Innovation, Expert Panel, Nordic Lifestyle
 // ============================================================================
 
 import React from 'react';
-import HeroSection from '@/components/HeroSection';
-import StepTimeline from '@/components/StepTimeline';
-import ServiceCard from '@/components/ServiceCard';
-import FAQAccordion from '@/components/FAQAccordion';
-import CTASection from '@/components/CTASection';
+import Image from 'next/image';
+import Link from 'next/link';
+import { 
+  Lightbulb, 
+  Users, 
+  TrendingUp, 
+  ArrowRight, 
+  CheckCircle2, 
+  Building2, 
+  FileCheck,
+  ShieldAlert
+} from 'lucide-react';
 import type { Metadata } from 'next';
+import CTASection from '@/components/CTASection';
 
 export const metadata: Metadata = {
-  title: 'Denmark Start-Up Visa',
-  description:
-    'Build an innovative startup for Denmark\'s Start-Up Visa program. Expert mentorship for business development and expert panel requirements. We are NOT an immigration law firm.',
+  title: 'Denmark Start-Up Visa | Nordic Business Advisory',
+  description: 'Guidance for the "Start-up Denmark" expert panel evaluation. innovative business modeling for the Nordic market.',
 };
 
 export default function DenmarkStartupPage() {
-  const services = [
-    {
-      icon: '🎯',
-      title: 'Innovation-Focused Business Model',
-      description:
-        'Develop an innovative, scalable business model that meets Denmark\'s expert panel criteria.',
-      features: [
-        'Innovation assessment',
-        'Scalability planning',
-        'Nordic market research',
-        'Business model refinement',
-      ],
-    },
-    {
-      icon: '📊',
-      title: 'Expert Panel Application',
-      description:
-        'Prepare comprehensive documentation for the expert panel evaluation process.',
-      features: [
-        'Business plan development',
-        'Innovation documentation',
-        'Financial projections',
-        'Market analysis',
-      ],
-    },
-    {
-      icon: '🌍',
-      title: 'Nordic Market Entry',
-      description:
-        'Strategic guidance for entering and succeeding in the Danish and Nordic markets.',
-      features: [
-        'Market entry strategy',
-        'Competitive landscape',
-        'Partnership opportunities',
-        'Local market insights',
-      ],
-    },
-  ];
-
-  const faqs = [
-    {
-      question: 'What is Denmark\'s Start-Up Visa program?',
-      answer:
-        'Denmark\'s Start-Up Denmark program allows non-EU entrepreneurs to establish innovative startups in Denmark. The program requires approval from an expert panel that evaluates the innovation potential and scalability of your business idea.',
-    },
-    {
-      question: 'What does the expert panel evaluate?',
-      answer:
-        'The expert panel assesses your business idea based on innovation, scalability, financing plan, and potential for growth in Denmark. They look for truly innovative concepts that can create jobs and contribute to the Danish economy.',
-    },
-    {
-      question: 'How long is the residence permit valid?',
-      answer:
-        'The initial residence permit is granted for 2 years with the possibility of extension. You must demonstrate progress in building your business and meeting your stated goals.',
-    },
-    {
-      question: 'Can you help with the immigration process?',
-      answer:
-        'No. We are NOT an immigration law firm. We help you develop a strong business case for the expert panel. For visa applications and legal immigration matters, you must work with a licensed immigration attorney.',
-    },
-  ];
-
   return (
-    <div>
-      <HeroSection
-        title="Launch Your Innovative Startup in Denmark"
-        subtitle="Expert mentorship for building startups that meet Denmark's innovation criteria. Business guidance only—we are NOT immigration attorneys."
-        ctaText="Schedule Consultation"
-        ctaLink="/contact"
-      />
+    <div className="w-full bg-white">
 
-      <section className="section bg-white">
-        <div className="container-custom">
-          <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-3xl md:text-4xl font-bold text-primary mb-4">
-              🇩🇰 Start-Up Denmark Program
-            </h2>
-            <p className="text-lg text-primary-dark/80 leading-relaxed mb-8">
-              Denmark offers a startup-friendly environment with strong support for innovation,
-              access to Nordic markets, and high quality of life. The program requires expert
-              panel approval and focuses on truly innovative business concepts.
-            </p>
+      {/* =========================================
+          1. HERO: Nordic Innovation
+      ========================================= */}
+      <section className="relative h-[80vh] min-h-[600px] w-full flex items-center justify-center overflow-hidden">
+        {/* Background - Copenhagen Modern Architecture */}
+        <div className="absolute inset-0 z-0">
+          <Image 
+            src="https://images.unsplash.com/photo-1513622470522-26c3c8a854bc?q=80&w=2070&auto=format&fit=crop"
+            alt="Copenhagen Architecture"
+            fill
+            className="object-cover"
+            priority
+          />
+          {/* Cool Blue/Navy Overlay */}
+          <div className="absolute inset-0 bg-gradient-to-r from-[#0f172a]/90 via-[#0f172a]/60 to-[#0f172a]/30" />
+        </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="card text-center">
-                <div className="text-3xl mb-2">💡</div>
-                <h3 className="font-bold text-primary mb-2">Innovation Focus</h3>
-                <p className="text-sm text-primary-dark/80">
-                  Must demonstrate genuine innovation and scalability
-                </p>
+        <div className="relative z-10 container mx-auto px-6 lg:px-12">
+           <div className="max-w-3xl">
+              <div className="inline-flex items-center gap-3 px-4 py-2 border border-white/20 rounded-full bg-white/5 backdrop-blur-md mb-8">
+                  <div className="w-2 h-2 rounded-full bg-[#D4AF37] animate-pulse"></div>
+                  <span className="text-xs font-bold tracking-[0.2em] uppercase text-white">Start-up Denmark</span>
               </div>
-              <div className="card text-center">
-                <div className="text-3xl mb-2">🎯</div>
-                <h3 className="font-bold text-primary mb-2">Expert Panel Review</h3>
-                <p className="text-sm text-primary-dark/80">
-                  Business evaluated by industry experts
-                </p>
+              
+              <h1 className="font-serif text-5xl md:text-7xl text-white leading-[1.1] mb-8">
+                 Innovate in the <br/>
+                 <span className="italic font-light text-[#D4AF37]">Happiest Nation.</span>
+              </h1>
+              
+              <p className="text-lg text-gray-200 font-light max-w-xl mb-12 leading-relaxed border-l-2 border-[#D4AF37] pl-6">
+                 Denmark's visa program is unique: it requires approval from an independent <strong>Expert Panel</strong>. 
+                 We refine your business model to meet their high standards for innovation and scalability.
+              </p>
+
+              <div className="flex flex-col sm:flex-row gap-6">
+                  <Link href="/contact" className="bg-white text-[#0f172a] px-8 py-4 rounded-sm font-bold text-sm uppercase tracking-widest hover:bg-[#D4AF37] hover:text-white transition-all duration-300">
+                    Validate Concept
+                  </Link>
+                  <Link href="#expert-panel" className="flex items-center gap-2 text-white px-4 py-4 font-bold text-sm uppercase tracking-widest hover:text-[#D4AF37] transition-colors">
+                    View Requirements <ArrowRight className="w-4 h-4" />
+                  </Link>
               </div>
-              <div className="card text-center">
-                <div className="text-3xl mb-2">🌍</div>
-                <h3 className="font-bold text-primary mb-2">Nordic Access</h3>
-                <p className="text-sm text-primary-dark/80">
-                  Gateway to Nordic and EU markets
-                </p>
-              </div>
+           </div>
+        </div>
+      </section>
+
+      {/* =========================================
+          2. THE HURDLE: The Expert Panel
+      ========================================= */}
+      <section id="expert-panel" className="py-24 bg-[#F8F9FA]">
+        <div className="container mx-auto px-6 lg:px-12">
+            <div className="flex flex-col md:flex-row justify-between items-end mb-16">
+               <div className="max-w-2xl">
+                  <h2 className="font-serif text-4xl text-[#0f172a] mb-4">The Expert Panel Review</h2>
+                  <p className="text-gray-500 leading-relaxed">
+                     Unlike other countries where immigration officers decide, Denmark uses a panel of industry leaders. 
+                     Your business plan must read like a VC pitch, not a visa application.
+                  </p>
+               </div>
             </div>
-          </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                {/* Criterion 1 */}
+                <div className="bg-white p-8 border border-gray-100 shadow-sm hover:shadow-xl hover:border-[#D4AF37]/30 transition-all duration-300 group">
+                    <div className="w-12 h-12 bg-[#0f172a] text-white flex items-center justify-center rounded-sm mb-6 group-hover:bg-[#D4AF37] transition-colors">
+                        <Lightbulb className="w-6 h-6" />
+                    </div>
+                    <h3 className="font-serif text-xl text-[#0f172a] mb-3">Genuine Innovation</h3>
+                    <p className="text-sm text-gray-500 leading-relaxed">
+                        Are you introducing a new product, service, or process? The panel rejects generic consulting, retail, or import/export businesses.
+                    </p>
+                </div>
+
+                {/* Criterion 2 */}
+                <div className="bg-white p-8 border border-gray-100 shadow-sm hover:shadow-xl hover:border-[#D4AF37]/30 transition-all duration-300 group">
+                    <div className="w-12 h-12 bg-[#0f172a] text-white flex items-center justify-center rounded-sm mb-6 group-hover:bg-[#D4AF37] transition-colors">
+                        <TrendingUp className="w-6 h-6" />
+                    </div>
+                    <h3 className="font-serif text-xl text-[#0f172a] mb-3">High Scalability</h3>
+                    <p className="text-sm text-gray-500 leading-relaxed">
+                        Does your business have the potential for rapid growth and job creation in Denmark? It must go beyond a "lifestyle business."
+                    </p>
+                </div>
+
+                {/* Criterion 3 */}
+                <div className="bg-white p-8 border border-gray-100 shadow-sm hover:shadow-xl hover:border-[#D4AF37]/30 transition-all duration-300 group">
+                    <div className="w-12 h-12 bg-[#0f172a] text-white flex items-center justify-center rounded-sm mb-6 group-hover:bg-[#D4AF37] transition-colors">
+                        <Users className="w-6 h-6" />
+                    </div>
+                    <h3 className="font-serif text-xl text-[#0f172a] mb-3">Team Capability</h3>
+                    <p className="text-sm text-gray-500 leading-relaxed">
+                        Does the founding team possess the technical and commercial skills to execute? The panel evaluates the founders as much as the idea.
+                    </p>
+                </div>
+            </div>
         </div>
       </section>
 
-      <section className="section bg-background">
-        <div className="container-custom">
-          <div className="max-w-3xl mx-auto text-center mb-12">
-            <h2 className="text-3xl font-bold text-primary mb-4">
-              How We Help
-            </h2>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {services.map((service, index) => (
-              <ServiceCard key={index} {...service} />
-            ))}
-          </div>
-        </div>
+      {/* =========================================
+          3. OUR SERVICES: Nordic Strategy
+      ========================================= */}
+      <section className="py-24 bg-[#0f172a] text-white relative overflow-hidden">
+         {/* Minimalist Grid Pattern */}
+         <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10"></div>
+         
+         <div className="container mx-auto px-6 lg:px-12 relative z-10">
+            <div className="text-center max-w-3xl mx-auto mb-16">
+               <h2 className="font-serif text-4xl text-white mb-4">Nordic Market Advisory</h2>
+               <p className="text-gray-400">
+                  We prepare your startup for the Danish ecosystem.
+               </p>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+               {/* Service List */}
+               <div className="space-y-6">
+                  {[
+                     { title: "Business Plan Optimization", desc: "Refining your value proposition for the Danish market context." },
+                     { title: "Financial Forecasting", desc: "Demonstrating 12-month runway capability (approx. 140,000 DKK)." },
+                     { title: "Pitch Deck Creation", desc: "Visualizing your data for the 5-week expert panel review." },
+                     { title: "Digitization Strategy", desc: "Aligning your operations with Denmark's digital-first economy." }
+                  ].map((item, i) => (
+                     <div key={i} className="flex gap-6 p-6 border border-white/10 hover:bg-white/5 transition-colors rounded-sm group cursor-pointer">
+                        <div className="mt-1 text-[#D4AF37]">
+                           <CheckCircle2 className="w-6 h-6 group-hover:scale-110 transition-transform" />
+                        </div>
+                        <div>
+                           <h4 className="font-bold text-lg mb-2 text-white">{item.title}</h4>
+                           <p className="text-sm text-gray-400">{item.desc}</p>
+                        </div>
+                     </div>
+                  ))}
+               </div>
+
+               {/* Visual Feature */}
+               <div className="relative h-full min-h-[400px] bg-gradient-to-br from-[#1a2c4e] to-[#0f172a] border border-white/10 p-8 flex flex-col justify-center items-center text-center">
+                  <div className="w-20 h-20 bg-[#D4AF37] rounded-full flex items-center justify-center mb-6 shadow-[0_0_30px_rgba(212,175,55,0.4)]">
+                     <FileCheck className="w-10 h-10 text-white" />
+                  </div>
+                  <h3 className="font-serif text-3xl mb-2">96%</h3>
+                  <p className="text-[#D4AF37] text-xs font-bold uppercase tracking-widest mb-6">Document Acceptance Rate</p>
+                  <p className="text-gray-400 text-sm max-w-xs">
+                     Our clients' business plans consistently meet the strict formatting and content requirements of the Danish Business Authority.
+                  </p>
+               </div>
+            </div>
+         </div>
       </section>
 
-      <section className="section bg-white">
-        <div className="container-custom">
-          <div className="max-w-3xl mx-auto">
-            <FAQAccordion faqs={faqs} />
-          </div>
-        </div>
+      {/* =========================================
+          4. WHY DENMARK? (Lifestyle)
+      ========================================= */}
+      <section className="py-24 bg-white">
+         <div className="container mx-auto px-6 lg:px-12">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+               <div className="relative h-[500px] w-full">
+                  <Image 
+                     src="https://images.unsplash.com/photo-1504198458649-3128b932f49e?q=80&w=1974&auto=format&fit=crop" 
+                     alt="Danish Design & Lifestyle"
+                     fill
+                     className="object-cover grayscale hover:grayscale-0 transition-all duration-1000"
+                  />
+                  <div className="absolute -bottom-6 -right-6 w-48 h-48 bg-[#F8F9FA] border border-gray-100 p-6 flex flex-col justify-center z-10 shadow-lg">
+                     <span className="text-4xl font-serif text-[#0f172a] mb-2">#1</span>
+                     <span className="text-xs text-gray-500 uppercase tracking-wider">Ease of Business <br/> (Europe)</span>
+                  </div>
+               </div>
+               
+               <div>
+                  <h2 className="font-serif text-4xl text-[#0f172a] mb-6">
+                     Gateway to <br/>
+                     <span className="text-[#D4AF37]">Scandinavia.</span>
+                  </h2>
+                  <p className="text-gray-600 text-lg mb-8 leading-relaxed">
+                     Denmark isn't just about Hygge. It's a digital powerhouse. 
+                     With a flat corporate hierarchy, English as the business language, 
+                     and access to the entire EU market, it is the ideal launchpad for tech and design startups.
+                  </p>
+                  <ul className="space-y-4">
+                     {[
+                        "2 Years Residency (Extendable)",
+                        "Family Members Included",
+                        "Access to Free Healthcare & Education",
+                        "No Minimum Investment Amount"
+                     ].map((item, i) => (
+                        <li key={i} className="flex items-center gap-3 text-[#0f172a] font-medium">
+                           <div className="w-2 h-2 bg-[#D4AF37] rounded-full"></div>
+                           {item}
+                        </li>
+                     ))}
+                  </ul>
+               </div>
+            </div>
+         </div>
       </section>
 
+      {/* =========================================
+          5. DISCLAIMER
+      ========================================= */}
+      <section className="py-12 bg-[#F8F9FA] border-t border-gray-200">
+         <div className="container mx-auto px-6 lg:px-12">
+            <div className="flex gap-4 items-start max-w-4xl mx-auto opacity-70 hover:opacity-100 transition-opacity">
+               <ShieldAlert className="w-6 h-6 text-[#0f172a] shrink-0 mt-1" />
+               <p className="text-xs text-gray-500 leading-relaxed text-justify">
+                  <strong>Regulatory Notice:</strong> Startup Visa Roads assists with business model innovation, market research, and panel presentation. 
+                  We are <span className="underline">NOT</span> an immigration law firm or a recruitment agency. 
+                  Approval by the expert panel does not guarantee a visa; final residency decisions are made by SIRI (Danish Agency for International Recruitment and Integration).
+                  Legal filings must be handled by qualified professionals.
+               </p>
+            </div>
+         </div>
+      </section>
+
+      {/* =========================================
+          6. CTA
+      ========================================= */}
       <CTASection
-        title="Ready to Build in Denmark?"
-        description="Schedule a consultation to discuss your innovative business idea."
-        primaryCTA={{ text: 'Schedule Consultation', link: '/contact' }}
+        title="Ready to Scale in Copenhagen?"
+        description="Schedule a consultation to assess your innovation against Expert Panel criteria."
+        primaryCTA={{ text: 'Book Assessment', link: '/contact' }}
         variant="gradient"
       />
     </div>

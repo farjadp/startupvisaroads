@@ -1,332 +1,221 @@
 // ============================================================================
-// Page Source: app/contact/page.tsx
-// Version: 1.0.0 — Contact & Consultation Booking Page
-// Why: Primary conversion point for consultation bookings and inquiries
-// Purpose: Make it easy for founders to reach out and schedule consultations
-// Colors: Primary(#1c3b6e), Secondary(#f2b95e), Accent(#a81f93), Bg(#e7e8ec)
-// Sections:
-//   1. Hero - Contact value proposition
-//   2. Contact Form - Lead capture (UI only, no backend)
-//   3. Contact Information - Email, social, etc.
-//   4. FAQ - Quick answers
-//   5. Office Hours - Availability
+// Page: app/contact/page.tsx
+// Style: Editorial / Art Gallery
+// Concept: "The Application"
 // ============================================================================
 
 import React from 'react';
-import HeroSection from '@/components/HeroSection';
-import FAQAccordion from '@/components/FAQAccordion';
+import Link from 'next/link';
+import { 
+  ArrowRight, 
+  Mail, 
+  MapPin, 
+  Clock, 
+  ShieldAlert,
+  Send,
+  Linkedin,
+  Twitter
+} from 'lucide-react';
 import type { Metadata } from 'next';
 
-/**
- * Contact Page Metadata
- */
 export const metadata: Metadata = {
-  title: 'Contact Us',
-  description:
-    'Schedule a free consultation to discuss your startup idea and explore how we can help. Get in touch with our team for mentorship and business advisory services.',
-  openGraph: {
-    title: 'Contact Us | Startup Visa Roads',
-    description:
-      'Schedule your free consultation today. Let\'s discuss how we can help you build an investment-ready startup.',
-  },
+  title: 'Contact | Initiate Protocol',
+  description: 'Schedule your strategic assessment. Access limited.',
 };
 
-/**
- * Contact Page Component
- *
- * Primary conversion page with contact form and consultation scheduling.
- * Note: Form is UI only - backend integration required for production.
- */
 export default function ContactPage() {
-  const faqs = [
-    {
-      question: 'How much does a consultation cost?',
-      answer:
-        'The initial 30-minute discovery consultation is completely free with no obligation. This allows us to understand your needs and determine if we\'re a good fit.',
-    },
-    {
-      question: 'How quickly can we get started?',
-      answer:
-        'After your initial consultation, we can typically begin working together within 1-2 weeks, depending on your schedule and our mentor availability.',
-    },
-    {
-      question: 'What should I prepare for the consultation?',
-      answer:
-        'Come prepared with a brief overview of your business idea, target market, and which startup visa programs you\'re considering. Don\'t worry if things aren\'t fully formed—that\'s what we\'re here to help with!',
-    },
-  ];
-
   return (
-    <div>
-      {/* Hero Section */}
-      <HeroSection
-        title="Let's Build Your Startup Together"
-        subtitle="Schedule a free consultation to discuss your business idea and explore how we can help you achieve your entrepreneurial goals."
-        ctaText="Scroll to Form"
-        ctaLink="#contact-form"
-      />
+    <div className="w-full bg-[#F2F0E9] text-[#1a1a1a]">
 
-      {/* Contact Form & Info Section */}
-      <section id="contact-form" className="section bg-white">
-        <div className="container-custom">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-6xl mx-auto">
-            {/* Contact Form */}
+      {/* =========================================
+          1. HERO: TYPE-DRIVEN
+      ========================================= */}
+      <section className="pt-32 pb-20 px-6 border-b border-[#1a1a1a]">
+        <div className="container mx-auto">
+          <div className="flex items-center gap-4 mb-8">
+             <span className="w-4 h-4 bg-[#1a1a1a]"></span>
+             <span className="font-sans text-xs font-bold uppercase tracking-widest text-[#1a1a1a]/60">Inquiry</span>
+          </div>
+
+          <h1 className="font-serif text-[12vw] leading-[0.8] tracking-tighter mb-12">
+            INITIATE <br/>
+            <span className="pl-[15vw] italic text-[#1a1a1a]/40">PROTOCOL.</span>
+          </h1>
+
+          <div className="flex flex-col md:flex-row gap-12 items-end">
+             <p className="font-serif text-3xl md:text-4xl leading-tight max-w-2xl">
+                We accept a limited number of clients per quarter. <br/>
+                Tell us about your ambition.
+             </p>
+          </div>
+        </div>
+      </section>
+
+      {/* =========================================
+          2. THE FORM & INFO SPLIT
+      ========================================= */}
+      <section className="min-h-screen">
+         <div className="grid grid-cols-1 lg:grid-cols-2">
+            
+            {/* LEFT: Contact Info (Sticky) */}
+            <div className="bg-[#1a1a1a] text-[#F2F0E9] p-12 lg:p-24 flex flex-col justify-between min-h-[50vh] lg:h-auto">
+               <div>
+                  <span className="font-sans text-xs font-bold text-[#CCFF00] mb-8 block uppercase tracking-widest">Direct Line</span>
+                  
+                  <div className="space-y-12">
+                     <div className="group">
+                        <h3 className="font-serif text-3xl mb-2 flex items-center gap-3">
+                           <Mail className="w-6 h-6 text-[#CCFF00]" /> Email
+                        </h3>
+                        <a href="mailto:hello@startupvisaroads.com" className="font-sans text-lg opacity-60 hover:opacity-100 hover:text-[#CCFF00] transition-all">
+                           hello@startupvisaroads.com
+                        </a>
+                     </div>
+
+                     <div className="group">
+                        <h3 className="font-serif text-3xl mb-2 flex items-center gap-3">
+                           <MapPin className="w-6 h-6 text-[#CCFF00]" /> HQ
+                        </h3>
+                        <address className="not-italic font-sans text-lg opacity-60">
+                           100 King St W, Suite 5600<br/>
+                           Toronto, ON M5X 1C9
+                        </address>
+                     </div>
+
+                     <div className="group">
+                        <h3 className="font-serif text-3xl mb-2 flex items-center gap-3">
+                           <Clock className="w-6 h-6 text-[#CCFF00]" /> Hours
+                        </h3>
+                        <p className="font-sans text-lg opacity-60">
+                           Mon - Fri: 09:00 - 18:00 EST<br/>
+                           Async Support: 24/7
+                        </p>
+                     </div>
+                  </div>
+               </div>
+
+               <div className="mt-20">
+                  <span className="font-sans text-xs font-bold text-[#CCFF00] mb-6 block uppercase tracking-widest">Connect</span>
+                  <div className="flex gap-4">
+                     <a href="#" className="w-12 h-12 border border-[#F2F0E9]/20 rounded-full flex items-center justify-center hover:bg-[#CCFF00] hover:text-[#1a1a1a] transition-all">
+                        <Linkedin size={20} />
+                     </a>
+                     <a href="#" className="w-12 h-12 border border-[#F2F0E9]/20 rounded-full flex items-center justify-center hover:bg-[#CCFF00] hover:text-[#1a1a1a] transition-all">
+                        <Twitter size={20} />
+                     </a>
+                  </div>
+               </div>
+            </div>
+
+            {/* RIGHT: The Form */}
+            <div className="bg-[#F2F0E9] p-12 lg:p-24 border-b border-[#1a1a1a] lg:border-b-0 lg:border-l">
+               <span className="font-sans text-xs font-bold bg-[#1a1a1a] text-[#F2F0E9] px-2 py-1 mb-12 inline-block uppercase tracking-widest">Application Form</span>
+               
+               <form className="space-y-12">
+                  
+                  {/* Personal Info */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                     <div className="group">
+                        <label className="block font-sans text-xs font-bold uppercase tracking-widest mb-3 opacity-50 group-focus-within:opacity-100 group-focus-within:text-[#1a1a1a]">First Name</label>
+                        <input type="text" className="w-full bg-transparent border-b border-[#1a1a1a]/20 py-4 focus:outline-none focus:border-[#1a1a1a] transition-colors font-serif text-2xl" placeholder="Enter name" />
+                     </div>
+                     <div className="group">
+                        <label className="block font-sans text-xs font-bold uppercase tracking-widest mb-3 opacity-50 group-focus-within:opacity-100 group-focus-within:text-[#1a1a1a]">Last Name</label>
+                        <input type="text" className="w-full bg-transparent border-b border-[#1a1a1a]/20 py-4 focus:outline-none focus:border-[#1a1a1a] transition-colors font-serif text-2xl" placeholder="Enter surname" />
+                     </div>
+                  </div>
+
+                  <div className="group">
+                     <label className="block font-sans text-xs font-bold uppercase tracking-widest mb-3 opacity-50 group-focus-within:opacity-100 group-focus-within:text-[#1a1a1a]">Email Address</label>
+                     <input type="email" className="w-full bg-transparent border-b border-[#1a1a1a]/20 py-4 focus:outline-none focus:border-[#1a1a1a] transition-colors font-serif text-2xl" placeholder="founder@company.com" />
+                  </div>
+
+                  {/* Selection */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                     <div className="group">
+                        <label className="block font-sans text-xs font-bold uppercase tracking-widest mb-3 opacity-50">Jurisdiction</label>
+                        <select className="w-full bg-transparent border-b border-[#1a1a1a]/20 py-4 focus:outline-none focus:border-[#1a1a1a] font-serif text-xl appearance-none rounded-none cursor-pointer hover:bg-[#1a1a1a]/5">
+                           <option>Canada (SUV)</option>
+                           <option>USA (NIW)</option>
+                           <option>UAE (Golden)</option>
+                           <option>Europe (General)</option>
+                           <option>Undecided</option>
+                        </select>
+                     </div>
+                     <div className="group">
+                        <label className="block font-sans text-xs font-bold uppercase tracking-widest mb-3 opacity-50">Stage</label>
+                        <select className="w-full bg-transparent border-b border-[#1a1a1a]/20 py-4 focus:outline-none focus:border-[#1a1a1a] font-serif text-xl appearance-none rounded-none cursor-pointer hover:bg-[#1a1a1a]/5">
+                           <option>Idea Phase</option>
+                           <option>MVP Built</option>
+                           <option>Revenue Generating</option>
+                           <option>Series A+</option>
+                        </select>
+                     </div>
+                  </div>
+
+                  {/* Message */}
+                  <div className="group">
+                     <label className="block font-sans text-xs font-bold uppercase tracking-widest mb-3 opacity-50 group-focus-within:opacity-100 group-focus-within:text-[#1a1a1a]">The Vision</label>
+                     <textarea rows={4} className="w-full bg-transparent border-b border-[#1a1a1a]/20 py-4 focus:outline-none focus:border-[#1a1a1a] transition-colors font-serif text-xl resize-none" placeholder="Briefly describe your business model and goals..."></textarea>
+                  </div>
+
+                  {/* Submit */}
+                  <div className="pt-8">
+                     <button className="w-full bg-[#1a1a1a] text-[#F2F0E9] py-6 font-sans font-bold uppercase tracking-widest hover:bg-[#CCFF00] hover:text-[#1a1a1a] transition-all flex items-center justify-center gap-3 group">
+                        Submit Application <Send className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                     </button>
+                     <p className="mt-6 text-center text-xs font-sans text-[#1a1a1a]/40">
+                        By submitting, you agree to our privacy policy. We reply within 24h.
+                     </p>
+                  </div>
+               </form>
+            </div>
+
+         </div>
+      </section>
+
+      {/* =========================================
+          3. FAQ
+      ========================================= */}
+      <section className="py-24 px-6 bg-white border-t border-[#1a1a1a]/10">
+         <div className="container mx-auto max-w-3xl">
+            <h2 className="font-serif text-4xl mb-12 text-center">Common Queries</h2>
+            
+            <div className="space-y-4">
+               {[
+                  { q: "Is the first consultation free?", a: "Yes. We offer a complimentary 20-minute discovery call to assess mutual fit." },
+                  { q: "Do you handle the legal filing?", a: "No. We handle business strategy, documentation, and mentorship. We refer you to partner law firms for the legal submission." },
+                  { q: "How long is the waitlist?", a: "Currently 2-3 weeks for new client onboarding due to high demand." }
+               ].map((item, i) => (
+                  <details key={i} className="group border-b border-[#1a1a1a]/10 pb-6 cursor-pointer">
+                     <summary className="flex justify-between items-center font-serif text-xl list-none hover:text-[#1a1a1a]/60 transition-colors">
+                        {item.q}
+                        <span className="font-sans text-xs font-bold bg-[#1a1a1a] text-[#F2F0E9] px-2 py-1 group-open:bg-[#CCFF00] group-open:text-[#1a1a1a] transition-colors">?</span>
+                     </summary>
+                     <p className="mt-4 font-sans text-sm text-[#1a1a1a]/60 leading-relaxed max-w-xl">
+                        {item.a}
+                     </p>
+                  </details>
+               ))}
+            </div>
+         </div>
+      </section>
+
+      {/* =========================================
+          4. DISCLAIMER
+      ========================================= */}
+      <section className="py-12 px-6">
+         <div className="container mx-auto max-w-4xl border border-[#1a1a1a]/10 p-6 bg-[#F9F9F9] flex gap-4 items-start">
+            <ShieldAlert className="shrink-0 w-6 h-6 text-[#1a1a1a]/40" />
             <div>
-              <h2 className="text-3xl font-bold text-primary mb-4">
-                Schedule Your Free Consultation
-              </h2>
-              <p className="text-primary-dark/80 mb-8 leading-relaxed">
-                Fill out the form below and we'll get back to you within 24 hours to
-                schedule your consultation.
-              </p>
-
-              {/* Form (UI only - no backend) */}
-              <form className="space-y-6">
-                {/* Name Fields */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label
-                      htmlFor="firstName"
-                      className="block text-sm font-medium text-primary mb-2"
-                    >
-                      First Name *
-                    </label>
-                    <input
-                      type="text"
-                      id="firstName"
-                      name="firstName"
-                      required
-                      className="w-full px-4 py-3 border border-primary/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
-                      placeholder="John"
-                    />
-                  </div>
-                  <div>
-                    <label
-                      htmlFor="lastName"
-                      className="block text-sm font-medium text-primary mb-2"
-                    >
-                      Last Name *
-                    </label>
-                    <input
-                      type="text"
-                      id="lastName"
-                      name="lastName"
-                      required
-                      className="w-full px-4 py-3 border border-primary/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
-                      placeholder="Smith"
-                    />
-                  </div>
-                </div>
-
-                {/* Email */}
-                <div>
-                  <label
-                    htmlFor="email"
-                    className="block text-sm font-medium text-primary mb-2"
-                  >
-                    Email Address *
-                  </label>
-                  <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    required
-                    className="w-full px-4 py-3 border border-primary/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
-                    placeholder="john@example.com"
-                  />
-                </div>
-
-                {/* Country/Program Interest */}
-                <div>
-                  <label
-                    htmlFor="program"
-                    className="block text-sm font-medium text-primary mb-2"
-                  >
-                    Which program are you interested in? *
-                  </label>
-                  <select
-                    id="program"
-                    name="program"
-                    required
-                    className="w-full px-4 py-3 border border-primary/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
-                  >
-                    <option value="">Select a program...</option>
-                    <option value="canada">Canada Start-Up Visa</option>
-                    <option value="denmark">Denmark Start-Up Visa</option>
-                    <option value="netherlands">Netherlands Startup Visa</option>
-                    <option value="finland">Finland Startup Visa</option>
-                    <option value="uae-golden">UAE Golden Visa</option>
-                    <option value="usa-eb2">USA EB-2 NIW</option>
-                    <option value="usa-eb1">USA EB-1</option>
-                    <option value="usa-eb5">USA EB-5</option>
-                    <option value="other">Other / Not Sure</option>
-                  </select>
-                </div>
-
-                {/* Business Stage */}
-                <div>
-                  <label
-                    htmlFor="stage"
-                    className="block text-sm font-medium text-primary mb-2"
-                  >
-                    Current Business Stage *
-                  </label>
-                  <select
-                    id="stage"
-                    name="stage"
-                    required
-                    className="w-full px-4 py-3 border border-primary/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
-                  >
-                    <option value="">Select stage...</option>
-                    <option value="idea">Idea Stage</option>
-                    <option value="mvp">Building MVP</option>
-                    <option value="launched">Launched (Pre-Revenue)</option>
-                    <option value="revenue">Generating Revenue</option>
-                    <option value="growth">Growth Stage</option>
-                  </select>
-                </div>
-
-                {/* Message */}
-                <div>
-                  <label
-                    htmlFor="message"
-                    className="block text-sm font-medium text-primary mb-2"
-                  >
-                    Tell us about your business idea *
-                  </label>
-                  <textarea
-                    id="message"
-                    name="message"
-                    rows={5}
-                    required
-                    className="w-full px-4 py-3 border border-primary/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
-                    placeholder="Briefly describe your business idea, target market, and what you're hoping to achieve..."
-                  />
-                </div>
-
-                {/* Submit Button */}
-                <button
-                  type="submit"
-                  className="btn-accent w-full text-lg"
-                >
-                  Request Consultation
-                </button>
-
-                <p className="text-xs text-primary-dark/60 text-center">
-                  We typically respond within 24 hours. Your information is kept confidential.
-                </p>
-              </form>
+               <p className="font-sans text-xs text-[#1a1a1a]/60 text-justify leading-relaxed">
+                  <strong>Non-Legal Disclaimer:</strong> Startup Visa Roads acts solely as a business consultancy. 
+                  We do not provide legal advice or representation. All immigration forms must be filed by a licensed attorney or consultant.
+               </p>
             </div>
-
-            {/* Contact Information & Details */}
-            <div className="space-y-8">
-              <div>
-                <h3 className="text-2xl font-bold text-primary mb-4">
-                  Other Ways to Reach Us
-                </h3>
-
-                {/* Email */}
-                <div className="card mb-4">
-                  <div className="flex items-start gap-4">
-                    <span className="text-3xl">📧</span>
-                    <div>
-                      <h4 className="font-semibold text-primary mb-1">Email</h4>
-                      <a
-                        href="mailto:hello@startupvisaroads.com"
-                        className="text-accent hover:text-accent-light transition-colors"
-                      >
-                        hello@startupvisaroads.com
-                      </a>
-                      <p className="text-sm text-primary-dark/60 mt-1">
-                        We respond within 24 hours
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Office Hours */}
-                <div className="card mb-4">
-                  <div className="flex items-start gap-4">
-                    <span className="text-3xl">🕐</span>
-                    <div>
-                      <h4 className="font-semibold text-primary mb-1">
-                        Office Hours
-                      </h4>
-                      <p className="text-sm text-primary-dark/80">
-                        Monday - Friday: 9:00 AM - 6:00 PM EST
-                      </p>
-                      <p className="text-sm text-primary-dark/80">
-                        Saturday: 10:00 AM - 2:00 PM EST
-                      </p>
-                      <p className="text-sm text-primary-dark/80">
-                        Sunday: Closed
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Social Media */}
-                <div className="card">
-                  <div className="flex items-start gap-4">
-                    <span className="text-3xl">🌐</span>
-                    <div>
-                      <h4 className="font-semibold text-primary mb-2">
-                        Connect With Us
-                      </h4>
-                      <div className="flex gap-3">
-                        <a
-                          href="https://linkedin.com"
-                          className="w-10 h-10 bg-primary/10 hover:bg-primary rounded-lg flex items-center justify-center transition-all hover:text-white"
-                        >
-                          <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
-                          </svg>
-                        </a>
-                        <a
-                          href="https://twitter.com"
-                          className="w-10 h-10 bg-primary/10 hover:bg-primary rounded-lg flex items-center justify-center transition-all hover:text-white"
-                        >
-                          <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-                          </svg>
-                        </a>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Important Note */}
-              <div className="bg-accent/10 border-2 border-accent/30 rounded-xl p-6">
-                <h4 className="font-bold text-primary mb-2 flex items-center gap-2">
-                  <span>⚠️</span>
-                  Important Notice
-                </h4>
-                <p className="text-sm text-primary-dark/80 leading-relaxed">
-                  We are NOT an immigration law firm. For legal immigration advice,
-                  please consult a licensed immigration attorney. We provide business
-                  mentorship and advisory services only.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
+         </div>
       </section>
 
-      {/* FAQ Section */}
-      <section className="section bg-background">
-        <div className="container-custom">
-          <div className="max-w-3xl mx-auto text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-primary mb-4">
-              Quick Questions
-            </h2>
-          </div>
-
-          <div className="max-w-3xl mx-auto">
-            <FAQAccordion faqs={faqs} />
-          </div>
-        </div>
-      </section>
     </div>
   );
 }

@@ -1,383 +1,229 @@
 // ============================================================================
-// Page Source: app/page.tsx
-// Version: 1.0.0 — Homepage / Landing Page
-// Why: Main entry point showcasing value proposition and guiding users to key areas
-// Purpose: Convert visitors into consultation bookings through trust and clarity
-// Colors: Primary(#1c3b6e), Secondary(#f2b95e), Accent(#a81f93), Bg(#e7e8ec)
-// Sections:
-//   1. Hero - Clear value proposition and primary CTA
-//   2. Trust Indicators - Social proof and credentials
-//   3. Services Overview - Core offerings
-//   4. Popular Programs - Country-specific visa programs
-//   5. How It Works - Process timeline
-//   6. Testimonials - Social proof
-//   7. FAQ - Address common concerns
-//   8. Final CTA - Conversion point
+// Page: Home
+// Style: Typography-driven, Editorial, "Less is More"
 // ============================================================================
 
 import React from 'react';
-import HeroSection from '@/components/HeroSection';
-import ServiceCard from '@/components/ServiceCard';
-import CountryCard from '@/components/CountryCard';
-import StepTimeline from '@/components/StepTimeline';
-import FAQAccordion from '@/components/FAQAccordion';
-import CTASection from '@/components/CTASection';
-import type { Metadata } from 'next';
+import Link from 'next/link';
+import { ArrowDownRight, ArrowRight } from 'lucide-react';
 
-/**
- * Homepage Metadata
- *
- * SEO-optimized metadata specific to the homepage.
- * Emphasizes main value propositions and target keywords.
- */
-export const metadata: Metadata = {
-  title: 'Home',
-  description:
-    'Startup Visa Roads provides professional mentorship and business readiness guidance for founders pursuing startup visa programs in Canada, Europe, UAE, and USA. Expert advisory, NOT immigration law services.',
-  openGraph: {
-    title: 'Startup Visa Roads | Professional Startup Mentorship',
-    description:
-      'Transform your startup idea into a visa-ready business with expert mentorship. We guide founders through business development—we are NOT an immigration law firm.',
-  },
-};
-
-/**
- * Homepage Component
- *
- * The main landing page designed to:
- * 1. Establish trust and credibility
- * 2. Clearly communicate value proposition
- * 3. Showcase services and programs
- * 4. Address common questions and concerns
- * 5. Drive consultations through strategic CTAs
- *
- * Content Strategy:
- * - Clear differentiation: mentorship, NOT legal services
- * - Benefit-focused messaging
- * - Social proof and trust indicators
- * - Scannable, organized content
- * - Multiple conversion points
- *
- * User Journey:
- * Hero → Trust → Services → Programs → Process → Social Proof → FAQ → CTA
- */
 export default function HomePage() {
-  // Services data for cards
-  const services = [
-    {
-      icon: '🎯',
-      title: 'Business Model Development',
-      description:
-        'Refine your startup idea into a viable, scalable business model that meets investor and visa program requirements.',
-      features: [
-        'Market validation and research',
-        'Revenue model optimization',
-        'Competitive analysis',
-        'Value proposition refinement',
-      ],
-      link: '/services',
-    },
-    {
-      icon: '📊',
-      title: 'Investment Readiness',
-      description:
-        'Prepare your startup for investor scrutiny and visa program evaluation with professional business documentation.',
-      features: [
-        'Business plan development',
-        'Financial projections',
-        'Pitch deck creation',
-        'Investment materials',
-      ],
-      link: '/services',
-    },
-    {
-      icon: '🧭',
-      title: 'Mentorship & Strategy',
-      description:
-        'One-on-one guidance from experienced founders who have successfully navigated startup visa programs.',
-      features: [
-        'Regular mentorship sessions',
-        'Strategic planning',
-        'Milestone tracking',
-        'Personalized guidance',
-      ],
-      link: '/mentorship',
-    },
-  ];
-
-  // Popular visa programs
-  const popularPrograms = [
-    {
-      countryName: 'Canada',
-      programName: 'Start-Up Visa Program',
-      flagEmoji: '🇨🇦',
-      description:
-        'Build a business that qualifies for Canada\'s Start-Up Visa program with support from designated organizations.',
-      highlights: [
-        'No net worth requirements',
-        'Permanent residence pathway',
-        'Family inclusion',
-        'Designated organization support needed',
-      ],
-      link: '/startup-visa-canada',
-    },
-    {
-      countryName: 'Denmark',
-      programName: 'Start-Up Denmark',
-      flagEmoji: '🇩🇰',
-      description:
-        'Launch your innovative startup in Denmark\'s thriving ecosystem with expert mentorship and business development.',
-      highlights: [
-        'Expert panel evaluation',
-        '2-year residence permit',
-        'Access to Nordic markets',
-        'Strong startup ecosystem',
-      ],
-      link: '/europe/denmark',
-    },
-    {
-      countryName: 'Netherlands',
-      programName: 'Dutch Start-Up Visa',
-      flagEmoji: '🇳🇱',
-      description:
-        'Develop an innovative business for the Dutch market with guidance from experienced mentors and facilitators.',
-      highlights: [
-        'One-year residence permit',
-        'Facilitator requirement',
-        'Innovation focus',
-        'EU market access',
-      ],
-      link: '/europe/netherlands',
-    },
-    {
-      countryName: 'UAE',
-      programName: 'Golden Visa for Entrepreneurs',
-      flagEmoji: '🇦🇪',
-      description:
-        'Build a business that qualifies for UAE\'s prestigious Golden Visa program with strategic business planning.',
-      highlights: [
-        '10-year renewable visa',
-        'No sponsor needed',
-        'Family sponsorship',
-        'Investment requirements',
-      ],
-      link: '/uae/golden-visa',
-    },
-  ];
-
-  // Process steps
-  const processSteps = [
-    {
-      title: 'Initial Consultation',
-      description:
-        'We assess your startup idea, background, and goals to determine the best path forward.',
-      details: [
-        'Evaluate your business concept',
-        'Discuss target programs',
-        'Identify gaps and opportunities',
-        'Create personalized roadmap',
-      ],
-    },
-    {
-      title: 'Business Development',
-      description:
-        'Work with mentors to refine your business model, conduct market research, and validate your idea.',
-      details: [
-        'Market validation',
-        'Business model refinement',
-        'Competitive analysis',
-        'Product-market fit assessment',
-      ],
-    },
-    {
-      title: 'Documentation Preparation',
-      description:
-        'Create professional business documentation including business plans, financial projections, and pitch materials.',
-      details: [
-        'Comprehensive business plan',
-        '3-5 year financial projections',
-        'Executive summary',
-        'Market research reports',
-      ],
-    },
-    {
-      title: 'Launch & Support',
-      description:
-        'Ongoing mentorship as you launch your business and navigate the visa application process (with your attorney).',
-      details: [
-        'Implementation support',
-        'Milestone tracking',
-        'Strategy adjustments',
-        'Continued mentorship',
-      ],
-    },
-  ];
-
-  // FAQ data
-  const faqs = [
-    {
-      question: 'Are you an immigration law firm?',
-      answer:
-        'No. Startup Visa Roads is NOT an immigration law firm and we do NOT provide immigration legal services. We are a mentorship and business advisory service that helps founders build investment-ready startups. For legal immigration matters, you must work with a licensed immigration attorney.',
-    },
-    {
-      question: 'What exactly do you help with?',
-      answer:
-        'We help founders develop strong, viable businesses that meet the requirements of various startup visa programs. This includes business model development, market research, business plan creation, financial projections, and strategic mentorship. We prepare you from a business readiness perspective.',
-    },
-    {
-      question: 'Do you guarantee visa approval?',
-      answer:
-        'No. We cannot and do not guarantee visa approvals. Visa decisions are made by government immigration authorities and depend on many factors. We help you build the strongest possible business case, but the final decision rests with immigration officials and must be handled through proper legal channels.',
-    },
-    {
-      question: 'Who should work with you?',
-      answer:
-        'Founders with serious business ideas who are considering or actively pursuing startup visa programs. You should have a genuine interest in building a real business, not just obtaining a visa. Our services are most valuable for those who need help refining their business model and creating professional documentation.',
-    },
-    {
-      question: 'How long does the process take?',
-      answer:
-        'The business development process typically takes 2-4 months depending on your starting point and goals. This includes refining your business model, conducting research, and creating comprehensive documentation. The actual visa application timeline varies by country and program.',
-    },
-    {
-      question: 'What happens after I\'m business-ready?',
-      answer:
-        'Once your business documentation is complete, you\'ll work with a licensed immigration attorney to handle the legal aspects of your visa application. We can provide ongoing business mentorship as you launch and grow your startup, but all legal immigration matters must be handled by qualified legal professionals.',
-    },
-  ];
-
   return (
-    <div>
-      {/* Hero Section */}
-      <HeroSection
-        title="Build Your Global Startup with Expert Mentorship"
-        subtitle="Professional business guidance for founders pursuing startup visa programs worldwide. We develop your business—not your visa application."
-        ctaText="Schedule Free Consultation"
-        ctaLink="/contact"
-      />
+    <div className="w-full px-4 md:px-8 border-x border-[#1a1a1a]/10 max-w-[1400px] mx-auto bg-[#F2F0E9]">
+      
+      {/* =========================================
+          1. HERO: Big & Bold (No Images)
+      ========================================= */}
+      <section className="min-h-[80vh] flex flex-col justify-between pb-12">
+        
+        {/* Top Meta Data */}
+        <div className="flex justify-between items-start border-t border-[#1a1a1a] pt-4">
+           <span className="font-sans text-xs uppercase tracking-widest">( EST. 2024 )</span>
+           <span className="font-sans text-xs uppercase tracking-widest text-right hidden md:block">
+              London • Toronto • Amsterdam <br/>
+              Dubai
+           </span>
+        </div>
 
-      {/* Trust Indicators Section */}
-      <section className="section bg-white">
-        <div className="container-custom">
-          <div className="max-w-4xl mx-auto text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-primary mb-4">
-              Trusted Business Mentorship for Global Founders
-            </h2>
-            <p className="text-lg text-primary-dark/80">
-              We are mentors and business advisors—<strong>NOT an immigration law firm</strong>.
-              Our focus is helping you build a strong, viable business.
-            </p>
-          </div>
+        {/* Massive Headline */}
+        <div className="mt-20">
+           <h1 className="font-serif text-[15vw] leading-[0.8] tracking-tighter mix-blend-difference text-[#1a1a1a]">
+              BORDER<br/>
+              <span className="ml-[15vw] italic font-light text-[#1a1a1a]/60">LESS</span>
+           </h1>
+        </div>
 
-          {/* Stats/Trust Metrics */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-            <div className="text-center">
-              <div className="text-4xl font-bold text-accent mb-2">500+</div>
-              <div className="text-primary-dark/70">Founders Mentored</div>
-            </div>
-            <div className="text-center">
-              <div className="text-4xl font-bold text-accent mb-2">15+</div>
-              <div className="text-primary-dark/70">Countries Covered</div>
-            </div>
-            <div className="text-center">
-              <div className="text-4xl font-bold text-accent mb-2">95%</div>
-              <div className="text-primary-dark/70">Client Satisfaction</div>
-            </div>
-          </div>
+        {/* Bottom Hero Interactions */}
+        <div className="flex flex-col md:flex-row items-end justify-between gap-10 mt-12">
+           <div className="max-w-md">
+              <p className="font-sans text-lg md:text-xl leading-relaxed">
+                 We are the architects of your global expansion. A boutique advisory firm for founders who have outgrown their geography.
+              </p>
+           </div>
+           
+           <Link href="/contact" className="group flex items-center gap-4 bg-[#1a1a1a] text-[#F2F0E9] px-8 py-6 rounded-none hover:bg-[#CCFF00] hover:text-black transition-colors duration-300">
+              <span className="font-sans font-bold uppercase tracking-wider">Start The Process</span>
+              <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform" />
+           </Link>
         </div>
       </section>
 
-      {/* Services Section */}
-      <section className="section bg-background">
-        <div className="container-custom">
-          <div className="max-w-3xl mx-auto text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-primary mb-4">
-              How We Help Founders
-            </h2>
-            <p className="text-lg text-primary-dark/80">
-              Comprehensive business development services to prepare your startup for success
-            </p>
-          </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {services.map((service, index) => (
-              <ServiceCard key={index} {...service} />
+      {/* =========================================
+          2. THE TICKER (Minimal)
+      ========================================= */}
+      <div className="border-y border-[#1a1a1a] py-6 overflow-hidden">
+         <div className="animate-marquee whitespace-nowrap flex gap-24">
+            {["Strategy", "Legal", "Capital", "Mobility", "Growth"].map((item, i) => (
+               <span key={i} className="font-serif text-4xl md:text-6xl italic text-[#1a1a1a]/20">
+                  {item}
+               </span>
             ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Popular Programs Section */}
-      <section className="section bg-white">
-        <div className="container-custom">
-          <div className="max-w-3xl mx-auto text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-primary mb-4">
-              Popular Startup Visa Programs
-            </h2>
-            <p className="text-lg text-primary-dark/80">
-              Explore opportunities in top entrepreneurship destinations
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {popularPrograms.map((program, index) => (
-              <CountryCard key={index} {...program} />
+            {["Strategy", "Legal", "Capital", "Mobility", "Growth"].map((item, i) => (
+               <span key={`dup-${i}`} className="font-serif text-4xl md:text-6xl italic text-[#1a1a1a]/20">
+                  {item}
+               </span>
             ))}
-          </div>
+         </div>
+      </div>
+
+
+      {/* =========================================
+          3. EDITORIAL CONTENT (Grid)
+      ========================================= */}
+      <section className="py-32">
+         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+            
+            {/* Sidebar / Sticky Title */}
+            <div className="lg:col-span-4">
+               <div className="sticky top-12">
+                  <h2 className="font-serif text-5xl mb-6">The <br/> Methodology</h2>
+                  <div className="w-12 h-1 bg-[#CCFF00] mb-6"></div>
+                  <p className="font-sans text-sm text-[#1a1a1a]/60 max-w-xs">
+                     Our approach is clinical, not administrative. We diagnose your business model's compatibility with global markets before we draft a single document.
+                  </p>
+               </div>
+            </div>
+
+            {/* Content List */}
+            <div className="lg:col-span-8 space-y-20">
+               
+               {/* Item 01 */}
+               <div className="group border-b border-[#1a1a1a]/20 pb-12 cursor-pointer">
+                  <div className="flex justify-between items-baseline mb-4">
+                     <span className="font-sans text-xs font-bold text-[#CCFF00] bg-black px-2 py-1">01</span>
+                     <ArrowDownRight className="opacity-0 group-hover:opacity-100 transition-opacity w-8 h-8" />
+                  </div>
+                  <h3 className="font-serif text-4xl md:text-6xl mb-4 group-hover:italic transition-all">Audit & Strategy</h3>
+                  <p className="font-sans text-lg text-[#1a1a1a]/70 max-w-xl">
+                     A ruthless evaluation of your startup's scalability. We identify the weak points in your IP strategy and financial projections before the immigration officer does.
+                  </p>
+               </div>
+
+               {/* Item 02 */}
+               <div className="group border-b border-[#1a1a1a]/20 pb-12 cursor-pointer">
+                  <div className="flex justify-between items-baseline mb-4">
+                     <span className="font-sans text-xs font-bold text-[#CCFF00] bg-black px-2 py-1">02</span>
+                     <ArrowDownRight className="opacity-0 group-hover:opacity-100 transition-opacity w-8 h-8" />
+                  </div>
+                  <h3 className="font-serif text-4xl md:text-6xl mb-4 group-hover:italic transition-all">Endorsement</h3>
+                  <p className="font-sans text-lg text-[#1a1a1a]/70 max-w-xl">
+                     Securing the "Letter of Support". We leverage our deep relationships with Incubators and Angel Networks in Canada and the UK to get your foot in the door.
+                  </p>
+               </div>
+
+               {/* Item 03 */}
+               <div className="group border-b border-[#1a1a1a]/20 pb-12 cursor-pointer">
+                  <div className="flex justify-between items-baseline mb-4">
+                     <span className="font-sans text-xs font-bold text-[#CCFF00] bg-black px-2 py-1">03</span>
+                     <ArrowDownRight className="opacity-0 group-hover:opacity-100 transition-opacity w-8 h-8" />
+                  </div>
+                  <h3 className="font-serif text-4xl md:text-6xl mb-4 group-hover:italic transition-all">Deployment</h3>
+                  <p className="font-sans text-lg text-[#1a1a1a]/70 max-w-xl">
+                     Landing is just the beginning. We handle incorporation, banking setup, and initial hiring to ensure you hit the ground running.
+                  </p>
+               </div>
+
+            </div>
+         </div>
+      </section>
+
+
+      {/* =========================================
+          4. IMAGE / STATEMENT SECTION
+      ========================================= */}
+      <section className="py-20">
+         <div className="relative w-full h-[60vh] bg-[#1a1a1a] flex items-center justify-center overflow-hidden">
+             {/* This would ideally be a high-grain Black & White photo of architecture */}
+             <div className="absolute inset-0 opacity-40 bg-[url('https://images.unsplash.com/photo-1487958449943-2429e8be8625?q=80&w=2070&auto=format&fit=crop')] bg-cover bg-center grayscale contrast-125"></div>
+             
+             <div className="relative z-10 text-center p-8 border border-[#CCFF00]/50 backdrop-blur-sm max-w-3xl">
+                <p className="font-serif text-3xl md:text-5xl text-[#F2F0E9] leading-tight italic">
+                   "In a world of closed borders, <br/>
+                   <span className="text-[#CCFF00] not-italic">audacity</span> is the only visa you need."
+                </p>
+             </div>
+         </div>
+      </section>
+
+
+
+{/* =========================================
+          ADDED SECTION: THE FOUNDER & FAQ
+      ========================================= */}
+      <section className="py-32 border-t border-[#1a1a1a]/10">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-20">
+           
+           {/* Left: Founder Note */}
+           <div>
+              <span className="font-sans text-xs font-bold text-[#CCFF00] bg-black px-2 py-1 mb-6 inline-block">THE PARTNER</span>
+              <h3 className="font-serif text-4xl mb-8 leading-tight">
+                 "Immigration is not paperwork. It is <span className="italic border-b-2 border-[#CCFF00]">architecture</span>."
+              </h3>
+              <div className="font-sans text-lg text-[#1a1a1a]/70 space-y-6 leading-relaxed">
+                 <p>
+                    Most agencies treat you like a case number. We treat you like a unicorn. 
+                    The global market is ruthless, and you need a strategy that covers IP, tax residency, and capital structure.
+                 </p>
+                 <p>
+                    I built SVR to be the firm I wish I had when I was scaling my first company.
+                 </p>
+              </div>
+              
+              <div className="mt-12 flex items-center gap-6">
+                 {/* Placeholder for Signature or Photo */}
+                 <div className="w-16 h-16 bg-[#1a1a1a] rounded-full grayscale overflow-hidden">
+                    {/* <Image src="/founder.jpg" ... /> */}
+                 </div>
+                 <div>
+                    <p className="font-serif text-xl font-bold">Kaveh R.</p>
+                    <p className="font-sans text-xs uppercase tracking-widest text-[#1a1a1a]/50">Managing Partner</p>
+                 </div>
+              </div>
+           </div>
+
+           {/* Right: Minimal FAQ */}
+           <div className="space-y-0">
+              <span className="font-sans text-xs font-bold text-[#CCFF00] bg-black px-2 py-1 mb-6 inline-block">QUERIES</span>
+              
+              {[
+                 { q: "What is the minimum capital required?", a: "It varies by jurisdiction. For Canada/UK, usually between $50k to $150k in available liquid assets." },
+                 { q: "Do you guarantee success?", a: "No one ethically can. However, we audit your case before applying. If we take you on, it's because we see a 95%+ probability." },
+                 { q: "Can I bring my co-founders?", a: "Yes. Most programs allow up to 5 co-founders and their families on a single startup application." },
+                 { q: "How long is the process?", a: "Expect 12-18 months for Permanent Residency tracks. Work permits can be issued in as little as 3 months." }
+              ].map((item, i) => (
+                 <div key={i} className="border-b border-[#1a1a1a]/20 py-8 group">
+                    <details className="cursor-pointer">
+                       <summary className="list-none flex justify-between items-center font-serif text-2xl hover:text-[#555] transition-colors">
+                          {item.q}
+                          <span className="font-sans text-sm text-[#CCFF00] bg-black px-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">+</span>
+                       </summary>
+                       <p className="mt-4 font-sans text-[#1a1a1a]/60 leading-relaxed max-w-md">
+                          {item.a}
+                       </p>
+                    </details>
+                 </div>
+              ))}
+           </div>
+
         </div>
       </section>
 
-      {/* Process Section */}
-      <section className="section bg-background">
-        <div className="container-custom">
-          <div className="max-w-3xl mx-auto text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-primary mb-4">
-              Our Mentorship Process
+
+
+      {/* =========================================
+          5. FOOTER CTA (Minimal)
+      ========================================= */}
+      <section className="py-32 flex flex-col items-center justify-center text-center">
+         <p className="font-sans text-xs uppercase tracking-[0.3em] mb-6 text-[#1a1a1a]/50">Accepting New Applications</p>
+         <Link href="/contact" className="relative group">
+            <h2 className="font-serif text-6xl md:text-9xl hover:text-transparent hover:bg-clip-text hover:bg-gradient-to-r hover:from-black hover:to-[#555] transition-all cursor-pointer">
+               GET IN TOUCH
             </h2>
-            <p className="text-lg text-primary-dark/80">
-              A structured approach to building your investment-ready startup
-            </p>
-          </div>
-
-          <div className="max-w-4xl mx-auto">
-            <StepTimeline steps={processSteps} variant="vertical" />
-          </div>
-        </div>
+            <div className="h-2 w-0 bg-[#CCFF00] group-hover:w-full transition-all duration-500 ease-out mt-4"></div>
+         </Link>
       </section>
 
-      {/* FAQ Section */}
-      <section className="section bg-white">
-        <div className="container-custom">
-          <div className="max-w-3xl mx-auto text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-primary mb-4">
-              Frequently Asked Questions
-            </h2>
-            <p className="text-lg text-primary-dark/80">
-              Clear answers to common questions about our services
-            </p>
-          </div>
-
-          <div className="max-w-3xl mx-auto">
-            <FAQAccordion faqs={faqs} />
-          </div>
-        </div>
-      </section>
-
-      {/* Final CTA */}
-      <CTASection
-        title="Ready to Build Your Global Startup?"
-        description="Schedule a free consultation to discuss your business idea and explore how we can help you achieve your entrepreneurial goals."
-        primaryCTA={{
-          text: 'Schedule Free Consultation',
-          link: '/contact',
-        }}
-        secondaryCTA={{
-          text: 'Learn About Our Services',
-          link: '/services',
-        }}
-        variant="gradient"
-      />
     </div>
   );
 }

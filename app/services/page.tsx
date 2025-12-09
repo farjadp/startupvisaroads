@@ -1,407 +1,276 @@
 // ============================================================================
-// Page Source: app/services/page.tsx
-// Version: 1.0.0 — Services Overview Page
-// Why: Comprehensive overview of all mentorship and advisory services offered
-// Purpose: Detail service offerings, pricing approaches, and engagement models
-// Colors: Primary(#1c3b6e), Secondary(#f2b95e), Accent(#a81f93), Bg(#e7e8ec)
-// Sections:
-//   1. Hero - Services value proposition
-//   2. Core Services - Main offering categories
-//   3. Service Details - In-depth descriptions
-//   4. Engagement Models - How we work with clients
-//   5. What's Included - Deliverables and expectations
-//   6. What We DON'T Do - Clear boundaries (legal services)
-//   7. CTA - Schedule consultation
+// Page: app/services/page.tsx
+// Style: Editorial / Art Gallery
+// Concept: "The Architect's Blueprint"
 // ============================================================================
 
 import React from 'react';
-import HeroSection from '@/components/HeroSection';
-import ServiceCard from '@/components/ServiceCard';
-import CTASection from '@/components/CTASection';
+import Link from 'next/link';
+import { 
+  ArrowRight, 
+  ArrowDownRight, 
+  FileText, 
+  Target, 
+  TrendingUp, 
+  ShieldAlert,
+  Zap,
+  Globe2,
+  PieChart
+} from 'lucide-react';
 import type { Metadata } from 'next';
 
-/**
- * Services Page Metadata
- *
- * SEO-optimized for service-related searches.
- * Emphasizes mentorship and business advisory (NOT legal services).
- */
 export const metadata: Metadata = {
-  title: 'Services',
-  description:
-    'Professional startup mentorship and business advisory services including business model development, investment readiness, financial planning, and strategic guidance. We are NOT an immigration law firm.',
-  openGraph: {
-    title: 'Our Services | Startup Visa Roads',
-    description:
-      'Comprehensive business development services for founders pursuing startup visa programs. Mentorship and advisory only—NOT legal services.',
-  },
+  title: 'Advisory Services | SVR',
+  description: 'Business architecture for the global founder. Strategy, Financials, and Market Validation.',
 };
 
-/**
- * Services Page Component
- *
- * Comprehensive overview of all services with clear scope definition.
- * Critical to establish what we DO and DON'T do.
- *
- * Key Messaging:
- * - Business mentorship and advisory
- * - NOT legal immigration services
- * - Clear deliverables and outcomes
- * - Transparent engagement models
- *
- * Content Strategy:
- * - Service categories with details
- * - What's included in each service
- * - Clear boundaries and limitations
- * - Social proof and trust indicators
- */
 export default function ServicesPage() {
-  // Core service offerings
-  const coreServices = [
-    {
-      icon: '🎯',
-      title: 'Business Model Development',
-      description:
-        'Transform your startup idea into a clear, viable business model that stands up to investor and program scrutiny.',
-      features: [
-        'Market opportunity analysis',
-        'Revenue model design',
-        'Value proposition refinement',
-        'Competitive landscape assessment',
-        'Customer segment identification',
-      ],
-      link: '#business-model',
-    },
-    {
-      icon: '📊',
-      title: 'Business Plan Creation',
-      description:
-        'Comprehensive business plans that meet the stringent requirements of startup visa programs and investors.',
-      features: [
-        'Executive summary crafting',
-        'Market analysis and research',
-        'Financial projections (3-5 years)',
-        'Operational planning',
-        'Risk assessment and mitigation',
-      ],
-      link: '#business-plan',
-    },
-    {
-      icon: '💰',
-      title: 'Financial Planning & Projections',
-      description:
-        'Professional financial models and projections that demonstrate business viability and growth potential.',
-      features: [
-        'Revenue and expense modeling',
-        'Cash flow projections',
-        'Break-even analysis',
-        'Funding requirement calculations',
-        'Unit economics optimization',
-      ],
-      link: '#financial-planning',
-    },
-    {
-      icon: '🎤',
-      title: 'Pitch Deck Development',
-      description:
-        'Compelling pitch decks designed to win over investors, accelerators, and designated organizations.',
-      features: [
-        'Story arc development',
-        'Visual design and layout',
-        'Data visualization',
-        'Competitive positioning',
-        'Ask and use of funds clarity',
-      ],
-      link: '#pitch-deck',
-    },
-    {
-      icon: '🔍',
-      title: 'Market Research & Validation',
-      description:
-        'Evidence-based market research to validate your business concept and identify opportunities.',
-      features: [
-        'Target market sizing',
-        'Customer discovery interviews',
-        'Competitor analysis',
-        'Industry trend research',
-        'Market entry strategy',
-      ],
-      link: '#market-research',
-    },
-    {
-      icon: '🧭',
-      title: 'Strategic Mentorship',
-      description:
-        'One-on-one guidance from experienced founders who understand the startup visa landscape.',
-      features: [
-        'Regular mentorship sessions',
-        'Goal setting and tracking',
-        'Strategic decision support',
-        'Accountability and milestones',
-        'Network introductions',
-      ],
-      link: '/mentorship',
-    },
-  ];
-
-  // What's included in our services
-  const included = [
-    {
-      icon: '✅',
-      title: 'Professional Documentation',
-      items: [
-        'Business plans (20-40 pages)',
-        'Executive summaries',
-        'Financial models (Excel)',
-        'Pitch decks (10-15 slides)',
-        'Market research reports',
-      ],
-    },
-    {
-      icon: '✅',
-      title: 'Expert Guidance',
-      items: [
-        'Experienced mentor assignment',
-        'Regular progress meetings',
-        'Unlimited email support',
-        'Document reviews and feedback',
-        'Strategic planning sessions',
-      ],
-    },
-    {
-      icon: '✅',
-      title: 'Resources & Templates',
-      items: [
-        'Financial modeling templates',
-        'Business plan frameworks',
-        'Market research guides',
-        'Pitch deck templates',
-        'Milestone tracking tools',
-      ],
-    },
-  ];
-
-  // What we DON'T do (critical boundaries)
-  const notIncluded = [
-    {
-      icon: '❌',
-      title: 'Immigration Legal Services',
-      description:
-        'We are NOT immigration attorneys and do NOT provide legal advice, complete visa applications, or communicate with immigration authorities on your behalf.',
-    },
-    {
-      icon: '❌',
-      title: 'Visa Guarantees',
-      description:
-        'We cannot and do not guarantee visa approvals. All visa decisions are made by government authorities and depend on many factors beyond business readiness.',
-    },
-    {
-      icon: '❌',
-      title: 'Attorney Representation',
-      description:
-        'We do not represent you in legal matters or before immigration agencies. You must work with a licensed immigration attorney for all legal aspects.',
-    },
-    {
-      icon: '❌',
-      title: 'Document Filing',
-      description:
-        'We do not file visa applications, communicate with embassies, or handle any official immigration paperwork. These tasks must be done by you and your attorney.',
-    },
-  ];
-
   return (
-    <div>
-      {/* Hero Section */}
-      <HeroSection
-        title="Professional Startup Mentorship & Business Advisory"
-        subtitle="Comprehensive services to transform your idea into an investment-ready business. We develop your business—NOT your visa application."
-        ctaText="Explore Our Services"
-        ctaLink="#core-services"
-      />
+    <div className="w-full bg-[#F2F0E9] text-[#1a1a1a]">
 
-      {/* Important Notice */}
-      <section className="section bg-accent/10">
-        <div className="container-custom">
-          <div className="max-w-3xl mx-auto bg-white rounded-xl p-8 border-2 border-accent shadow-lg">
-            <div className="flex items-start gap-4">
-              <span className="text-4xl">⚠️</span>
-              <div>
-                <h3 className="text-xl font-bold text-primary mb-2">
-                  Important Service Scope Notice
-                </h3>
-                <p className="text-primary-dark/80 leading-relaxed">
-                  <strong>Startup Visa Roads is NOT an immigration law firm.</strong> We provide
-                  business mentorship and advisory services only. We do NOT provide legal advice,
-                  complete visa applications, or guarantee visa approvals. For all legal immigration
-                  matters, you must work with a licensed immigration attorney.
+      {/* =========================================
+          1. HERO: THE ARCHITECT
+      ========================================= */}
+      <section className="pt-32 pb-20 px-6 border-b border-[#1a1a1a]">
+        <div className="container mx-auto">
+          <div className="flex items-center gap-4 mb-8">
+             <span className="w-4 h-4 bg-[#CCFF00]"></span>
+             <span className="font-sans text-xs font-bold uppercase tracking-widest text-[#1a1a1a]/60">Scope of Work</span>
+          </div>
+
+          <h1 className="font-serif text-[12vw] leading-[0.8] tracking-tighter mb-12">
+            BUSINESS <br/>
+            <span className="pl-[10vw] italic text-[#1a1a1a]/40">ARCHITECTURE.</span>
+          </h1>
+
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-end">
+             <div className="lg:col-span-7">
+                <p className="font-serif text-3xl md:text-5xl leading-tight">
+                   We translate <span className="bg-[#1a1a1a] text-[#F2F0E9] px-2">vision</span> into <span className="underline decoration-[#CCFF00]">documentation</span>.
                 </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Core Services */}
-      <section id="core-services" className="section bg-background">
-        <div className="container-custom">
-          <div className="max-w-3xl mx-auto text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-primary mb-4">
-              Our Core Services
-            </h2>
-            <p className="text-lg text-primary-dark/80">
-              Comprehensive business development services tailored for startup founders
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {coreServices.map((service, index) => (
-              <ServiceCard key={index} {...service} />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* What's Included */}
-      <section className="section bg-white">
-        <div className="container-custom">
-          <div className="max-w-3xl mx-auto text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-primary mb-4">
-              What's Included
-            </h2>
-            <p className="text-lg text-primary-dark/80">
-              Everything you need to build a strong, viable business
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-            {included.map((category, index) => (
-              <div key={index} className="card">
-                <div className="text-4xl mb-4">{category.icon}</div>
-                <h3 className="text-xl font-bold text-primary mb-4">
-                  {category.title}
-                </h3>
-                <ul className="space-y-2">
-                  {category.items.map((item, idx) => (
-                    <li
-                      key={idx}
-                      className="flex items-start text-sm text-primary-dark/80"
-                    >
-                      <span className="text-secondary mr-2">▸</span>
-                      <span>{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* What We DON'T Do */}
-      <section className="section bg-background">
-        <div className="container-custom">
-          <div className="max-w-3xl mx-auto text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-primary mb-4">
-              What We DON'T Do
-            </h2>
-            <p className="text-lg text-primary-dark/80">
-              Clear boundaries to set proper expectations
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-            {notIncluded.map((item, index) => (
-              <div
-                key={index}
-                className="bg-white rounded-xl p-6 border-2 border-red-200"
-              >
-                <div className="flex items-start gap-4">
-                  <span className="text-3xl flex-shrink-0">{item.icon}</span>
-                  <div>
-                    <h3 className="text-lg font-bold text-primary mb-2">
-                      {item.title}
-                    </h3>
-                    <p className="text-sm text-primary-dark/80 leading-relaxed">
-                      {item.description}
-                    </p>
-                  </div>
+             </div>
+             <div className="lg:col-span-5 flex flex-col gap-8">
+                <p className="font-sans text-sm text-[#1a1a1a]/60 leading-relaxed text-justify">
+                   Immigration officers are not visionaries; they are bureaucrats. 
+                   We bridge the gap by converting your startup idea into the compliant, 
+                   data-driven artifacts (Business Plans, Financial Models, IP Strategies) required for approval.
+                </p>
+                <div className="flex gap-4">
+                   <Link href="/contact" className="bg-[#1a1a1a] text-[#F2F0E9] px-8 py-4 font-sans text-xs font-bold uppercase tracking-widest hover:bg-[#CCFF00] hover:text-[#1a1a1a] transition-colors">
+                      Start Project
+                   </Link>
                 </div>
-              </div>
-            ))}
+             </div>
           </div>
         </div>
       </section>
 
-      {/* Engagement Process */}
-      <section className="section bg-white">
-        <div className="container-custom">
-          <div className="max-w-3xl mx-auto text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-primary mb-4">
-              How We Work Together
+
+      {/* =========================================
+          2. THE CORE SERVICES (Grid System)
+      ========================================= */}
+      <section className="py-0 border-b border-[#1a1a1a]">
+         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+            
+            {/* Service 01 */}
+            <div className="group border-b lg:border-b-0 md:border-r border-[#1a1a1a] p-12 hover:bg-[#1a1a1a] hover:text-[#F2F0E9] transition-all duration-300">
+               <span className="font-sans text-xs font-bold uppercase tracking-widest mb-8 block opacity-50">Service 01</span>
+               <PieChart className="w-12 h-12 mb-8 text-[#CCFF00]" />
+               <h3 className="font-serif text-4xl mb-4 group-hover:italic">Business Modeling</h3>
+               <p className="font-sans text-sm opacity-70 leading-relaxed mb-8">
+                  Transforming abstract ideas into concrete revenue models. We stress-test your assumptions before the visa officer does.
+               </p>
+               <ul className="space-y-2 font-sans text-xs font-bold uppercase tracking-wider opacity-50">
+                  <li>— Value Prop Design</li>
+                  <li>— Revenue Streams</li>
+                  <li>— Customer Segments</li>
+               </ul>
+            </div>
+
+            {/* Service 02 */}
+            <div className="group border-b lg:border-b-0 md:border-r border-[#1a1a1a] p-12 hover:bg-[#1a1a1a] hover:text-[#F2F0E9] transition-all duration-300">
+               <span className="font-sans text-xs font-bold uppercase tracking-widest mb-8 block opacity-50">Service 02</span>
+               <FileText className="w-12 h-12 mb-8 text-[#CCFF00]" />
+               <h3 className="font-serif text-4xl mb-4 group-hover:italic">The Plan</h3>
+               <p className="font-sans text-sm opacity-70 leading-relaxed mb-8">
+                  A 30-40 page comprehensive document written specifically for immigration intent, not just general investors.
+               </p>
+               <ul className="space-y-2 font-sans text-xs font-bold uppercase tracking-wider opacity-50">
+                  <li>— Market Analysis</li>
+                  <li>— Risk Mitigation</li>
+                  <li>— Operational Roadmap</li>
+               </ul>
+            </div>
+
+            {/* Service 03 */}
+            <div className="group border-b lg:border-b-0 border-[#1a1a1a] p-12 hover:bg-[#1a1a1a] hover:text-[#F2F0E9] transition-all duration-300">
+               <span className="font-sans text-xs font-bold uppercase tracking-widest mb-8 block opacity-50">Service 03</span>
+               <TrendingUp className="w-12 h-12 mb-8 text-[#CCFF00]" />
+               <h3 className="font-serif text-4xl mb-4 group-hover:italic">Financials</h3>
+               <p className="font-sans text-sm opacity-70 leading-relaxed mb-8">
+                  5-year pro-forma projections (P&L, Cash Flow, Balance Sheet) that justify your hiring plan and capital needs.
+               </p>
+               <ul className="space-y-2 font-sans text-xs font-bold uppercase tracking-wider opacity-50">
+                  <li>— Unit Economics</li>
+                  <li>— Burn Rate Analysis</li>
+                  <li>— Valuation Modeling</li>
+               </ul>
+            </div>
+
+            {/* Service 04 */}
+            <div className="group border-b lg:border-b-0 md:border-r border-[#1a1a1a] p-12 hover:bg-[#1a1a1a] hover:text-[#F2F0E9] transition-all duration-300">
+               <span className="font-sans text-xs font-bold uppercase tracking-widest mb-8 block opacity-50">Service 04</span>
+               <Zap className="w-12 h-12 mb-8 text-[#CCFF00]" />
+               <h3 className="font-serif text-4xl mb-4 group-hover:italic">Pitch Deck</h3>
+               <p className="font-sans text-sm opacity-70 leading-relaxed mb-8">
+                  Visual storytelling designed to secure the "Letter of Support" from Incubators and Angel Groups.
+               </p>
+               <ul className="space-y-2 font-sans text-xs font-bold uppercase tracking-wider opacity-50">
+                  <li>— Narrative Arc</li>
+                  <li>— Data Visualization</li>
+                  <li>— Competitive Grid</li>
+               </ul>
+            </div>
+
+            {/* Service 05 */}
+            <div className="group border-b lg:border-b-0 md:border-r border-[#1a1a1a] p-12 hover:bg-[#1a1a1a] hover:text-[#F2F0E9] transition-all duration-300">
+               <span className="font-sans text-xs font-bold uppercase tracking-widest mb-8 block opacity-50">Service 05</span>
+               <Target className="w-12 h-12 mb-8 text-[#CCFF00]" />
+               <h3 className="font-serif text-4xl mb-4 group-hover:italic">Market Intel</h3>
+               <p className="font-sans text-sm opacity-70 leading-relaxed mb-8">
+                  Evidence-based research proving your concept has traction potential in the destination country (Canada/UK/EU).
+               </p>
+               <ul className="space-y-2 font-sans text-xs font-bold uppercase tracking-wider opacity-50">
+                  <li>— TAM/SAM/SOM</li>
+                  <li>— Competitor Deep Dive</li>
+                  <li>— Entry Strategy</li>
+               </ul>
+            </div>
+
+            {/* Service 06 */}
+            <div className="group p-12 bg-[#1a1a1a] text-[#F2F0E9] hover:bg-[#CCFF00] hover:text-[#1a1a1a] transition-all duration-300">
+               <span className="font-sans text-xs font-bold uppercase tracking-widest mb-8 block opacity-50">Premium</span>
+               <Globe2 className="w-12 h-12 mb-8 text-[#F2F0E9] group-hover:text-[#1a1a1a]" />
+               <h3 className="font-serif text-4xl mb-4">Advisory Retainer</h3>
+               <p className="font-sans text-sm opacity-70 leading-relaxed mb-8">
+                  End-to-end strategic partner. We act as your temporary "Co-Founder" to navigate the entire ecosystem.
+               </p>
+               <Link href="/mentorship" className="inline-flex items-center gap-2 border-b border-current pb-1 font-bold uppercase tracking-widest text-xs">
+                  View Mentorship <ArrowRight size={14}/>
+               </Link>
+            </div>
+
+         </div>
+      </section>
+
+
+      {/* =========================================
+          3. WHAT'S INCLUDED (Editorial List)
+      ========================================= */}
+      <section className="py-24 px-6 bg-[#F2F0E9]">
+         <div className="container mx-auto max-w-5xl">
+            <h2 className="font-serif text-5xl mb-16">Deliverables</h2>
+            
+            <div className="space-y-0 border-t border-[#1a1a1a]">
+               {[
+                  { title: "The Master Document", desc: "40+ page investor-grade business plan (PDF + Word)." },
+                  { title: "Financial Engine", desc: "Dynamic Excel model with modifiable assumptions (Revenue, OpEx, CapEx)." },
+                  { title: "Pitch Assets", desc: "15-slide presentation deck + 1-page executive summary teaser." },
+                  { title: "Market Report", desc: "Detailed citation list and market validation data sources." },
+                  { title: "Strategic Brief", desc: "Consultation notes on interview prep and Q&A defense strategy." }
+               ].map((item, i) => (
+                  <div key={i} className="group border-b border-[#1a1a1a] py-8 flex flex-col md:flex-row md:items-baseline justify-between hover:pl-4 transition-all duration-300 cursor-default">
+                     <div className="flex items-baseline gap-6">
+                        <span className="font-sans text-xs font-bold text-[#CCFF00] bg-[#1a1a1a] px-2 py-1">0{i+1}</span>
+                        <h3 className="font-serif text-2xl md:text-3xl">{item.title}</h3>
+                     </div>
+                     <p className="mt-4 md:mt-0 font-sans text-sm text-[#1a1a1a]/60 max-w-sm text-right">
+                        {item.desc}
+                     </p>
+                  </div>
+               ))}
+            </div>
+         </div>
+      </section>
+
+
+      {/* =========================================
+          4. THE ANTI-PORTFOLIO (Boundaries)
+      ========================================= */}
+      <section className="py-24 px-6 bg-white border-y border-[#1a1a1a]/10">
+         <div className="container mx-auto">
+            <div className="flex flex-col md:flex-row gap-16 items-start">
+               
+               <div className="md:w-1/3">
+                  <div className="bg-[#1a1a1a] text-[#F2F0E9] p-8 inline-block">
+                     <ShieldAlert className="w-12 h-12 text-[#CCFF00] mb-4" />
+                     <h2 className="font-serif text-3xl mb-2">Scope Limits</h2>
+                     <p className="font-sans text-xs uppercase tracking-widest opacity-60">What we do NOT do</p>
+                  </div>
+               </div>
+
+               <div className="md:w-2/3 grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <div>
+                     <h3 className="font-serif text-2xl mb-2 flex items-center gap-2">
+                        <span className="text-[#1a1a1a]/20">01.</span> Legal Advice
+                     </h3>
+                     <p className="font-sans text-sm text-[#1a1a1a]/60 leading-relaxed">
+                        We are not attorneys. We do not provide legal counsel, interpretation of immigration law, or representation in court.
+                     </p>
+                  </div>
+                  <div>
+                     <h3 className="font-serif text-2xl mb-2 flex items-center gap-2">
+                        <span className="text-[#1a1a1a]/20">02.</span> Visa Guarantees
+                     </h3>
+                     <p className="font-sans text-sm text-[#1a1a1a]/60 leading-relaxed">
+                        No one can guarantee a government outcome. We guarantee the quality of the business documents, not the visa decision.
+                     </p>
+                  </div>
+                  <div>
+                     <h3 className="font-serif text-2xl mb-2 flex items-center gap-2">
+                        <span className="text-[#1a1a1a]/20">03.</span> Filing Forms
+                     </h3>
+                     <p className="font-sans text-sm text-[#1a1a1a]/60 leading-relaxed">
+                        We do not fill out government forms (IMM 0008, etc.). Your lawyer handles the bureaucratic submission.
+                     </p>
+                  </div>
+                  <div>
+                     <h3 className="font-serif text-2xl mb-2 flex items-center gap-2">
+                        <span className="text-[#1a1a1a]/20">04.</span> Finding Co-Founders
+                     </h3>
+                     <p className="font-sans text-sm text-[#1a1a1a]/60 leading-relaxed">
+                        We do not "matchmake" co-founders for the sole purpose of immigration. Your team must be organic and genuine.
+                     </p>
+                  </div>
+               </div>
+
+            </div>
+         </div>
+      </section>
+
+
+      {/* =========================================
+          5. CTA
+      ========================================= */}
+      <section className="py-32 px-6 text-center">
+         <div className="container mx-auto">
+            <h2 className="font-serif text-5xl md:text-7xl mb-8">
+               Build the foundation.
             </h2>
-            <p className="text-lg text-primary-dark/80">
-              A collaborative, structured approach to business development
+            <p className="font-sans text-[#1a1a1a]/60 text-lg mb-12 max-w-xl mx-auto">
+               Secure the expertise needed to turn your concept into a bankable business case.
             </p>
-          </div>
-
-          <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="card">
-              <h3 className="text-xl font-bold text-primary mb-3">
-                1. Discovery Call
-              </h3>
-              <p className="text-primary-dark/80 leading-relaxed">
-                Free 30-minute consultation to understand your goals, assess your
-                business idea, and determine if we're a good fit.
-              </p>
+            <div className="flex flex-col sm:flex-row justify-center gap-6">
+               <Link href="/contact" className="bg-[#1a1a1a] text-[#F2F0E9] px-10 py-5 font-sans font-bold uppercase tracking-widest hover:bg-[#CCFF00] hover:text-[#1a1a1a] transition-colors">
+                  Request Proposal
+               </Link>
+               <Link href="/mentorship" className="border border-[#1a1a1a] text-[#1a1a1a] px-10 py-5 font-sans font-bold uppercase tracking-widest hover:bg-[#1a1a1a] hover:text-[#F2F0E9] transition-colors">
+                  Explore Mentorship
+               </Link>
             </div>
-
-            <div className="card">
-              <h3 className="text-xl font-bold text-primary mb-3">
-                2. Customized Proposal
-              </h3>
-              <p className="text-primary-dark/80 leading-relaxed">
-                Tailored service package and timeline based on your specific needs,
-                starting point, and target program requirements.
-              </p>
-            </div>
-
-            <div className="card">
-              <h3 className="text-xl font-bold text-primary mb-3">
-                3. Active Engagement
-              </h3>
-              <p className="text-primary-dark/80 leading-relaxed">
-                Collaborative work sessions, regular check-ins, and continuous
-                feedback as we develop your business documentation.
-              </p>
-            </div>
-
-            <div className="card">
-              <h3 className="text-xl font-bold text-primary mb-3">
-                4. Delivery & Support
-              </h3>
-              <p className="text-primary-dark/80 leading-relaxed">
-                Final deliverables with optional ongoing mentorship as you launch
-                your business and work with your immigration attorney.
-              </p>
-            </div>
-          </div>
-        </div>
+         </div>
       </section>
 
-      {/* Final CTA */}
-      <CTASection
-        title="Ready to Build Your Business?"
-        description="Schedule a free consultation to discuss your startup idea and explore which services are right for you."
-        primaryCTA={{
-          text: 'Schedule Free Consultation',
-          link: '/contact',
-        }}
-        secondaryCTA={{
-          text: 'Learn About Mentorship',
-          link: '/mentorship',
-        }}
-        variant="gradient"
-      />
     </div>
   );
 }

@@ -1,19 +1,12 @@
 // ============================================================================
-// Component Source: components/CTASection.tsx
-// Version: 1.0.0 — Call-to-Action Section Component
-// Why: Drive conversions with compelling CTAs throughout the site
-// Usage: End of pages, between sections, conversion points
-// Colors: Primary(#1c3b6e), Secondary(#f2b95e), Accent(#a81f93), Bg(#e7e8ec)
-// Props:
-//   - title: CTA headline
-//   - description: Supporting text
-//   - primaryCTA: Primary button config (text + link)
-//   - secondaryCTA: Optional secondary button config
-//   - variant: Visual style ('default', 'gradient', 'minimal')
+// Component: components/CTASection.tsx
+// Style: High-End Advisory / Cinematic
+// Focus: Conversion, Trust, Authority
 // ============================================================================
 
 import React from 'react';
 import Link from 'next/link';
+import { ArrowRight, CheckCircle2 } from 'lucide-react';
 
 interface CTAButton {
   text: string;
@@ -28,108 +21,116 @@ interface CTASectionProps {
   variant?: 'default' | 'gradient' | 'minimal';
 }
 
-/**
- * CTASection Component
- *
- * Prominent call-to-action sections designed to drive user engagement
- * and conversions at key decision points throughout the site.
- *
- * Conversion Principles:
- * - Clear value proposition
- * - Single primary action (with optional secondary)
- * - Contrasting colors for visibility
- * - Action-oriented copy
- * - Low friction (direct links, no forms in CTA)
- *
- * Variants:
- * - default: Standard CTA with card styling
- * - gradient: Bold gradient background for high-impact placement
- * - minimal: Subtle styling for repeated CTAs
- *
- * Strategic Placement:
- * - End of informational pages
- * - After value propositions
- * - Between major content sections
- * - Exit intent areas
- */
 export default function CTASection({
   title,
   description,
   primaryCTA,
   secondaryCTA,
-  variant = 'default',
+  variant = 'gradient',
 }: CTASectionProps) {
-  // Variant-specific styling
-  const variantStyles = {
-    default: 'bg-white card',
-    gradient: 'bg-gradient-to-br from-primary via-accent to-primary-light text-white',
-    minimal: 'bg-background-light border-2 border-primary/20 rounded-xl p-8',
+  
+  // 1. VARIANT STYLING CONFIGURATION
+  const styles = {
+    gradient: {
+      wrapper: "relative bg-[#0f172a] text-white border-y border-[#D4AF37]/30 overflow-hidden",
+      title: "text-white",
+      desc: "text-gray-400",
+      primaryBtn: "bg-[#D4AF37] text-white hover:bg-white hover:text-[#0f172a]",
+      secondaryBtn: "border border-white/20 text-white hover:bg-white/10",
+      disclaimer: "text-gray-500"
+    },
+    default: {
+      wrapper: "bg-white text-[#0f172a] border border-gray-100 shadow-2xl",
+      title: "text-[#0f172a]",
+      desc: "text-gray-600",
+      primaryBtn: "bg-[#0f172a] text-white hover:bg-[#D4AF37]",
+      secondaryBtn: "border border-[#0f172a]/20 text-[#0f172a] hover:bg-gray-50",
+      disclaimer: "text-gray-400"
+    },
+    minimal: {
+      wrapper: "bg-[#F8F9FA] text-[#0f172a] border-t border-gray-200",
+      title: "text-[#0f172a]",
+      desc: "text-gray-500",
+      primaryBtn: "bg-transparent border-b border-[#0f172a] text-[#0f172a] px-0 py-1 hover:text-[#D4AF37] hover:border-[#D4AF37] !rounded-none",
+      secondaryBtn: "hidden", // Usually minimal doesn't need secondary
+      disclaimer: "text-gray-400"
+    }
   };
 
-  const textColorClass = variant === 'gradient' ? 'text-white' : 'text-primary';
-  const descColorClass = variant === 'gradient' ? 'text-white/90' : 'text-primary-dark/80';
+  const currentStyle = styles[variant];
+  const isMinimal = variant === 'minimal';
 
   return (
-    <section className="section">
-      <div className="container-custom">
-        <div
-          className={`${variantStyles[variant]} max-w-4xl mx-auto text-center animate-fade-in`}
-        >
-          {/* Title */}
-          <h2
-            className={`text-3xl md:text-4xl font-bold ${textColorClass} mb-4`}
-          >
+    <section className={`py-20 md:py-28 px-6 lg:px-12 ${isMinimal ? 'py-16' : ''}`}>
+      <div 
+        className={`
+          max-w-5xl mx-auto rounded-sm relative 
+          ${variant !== 'minimal' ? 'p-10 md:p-16 text-center' : 'text-left max-w-7xl mx-auto'}
+          ${currentStyle.wrapper}
+        `}
+      >
+        {/* Decorative Background for Gradient Variant */}
+        {variant === 'gradient' && (
+          <>
+            <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-[#D4AF37]/10 rounded-full blur-[80px] pointer-events-none -translate-y-1/2 translate-x-1/2"></div>
+            <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-blue-900/10 rounded-full blur-[80px] pointer-events-none translate-y-1/2 -translate-x-1/2"></div>
+            <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10 mix-blend-overlay"></div>
+          </>
+        )}
+
+        <div className="relative z-10 flex flex-col items-center">
+          
+          {/* Header */}
+          <h2 className={`font-serif text-4xl md:text-5xl lg:text-6xl mb-6 ${currentStyle.title} ${isMinimal ? 'text-left w-full' : ''}`}>
             {title}
           </h2>
 
           {/* Description */}
-          <p className={`text-lg md:text-xl ${descColorClass} mb-8 leading-relaxed`}>
+          <p className={`text-lg leading-relaxed max-w-2xl mb-10 ${currentStyle.desc} ${isMinimal ? 'text-left w-full mb-6' : ''}`}>
             {description}
           </p>
 
-          {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+          {/* Buttons */}
+          <div className={`flex flex-col sm:flex-row gap-5 ${isMinimal ? 'w-full justify-start' : 'justify-center'}`}>
+            
             {/* Primary CTA */}
             <Link
               href={primaryCTA.link}
-              className={`${
-                variant === 'gradient'
-                  ? 'bg-white text-primary hover:bg-background-light'
-                  : 'btn-accent'
-              } inline-block text-lg transform hover:scale-105 transition-all duration-300 py-3 px-8 rounded-lg font-bold shadow-lg hover:shadow-xl`}
+              className={`
+                ${currentStyle.primaryBtn} 
+                ${isMinimal ? '' : 'px-10 py-4 rounded-sm shadow-lg'}
+                font-bold text-sm uppercase tracking-[0.15em] transition-all duration-300 flex items-center gap-2 group
+              `}
             >
               {primaryCTA.text}
+              {!isMinimal && <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />}
+              {isMinimal && <ArrowRight className="w-4 h-4 ml-2" />}
             </Link>
 
-            {/* Secondary CTA (Optional) */}
-            {secondaryCTA && (
+            {/* Secondary CTA */}
+            {secondaryCTA && !isMinimal && (
               <Link
                 href={secondaryCTA.link}
-                className={`${
-                  variant === 'gradient'
-                    ? 'border-2 border-white text-white hover:bg-white hover:text-primary'
-                    : 'btn-outline'
-                } inline-block text-lg transition-all duration-300 py-3 px-8 rounded-lg font-semibold`}
+                className={`
+                  ${currentStyle.secondaryBtn} 
+                  px-10 py-4 rounded-sm font-bold text-sm uppercase tracking-[0.15em] transition-all duration-300
+                `}
               >
                 {secondaryCTA.text}
               </Link>
             )}
           </div>
 
-          {/* Trust Indicator */}
-          {variant !== 'minimal' && (
-            <p className="text-sm mt-6 opacity-70">
-              {variant === 'gradient' ? (
-                <span className="text-white/80">
-                  ✓ Professional mentorship · No immigration law services
-                </span>
-              ) : (
-                <span className="text-primary-dark/60">
-                  ✓ Professional mentorship · No immigration law services
-                </span>
-              )}
-            </p>
+          {/* Trust/Legal Indicator */}
+          {!isMinimal && (
+            <div className={`mt-10 pt-8 border-t border-current border-opacity-10 w-full max-w-lg flex items-center justify-center gap-2 ${currentStyle.disclaimer}`}>
+              <CheckCircle2 className="w-4 h-4 opacity-70" />
+              <p className="text-xs tracking-wide opacity-80">
+                Business Advisory Services • Not a Law Firm
+              </p>
+            </div>
           )}
+
         </div>
       </div>
     </section>
