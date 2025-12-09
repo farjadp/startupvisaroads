@@ -42,9 +42,9 @@ export default function Footer() {
               
               {/* Socials - Minimal Circles */}
               <div className="flex gap-4 mt-8">
-                 {[<Linkedin key="li"/>, <Twitter key="tw"/>, <Instagram key="ig"/>].map((icon, i) => (
+                 {[Linkedin, Twitter, Instagram].map((Icon, i) => (
                     <a key={i} href="#" className="w-12 h-12 rounded-full border border-[#F2F0E9]/20 flex items-center justify-center hover:bg-[#CCFF00] hover:text-black hover:border-transparent transition-all duration-300">
-                       {React.cloneElement(icon as React.ReactElement, { size: 20 })}
+                       <Icon size={20} />
                     </a>
                  ))}
               </div>

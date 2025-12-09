@@ -143,19 +143,21 @@ export default function EB2NIWPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-px bg-[#FCFBF9]/20 border border-[#FCFBF9]/20">
                {[
-                  { icon: <GraduationCap/>, title: "STEM PhDs", desc: "Researchers in critical fields." },
-                  { icon: <Award/>, title: "Entrepreneurs", desc: "Founders with US interest." },
-                  { icon: <Landmark/>, title: "Pilots", desc: "Addressing national shortage." },
-                  { icon: <BookOpen/>, title: "Physicians", desc: "Working in underserved areas." }
-               ].map((item, i) => (
+                  { icon: GraduationCap, title: "STEM PhDs", desc: "Researchers in critical fields." },
+                  { icon: Award, title: "Entrepreneurs", desc: "Founders with US interest." },
+                  { icon: Landmark, title: "Pilots", desc: "Addressing national shortage." },
+                  { icon: BookOpen, title: "Physicians", desc: "Working in underserved areas." }
+               ].map((item, i) => {
+                  const Icon = item.icon;
+                  return (
                   <div key={i} className="bg-[#0f172a] p-10 hover:bg-[#1e293b] transition-colors group">
                      <div className="mb-6 opacity-50 group-hover:opacity-100 group-hover:text-[#b91c1c] transition-all">
-                        {React.cloneElement(item.icon as React.ReactElement, { size: 32 })}
+                        <Icon size={32} />
                      </div>
                      <h4 className="font-serif text-2xl mb-2">{item.title}</h4>
                      <p className="font-serif text-sm opacity-60">{item.desc}</p>
                   </div>
-               ))}
+               )})}
             </div>
          </div>
       </section>

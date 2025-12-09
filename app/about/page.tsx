@@ -1,310 +1,175 @@
 // ============================================================================
-// Page Source: app/about/page.tsx
-// Version: 1.0.0 — About Us / Company Information Page
-// Why: Build trust through transparency about mission, values, and team
-// Purpose: Establish credibility and differentiate from immigration law firms
-// Colors: Primary(#1c3b6e), Secondary(#f2b95e), Accent(#a81f93), Bg(#e7e8ec)
-// Sections:
-//   1. Hero - Company mission and vision
-//   2. Our Story - Origin and why we exist
-//   3. Our Approach - How we're different
-//   4. Values - Core principles
-//   5. Team - Key people (placeholder)
-//   6. CTA - Get started
+// Page: app/about/page.tsx
+// Style: Editorial / Art Gallery
+// Concept: "The Manifesto" (Philosophy & Team)
 // ============================================================================
 
 import React from 'react';
-import HeroSection from '@/components/HeroSection';
-import MentorCard from '@/components/MentorCard';
-import CTASection from '@/components/CTASection';
+import Link from 'next/link';
+import { 
+  ArrowRight, 
+  Target, 
+  Globe2, 
+  ShieldCheck, 
+  Award,
+  Users
+} from 'lucide-react';
 import type { Metadata } from 'next';
 
-/**
- * About Page Metadata
- */
 export const metadata: Metadata = {
-  title: 'About Us',
-  description:
-    'Learn about Startup Visa Roads: our mission to help founders build investment-ready startups, our values, and our approach to mentorship. We are NOT an immigration law firm.',
-  openGraph: {
-    title: 'About Us | Startup Visa Roads',
-    description:
-      'Discover our story, mission, and the team behind Startup Visa Roads. Professional mentorship for global entrepreneurs.',
-  },
+  title: 'The Firm | About SVR',
+  description: 'Our philosophy: Meritocracy, Precision, and Global Ambition.',
 };
 
-/**
- * About Page Component
- *
- * Establishes trust and credibility through transparent communication
- * about mission, values, and team. Critical for differentiation.
- */
 export default function AboutPage() {
-  const values = [
-    {
-      icon: '🎯',
-      title: 'Clarity & Honesty',
-      description:
-        'We communicate clearly about what we do and don\'t do. No overclaiming, no false promises—just honest guidance.',
-    },
-    {
-      icon: '🤝',
-      title: 'Founder-First',
-      description:
-        'Everything we do is designed to serve founders. Your success in building a real business is our only metric.',
-    },
-    {
-      icon: '📚',
-      title: 'Knowledge Sharing',
-      description:
-        'We believe in education and empowerment. We teach you to build, not create dependency on our services.',
-    },
-    {
-      icon: '🌍',
-      title: 'Global Perspective',
-      description:
-        'We understand the challenges of building across borders and bring international experience to every engagement.',
-    },
-  ];
-
-  const team = [
-    {
-      name: 'David Martinez',
-      title: 'Founder & Lead Mentor',
-      bio: 'Serial entrepreneur with 3 successful exits. Helped 200+ founders navigate startup visa programs while building real businesses. Former VC partner.',
-      expertise: ['Entrepreneurship', 'Fundraising', 'Strategy', 'Mentorship'],
-    },
-    {
-      name: 'Lisa Thompson',
-      title: 'Head of Business Development',
-      bio: 'Expert in business model innovation and market entry strategies. 15 years experience in startup ecosystems across North America and Europe.',
-      expertise: ['Business Models', 'Market Research', 'Go-to-Market', 'Product'],
-    },
-    {
-      name: 'Raj Patel',
-      title: 'Financial Planning Lead',
-      bio: 'Former CFO of multiple venture-backed startups. Specializes in financial modeling, fundraising preparation, and investor relations.',
-      expertise: ['Finance', 'Fundraising', 'Modeling', 'Investor Relations'],
-    },
-  ];
-
   return (
-    <div>
-      {/* Hero Section */}
-      <HeroSection
-        title="Guiding Founders on Their Global Journey"
-        subtitle="We're on a mission to help ambitious founders build investment-ready startups that create value, generate jobs, and transform industries worldwide."
-        ctaText="Work With Us"
-        ctaLink="/contact"
-      />
+    <div className="w-full bg-[#F2F0E9] text-[#1a1a1a]">
 
-      {/* Our Story */}
-      <section className="section bg-white">
-        <div className="container-custom">
-          <div className="max-w-4xl mx-auto">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-bold text-primary mb-4">
-                Our Story
-              </h2>
-            </div>
+      {/* =========================================
+          1. HERO: PHILOSOPHY
+      ========================================= */}
+      <section className="pt-32 pb-20 px-6 border-b border-[#1a1a1a]">
+        <div className="container mx-auto">
+          <div className="flex items-center gap-4 mb-8">
+             <span className="w-4 h-4 bg-[#1a1a1a]"></span>
+             <span className="font-sans text-xs font-bold uppercase tracking-widest text-[#1a1a1a]/60">The Philosophy</span>
+          </div>
 
-            <div className="prose max-w-none">
-              <div className="card mb-8">
-                <p className="text-lg text-primary-dark/80 leading-relaxed mb-4">
-                  Startup Visa Roads was born from a simple observation: many talented
-                  founders with great ideas struggle not because they lack potential,
-                  but because they lack the business foundation and guidance needed to
-                  succeed in startup visa programs.
+          <h1 className="font-serif text-[12vw] leading-[0.8] tracking-tighter mb-12">
+            MERIT <br/>
+            <span className="pl-[15vw] italic text-[#1a1a1a]/40">OVER BORDERS.</span>
+          </h1>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-end">
+             <div>
+                <p className="font-serif text-3xl md:text-4xl leading-tight">
+                   We believe that exceptional talent should be <span className="bg-[#CCFF00] px-2">geography-agnostic</span>.
                 </p>
-                <p className="text-lg text-primary-dark/80 leading-relaxed mb-4">
-                  Having personally navigated startup visa programs and worked with hundreds
-                  of entrepreneurs, we recognized a critical gap in the market. While
-                  immigration attorneys handle the legal aspects, founders often need help
-                  with the business side: refining their model, creating professional
-                  documentation, and building something investors actually want to fund.
+             </div>
+             <div className="flex flex-col gap-6">
+                <p className="font-sans text-sm text-[#1a1a1a]/60 leading-relaxed text-justify max-w-md ml-auto">
+                   Startup Visa Roads was founded on a single premise: Immigration systems are designed to filter out the noise. 
+                   To pass through, you must become the signal. We help founders amplify their signal through rigorous business architecture.
                 </p>
-                <p className="text-lg text-primary-dark/80 leading-relaxed">
-                  That's where we come in. We're <strong>mentors and business advisors</strong>—
-                  NOT an immigration law firm. We focus exclusively on helping you build a
-                  strong, viable business that meets the requirements of startup visa programs
-                  and has real potential for success.
-                </p>
-              </div>
-            </div>
+             </div>
           </div>
         </div>
       </section>
 
-      {/* Our Approach */}
-      <section className="section bg-background">
-        <div className="container-custom">
-          <div className="max-w-3xl mx-auto text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-primary mb-4">
-              How We're Different
+      {/* =========================================
+          2. THE ORIGIN STORY (Minimal Text)
+      ========================================= */}
+      <section className="py-24 px-6 border-b border-[#1a1a1a]/10">
+         <div className="container mx-auto max-w-4xl">
+            <h2 className="font-serif text-5xl mb-12 text-center">The Origin</h2>
+            <div className="space-y-8 font-serif text-xl md:text-2xl leading-relaxed text-[#1a1a1a]/80">
+               <p>
+                  In 2024, we noticed a flaw in the global mobility market. Immigration law firms were excellent at filing forms, 
+                  but terrible at understanding <span className="italic">venture capital</span>.
+               </p>
+               <p>
+                  Founders were being rejected not because of legal errors, but because their business models 
+                  lacked the financial sophistication required by Designated Organizations.
+               </p>
+               <p className="border-l-4 border-[#CCFF00] pl-6">
+                  We built SVR to bridge that gap. We are not lawyers. We are exited founders, investment bankers, 
+                  and product strategists who speak the language of innovation.
+               </p>
+            </div>
+         </div>
+      </section>
+
+      {/* =========================================
+          3. CORE VALUES (Grid)
+      ========================================= */}
+      <section className="py-24 px-6 bg-[#1a1a1a] text-[#F2F0E9]">
+         <div className="container mx-auto">
+            <h2 className="font-serif text-5xl mb-16">The Code</h2>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+               
+               <div className="group border border-[#F2F0E9]/20 p-8 hover:bg-[#CCFF00] hover:text-[#1a1a1a] transition-all duration-300">
+                  <Target className="w-10 h-10 mb-6" />
+                  <h3 className="font-serif text-2xl mb-4">Precision</h3>
+                  <p className="font-sans text-xs opacity-60 leading-relaxed">
+                     We do not guess. Every claim in your business plan is backed by verifiable market data and citations.
+                  </p>
+               </div>
+
+               <div className="group border border-[#F2F0E9]/20 p-8 hover:bg-[#CCFF00] hover:text-[#1a1a1a] transition-all duration-300">
+                  <Globe2 className="w-10 h-10 mb-6" />
+                  <h3 className="font-serif text-2xl mb-4">Access</h3>
+                  <p className="font-sans text-xs opacity-60 leading-relaxed">
+                     We open doors that are closed to the public. Direct lines to Incubator Directors and Angel Groups.
+                  </p>
+               </div>
+
+               <div className="group border border-[#F2F0E9]/20 p-8 hover:bg-[#CCFF00] hover:text-[#1a1a1a] transition-all duration-300">
+                  <ShieldCheck className="w-10 h-10 mb-6" />
+                  <h3 className="font-serif text-2xl mb-4">Integrity</h3>
+                  <p className="font-sans text-xs opacity-60 leading-relaxed">
+                     We turn down 40% of applicants. If we don't believe your case is winnable, we won't take your money.
+                  </p>
+               </div>
+
+               <div className="group border border-[#F2F0E9]/20 p-8 hover:bg-[#CCFF00] hover:text-[#1a1a1a] transition-all duration-300">
+                  <Award className="w-10 h-10 mb-6" />
+                  <h3 className="font-serif text-2xl mb-4">Excellence</h3>
+                  <p className="font-sans text-xs opacity-60 leading-relaxed">
+                     Good enough is not enough. We aim for the top 1% of applications that get approved without questions.
+                  </p>
+               </div>
+
+            </div>
+         </div>
+      </section>
+
+      {/* =========================================
+          4. THE TEAM (Link to Mentorship)
+      ========================================= */}
+      <section className="py-24 px-6 border-b border-[#1a1a1a]/10">
+         <div className="container mx-auto">
+            <div className="flex flex-col md:flex-row gap-16 items-center">
+               <div className="md:w-1/2">
+                  <span className="font-sans text-xs font-bold bg-[#1a1a1a] text-[#F2F0E9] px-2 py-1 mb-6 inline-block uppercase tracking-widest">Leadership</span>
+                  <h2 className="font-serif text-5xl mb-6">Built by Builders.</h2>
+                  <p className="font-sans text-lg text-[#1a1a1a]/60 mb-8 leading-relaxed">
+                     Our team is composed of individuals who have sat on both sides of the table: 
+                     as founders seeking funding, and as committee members approving grants.
+                  </p>
+                  <Link href="/mentorship" className="inline-flex items-center gap-2 border-b-2 border-[#1a1a1a] pb-1 font-bold uppercase tracking-widest hover:text-[#CCFF00] hover:border-[#CCFF00] transition-colors">
+                     Meet the Committee <ArrowRight size={16}/>
+                  </Link>
+               </div>
+               <div className="md:w-1/2 grid grid-cols-2 gap-4 opacity-50 hover:opacity-100 transition-opacity">
+                  <div className="bg-[#1a1a1a] h-40 w-full rounded-sm"></div>
+                  <div className="bg-[#CCFF00] h-40 w-full rounded-sm mt-8"></div>
+                  <div className="bg-[#1a1a1a] h-40 w-full rounded-sm -mt-8"></div>
+                  <div className="bg-[#1a1a1a] h-40 w-full rounded-sm"></div>
+               </div>
+            </div>
+         </div>
+      </section>
+
+      {/* =========================================
+          5. CTA
+      ========================================= */}
+      <section className="py-32 px-6 text-center">
+         <div className="container mx-auto">
+            <h2 className="font-serif text-5xl md:text-7xl mb-8">
+               Join the ranks.
             </h2>
-            <p className="text-lg text-primary-dark/80">
-              We take a unique approach to supporting founders
+            <p className="font-sans text-[#1a1a1a]/60 text-lg mb-12 max-w-xl mx-auto">
+               We accept new clients by application only. Tell us about your project.
             </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-            <div className="card">
-              <div className="flex items-start gap-4">
-                <span className="text-3xl flex-shrink-0">✅</span>
-                <div>
-                  <h3 className="text-xl font-bold text-primary mb-2">
-                    We Focus on Business
-                  </h3>
-                  <p className="text-primary-dark/80 leading-relaxed">
-                    Our sole focus is helping you build a strong, viable business.
-                    We're not distracted by legal services we can't provide—we do
-                    one thing and do it well.
-                  </p>
-                </div>
-              </div>
+            <div className="flex flex-col sm:flex-row justify-center gap-6">
+               <Link href="/contact" className="bg-[#1a1a1a] text-[#F2F0E9] px-10 py-5 font-sans font-bold uppercase tracking-widest hover:bg-[#CCFF00] hover:text-[#1a1a1a] transition-colors">
+                  Submit Application
+               </Link>
             </div>
-
-            <div className="card">
-              <div className="flex items-start gap-4">
-                <span className="text-3xl flex-shrink-0">✅</span>
-                <div>
-                  <h3 className="text-xl font-bold text-primary mb-2">
-                    Real Founder Experience
-                  </h3>
-                  <p className="text-primary-dark/80 leading-relaxed">
-                    Our team consists of founders who have been in your shoes.
-                    We've built companies, raised funding, and navigated the
-                    same challenges you're facing.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="card">
-              <div className="flex items-start gap-4">
-                <span className="text-3xl flex-shrink-0">✅</span>
-                <div>
-                  <h3 className="text-xl font-bold text-primary mb-2">
-                    Transparent & Honest
-                  </h3>
-                  <p className="text-primary-dark/80 leading-relaxed">
-                    We're upfront about what we can and can't do. No false
-                    promises, no visa guarantees, just honest guidance and
-                    professional expertise.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="card">
-              <div className="flex items-start gap-4">
-                <span className="text-3xl flex-shrink-0">✅</span>
-                <div>
-                  <h3 className="text-xl font-bold text-primary mb-2">
-                    Long-Term Partnership
-                  </h3>
-                  <p className="text-primary-dark/80 leading-relaxed">
-                    We're not just here for the application process. We support
-                    you as you launch and grow your business, providing ongoing
-                    mentorship and guidance.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+         </div>
       </section>
 
-      {/* Values */}
-      <section className="section bg-white">
-        <div className="container-custom">
-          <div className="max-w-3xl mx-auto text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-primary mb-4">
-              Our Core Values
-            </h2>
-            <p className="text-lg text-primary-dark/80">
-              The principles that guide everything we do
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
-            {values.map((value, index) => (
-              <div key={index} className="card text-center">
-                <div className="text-5xl mb-3">{value.icon}</div>
-                <h3 className="text-lg font-bold text-primary mb-2">
-                  {value.title}
-                </h3>
-                <p className="text-sm text-primary-dark/80 leading-relaxed">
-                  {value.description}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Team */}
-      <section className="section bg-background">
-        <div className="container-custom">
-          <div className="max-w-3xl mx-auto text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-primary mb-4">
-              Meet Our Team
-            </h2>
-            <p className="text-lg text-primary-dark/80">
-              Experienced founders and operators dedicated to your success
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-            {team.map((member, index) => (
-              <MentorCard key={index} {...member} />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Important Disclaimer */}
-      <section className="section bg-white">
-        <div className="container-custom">
-          <div className="max-w-4xl mx-auto">
-            <div className="bg-accent/10 border-2 border-accent rounded-xl p-8">
-              <div className="flex items-start gap-4">
-                <span className="text-4xl flex-shrink-0">⚠️</span>
-                <div>
-                  <h3 className="text-2xl font-bold text-primary mb-3">
-                    What We Are NOT
-                  </h3>
-                  <p className="text-primary-dark/80 leading-relaxed mb-4">
-                    <strong>Startup Visa Roads is NOT an immigration law firm</strong> and
-                    we do NOT provide immigration legal services. We are mentors and business
-                    advisors who help you build strong, viable businesses.
-                  </p>
-                  <p className="text-primary-dark/80 leading-relaxed">
-                    We do not complete visa applications, communicate with immigration
-                    authorities, provide legal advice, or guarantee visa approvals. For all
-                    legal immigration matters, you must work with a licensed immigration attorney.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA */}
-      <CTASection
-        title="Ready to Start Your Journey?"
-        description="Let's discuss your business idea and explore how we can help you build something extraordinary."
-        primaryCTA={{
-          text: 'Schedule Free Consultation',
-          link: '/contact',
-        }}
-        secondaryCTA={{
-          text: 'View Our Services',
-          link: '/services',
-        }}
-        variant="gradient"
-      />
     </div>
   );
 }
