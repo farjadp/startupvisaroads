@@ -69,6 +69,10 @@ npm start
 
 **We are NOT an immigration law firm.** All pages include clear disclaimers about providing business advisory services only.
 
+## 🧾 Changelog
+
+See `CHANGELOG.md`. Update it before each git push with the date/time and a short list of changes.
+
 ## 📝 License
 
 See LICENSE file for details.

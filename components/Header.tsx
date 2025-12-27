@@ -57,6 +57,7 @@ export default function Header() {
       subLinks: [
         { header: 'North America' },
         { href: '/startup-visa-canada', label: 'Canada (SUV)' },
+        { href: '/pnp', label: 'Canada (PNP)' },
         { href: '/usa/eb1', label: 'USA (EB-1A)' },
         { href: '/usa/eb2-niw', label: 'USA (NIW)' },
         { href: '/usa/eb5', label: 'USA (EB-5)' },
@@ -115,7 +116,7 @@ export default function Header() {
             {/* 1. BRAND LOGO */}
             <Link href="/" className="relative z-50 group">
               <span className={`font-serif text-3xl font-bold tracking-tight transition-colors duration-300 ${getTextColor()}`}>
-                S V R
+                Visa Roads Inc.
                 <span className={`text-[#CCFF00] ${scrolled ? 'opacity-100' : 'opacity-0'} transition-opacity`}>.</span>
               </span>
             </Link>

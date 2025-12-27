@@ -24,7 +24,7 @@ const space = Space_Grotesk({
 });
 
 export const metadata: Metadata = {
-  title: "S V R | The Curated Path",
+  title: "VisaRoads | The Curated Path",
   description: "Global mobility for the exceptional.",
 };
 
