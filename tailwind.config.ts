@@ -9,8 +9,10 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        serif: ["var(--font-bodoni)", "serif"], // فونت لوکس و کلاسیک
-        sans: ["var(--font-space)", "sans-serif"], // فونت مدرن و عجیب
+
+                // اتصال متغیر فونت جدید به کلاس font-serif
+        serif: ["var(--font-serif)", "serif"], 
+        sans: ["var(--font-space)", "sans-serif"],
       },
       colors: {
         paper: "#F2F0E9", // رنگ کاغذ کاهی/استخوانی
