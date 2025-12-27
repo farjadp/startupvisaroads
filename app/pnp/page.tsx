@@ -15,6 +15,8 @@ import {
   FileText 
 } from 'lucide-react';
 import type { Metadata } from 'next';
+import PNPMasterAssessment from '@/components/PNPMasterAssessment'; // Import
+
 
 export const metadata: Metadata = {
   title: 'Provincial Nominee Programs | SVR',
@@ -55,6 +57,7 @@ export default function PNPPage() {
            </div>
         </div>
       </section>
+
 
 
       {/* =========================================
@@ -173,6 +176,22 @@ export default function PNPPage() {
       </section>
 
 
+
+
+
+   {/* =========================================
+          2. THE MASTER ASSESSMENT TOOL
+      ========================================= */}
+      <section className="py-24 px-4 bg-[#F2F0E9] relative z-20 -mt-20">
+         <div className="container mx-auto">
+            <PNPMasterAssessment />
+         </div>
+      </section>
+
+
+
+
+
       {/* =========================================
           4. THE PROCESS (Step-by-Step)
       ========================================= */}
@@ -217,6 +236,7 @@ export default function PNPPage() {
              </div>
          </div>
       </section>
+
 
 
 

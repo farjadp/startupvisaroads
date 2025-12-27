@@ -2,6 +2,10 @@
 
 Record changes before each git push with date/time (minute precision).
 
+## 2025-12-27 18:43
+- Added PNP province pages (New Brunswick, Newfoundland, PEI).
+- Added `PNPMasterAssessment` component and updated `app/pnp/page.tsx`.
+
 ## 2025-12-27 15:00
 - Added new PNP province pages (Saskatchewan, Manitoba, Nova Scotia).
 - Updated `app/layout.tsx` and `tailwind.config.ts`.
