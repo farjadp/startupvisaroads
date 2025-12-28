@@ -1,8 +1,7 @@
 // ============================================================================
 // Component: components/Footer.tsx
-// Style: Editorial / Art Gallery (Inverted Theme)
-// Colors: Ink (#1a1a1a) & Acid Green (#CCFF00)
-// Updated Links: Matches project file structure
+// Style: Modernist Editorial (Dark Mode)
+// Context: Global Navigation & Legal Disclaimer
 // ============================================================================
 
 import React from 'react';
@@ -11,84 +10,88 @@ import {
   ArrowUpRight, 
   Linkedin, 
   Twitter, 
-  Instagram
+  Instagram,
+  Globe
 } from 'lucide-react';
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-[#1a1a1a] text-[#F2F0E9] pt-24 pb-8 relative overflow-hidden">
+    <footer className="bg-[#1a1a1a] text-[#F2F0E9] pt-24 pb-8 relative overflow-hidden border-t border-[#CCFF00]">
       
-      {/* Decorative Top Border */}
-      <div className="absolute top-0 left-0 w-full h-1 bg-[#CCFF00]"></div>
-
-      <div className="container mx-auto px-6 md:px-12">
+      <div className="container mx-auto px-6 md:px-12 relative z-10">
         
-        {/* Top Section: Brand & Big Nav */}
+        {/* Top Section: Brand & Strategy */}
         <div className="flex flex-col lg:flex-row justify-between items-start mb-24 gap-16">
            
            {/* Brand Column */}
            <div className="lg:w-1/3">
               <Link href="/" className="inline-block mb-8 group">
-                 <h2 className="font-serif text-6xl md:text-8xl leading-none group-hover:text-[#CCFF00] transition-colors duration-300">
-                    S V R
+                 <h2 className="font-serif text-6xl md:text-8xl leading-none tracking-tighter group-hover:text-[#CCFF00] transition-colors duration-500">
+                    Visa Roads
                  </h2>
               </Link>
               <p className="font-sans text-lg text-[#F2F0E9]/60 leading-relaxed max-w-sm">
-                 Architecting global legacies. <br/>
-                 We bridge the gap between ambition and residency through strategic design.
+                 We build the bridges for the ambitious to walk across. <br/>
+                 Global mobility architecture for the 1%.
               </p>
               
-              {/* Socials - Minimal Circles */}
-              <div className="flex gap-4 mt-8">
+              {/* Socials */}
+              <div className="flex gap-4 mt-12">
                  {[Linkedin, Twitter, Instagram].map((Icon, i) => (
-                    <a key={i} href="#" className="w-12 h-12 rounded-full border border-[#F2F0E9]/20 flex items-center justify-center hover:bg-[#CCFF00] hover:text-black hover:border-transparent transition-all duration-300">
+                    <a key={i} href="#" className="w-12 h-12 rounded-full border border-[#F2F0E9]/20 flex items-center justify-center hover:bg-[#CCFF00] hover:text-black hover:border-[#CCFF00] transition-all duration-300">
                        <Icon size={20} />
                     </a>
                  ))}
               </div>
            </div>
 
-           {/* Navigation Columns */}
+           {/* Navigation Grid */}
            <div className="lg:w-2/3 grid grid-cols-1 md:grid-cols-3 gap-12">
               
-              {/* Column 1: Firm */}
+              {/* Column 1: Global Access */}
               <div>
-                 <h4 className="font-sans text-xs font-bold text-[#CCFF00] mb-8 uppercase tracking-widest">The Firm</h4>
-                 <ul className="space-y-4 font-serif text-2xl">
-                    <li><Link href="/services" className="hover:text-[#CCFF00] hover:pl-2 transition-all">Advisory Services</Link></li>
-                    <li><Link href="/mentorship" className="hover:text-[#CCFF00] hover:pl-2 transition-all">Mentorship Program</Link></li>
-                    <li><Link href="/about" className="hover:text-[#CCFF00] hover:pl-2 transition-all">Our Story</Link></li>
-                    <li><Link href="/blog" className="hover:text-[#CCFF00] hover:pl-2 transition-all">Insights</Link></li>
-                 </ul>
-              </div>
-
-              {/* Column 2: Jurisdictions (Matched to File Structure) */}
-              <div>
-                 <h4 className="font-sans text-xs font-bold text-[#CCFF00] mb-8 uppercase tracking-widest">Jurisdictions</h4>
-                 <ul className="space-y-4 font-serif text-2xl">
+                 <h4 className="font-sans text-xs font-bold text-[#CCFF00] mb-8 uppercase tracking-widest flex items-center gap-2">
+                    <Globe size={12}/> Global Access
+                 </h4>
+                 <ul className="space-y-4 font-serif text-2xl text-[#F2F0E9]/80">
                     <li><Link href="/startup-visa-canada" className="hover:text-[#CCFF00] hover:pl-2 transition-all">Canada (SUV)</Link></li>
-                    <li><Link href="/usa/eb2-niw" className="hover:text-[#CCFF00] hover:pl-2 transition-all">USA (NIW)</Link></li>
-                    <li><Link href="/uae/golden-visa" className="hover:text-[#CCFF00] hover:pl-2 transition-all">UAE Golden</Link></li>
-                    <li><Link href="/europe/netherlands" className="hover:text-[#CCFF00] hover:pl-2 transition-all">Netherlands</Link></li>
+                    <li><Link href="/pnp" className="hover:text-[#CCFF00] hover:pl-2 transition-all">Canada (PNP)</Link></li>
+                    <li><Link href="/australia/entrepreneur-stream" className="hover:text-[#CCFF00] hover:pl-2 transition-all">Australia (NIV)</Link></li>
+                    <li><Link href="/country/uae" className="hover:text-[#CCFF00] hover:pl-2 transition-all">UAE (Golden)</Link></li>
+                    <li><Link href="/country/usa" className="hover:text-[#CCFF00] hover:pl-2 transition-all">USA (NIW)</Link></li>
                  </ul>
               </div>
 
-              {/* Column 3: Contact */}
+              {/* Column 2: Strategy */}
               <div>
-                 <h4 className="font-sans text-xs font-bold text-[#CCFF00] mb-8 uppercase tracking-widest">Office</h4>
-                 <address className="not-italic font-sans text-[#F2F0E9]/60 space-y-2 mb-8">
-                    hello@startupvisaroads.com<br/>
-                    +1 (416) 555-0192<br/>
-                    Toronto, ON
+                 <h4 className="font-sans text-xs font-bold text-[#CCFF00] mb-8 uppercase tracking-widest">Strategy</h4>
+                 <ul className="space-y-4 font-serif text-2xl text-[#F2F0E9]/80">
+                    <li><Link href="/services" className="hover:text-[#CCFF00] hover:pl-2 transition-all">Advisory</Link></li>
+                    <li><Link href="/mentorship" className="hover:text-[#CCFF00] hover:pl-2 transition-all">Mentorship</Link></li>
+                    <li><Link href="/country" className="hover:text-[#CCFF00] hover:pl-2 transition-all">Jurisdictions</Link></li>
+                    <li><Link href="/about" className="hover:text-[#CCFF00] hover:pl-2 transition-all">The Firm</Link></li>
+                 </ul>
+              </div>
+
+              {/* Column 3: Headquarters */}
+              <div>
+                 <h4 className="font-sans text-xs font-bold text-[#CCFF00] mb-8 uppercase tracking-widest">Headquarters</h4>
+                 <address className="not-italic font-sans text-[#F2F0E9]/60 space-y-2 mb-8 text-sm leading-relaxed">
+                    <strong>Visa Roads Inc.</strong><br/>
+                    Financial District<br/>
+                    Toronto, ON, Canada<br/>
+                    <a href="mailto:hello@ashavid.ca" className="hover:text-white transition-colors">hello@ashavid.ca</a>
                  </address>
-                 <Link href="/contact" className="inline-flex items-center gap-2 font-sans font-bold border-b border-[#CCFF00] pb-1 hover:text-[#CCFF00] transition-colors">
-                    BOOK CONSULTATION <ArrowUpRight size={16} />
+                 
+                 <Link href="/contact" className="inline-flex items-center gap-2 font-sans font-bold border-b border-[#CCFF00] pb-1 hover:text-[#CCFF00] transition-colors text-sm tracking-widest uppercase">
+                    Schedule Audit <ArrowUpRight size={14} />
                  </Link>
-                 <div className="mt-6">
-                    <Link href="/login" className="text-xs font-sans text-[#F2F0E9]/40 hover:text-[#CCFF00] transition-colors uppercase tracking-widest">
-                       Client Portal Login
+                 
+                 <div className="mt-8 pt-8 border-t border-[#F2F0E9]/10">
+                    <Link href="/login" className="text-[10px] font-sans text-[#F2F0E9]/30 hover:text-[#CCFF00] transition-colors uppercase tracking-widest">
+                       Client Portal Access
                     </Link>
                  </div>
               </div>
@@ -96,31 +99,39 @@ export default function Footer() {
            </div>
         </div>
 
-        {/* Legal Disclaimer - Editorial Style */}
+        {/* Legal Disclaimer */}
         <div className="border-t border-[#F2F0E9]/10 pt-10 pb-20">
            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
               <div className="lg:col-span-8">
-                 <h5 className="font-sans text-[10px] font-bold text-[#CCFF00] uppercase mb-2">Legal Disclaimer</h5>
-                 <p className="font-sans text-xs text-[#F2F0E9]/40 text-justify leading-relaxed">
-                    Startup Visa Roads is a strategic business advisory firm. We are NOT a law firm and do not provide legal advice or immigration representation. Our services are strictly limited to business model development, market research, and mentorship. All legal filings and immigration petitions must be handled by licensed attorneys. We do not guarantee visa issuance, as such decisions remain the sole prerogative of government authorities.
+                 <div className="flex items-center gap-2 mb-4">
+                    <div className="w-2 h-2 bg-[#b91c1c] rounded-full"></div>
+                    <h5 className="font-sans text-[10px] font-bold text-[#F2F0E9] uppercase tracking-widest">Disclaimer</h5>
+                 </div>
+                 <p className="font-sans text-[10px] text-[#F2F0E9]/40 text-justify leading-relaxed max-w-3xl">
+                    Visa Roads Inc. is a strategic business advisory firm specializing in international expansion and startup consulting. 
+                    <strong> We are NOT a law firm </strong> and do not provide legal advice or immigration representation. 
+                    Our services are strictly limited to business plan development, market research, and corporate structuring. 
+                    All legal filings, visa petitions, and government forms must be handled by licensed immigration attorneys or RCICs. 
+                    We do not guarantee visa issuance, as such decisions remain the sole prerogative of the respective government authorities.
                  </p>
               </div>
-              <div className="lg:col-span-4 flex flex-col md:flex-row justify-end items-end gap-6 text-xs text-[#F2F0E9]/40 font-sans uppercase tracking-wider">
-                 <Link href="/privacy" className="hover:text-[#F2F0E9] transition-colors">Privacy</Link>
-                 <Link href="/terms" className="hover:text-[#F2F0E9] transition-colors">Terms</Link>
-                 <span>© {currentYear} SVR.</span>
+              <div className="lg:col-span-4 flex flex-col md:flex-row justify-end items-end gap-6 text-[10px] text-[#F2F0E9]/40 font-sans uppercase tracking-widest">
+                 <Link href="/privacy" className="hover:text-[#F2F0E9] transition-colors">Privacy Policy</Link>
+                 <Link href="/terms" className="hover:text-[#F2F0E9] transition-colors">Terms of Service</Link>
+                 <span>© {currentYear} Visa Roads Inc.</span>
               </div>
            </div>
         </div>
 
-        {/* Huge Background Watermark */}
-        <div className="absolute -bottom-10 left-0 w-full text-center pointer-events-none select-none overflow-hidden">
-           <span className="font-serif text-[20vw] text-[#F2F0E9] opacity-[0.02] leading-none whitespace-nowrap">
-              GLOBAL AMBITION
-           </span>
-        </div>
-
       </div>
+
+      {/* Background Watermark (Subtle) */}
+      <div className="absolute -bottom-[5vw] left-0 w-full text-center pointer-events-none select-none overflow-hidden opacity-[0.03]">
+         <span className="font-serif text-[25vw] text-[#F2F0E9] leading-none whitespace-nowrap">
+            BORDERLESS
+         </span>
+      </div>
+
     </footer>
   );
 }

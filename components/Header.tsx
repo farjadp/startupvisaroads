@@ -9,7 +9,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Menu, X, ArrowRight, ChevronDown, User } from 'lucide-react';
+import { Menu, X, ArrowRight, ChevronDown, User, Globe } from 'lucide-react';
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -50,24 +50,32 @@ export default function Header() {
   const navLinks = [
     { href: '/', label: 'Home' },
     { href: '/services', label: 'Advisory' },
-    { href: '/mentorship', label: 'Mentorship' },
     { 
       label: 'Jurisdictions',
       key: 'jurisdictions',
       subLinks: [
-        { header: 'North America' },
-        { href: '/startup-visa-canada', label: 'Canada (SUV)' },
-        { href: '/pnp', label: 'Canada (PNP)' },
-        { href: '/usa/eb1', label: 'USA (EB-1A)' },
-        { href: '/usa/eb2-niw', label: 'USA (NIW)' },
-        { href: '/usa/eb5', label: 'USA (EB-5)' },
-        { header: 'EMEA' },
-        { href: '/uae/golden-visa', label: 'UAE Golden Visa' },
+        { header: 'Canada' },
+        { href: '/country/canada', label: 'Country Profile' },
+        { href: '/startup-visa-canada', label: 'Start-Up Visa (SUV)' },
+        { href: '/pnp', label: 'Provincial Nominee (PNP)' },
+        
+        { header: 'United States' },
+        { href: '/country/usa', label: 'Country Profile' },
+        { href: '/usa/eb2-niw', label: 'EB-2 NIW (National Interest)' },
+        { href: '/usa/eb1', label: 'EB-1A (Extraordinary)' },
+        
+        { header: 'Europe' },
+        { href: '/country/denmark', label: 'Denmark (Start-up)' },
+        { href: '/country/finland', label: 'Finland (Fast Track)' },
         { href: '/europe/netherlands', label: 'Netherlands' },
-        { href: '/europe/denmark', label: 'Denmark' },
-        { href: '/europe/finland', label: 'Finland' },
+        
+        { header: 'Global' },
+        { href: '/country/uae', label: 'UAE (Golden Visa)' },
+        { href: '/australia/entrepreneur-stream', label: 'Australia (NIV)' },
+        { href: '/country', label: 'View All Regions →' },
       ]
     },
+    { href: '/mentorship', label: 'Mentorship' },
     { 
       label: 'The Firm',
       key: 'firm',
@@ -129,7 +137,7 @@ export default function Header() {
                         // Dropdown Trigger
                         <button className={`flex items-center gap-1 font-sans text-xs font-bold uppercase tracking-[0.15em] transition-colors duration-300 cursor-pointer ${getTextColor()} hover:text-[#CCFF00]`}>
                             {link.label}
-                            <ChevronDown className="w-3 h-3 opacity-50" />
+                            <ChevronDown className="w-3 h-3 opacity-50 group-hover:rotate-180 transition-transform" />
                         </button>
                     ) : (
                         // Normal Link
@@ -147,18 +155,20 @@ export default function Header() {
                     {/* Dropdown Menu (Desktop) */}
                     {link.subLinks && (
                         <div className="absolute top-full left-1/2 -translate-x-1/2 pt-8 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
-                            <div className="bg-[#1a1a1a] border-t-2 border-[#CCFF00] p-8 min-w-[260px] shadow-[0_20px_50px_rgba(0,0,0,0.5)] relative">
+                            <div className="bg-[#1a1a1a] border-t-2 border-[#CCFF00] p-8 min-w-[280px] shadow-[0_20px_50px_rgba(0,0,0,0.5)] relative max-h-[80vh] overflow-y-auto">
                                 <div className="flex flex-col gap-3">
                                     {link.subLinks.map((sub, i) => (
                                         sub.header ? (
-                                            <span key={i} className="font-sans text-[10px] text-[#CCFF00] uppercase tracking-widest mt-3 mb-1 block select-none">
-                                                {sub.header}
-                                            </span>
+                                            <div key={i} className="mt-4 first:mt-0 pb-1 mb-1 border-b border-[#F2F0E9]/10">
+                                                <span className="font-sans text-[10px] text-[#CCFF00] uppercase tracking-widest block select-none">
+                                                    {sub.header}
+                                                </span>
+                                            </div>
                                         ) : (
                                             <Link 
                                                 key={sub.href} 
                                                 href={sub.href!}
-                                                className="font-serif text-lg text-[#F2F0E9] hover:text-[#CCFF00] hover:translate-x-2 transition-all block whitespace-nowrap"
+                                                className="font-serif text-lg text-[#F2F0E9] hover:text-[#CCFF00] hover:translate-x-2 transition-all block whitespace-nowrap opacity-80 hover:opacity-100"
                                             >
                                                 {sub.label}
                                             </Link>
@@ -175,6 +185,11 @@ export default function Header() {
             {/* 3. CTA & ACTIONS */}
             <div className="flex items-center gap-6">
                 
+                {/* Global Map Icon */}
+                <Link href="/country" className={`hidden lg:block p-2 rounded-full border transition-all hover:bg-[#CCFF00] hover:text-[#1a1a1a] hover:border-[#CCFF00] ${getBorderColor()} ${getTextColor()}`}>
+                    <Globe className="w-4 h-4" />
+                </Link>
+
                 {/* Login Icon */}
                 <Link href="/login" className={`hidden lg:block p-2 rounded-full border transition-all hover:bg-[#CCFF00] hover:text-[#1a1a1a] hover:border-[#CCFF00] ${getBorderColor()} ${getTextColor()}`}>
                     <User className="w-4 h-4" />
@@ -235,7 +250,7 @@ export default function Header() {
                                 >
                                     <span className="flex items-baseline gap-4">
                                         <span className="font-sans text-xs font-bold text-[#CCFF00]">0{idx + 1}</span>
-                                        <span className={`font-serif text-4xl md:text-6xl transition-colors ${expandedMobileMenu === link.key ? 'text-[#CCFF00]' : 'text-[#F2F0E9]'}`}>
+                                        <span className={`font-serif text-4xl md:text-5xl transition-colors ${expandedMobileMenu === link.key ? 'text-[#CCFF00]' : 'text-[#F2F0E9]'}`}>
                                             {link.label}
                                         </span>
                                     </span>
@@ -243,18 +258,18 @@ export default function Header() {
                                 </button>
                                 
                                 {/* Sub-menu Links */}
-                                <div className={`overflow-hidden transition-all duration-500 ${expandedMobileMenu === link.key ? 'max-h-[500px] opacity-100 mt-6' : 'max-h-0 opacity-0'}`}>
-                                    <div className="pl-12 flex flex-col gap-4 border-l border-[#F2F0E9]/10 ml-2">
+                                <div className={`overflow-hidden transition-all duration-500 ${expandedMobileMenu === link.key ? 'max-h-[600px] opacity-100 mt-6' : 'max-h-0 opacity-0'}`}>
+                                    <div className="pl-12 flex flex-col gap-3 border-l border-[#F2F0E9]/10 ml-2">
                                         {link.subLinks.map((sub, i) => (
                                             sub.header ? (
-                                                <span key={i} className="font-sans text-xs text-[#CCFF00]/50 uppercase tracking-widest mt-2">
+                                                <span key={i} className="font-sans text-[10px] text-[#CCFF00]/70 uppercase tracking-widest mt-4 first:mt-0">
                                                     {sub.header}
                                                 </span>
                                             ) : (
                                                 <Link 
                                                     key={sub.href} 
                                                     href={sub.href!}
-                                                    className="font-serif text-xl text-[#F2F0E9] hover:text-[#CCFF00] transition-colors"
+                                                    className="font-serif text-lg text-[#F2F0E9] hover:text-[#CCFF00] transition-colors"
                                                 >
                                                     {sub.label}
                                                 </Link>
@@ -270,7 +285,7 @@ export default function Header() {
                                 className="group flex items-baseline gap-4"
                             >
                                 <span className="font-sans text-xs font-bold text-[#CCFF00]">0{idx + 1}</span>
-                                <span className="font-serif text-4xl md:text-6xl text-[#F2F0E9] group-hover:text-[#CCFF00] group-hover:italic transition-all duration-300">
+                                <span className="font-serif text-4xl md:text-5xl text-[#F2F0E9] group-hover:text-[#CCFF00] group-hover:italic transition-all duration-300">
                                     {link.label}
                                 </span>
                             </Link>

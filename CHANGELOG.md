@@ -2,6 +2,12 @@
 
 Record changes before each git push with date/time (minute precision).
 
+## 2025-12-27 19:38
+- Added new country pages under `app/australia/` and `app/country/`.
+- Added privacy and terms pages.
+- Updated header, footer, and contact page.
+- Added `LifestyleCompass` component.
+
 ## 2025-12-27 18:43
 - Added PNP province pages (New Brunswick, Newfoundland, PEI).
 - Added `PNPMasterAssessment` component and updated `app/pnp/page.tsx`.
