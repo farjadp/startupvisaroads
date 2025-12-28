@@ -2,6 +2,9 @@
 
 Record changes before each git push with date/time (minute precision).
 
+## 2025-12-27 19:45
+- Fixed `LifestyleCompass` typing for score updates.
+
 ## 2025-12-27 19:38
 - Added new country pages under `app/australia/` and `app/country/`.
 - Added privacy and terms pages.

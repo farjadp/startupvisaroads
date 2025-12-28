@@ -18,6 +18,9 @@ type ResultProfile = {
   link: string;
 };
 
+type ScoreMap = Record<CountryID, number>;
+type Points = Partial<Record<CountryID, number>>;
+
 const RESULTS: Record<CountryID, ResultProfile> = {
   usa: {
     id: 'usa',
@@ -112,15 +115,17 @@ const QUESTIONS = [
 
 export default function LifestyleCompass() {
   const [step, setStep] = useState(0);
-  const [scores, setScores] = useState<Record<string, number>>({
+  const [scores, setScores] = useState<ScoreMap>({
     usa: 0, canada: 0, uae: 0, australia: 0, nordics: 0, uk: 0
   });
   const [finished, setFinished] = useState(false);
 
-  const handleAnswer = (points: Record<string, number>) => {
+  const handleAnswer = (points: Points) => {
     const newScores = { ...scores };
-    Object.entries(points).forEach(([key, val]) => {
-      if (newScores[key] !== undefined) newScores[key] += val;
+    Object.keys(points).forEach((key) => {
+      const country = key as CountryID;
+      const value = points[country];
+      if (typeof value === 'number') newScores[country] += value;
     });
     setScores(newScores);
 
