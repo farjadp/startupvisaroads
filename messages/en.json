@@ -1,0 +1,39 @@
+{
+    "Hero": {
+        "est": "( EST. 2024 )",
+        "locations": "London • Toronto • Amsterdam <br/> Dubai",
+        "title_first": "BORDER",
+        "title_second": "LESS",
+        "subtitle": "We are the architects of your global expansion. A boutique advisory firm for founders who have outgrown their geography.",
+        "cta": "Start The Process"
+    },
+    "Navigation": {
+        "home": "Home",
+        "advisory": "Advisory",
+        "jurisdictions": "Jurisdictions",
+        "destinations": "Destinations",
+        "mentorship": "Mentorship",
+        "firm": "The Firm",
+        "canada": "Canada",
+        "canada_profile": "Country Profile",
+        "suv": "Start-Up Visa (SUV)",
+        "pnp": "Provincial Nominee (PNP)",
+        "usa": "United States",
+        "usa_profile": "Country Profile",
+        "eb2": "EB-2 NIW (National Interest)",
+        "eb1": "EB-1A (Extraordinary)",
+        "europe": "Europe",
+        "denmark": "Denmark (Start-up)",
+        "finland": "Finland (Fast Track)",
+        "netherlands": "Netherlands",
+        "global": "Global",
+        "uae": "UAE (Golden Visa)",
+        "australia": "Australia (NIV)",
+        "view_all": "View All Regions →",
+        "our_story": "Our Story",
+        "journal": "Journal",
+        "contact": "Contact",
+        "client_login": "Client Login",
+        "book_consultation": "Book Consultation"
+    }
+}

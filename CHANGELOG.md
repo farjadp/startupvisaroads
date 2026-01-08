@@ -2,6 +2,10 @@
 
 Record changes before each git push with date/time (minute precision).
 
+## 2026-01-08 10:55
+- Added Telegram notification support for contact form submissions.
+- Updated About page with "The Architect" section and fixed icon imports.
+
 ## 2025-12-27 19:45
 - Fixed `LifestyleCompass` typing for score updates.
 

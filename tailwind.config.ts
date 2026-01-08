@@ -10,9 +10,10 @@ const config: Config = {
     extend: {
       fontFamily: {
 
-                // اتصال متغیر فونت جدید به کلاس font-serif
-        serif: ["var(--font-serif)", "serif"], 
+        // اتصال متغیر فونت جدید به کلاس font-serif
+        serif: ["var(--font-serif)", "serif"],
         sans: ["var(--font-space)", "sans-serif"],
+        vazir: ["var(--font-vazir)", "sans-serif"],
       },
       colors: {
         paper: "#F2F0E9", // رنگ کاغذ کاهی/استخوانی
