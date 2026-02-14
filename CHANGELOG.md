@@ -2,6 +2,9 @@
 
 Record changes before each git push with date/time (minute precision).
 
+## 2026-02-13 19:33
+- Fixed build error in PNP Brochure page: added missing `videoOpen` state and `VideoBriefing` modal.
+
 ## 2026-01-08 10:55
 - Added Telegram notification support for contact form submissions.
 - Updated About page with "The Architect" section and fixed icon imports.
