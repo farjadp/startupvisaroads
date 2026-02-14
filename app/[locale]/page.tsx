@@ -1,6 +1,7 @@
 // ============================================================================
 // Page: Home
 // Style: Typography-driven, Editorial, "Less is More"
+// src/app/[locale]/page.tsx
 // ============================================================================
 
 import React from 'react';

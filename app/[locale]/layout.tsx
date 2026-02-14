@@ -1,6 +1,7 @@
 // ============================================================================
 // Layout: Modernist Editorial
 // Style: High Fashion, Asymmetric, Raw
+// src/app/[locale]/layout.tsx
 // ============================================================================
 import type { Metadata } from "next";
 import { DM_Serif_Display, Space_Grotesk, Vazirmatn } from "next/font/google";

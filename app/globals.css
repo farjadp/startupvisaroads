@@ -6,7 +6,7 @@
   body {
     @apply bg-paper text-ink;
   }
-  
+
   /* حذف استایل آبی پیش‌فرض هنگام انتخاب متن و جایگزینی با سبز فسفری */
   ::selection {
     background-color: #CCFF00;
@@ -18,9 +18,68 @@
 ::-webkit-scrollbar {
   width: 6px;
 }
+
 ::-webkit-scrollbar-track {
   background: transparent;
 }
+
 ::-webkit-scrollbar-thumb {
   background: #1a1a1a;
+}
+
+
+/* تعریف وزن‌های مختلف فونت IranSansX */
+
+@font-face {
+  font-family: 'IRANSansX';
+  font-style: normal;
+  font-weight: 100;
+  /* Thin */
+  src: url('/fonts/IRANSansX-Thin.woff2') format('woff2'),
+    url('/fonts/IRANSansX-Thin.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'IRANSansX';
+  font-style: normal;
+  font-weight: 300;
+  /* Light */
+  src: url('/fonts/IRANSansX-Light.woff2') format('woff2'),
+    url('/fonts/IRANSansX-Light.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'IRANSansX';
+  font-style: normal;
+  font-weight: 400;
+  /* Regular - نرمال */
+  src: url('/fonts/IRANSansX-Regular.woff2') format('woff2'),
+    url('/fonts/IRANSansX-Regular.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'IRANSansX';
+  font-style: normal;
+  font-weight: 500;
+  /* Medium */
+  src: url('/fonts/IRANSansX-Medium.woff2') format('woff2'),
+    url('/fonts/IRANSansX-Medium.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'IRANSansX';
+  font-style: normal;
+  font-weight: 700;
+  /* Bold */
+  src: url('/fonts/IRANSansX-Bold.woff2') format('woff2'),
+    url('/fonts/IRANSansX-Bold.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'IRANSansX';
+  font-style: normal;
+  font-weight: 900;
+  /* Black */
+  src: url('/fonts/IRANSansX-Black.woff2') format('woff2'),
+    url('/fonts/IRANSansX-Black.woff') format('woff');
 }

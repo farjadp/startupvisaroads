@@ -27,7 +27,8 @@ import {
 
 export default function PersianPNPPage() {
   return (
-    <div className="min-h-screen bg-[#Fdfbf7] text-[#0F172A] font-sans-fa" dir="rtl">
+    <div className="min-h-screen bg-[#Fdfbf7] text-[#0F172A] font-iransans" dir="rtl">
+        
       
       {/* 1. HERO: THE ROYAL DECREE */}
       <section className="relative pt-36 pb-24 px-6 border-b-8 border-[#D4AF37] overflow-hidden">

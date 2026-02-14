@@ -2,6 +2,10 @@
 
 Record changes before each git push with date/time (minute precision).
 
+## 2026-02-13 20:06
+- Fixed `IRANSansX` font path issue in `globals.css` and configured it in `tailwind.config.ts`.
+- Updated Startup Work Permit form: added phone/email fields, updated designated org options, and implemented Telegram notification.
+
 ## 2026-02-13 19:33
 - Fixed build error in PNP Brochure page: added missing `videoOpen` state and `VideoBriefing` modal.
 
