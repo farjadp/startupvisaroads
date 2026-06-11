@@ -1,0 +1,53 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model PageView {
+  id        String   @id @default(cuid())
+  path      String
+  createdAt DateTime @default(now())
+}
+
+model Article {
+  id          String   @id @default(cuid())
+  title       String
+  slug        String   @unique
+  excerpt     String?
+  content     String   // HTML content
+  coverImage  String?
+  status      String   @default("DRAFT") // DRAFT or PUBLISHED
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  categoryId  String?
+  category    Category? @relation(fields: [categoryId], references: [id])
+  
+  tags        Tag[]     @relation("ArticleTags")
+}
+
+model Category {
+  id        String    @id @default(cuid())
+  name      String
+  slug      String    @unique
+  articles  Article[]
+}
+
+model Tag {
+  id        String    @id @default(cuid())
+  name      String    @unique
+  articles  Article[] @relation("ArticleTags")
+}
+
+model AiKeyword {
+  id        String   @id @default(cuid())
+  keyword   String
+  status    String   @default("PENDING") // PENDING, PROCESSING, COMPLETED, ERROR
+  error     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

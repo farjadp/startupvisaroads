@@ -17,12 +17,23 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@prisma/client": "^5.22.0",
     "@swc/helpers": "0.5.18",
+    "@tiptap/extension-image": "^3.26.1",
+    "@tiptap/extension-link": "^3.26.1",
+    "@tiptap/pm": "^3.26.1",
+    "@tiptap/react": "^3.26.1",
+    "@tiptap/starter-kit": "^3.26.1",
+    "cheerio": "^1.2.0",
+    "date-fns": "^4.4.0",
     "lucide-react": "^0.556.0",
     "next": "^16.0.8",
     "next-intl": "^4.6.1",
+    "openai": "^6.42.0",
+    "prisma": "^5.22.0",
     "react": "^19.2.1",
-    "react-dom": "^19.2.1"
+    "react-dom": "^19.2.1",
+    "slugify": "^1.6.9"
   },
   "devDependencies": {
     "@types/node": "^24.10.2",

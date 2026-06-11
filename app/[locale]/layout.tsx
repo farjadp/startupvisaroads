@@ -6,8 +6,7 @@
 import type { Metadata } from "next";
 import { DM_Serif_Display, Space_Grotesk, Vazirmatn } from "next/font/google";
 import "../globals.css";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
+
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
 import { notFound } from 'next/navigation';
@@ -68,11 +67,7 @@ export default async function RootLayout({
           {/* Fixed Grain Overlay */}
           <div className="fixed inset-0 pointer-events-none opacity-[0.03] z-50 mix-blend-multiply bg-[url('https://grainy-gradients.vercel.app/noise.svg')]"></div>
 
-          <Header />
-          <main className="flex-grow pt-24 md:pt-32">
-            {children}
-          </main>
-          <Footer />
+          {children}
         </NextIntlClientProvider>
       </body>
     </html>

@@ -12,6 +12,7 @@ const withNextIntl = createNextIntlPlugin();
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  output: 'standalone',
 
   // Image optimization configuration
   images: {
