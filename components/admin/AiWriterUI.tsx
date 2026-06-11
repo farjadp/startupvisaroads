@@ -74,7 +74,7 @@ export default function AiWriterUI({ queuedKeywords }: any) {
                     {job.status === 'PENDING' && <Clock className="w-4 h-4 text-yellow-500 flex-shrink-0" />}
                     {job.status === 'PROCESSING' && <RefreshCw className="w-4 h-4 text-blue-500 animate-spin flex-shrink-0" />}
                     {job.status === 'COMPLETED' && <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0" />}
-                    {job.status === 'ERROR' && <AlertTriangle className="w-4 h-4 text-red-500 flex-shrink-0" title={job.error} />}
+                    {job.status === 'ERROR' && <span title={job.error ?? 'Error'}><AlertTriangle className="w-4 h-4 text-red-500 flex-shrink-0" /></span>}
                   </li>
                 ))}
                 {queuedKeywords.length === 0 && (
