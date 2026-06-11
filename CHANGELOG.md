@@ -2,6 +2,10 @@
 
 Record changes before each git push with date/time (minute precision).
 
+## 2026-06-11 13:11
+- Expanded the Netherlands Startup Visa page (`app/[locale]/europe/netherlands/page.tsx`) with a detailed roadmap, the 5 strict rules, the 3 agency lies, and a 20-fact comprehensive FAQ section (2-column grid layout).
+- Fixed Unsplash image 404 issues on the Netherlands page by using stable photo IDs.
+
 ## 2026-02-13 20:06
 - Fixed `IRANSansX` font path issue in `globals.css` and configured it in `tailwind.config.ts`.
 - Updated Startup Work Permit form: added phone/email fields, updated designated org options, and implemented Telegram notification.
