@@ -1,6 +1,5 @@
 FROM node:20-alpine AS base
 
-# Install dependencies
 FROM base AS deps
 RUN apk add --no-cache libc6-compat openssl
 WORKDIR /app
@@ -8,21 +7,21 @@ WORKDIR /app
 COPY package.json package-lock.json* ./
 RUN npm ci
 
-# Build stage
 FROM base AS builder
 RUN apk add --no-cache openssl
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Generate Prisma Client for production
+# Use production schema (postgresql) for build
+RUN cp prisma/schema.production.prisma prisma/schema.prisma
 RUN npx prisma generate
 
-# Build Next.js
 ENV NEXT_TELEMETRY_DISABLED=1
+# Build with a placeholder DATABASE_URL so Next.js doesn't fail at build time
+ENV DATABASE_URL="postgresql://placeholder:placeholder@localhost/placeholder"
 RUN npm run build
 
-# Production image
 FROM base AS runner
 RUN apk add --no-cache openssl
 WORKDIR /app
@@ -50,5 +49,4 @@ EXPOSE 8080
 ENV PORT=8080
 ENV HOSTNAME="0.0.0.0"
 
-# Run migrations then start
-CMD ["sh", "-c", "npx prisma migrate deploy && node server.js"]
+CMD ["sh", "-c", "npx prisma migrate deploy --schema=prisma/schema.production.prisma && node server.js"]
