@@ -4,7 +4,7 @@ import { writeFile, mkdir } from 'fs/promises';
 import { join } from 'path';
 
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
+  apiKey: process.env.OPENAI_API_KEY || 'dummy-key-for-build',
 });
 
 const FAL_KEY = process.env.FAL_KEY;
