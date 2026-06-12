@@ -38,11 +38,11 @@ export async function POST(req: NextRequest) {
       counter++;
     }
 
-    // Intelligent category creation and lookup
+    // Intelligent category lookup (restrict to existing categories)
     let categoryId: string | null = null;
     if (payload.category) {
       const categoryName = payload.category.trim();
-      const categorySlug = slugify(categoryName, { lower: true, strict: true }) || 'general';
+      const categorySlug = slugify(categoryName, { lower: true, strict: true });
       
       let category = await prisma.category.findFirst({
         where: {
@@ -53,15 +53,15 @@ export async function POST(req: NextRequest) {
         }
       });
       
-      if (!category) {
-        category = await prisma.category.create({
-          data: {
-            name: categoryName,
-            slug: categorySlug
-          }
-        });
+      if (category) {
+        categoryId = category.id;
+      } else {
+        // Fallback: Use the first category in the database
+        const firstCategory = await prisma.category.findFirst();
+        if (firstCategory) {
+          categoryId = firstCategory.id;
+        }
       }
-      categoryId = category.id;
     }
 
     // Tags processing and association

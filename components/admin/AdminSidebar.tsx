@@ -3,7 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { LayoutDashboard, Users, FileText, Settings, LogOut, BookOpen, Sparkles } from 'lucide-react';
+import { LayoutDashboard, Users, FileText, Settings, LogOut, BookOpen, Sparkles, FolderOpen } from 'lucide-react';
 
 export default function AdminSidebar() {
   const router = useRouter();
@@ -44,6 +44,10 @@ export default function AdminSidebar() {
         <Link href="/en/admin/articles" className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/5 text-white/70 hover:text-white transition-colors">
           <BookOpen className="w-5 h-5" />
           Articles
+        </Link>
+        <Link href="/en/admin/categories" className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/5 text-white/70 hover:text-white transition-colors">
+          <FolderOpen className="w-5 h-5" />
+          Categories
         </Link>
         <Link href="/en/admin/ai-writer" className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/5 text-[#CCFF00] hover:text-[#CCFF00] transition-colors border border-[#CCFF00]/20 bg-[#CCFF00]/5">
           <Sparkles className="w-5 h-5" />

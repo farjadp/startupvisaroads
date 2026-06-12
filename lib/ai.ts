@@ -1,7 +1,7 @@
 import OpenAI from 'openai';
 import * as cheerio from 'cheerio';
-import { writeFile, mkdir } from 'fs/promises';
-import { join } from 'path';
+import prisma from '@/lib/prisma';
+import { ensureDefaultCategories } from '@/lib/categories';
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY || 'dummy-key-for-build',
@@ -56,6 +56,13 @@ export async function scrapeUrl(url: string): Promise<string> {
 }
 
 export async function generateArticlePayload(mode: 'KEYWORD' | 'URL' | 'TEXT', input: string) {
+  // Ensure default categories exist first
+  await ensureDefaultCategories();
+
+  // Fetch existing categories from DB
+  const categories = await prisma.category.findMany();
+  const categoryNames = categories.map(c => c.name);
+
   let sourceText = input;
   
   if (mode === 'URL') {
@@ -96,7 +103,7 @@ export async function generateArticlePayload(mode: 'KEYWORD' | 'URL' | 'TEXT', i
     {
       "title": "SEO Optimized Title",
       "excerpt": "A short 2 sentence excerpt.",
-      "category": "Intelligent category name based on country & program (e.g., 'Canada Startup Visa', 'Netherlands Startup Visa', 'Global Talent Visa')",
+      "category": "Select EXACTLY one of these existing categories: ${JSON.stringify(categoryNames)}. Do NOT create new categories.",
       "tags": ["tag1", "tag2", "tag3"],
       "content": "<h1>...</h1>...[IMAGE_PLACEHOLDER_1]...",
       "quickFacts": {
