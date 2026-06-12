@@ -100,12 +100,12 @@ export default function Header() {
       ]
     },
     { href: '/mentorship', label: t('mentorship') },
+    { href: '/blog', label: t('blog') },
     {
       label: t('firm'),
       key: 'firm',
       subLinks: [
         { href: '/about', label: t('our_story') },
-        { href: '/blog', label: t('journal') },
         { href: '/contact', label: t('contact') },
       ]
     },

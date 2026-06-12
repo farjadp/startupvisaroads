@@ -2,9 +2,26 @@ import { NextRequest, NextResponse } from 'next/server';
 import { generateArticlePayload } from '@/lib/ai';
 import prisma from '@/lib/prisma';
 import slugify from 'slugify';
+import { verifyJWT } from '@/lib/auth';
 
 export async function POST(req: NextRequest) {
   try {
+    // 1. Authenticate the request
+    const sessionCookie = req.cookies.get('admin_session')?.value;
+    const jwtSecret = process.env.JWT_SECRET || 'fallback-secret-key-1234';
+    let isAuthenticated = false;
+    
+    if (sessionCookie) {
+      const payload = await verifyJWT(sessionCookie, jwtSecret);
+      if (payload && payload.username) {
+        isAuthenticated = true;
+      }
+    }
+
+    if (!isAuthenticated) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const { mode, input } = await req.json();
     
     if (!mode || !input) {
@@ -21,6 +38,49 @@ export async function POST(req: NextRequest) {
       counter++;
     }
 
+    // Intelligent category creation and lookup
+    let categoryId: string | null = null;
+    if (payload.category) {
+      const categoryName = payload.category.trim();
+      const categorySlug = slugify(categoryName, { lower: true, strict: true }) || 'general';
+      
+      let category = await prisma.category.findFirst({
+        where: {
+          OR: [
+            { slug: categorySlug },
+            { name: categoryName }
+          ]
+        }
+      });
+      
+      if (!category) {
+        category = await prisma.category.create({
+          data: {
+            name: categoryName,
+            slug: categorySlug
+          }
+        });
+      }
+      categoryId = category.id;
+    }
+
+    // Tags processing and association
+    const tagNames: string[] = payload.tags || [];
+    const tagConnections = [];
+    
+    for (const name of tagNames) {
+      const cleanedName = name.trim();
+      if (!cleanedName) continue;
+      
+      const tag = await prisma.tag.upsert({
+        where: { name: cleanedName },
+        update: {},
+        create: { name: cleanedName }
+      });
+      
+      tagConnections.push({ id: tag.id });
+    }
+
     const article = await prisma.article.create({
       data: {
         title: payload.title,
@@ -28,7 +88,11 @@ export async function POST(req: NextRequest) {
         excerpt: payload.excerpt,
         content: payload.content,
         coverImage: payload.coverImage,
-        status: 'DRAFT', 
+        status: 'PUBLISHED', // Instant publish
+        ...(categoryId ? { categoryId } : {}),
+        tags: {
+          connect: tagConnections
+        }
       }
     });
 

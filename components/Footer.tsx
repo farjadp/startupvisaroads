@@ -5,7 +5,7 @@
 // ============================================================================
 
 import React from 'react';
-import Link from 'next/link';
+import { Link } from '@/navigation';
 import { 
   ArrowUpRight, 
   Linkedin, 
@@ -71,6 +71,7 @@ export default function Footer() {
                     <li><Link href="/services" className="hover:text-[#CCFF00] hover:pl-2 transition-all">Advisory</Link></li>
                     <li><Link href="/mentorship" className="hover:text-[#CCFF00] hover:pl-2 transition-all">Mentorship</Link></li>
                     <li><Link href="/country" className="hover:text-[#CCFF00] hover:pl-2 transition-all">Jurisdictions</Link></li>
+                    <li><Link href="/blog" className="hover:text-[#CCFF00] hover:pl-2 transition-all">Blog</Link></li>
                     <li><Link href="/about" className="hover:text-[#CCFF00] hover:pl-2 transition-all">The Firm</Link></li>
                  </ul>
               </div>
