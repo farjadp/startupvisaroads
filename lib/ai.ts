@@ -35,20 +35,13 @@ export async function generateAndSaveImage(prompt: string): Promise<string> {
   const data = await response.json();
   const imageUrl = data.images[0].url;
 
-  // Download the image and save to public/uploads
+  // Download the image and return as Base64 data URL to prevent stateless 404s
   const imageRes = await fetch(imageUrl);
   const arrayBuffer = await imageRes.arrayBuffer();
   const buffer = Buffer.from(arrayBuffer);
-
-  const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
-  const filename = `ai-${uniqueSuffix}.jpg`;
-  const uploadDir = join(process.cwd(), 'public', 'uploads');
+  const base64 = buffer.toString('base64');
   
-  try { await mkdir(uploadDir, { recursive: true }); } catch (e) {}
-
-  await writeFile(join(uploadDir, filename), buffer);
-  
-  return `/uploads/${filename}`;
+  return `data:image/jpeg;base64,${base64}`;
 }
 
 export async function scrapeUrl(url: string): Promise<string> {

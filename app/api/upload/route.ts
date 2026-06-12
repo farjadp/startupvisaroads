@@ -48,24 +48,11 @@ export async function POST(request: NextRequest) {
 
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
-
-    // Create unique filename
-    const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
-    const filename = `${uniqueSuffix}-${file.name.replace(/[^a-zA-Z0-9.-]/g, '')}`;
+    const base64 = buffer.toString('base64');
+    const mimeType = file.type || 'image/jpeg';
     
-    // Ensure uploads directory exists
-    const uploadDir = join(process.cwd(), 'public', 'uploads');
-    try {
-      await mkdir(uploadDir, { recursive: true });
-    } catch (e) {
-      // Ignore if directory exists
-    }
-
-    const path = join(uploadDir, filename);
-    await writeFile(path, buffer);
-
-    // Return the URL that can be used to access the image
-    const url = `/uploads/${filename}`;
+    // Return Base64 data URL directly
+    const url = `data:${mimeType};base64,${base64}`;
     
     return NextResponse.json({ success: true, url });
   } catch (error) {
