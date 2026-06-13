@@ -1,19 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import slugify from 'slugify';
-import { verifyJWT } from '@/lib/auth';
+import { getSessionFromRequest } from '@/lib/auth';
 
 async function checkAuth(req: NextRequest) {
-  const sessionCookie = req.cookies.get('admin_session')?.value;
-  const jwtSecret = process.env.JWT_SECRET || 'fallback-secret-key-1234';
-  if (!sessionCookie) return false;
-  
-  try {
-    const payload = await verifyJWT(sessionCookie, jwtSecret);
-    return !!(payload && payload.username);
-  } catch (e) {
-    return false;
-  }
+  const session = await getSessionFromRequest(req);
+  return !!session?.username;
 }
 
 export async function GET(req: NextRequest) {

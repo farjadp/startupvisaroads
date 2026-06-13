@@ -55,7 +55,7 @@ export async function scrapeUrl(url: string): Promise<string> {
   return $('body').text().replace(/\s+/g, ' ').trim();
 }
 
-export async function generateArticlePayload(mode: 'KEYWORD' | 'URL' | 'TEXT', input: string) {
+export async function generateArticlePayload(mode: 'KEYWORD' | 'URL' | 'TEXT', input: string, locale: 'en' | 'fa' = 'en') {
   // Ensure default categories exist first
   await ensureDefaultCategories();
 
@@ -64,15 +64,19 @@ export async function generateArticlePayload(mode: 'KEYWORD' | 'URL' | 'TEXT', i
   const categoryNames = categories.map(c => c.name);
 
   let sourceText = input;
-  
+
   if (mode === 'URL') {
     sourceText = await scrapeUrl(input);
   }
 
+  const languageName = locale === 'fa' ? 'Persian (Farsi)' : 'English';
+
   const prompt = `
     You are an expert Content Writer and SEO/AEO/AIO (Search, Answer, and AI Engine Optimization) specialist.
     I need you to write/rewrite a highly engaging, optimized article based on the input.
-    
+
+    IMPORTANT: Write the ENTIRE article (title, excerpt, content, tags, quickFacts) in ${languageName}.
+
     Mode: ${mode}
     Input Data: ${sourceText}
 
@@ -133,9 +137,16 @@ export async function generateArticlePayload(mode: 'KEYWORD' | 'URL' | 'TEXT', i
   const rawJson = completion.choices[0].message.content || '{}';
   const result = JSON.parse(rawJson);
 
-  // Generate Images
-  const coverImageUrl = await generateAndSaveImage(result.coverImagePrompt);
-  
+  // Generate cover image — never let a failed image abort the whole article.
+  let coverImageUrl: string | null = null;
+  try {
+    if (result.coverImagePrompt) {
+      coverImageUrl = await generateAndSaveImage(result.coverImagePrompt);
+    }
+  } catch (e) {
+    console.error('Failed to generate cover image, continuing without it', e);
+  }
+
   let finalContent = result.content;
   if (result.inTextImagePrompts && result.inTextImagePrompts.length > 0) {
     for (let i = 0; i < result.inTextImagePrompts.length; i++) {

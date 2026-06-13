@@ -21,13 +21,16 @@ model Article {
   content     String   // HTML content
   coverImage  String?
   status      String   @default("DRAFT") // DRAFT or PUBLISHED
+  locale      String   @default("en") // en or fa
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
   categoryId  String?
   category    Category? @relation(fields: [categoryId], references: [id])
-  
+
   tags        Tag[]     @relation("ArticleTags")
+
+  @@index([locale, status, createdAt])
 }
 
 model Category {

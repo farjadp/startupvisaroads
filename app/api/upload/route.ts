@@ -1,23 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { writeFile, mkdir } from 'fs/promises';
-import { join } from 'path';
-import { verifyJWT } from '@/lib/auth';
+import { getSessionFromRequest } from '@/lib/auth';
 
 export async function POST(request: NextRequest) {
   try {
     // 1. Authenticate the request
-    const sessionCookie = request.cookies.get('admin_session')?.value;
-    const jwtSecret = process.env.JWT_SECRET || 'fallback-secret-key-1234';
-    let isAuthenticated = false;
-    
-    if (sessionCookie) {
-      const payload = await verifyJWT(sessionCookie, jwtSecret);
-      if (payload && payload.username) {
-        isAuthenticated = true;
-      }
-    }
-
-    if (!isAuthenticated) {
+    const session = await getSessionFromRequest(request);
+    if (!session?.username) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
 

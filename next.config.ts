@@ -14,13 +14,14 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   output: 'standalone',
 
-  // Image optimization configuration
+  // Image optimization configuration.
+  // Restricted to known hosts to avoid acting as an open image proxy.
+  // (Generated/uploaded images are stored as inline base64 data URLs.)
   images: {
     remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "**",
-      },
+      { protocol: "https", hostname: "fal.media" },
+      { protocol: "https", hostname: "*.fal.media" },
+      { protocol: "https", hostname: "fal.run" },
     ],
   },
 

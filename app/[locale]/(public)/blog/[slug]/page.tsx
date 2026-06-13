@@ -1,8 +1,12 @@
 import React from 'react';
+import type { Metadata } from 'next';
 import prisma from '@/lib/prisma';
 import { notFound } from 'next/navigation';
 import * as cheerio from 'cheerio';
 import { Link } from '@/navigation';
+import JsonLd from '@/components/JsonLd';
+import { sanitizeHtml, extractFaqs } from '@/lib/sanitize';
+import { SITE_URL, articleJsonLd, breadcrumbJsonLd, faqJsonLd, ogLocale } from '@/lib/seo';
 import { 
   Clock, 
   BarChart, 
@@ -119,6 +123,62 @@ function getRecommendedService(title: string, categoryName: string, locale: stri
     desc: isRtl 
       ? 'تدوین و توسعه اسناد استراتژیک تجاری اعم از بیزینس پلن، مالی پروفرما و پیچ دک برای موفقیت در پرونده‌های مهاجرتی.' 
       : 'Transforming ideas into data-driven artifacts: Business Plans, Financial Projections, and Pitch Decks.',
+  };
+}
+
+// Incrementally regenerate article pages (ISR) — fast, cacheable, SEO-friendly.
+export const revalidate = 3600;
+
+export async function generateStaticParams() {
+  try {
+    const articles = await prisma.article.findMany({
+      where: { status: 'PUBLISHED' },
+      select: { slug: true, locale: true },
+    });
+    return articles.map((a) => ({ locale: a.locale === 'fa' ? 'fa' : 'en', slug: a.slug }));
+  } catch {
+    return [];
+  }
+}
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string; slug: string }> }): Promise<Metadata> {
+  const { locale, slug } = await params;
+  const article = await prisma.article.findUnique({
+    where: { slug },
+    include: { category: true, tags: true },
+  });
+
+  if (!article || article.status !== 'PUBLISHED') {
+    return { title: 'Not Found', robots: { index: false, follow: false } };
+  }
+
+  // Single-locale article: canonical points at its own locale to avoid
+  // duplicate content if it is reachable under both /en and /fa prefixes.
+  const articleLocale = article.locale === 'fa' ? 'fa' : 'en';
+  const canonical = `${SITE_URL}/${articleLocale}/blog/${article.slug}`;
+  const description = (article.excerpt || article.title).slice(0, 200);
+
+  return {
+    title: article.title,
+    description,
+    alternates: { canonical, languages: { [articleLocale]: canonical } },
+    openGraph: {
+      type: 'article',
+      url: canonical,
+      title: article.title,
+      description,
+      locale: ogLocale(articleLocale),
+      publishedTime: new Date(article.createdAt).toISOString(),
+      modifiedTime: new Date(article.updatedAt).toISOString(),
+      tags: article.tags.map((t) => t.name),
+      images: article.coverImage ? [{ url: article.coverImage, alt: article.title }] : undefined,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: article.title,
+      description,
+      images: article.coverImage ? [article.coverImage] : undefined,
+    },
   };
 }
 
@@ -307,8 +367,37 @@ export default async function BlogPostPage({ params }: { params: { locale: strin
   // 5. Context-aware service recommender calculation
   const recommendedService = getRecommendedService(article.title, article.category?.name || '', locale);
 
+  // 6. Sanitize HTML before rendering (defends against XSS from generated/edited content)
+  const safeContent = sanitizeHtml(cleanContent);
+
+  // 7. Build structured data (Article + Breadcrumb + FAQ) for SEO/AEO/GEO
+  const articleLocale = article.locale === 'fa' ? 'fa' : 'en';
+  const articleUrl = `${SITE_URL}/${articleLocale}/blog/${article.slug}`;
+  const faqs = extractFaqs(safeContent);
+  const structuredData = [
+    articleJsonLd({
+      title: article.title,
+      description: (article.excerpt || article.title).slice(0, 200),
+      url: articleUrl,
+      image: article.coverImage,
+      datePublished: article.createdAt,
+      dateModified: article.updatedAt,
+      locale: articleLocale,
+      section: article.category?.name,
+      tags: article.tags.map((tg) => tg.name),
+    }),
+    breadcrumbJsonLd([
+      { name: t.home, url: `${SITE_URL}/${locale}` },
+      { name: t.blog, url: `${SITE_URL}/${locale}/blog` },
+      ...(article.category ? [{ name: article.category.name, url: `${SITE_URL}/${locale}/blog/category/${article.category.slug}` }] : []),
+      { name: article.title, url: articleUrl },
+    ]),
+    faqJsonLd(faqs),
+  ];
+
   return (
     <div className="container mx-auto px-6 py-12 md:py-20 max-w-3xl" dir={isRtl ? 'rtl' : 'ltr'}>
+      <JsonLd data={structuredData} />
       {/* Scroll Progress Bar Client Component */}
       <ScrollProgressBar />
 
@@ -389,9 +478,9 @@ export default async function BlogPostPage({ params }: { params: { locale: strin
       </div>
 
       {/* Render HTML content safely */}
-      <article 
-        className="prose prose-lg md:prose-xl prose-headings:font-serif prose-headings:font-bold prose-a:text-[#1a1a1a] prose-a:underline max-w-none text-[#1a1a1a]/80" 
-        dangerouslySetInnerHTML={{ __html: cleanContent }} 
+      <article
+        className="prose prose-lg md:prose-xl prose-headings:font-serif prose-headings:font-bold prose-a:text-[#1a1a1a] prose-a:underline max-w-none text-[#1a1a1a]/80"
+        dangerouslySetInnerHTML={{ __html: safeContent }}
       />
 
       {/* Context-Aware Recommended Service Card */}

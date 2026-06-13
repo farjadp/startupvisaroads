@@ -1,9 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server';
 import createMiddleware from 'next-intl/middleware';
 import { routing } from './routing';
-import { verifyJWT } from './lib/auth';
+import { verifyJWT, getJwtSecret } from './lib/auth';
 
 const intlMiddleware = createMiddleware(routing);
+
+// Returns the verified admin payload, or null. Fails closed: if the JWT secret
+// is misconfigured we treat the request as unauthenticated rather than crashing.
+async function getAdminPayload(request: NextRequest): Promise<any | null> {
+  const sessionCookie = request.cookies.get('admin_session')?.value;
+  if (!sessionCookie) return null;
+  try {
+    const payload = await verifyJWT(sessionCookie, getJwtSecret());
+    return payload && payload.username ? payload : null;
+  } catch {
+    return null;
+  }
+}
 
 export default async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -12,18 +25,8 @@ export default async function middleware(request: NextRequest) {
   const isLoginPage = /^\/(en|fa)\/admin\/login(\/|$)/.test(pathname) || pathname === '/admin/login';
 
   if (isAdminPath && !isLoginPage) {
-    const sessionCookie = request.cookies.get('admin_session')?.value;
-    const jwtSecret = process.env.JWT_SECRET || 'fallback-secret-key-1234';
-
-    let isAuthenticated = false;
-    if (sessionCookie) {
-      const payload = await verifyJWT(sessionCookie, jwtSecret);
-      if (payload && payload.username) {
-        isAuthenticated = true;
-      }
-    }
-
-    if (!isAuthenticated) {
+    const payload = await getAdminPayload(request);
+    if (!payload) {
       const localeMatch = pathname.match(/^\/(en|fa)/);
       const locale = localeMatch ? localeMatch[1] : 'en';
 
@@ -34,16 +37,11 @@ export default async function middleware(request: NextRequest) {
   }
 
   if (isLoginPage) {
-    const sessionCookie = request.cookies.get('admin_session')?.value;
-    const jwtSecret = process.env.JWT_SECRET || 'fallback-secret-key-1234';
-
-    if (sessionCookie) {
-      const payload = await verifyJWT(sessionCookie, jwtSecret);
-      if (payload && payload.username) {
-        const localeMatch = pathname.match(/^\/(en|fa)/);
-        const locale = localeMatch ? localeMatch[1] : 'en';
-        return NextResponse.redirect(new URL(`/${locale}/admin`, request.url));
-      }
+    const payload = await getAdminPayload(request);
+    if (payload) {
+      const localeMatch = pathname.match(/^\/(en|fa)/);
+      const locale = localeMatch ? localeMatch[1] : 'en';
+      return NextResponse.redirect(new URL(`/${locale}/admin`, request.url));
     }
   }
 

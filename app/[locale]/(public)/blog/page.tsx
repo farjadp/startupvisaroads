@@ -1,9 +1,26 @@
 import React from 'react';
+import type { Metadata } from 'next';
 import prisma from '@/lib/prisma';
 import { Link } from '@/navigation';
 import { Clock, Tag } from 'lucide-react';
+import { buildMetadata } from '@/lib/seo';
 
-export default async function BlogPage({ 
+export const revalidate = 600;
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  const isRtl = locale === 'fa';
+  return buildMetadata({
+    locale,
+    path: '/blog',
+    title: isRtl ? 'مجله — راهنماها و تحلیل‌های ویزای استارتاپ' : 'The Journal — Startup Visa Guides & Analysis',
+    description: isRtl
+      ? 'آخرین تحلیل‌ها، راهنماهای گام‌به‌گام مهاجرت استارتاپی و به‌روزرسانی قوانین مهاجرتی جهان.'
+      : 'Insights, step-by-step guides, and regulatory updates on global startup visas and mobility.',
+  });
+}
+
+export default async function BlogPage({
   params, 
   searchParams 
 }: { 
@@ -46,19 +63,20 @@ export default async function BlogPage({
     pageOf: 'Page {current} of {total}',
   };
 
-  // Fetch categories that have at least one published article
+  // Fetch categories that have at least one published article in this locale
   const categories = await prisma.category.findMany({
     where: {
       articles: {
-        some: { status: 'PUBLISHED' }
+        some: { status: 'PUBLISHED', locale }
       }
     }
   });
 
   // Fetch total count of articles matching filter
   const totalCount = await prisma.article.count({
-    where: { 
+    where: {
       status: 'PUBLISHED',
+      locale,
       ...(activeCategorySlug ? { category: { slug: activeCategorySlug } } : {})
     }
   });
@@ -69,8 +87,9 @@ export default async function BlogPage({
   
   if (activeCategorySlug) {
     gridArticles = await prisma.article.findMany({
-      where: { 
+      where: {
         status: 'PUBLISHED',
+        locale,
         category: { slug: activeCategorySlug }
       },
       orderBy: { createdAt: 'desc' },
@@ -81,7 +100,7 @@ export default async function BlogPage({
   } else {
     if (page === 1) {
       const articles = await prisma.article.findMany({
-        where: { status: 'PUBLISHED' },
+        where: { status: 'PUBLISHED', locale },
         orderBy: { createdAt: 'desc' },
         skip: 0,
         take: pageSize + 1,
@@ -91,7 +110,7 @@ export default async function BlogPage({
       gridArticles = featuredArticle ? articles.slice(1) : articles;
     } else {
       gridArticles = await prisma.article.findMany({
-        where: { status: 'PUBLISHED' },
+        where: { status: 'PUBLISHED', locale },
         orderBy: { createdAt: 'desc' },
         skip: 1 + (page - 1) * pageSize,
         take: pageSize,

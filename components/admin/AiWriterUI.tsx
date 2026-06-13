@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 
 export default function AiWriterUI({ queuedKeywords }: any) {
   const [activeTab, setActiveTab] = useState<'KEYWORD' | 'AUTO' | 'URL' | 'TEXT'>('KEYWORD');
+  const [language, setLanguage] = useState<'en' | 'fa'>('en');
   const [isGenerating, setIsGenerating] = useState(false);
   const router = useRouter();
 
@@ -20,11 +21,11 @@ export default function AiWriterUI({ queuedKeywords }: any) {
       const res = await fetch('/api/ai/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ mode: activeTab, input })
+        body: JSON.stringify({ mode: activeTab, input, locale: language })
       });
       const data = await res.json();
       if (data.success) {
-        alert('Article generated successfully and saved as DRAFT!');
+        alert('Article generated and published successfully!');
         router.push(`/en/admin/articles/${data.articleId}/edit`);
       } else {
         alert('Generation failed: ' + data.error);
@@ -132,6 +133,14 @@ export default function AiWriterUI({ queuedKeywords }: any) {
             {activeTab === 'TEXT' && (
               <textarea name="input" required rows={8} placeholder="Paste raw content here..." className="w-full bg-[#1a1a1a]/[0.02] border border-[#1a1a1a]/10 rounded-xl px-4 py-3 font-sans text-sm focus:outline-none focus:border-[#CCFF00] mb-6"></textarea>
             )}
+
+            <div className="flex items-center gap-3 mb-6">
+              <span className="font-sans text-xs font-bold uppercase tracking-widest text-[#1a1a1a]/40">Output Language:</span>
+              <div className="flex rounded-lg overflow-hidden border border-[#1a1a1a]/10">
+                <button type="button" onClick={() => setLanguage('en')} className={`px-4 py-2 font-sans text-xs font-bold uppercase tracking-widest transition-colors ${language === 'en' ? 'bg-[#1a1a1a] text-[#CCFF00]' : 'bg-transparent text-[#1a1a1a]/50 hover:bg-[#1a1a1a]/[0.04]'}`}>English</button>
+                <button type="button" onClick={() => setLanguage('fa')} className={`px-4 py-2 font-sans text-xs font-bold uppercase tracking-widest transition-colors ${language === 'fa' ? 'bg-[#1a1a1a] text-[#CCFF00]' : 'bg-transparent text-[#1a1a1a]/50 hover:bg-[#1a1a1a]/[0.04]'}`}>فارسی</button>
+              </div>
+            </div>
 
             <button disabled={isGenerating} type="submit" className="bg-[#1a1a1a] text-[#F2F0E9] px-8 py-4 font-sans text-sm font-bold uppercase tracking-widest hover:bg-[#CCFF00] hover:text-[#1a1a1a] transition-colors rounded-xl flex items-center justify-center gap-2 w-full shadow-lg disabled:opacity-50 disabled:cursor-not-allowed">
               {isGenerating ? (

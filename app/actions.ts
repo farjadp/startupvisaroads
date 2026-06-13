@@ -9,25 +9,23 @@ export async function sendTelegramNotification(formData: any, analysisResults: a
     return { success: false };
   }
 
-  // ساخت پیام زیبا برای تلگرام
-  const message = `
-🚀 **New Lead Generated** (SVR Assessment)
+  // Plain text (no parse_mode) so user input can never inject Telegram markup.
+  const message = `🚀 New Lead Generated (SVR Assessment)
 ----------------------------------
-👤 **Name:** ${formData.fullName}
-📧 **Email:** ${formData.email}
-📱 **Phone:** ${formData.phone}
+👤 Name: ${formData.fullName}
+📧 Email: ${formData.email}
+📱 Phone: ${formData.phone}
 ----------------------------------
-💰 **Net Worth:** ${formData.netWorth}
-💵 **Liquidity:** ${formData.investment}
-🎓 **Education:** ${formData.education}
-🗣 **English:** ${formData.english}
+💰 Net Worth: ${formData.netWorth}
+💵 Liquidity: ${formData.investment}
+🎓 Education: ${formData.education}
+🗣 English: ${formData.english}
 ----------------------------------
-📊 **Auto-Analysis Results:**
+📊 Auto-Analysis Results:
 🇨🇦 Ontario: ${analysisResults.ontario}%
 🇨🇦 BC Tech: ${analysisResults.bc}%
 🇨🇦 Alberta: ${analysisResults.alberta}%
-🇨🇦 Sask: ${analysisResults.sask}%
-  `;
+🇨🇦 Sask: ${analysisResults.sask}%`;
 
   try {
     const url = `https://api.telegram.org/bot${botToken}/sendMessage`;
@@ -37,7 +35,6 @@ export async function sendTelegramNotification(formData: any, analysisResults: a
       body: JSON.stringify({
         chat_id: chatId,
         text: message,
-        parse_mode: 'Markdown',
       }),
     });
     return { success: true };

@@ -1,10 +1,32 @@
 import React from 'react';
+import type { Metadata } from 'next';
 import prisma from '@/lib/prisma';
 import { notFound } from 'next/navigation';
 import { Link } from '@/navigation';
 import { Clock, ArrowLeft, ArrowRight } from 'lucide-react';
+import JsonLd from '@/components/JsonLd';
+import { buildMetadata, breadcrumbJsonLd, SITE_URL } from '@/lib/seo';
 
-export default async function CategoryArchivePage({ 
+export const revalidate = 600;
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string; slug: string }> }): Promise<Metadata> {
+  const { locale, slug } = await params;
+  const category = await prisma.category.findUnique({ where: { slug } });
+  if (!category) {
+    return { title: 'Not Found', robots: { index: false, follow: false } };
+  }
+  const isRtl = locale === 'fa';
+  return buildMetadata({
+    locale,
+    path: `/blog/category/${slug}`,
+    title: isRtl ? `${category.name} — مقالات` : `${category.name} — Articles`,
+    description: isRtl
+      ? `جدیدترین راهنماها و تحلیل‌های دسته‌ی «${category.name}» در راه‌های ویزای استارتاپ.`
+      : `The latest guides and analysis in the "${category.name}" collection from Startup Visa Roads.`,
+  });
+}
+
+export default async function CategoryArchivePage({
   params 
 }: { 
   params: { locale: string; slug: string } 
@@ -23,10 +45,11 @@ export default async function CategoryArchivePage({
     return notFound();
   }
 
-  // Find articles belonging to this category
+  // Find articles belonging to this category (current locale)
   const articles = await prisma.article.findMany({
     where: {
       status: 'PUBLISHED',
+      locale,
       categoryId: category.id
     },
     orderBy: { createdAt: 'desc' },
@@ -64,6 +87,11 @@ export default async function CategoryArchivePage({
 
   return (
     <div className="container mx-auto px-6 py-12 md:py-20 max-w-5xl" dir={isRtl ? 'rtl' : 'ltr'}>
+      <JsonLd data={breadcrumbJsonLd([
+        { name: isRtl ? 'خانه' : 'Home', url: `${SITE_URL}/${locale}` },
+        { name: isRtl ? 'مجله خبری' : 'Journal', url: `${SITE_URL}/${locale}/blog` },
+        { name: category.name, url: `${SITE_URL}/${locale}/blog/category/${category.slug}` },
+      ])} />
       {/* Editorial Header */}
       <div className="border-b-4 border-[#1a1a1a] pb-10 mb-12">
         <Link 

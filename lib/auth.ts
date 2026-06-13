@@ -1,6 +1,54 @@
 // A lightweight JWT implementation using Web Crypto API.
 // Fully compatible with Edge Runtime (Next.js Middleware) and Node.js.
 
+import type { NextRequest } from 'next/server';
+
+/**
+ * Returns the JWT signing secret, throwing if it is missing or too weak.
+ * There is intentionally NO insecure fallback — a predictable secret would let
+ * anyone forge an admin session.
+ */
+export function getJwtSecret(): string {
+  const secret = process.env.JWT_SECRET;
+  if (!secret || secret.length < 16) {
+    throw new Error('JWT_SECRET environment variable is not set or is too weak (minimum 16 characters).');
+  }
+  return secret;
+}
+
+/** SHA-256 hex digest (Edge-compatible) — used for hashed password comparison. */
+export async function sha256Hex(input: string): Promise<string> {
+  const data = new TextEncoder().encode(input);
+  const digest = await crypto.subtle.digest('SHA-256', data);
+  return Array.from(new Uint8Array(digest))
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('');
+}
+
+/** Constant-time string comparison to avoid leaking length/content via timing. */
+export function safeCompare(a: string, b: string): boolean {
+  const enc = new TextEncoder();
+  const ab = enc.encode(a);
+  const bb = enc.encode(b);
+  const len = Math.max(ab.length, bb.length);
+  let result = ab.length === bb.length ? 0 : 1;
+  for (let i = 0; i < len; i++) {
+    result |= (ab[i] ?? 0) ^ (bb[i] ?? 0);
+  }
+  return result === 0;
+}
+
+/** Verify the admin session cookie on a request; returns the payload or null. */
+export async function getSessionFromRequest(req: NextRequest): Promise<any | null> {
+  const token = req.cookies.get('admin_session')?.value;
+  if (!token) return null;
+  try {
+    return await verifyJWT(token, getJwtSecret());
+  } catch {
+    return null;
+  }
+}
+
 function base64urlEncode(str: string): string {
   const encoder = new TextEncoder();
   const bytes = encoder.encode(str);

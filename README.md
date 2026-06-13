@@ -8,9 +8,11 @@ Startup Visa Roads provides expert mentorship and business development services 
 
 ## 🎯 Key Features
 
-- **Modern Tech Stack**: Next.js 15, TypeScript, Tailwind CSS
+- **Modern Tech Stack**: Next.js 16, TypeScript, Tailwind CSS
+- **AI-Powered Content Writer**: Automated editorial rewriter using GPT-4o and Fal.ai (Flux) cover/inline image generators.
+- **Admin Console & Category CRUD**: Robust admin dashboard for managing articles, tiptap-enabled manual uploads, and categories.
 - **Responsive Design**: Mobile-first approach with RTL support
-- **SEO Optimized**: Comprehensive metadata and semantic HTML for search engines and AI crawlers
+- **SEO & AEO Optimized**: Comprehensive JSON-LD structured data (Article, FAQ, Breadcrumbs), alternate canonical tags, ISR, and HTML sanitization.
 - **Component-Based**: Reusable, maintainable components
 - **Brand Aligned**: Professional navy/gold/magenta color scheme
 - **Clear Positioning**: Explicit disclaimers throughout about NOT being immigration attorneys

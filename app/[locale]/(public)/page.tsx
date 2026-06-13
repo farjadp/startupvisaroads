@@ -5,9 +5,26 @@
 // ============================================================================
 
 import React from 'react';
+import type { Metadata } from 'next';
 import { Link } from '@/navigation';
 import { ArrowDownRight, ArrowRight } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import { buildMetadata } from '@/lib/seo';
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  const isRtl = locale === 'fa';
+  return buildMetadata({
+    locale,
+    path: '/',
+    title: isRtl
+      ? 'مشاوره ویزای استارتاپ و مهاجرت کارآفرینی'
+      : 'Startup Visa & Global Mobility Mentorship',
+    description: isRtl
+      ? 'مسیر سرمایه‌گذاری و کارآفرینی به سمت اقامت جهانی: ویزای استارتاپ کانادا، PNP، EB-1/EB-2 NIW/EB-5 آمریکا و برنامه‌های اروپا و استرالیا.'
+      : 'Your curated path to global residency: Canada Startup Visa, Provincial Nominee Programs, US EB-1/EB-2 NIW/EB-5, and European & Australian entrepreneur pathways.',
+  });
+}
 
 export default function HomePage() {
    const t = useTranslations('Hero');

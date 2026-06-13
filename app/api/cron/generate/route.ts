@@ -1,12 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { generateArticlePayload } from '@/lib/ai';
-import slugify from 'slugify';
+import { createArticleFromPayload } from '@/lib/articles';
+import { safeCompare } from '@/lib/auth';
 
 export const dynamic = 'force-dynamic';
 
+// Detect article language from the keyword (presence of Persian/Arabic script).
+function detectLocale(text: string): 'en' | 'fa' {
+  return /[؀-ۿ]/.test(text) ? 'fa' : 'en';
+}
+
 export async function GET(request: NextRequest) {
-  // Verify cron secret token
+  // Verify cron secret token (constant-time)
   const authHeader = request.headers.get('Authorization');
   const querySecret = request.nextUrl.searchParams.get('secret');
   const cronSecret = process.env.CRON_SECRET;
@@ -16,111 +22,52 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: 'CRON_SECRET server configuration missing' }, { status: 500 });
   }
 
-  const token = authHeader?.startsWith('Bearer ') ? authHeader.substring(7) : querySecret;
-  if (token !== cronSecret) {
+  const token = authHeader?.startsWith('Bearer ') ? authHeader.substring(7) : (querySecret || '');
+  if (!safeCompare(token, cronSecret)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   let keywordJobId: string | null = null;
-  
+
   try {
     const keywordJob = await prisma.aiKeyword.findFirst({
       where: { status: 'PENDING' },
-      orderBy: { createdAt: 'asc' }
+      orderBy: { createdAt: 'asc' },
     });
 
     if (!keywordJob) {
       return NextResponse.json({ success: true, message: 'No pending keywords found' });
     }
 
+    // Atomically claim the job: only succeeds if it is still PENDING. This
+    // prevents two overlapping cron runs from processing the same keyword.
+    const claim = await prisma.aiKeyword.updateMany({
+      where: { id: keywordJob.id, status: 'PENDING' },
+      data: { status: 'PROCESSING' },
+    });
+    if (claim.count === 0) {
+      return NextResponse.json({ success: true, message: 'Keyword already claimed by another run' });
+    }
+
     keywordJobId = keywordJob.id;
+    const locale = detectLocale(keywordJob.keyword);
+
+    const payload = await generateArticlePayload('KEYWORD', keywordJob.keyword, locale);
+    await createArticleFromPayload(payload, { locale, status: 'PUBLISHED' });
 
     await prisma.aiKeyword.update({
       where: { id: keywordJob.id },
-      data: { status: 'PROCESSING' }
-    });
-
-    const payload = await generateArticlePayload('KEYWORD', keywordJob.keyword);
-
-    const baseSlug = slugify(payload.title, { lower: true, strict: true });
-    let slug = baseSlug;
-    let counter = 1;
-    while (await prisma.article.findUnique({ where: { slug } })) {
-      slug = `${baseSlug}-${counter}`;
-      counter++;
-    }
-
-    // Intelligent category creation and lookup
-    let categoryId: string | null = null;
-    if (payload.category) {
-      const categoryName = payload.category.trim();
-      const categorySlug = slugify(categoryName, { lower: true, strict: true }) || 'general';
-      
-      let category = await prisma.category.findFirst({
-        where: {
-          OR: [
-            { slug: categorySlug },
-            { name: categoryName }
-          ]
-        }
-      });
-      
-      if (!category) {
-        category = await prisma.category.create({
-          data: {
-            name: categoryName,
-            slug: categorySlug
-          }
-        });
-      }
-      categoryId = category.id;
-    }
-
-    // Tags processing and association
-    const tagNames: string[] = payload.tags || [];
-    const tagConnections = [];
-    
-    for (const name of tagNames) {
-      const cleanedName = name.trim();
-      if (!cleanedName) continue;
-      
-      const tag = await prisma.tag.upsert({
-        where: { name: cleanedName },
-        update: {},
-        create: { name: cleanedName }
-      });
-      
-      tagConnections.push({ id: tag.id });
-    }
-
-    await prisma.article.create({
-      data: {
-        title: payload.title,
-        slug,
-        excerpt: payload.excerpt,
-        content: payload.content,
-        coverImage: payload.coverImage,
-        status: 'PUBLISHED', // Instant publish
-        ...(categoryId ? { categoryId } : {}),
-        tags: {
-          connect: tagConnections
-        }
-      }
-    });
-
-    await prisma.aiKeyword.update({
-      where: { id: keywordJob.id },
-      data: { status: 'COMPLETED' }
+      data: { status: 'COMPLETED' },
     });
 
     return NextResponse.json({ success: true, keyword: keywordJob.keyword });
   } catch (error: any) {
     console.error('Cron AI Generation Error:', error);
-    
+
     if (keywordJobId) {
       await prisma.aiKeyword.update({
         where: { id: keywordJobId },
-        data: { status: 'ERROR', error: error.message }
+        data: { status: 'ERROR', error: error.message },
       });
     }
 

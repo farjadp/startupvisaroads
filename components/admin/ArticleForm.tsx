@@ -84,6 +84,13 @@ export default function ArticleForm({ article = null, categories = [] }: any) {
               <option value="PUBLISHED">Published</option>
             </select>
           </div>
+          <div>
+            <label className="block font-sans text-sm font-bold uppercase tracking-widest text-[#1a1a1a]/60 mb-2">Language</label>
+            <select name="locale" defaultValue={article?.locale || 'en'} className="w-full bg-[#1a1a1a]/[0.02] border border-[#1a1a1a]/10 rounded-xl px-4 py-3 font-sans text-sm focus:outline-none focus:border-[#CCFF00] focus:ring-1 focus:ring-[#CCFF00]">
+              <option value="en">English</option>
+              <option value="fa">فارسی</option>
+            </select>
+          </div>
         </div>
 
         <div>
