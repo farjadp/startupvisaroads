@@ -1,6 +1,7 @@
 import React from 'react';
 import type { Metadata } from 'next';
 import prisma from '@/lib/prisma';
+import { setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import * as cheerio from 'cheerio';
 import { Link } from '@/navigation';
@@ -182,9 +183,10 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   };
 }
 
-export default async function BlogPostPage({ params }: { params: { locale: string; slug: string } }) {
+export default async function BlogPostPage({ params }: { params: Promise<{ locale: string; slug: string }> }) {
   const resolvedParams = await params;
   const { locale, slug } = resolvedParams;
+  setRequestLocale(locale);
 
   const article = await prisma.article.findUnique({
     where: { slug },

@@ -8,8 +8,9 @@ import { DM_Serif_Display, Space_Grotesk, Vazirmatn } from "next/font/google";
 import "../globals.css";
 
 import { NextIntlClientProvider } from 'next-intl';
-import { getMessages } from 'next-intl/server';
+import { getMessages, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
+import { routing } from '@/routing';
 import JsonLd from '@/components/JsonLd';
 import { SITE_URL, SITE_NAME, DEFAULT_OG_IMAGE, buildAlternates, ogLocale, organizationJsonLd, websiteJsonLd } from '@/lib/seo';
 
@@ -33,6 +34,10 @@ const vazir = Vazirmatn({
   display: "swap",
   variable: "--font-vazir",
 });
+
+export function generateStaticParams() {
+  return routing.locales.map((locale) => ({ locale }));
+}
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
@@ -75,6 +80,7 @@ export default async function RootLayout({
   params: Promise<{ locale: string }>;
 }>) {
   const { locale } = await params;
+  setRequestLocale(locale);
 
   // Validate locale (optional if handled by middleware, but good as fallback)
   if (!['en', 'fa'].includes(locale)) {

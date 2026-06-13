@@ -18,9 +18,16 @@ export async function ensureDefaultCategories() {
     console.log('Seeding default categories...');
     for (const name of DEFAULT_CATEGORIES) {
       const slug = slugify(name, { lower: true, strict: true }) || 'general';
-      await prisma.category.create({
-        data: { name, slug }
-      });
+      try {
+        await prisma.category.upsert({
+          where: { slug },
+          update: {},
+          create: { name, slug }
+        });
+      } catch (err) {
+        // Ignore unique constraint or parallel insert errors
+        console.warn(`Parallel seeding ignored/handled for ${slug}`);
+      }
     }
   }
 }
