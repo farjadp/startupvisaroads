@@ -169,14 +169,21 @@ async function shareToLinkedin(
           registerUploadRequest: {
             recipes: ['urn:li:digitalmediaRecipe:feedshare-image'],
             owner: authorUrn,
-            supportedUploadMechanisms: ['SYNCHRONOUS_UPLOAD'],
+            serviceRelationships: [
+              {
+                relationshipType: 'OWNER',
+                identifier: 'urn:li:userGeneratedContent',
+              },
+            ],
           },
         }),
       });
 
       if (registerRes.ok) {
         const regData = await registerRes.json();
-        const uploadUrl = regData.value.uploadMechanism['com.linkedin.digitalmedia.uploading.MediaUploadMechanism'].uploadUrl;
+        const uploadMechanism = regData.value.uploadMechanism;
+        const mechanismKey = Object.keys(uploadMechanism)[0];
+        const uploadUrl = uploadMechanism[mechanismKey].uploadUrl;
         assetUrn = regData.value.asset;
 
         console.log('[Social Share] Uploading binary to LinkedIn...');
