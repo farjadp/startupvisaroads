@@ -18,10 +18,12 @@ import type { Metadata } from 'next';
 import PNPMasterAssessment from '@/components/PNPMasterAssessment'; // Import
 
 
-export const metadata: Metadata = {
-  title: 'Provincial Nominee Programs | SVR',
-  description: 'Regional immigration architecture. The strategic pathway to Permanent Residency via provincial nomination.',
-};
+import { metaFor } from '@/lib/pageMeta';
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  return metaFor('/pnp', locale);
+}
 
 export default function PNPPage() {
   return (

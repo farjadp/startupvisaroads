@@ -19,10 +19,12 @@ import {
 } from 'lucide-react';
 import type { Metadata } from 'next';
 
-export const metadata: Metadata = {
-  title: 'USA EB-5 | Immigrant Investor Program',
-  description: 'Business planning for the $800k+ investment route. Matter of Ho compliant plans.',
-};
+import { metaFor } from '@/lib/pageMeta';
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  return metaFor('/usa/eb5', locale);
+}
 
 export default function EB5Page() {
   return (

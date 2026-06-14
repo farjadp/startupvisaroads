@@ -17,10 +17,12 @@ import {
 } from 'lucide-react';
 import type { Metadata } from 'next';
 
-export const metadata: Metadata = {
-  title: 'Terms of Engagement | VisaRoads Inc.',
-  description: 'Conditions of use, limitation of liability, and service agreement scope.',
-};
+import { metaFor } from '@/lib/pageMeta';
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  return metaFor('/terms', locale);
+}
 
 export default function TermsPage() {
   const lastUpdated = "December 27, 2025";

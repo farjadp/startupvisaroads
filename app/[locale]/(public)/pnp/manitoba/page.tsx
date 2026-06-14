@@ -17,10 +17,12 @@ import {
 } from 'lucide-react';
 import type { Metadata } from 'next';
 
-export const metadata: Metadata = {
-  title: 'Manitoba (MPNP) | The Keystone Pathway',
-  description: 'Business Investor Stream (BIS) for Winnipeg and rural Manitoba. Entrepreneur & Farm pathways.',
-};
+import { metaFor } from '@/lib/pageMeta';
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  return metaFor('/pnp/manitoba', locale);
+}
 
 export default function ManitobaPage() {
   return (

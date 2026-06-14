@@ -11,10 +11,12 @@ import type { Metadata } from 'next';
 import LifestyleCompass from '@/components/LifestyleCompass'; // Import
 
 
-export const metadata: Metadata = {
-  title: 'Global Jurisdictions | SVR',
-  description: 'Select your future headquarters. Strategic immigration profiles for USA, Canada, UK, Australia, UAE, and Nordics.',
-};
+import { metaFor } from '@/lib/pageMeta';
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  return metaFor('/country', locale);
+}
 
 // Data for the grid
 const COUNTRIES = [

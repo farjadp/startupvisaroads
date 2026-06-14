@@ -18,10 +18,12 @@ import {
 } from 'lucide-react';
 import type { Metadata } from 'next';
 
-export const metadata: Metadata = {
-  title: 'New Brunswick (NBPNP) | The Logistics Hub',
-  description: 'The only officially bilingual province. High-speed pathway via the Deposit Agreement model.',
-};
+import { metaFor } from '@/lib/pageMeta';
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  return metaFor('/pnp/new-brunswick', locale);
+}
 
 export default function NewBrunswickPage() {
   return (

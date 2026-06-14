@@ -18,10 +18,12 @@ import {
 } from 'lucide-react';
 import type { Metadata } from 'next';
 
-export const metadata: Metadata = {
-  title: 'Denmark | The Innovation Kingdom',
-  description: 'Start-up Denmark Visa. Access the world’s most digitized economy and #1 ease of doing business.',
-};
+import { metaFor } from '@/lib/pageMeta';
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  return metaFor('/country/denmark', locale);
+}
 
 export default function DenmarkPage() {
   return (

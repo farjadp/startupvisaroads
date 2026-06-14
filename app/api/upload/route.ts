@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSessionFromRequest } from '@/lib/auth';
+import { storeImage } from '@/lib/storage';
 
 export async function POST(request: NextRequest) {
   try {
@@ -35,13 +36,11 @@ export async function POST(request: NextRequest) {
     }
 
     const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
-    const base64 = buffer.toString('base64');
     const mimeType = file.type || 'image/jpeg';
-    
-    // Return Base64 data URL directly
-    const url = `data:${mimeType};base64,${base64}`;
-    
+
+    // Upload to object storage if configured; otherwise inline as base64.
+    const url = await storeImage(new Uint8Array(bytes), mimeType);
+
     return NextResponse.json({ success: true, url });
   } catch (error) {
     console.error('Upload Error:', error);

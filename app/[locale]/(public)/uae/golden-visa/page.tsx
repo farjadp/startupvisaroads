@@ -18,10 +18,12 @@ import {
 } from 'lucide-react';
 import type { Metadata } from 'next';
 
-export const metadata: Metadata = {
-  title: 'UAE Golden Visa | The 10-Year Residency',
-  description: 'Strategic advisory for the UAE Golden Visa (Entrepreneur Category).',
-};
+import { metaFor } from '@/lib/pageMeta';
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  return metaFor('/uae/golden-visa', locale);
+}
 
 export default function UAEGoldenVisaPage() {
   return (

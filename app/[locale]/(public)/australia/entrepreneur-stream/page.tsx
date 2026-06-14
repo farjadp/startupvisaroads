@@ -18,10 +18,12 @@ import {
 } from 'lucide-react';
 import type { Metadata } from 'next';
 
-export const metadata: Metadata = {
-  title: 'Australia NIV | The National Innovation Visa',
-  description: 'The new Subclass 858. Direct Permanent Residency for high-performing entrepreneurs. Replaces the legacy 188 stream.',
-};
+import { metaFor } from '@/lib/pageMeta';
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  return metaFor('/australia/entrepreneur-stream', locale);
+}
 
 export default function AustraliaPage() {
   return (

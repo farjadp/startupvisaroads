@@ -18,10 +18,12 @@ import {
 } from 'lucide-react';
 import type { Metadata } from 'next';
 
-export const metadata: Metadata = {
-  title: 'Finland | The Happiest Tech Hub',
-  description: 'Finnish Startup Permit. Fast Track residence for founders in 14 days. Home of Slush and Supercell.',
-};
+import { metaFor } from '@/lib/pageMeta';
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  return metaFor('/country/finland', locale);
+}
 
 export default function FinlandPage() {
   return (

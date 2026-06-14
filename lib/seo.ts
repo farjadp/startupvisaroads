@@ -6,9 +6,34 @@
 
 import type { Metadata } from 'next';
 
-export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || 'https://startupvisaroads.com').replace(/\/$/, '');
+// Resolution order:
+//  1. SITE_URL              — server runtime env (override dynamic routes on
+//                             Cloud Run without rebuilding: sitemap, article canonicals)
+//  2. NEXT_PUBLIC_SITE_URL  — baked at build (used by statically generated pages)
+//  3. brand default
+// All consumers of SITE_URL are server-side, so the runtime value is honoured.
+export const SITE_URL = (
+  process.env.SITE_URL ||
+  process.env.NEXT_PUBLIC_SITE_URL ||
+  'https://visaroads.com'
+).replace(/\/$/, '');
 export const SITE_NAME = 'Startup Visa Roads';
-export const TWITTER_HANDLE = '@startupvisaroads';
+export const TWITTER_HANDLE = '@ashavidgroup';
+
+// VisaRoads is a product of Ashavid Inc. — these are the official company
+// profiles (used for sameAs / knowledge-graph entity linking).
+export const ASHAVID = {
+  name: 'Ashavid',
+  url: 'https://www.ashavid.ca',
+  sameAs: [
+    'https://www.linkedin.com/company/ashavid/',
+    'https://www.instagram.com/ashavidgroup/',
+    'https://www.youtube.com/@ashavidgroup',
+    'https://x.com/ashavidgroup',
+    'https://www.facebook.com/ashavid',
+    'https://www.tiktok.com/@ashavidgroup',
+  ],
+};
 
 export const LOCALES = ['en', 'fa'] as const;
 export type Locale = (typeof LOCALES)[number];
@@ -110,10 +135,19 @@ export function organizationJsonLd() {
     url: SITE_URL,
     logo: LOGO_URL,
     description: 'Mentorship and startup readiness for Startup Visa and global migration programs.',
-    sameAs: [
-      'https://twitter.com/startupvisaroads',
-      'https://www.linkedin.com/company/startupvisaroads',
-    ],
+    sameAs: ASHAVID.sameAs,
+    address: {
+      '@type': 'PostalAddress',
+      addressLocality: 'Toronto',
+      addressRegion: 'ON',
+      addressCountry: 'CA',
+    },
+    parentOrganization: {
+      '@type': 'Organization',
+      name: ASHAVID.name,
+      url: ASHAVID.url,
+      sameAs: ASHAVID.sameAs,
+    },
   };
 }
 

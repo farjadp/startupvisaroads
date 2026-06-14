@@ -5,6 +5,7 @@ import slugify from 'slugify';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { sanitizeHtml } from '@/lib/sanitize';
+import { shareToSocials } from '@/lib/socials';
 
 const normalizeLocale = (v: FormDataEntryValue | null): string => (v === 'fa' ? 'fa' : 'en');
 
@@ -33,7 +34,7 @@ export async function createArticle(formData: FormData) {
 
   const tagsList = rawTags ? rawTags.split(',').map(t => t.trim()).filter(Boolean) : [];
   
-  await prisma.article.create({
+  const article = await prisma.article.create({
     data: {
       title,
       slug,
@@ -51,6 +52,10 @@ export async function createArticle(formData: FormData) {
       },
     },
   });
+
+  if (article.status === 'PUBLISHED') {
+    await shareToSocials(article.id);
+  }
 
   revalidatePath('/en/admin/articles');
   revalidatePath('/fa/admin/articles');
@@ -98,6 +103,10 @@ export async function updateArticle(id: string, formData: FormData) {
     where: { id },
     data: updateData
   });
+
+  if (updated.status === 'PUBLISHED') {
+    await shareToSocials(updated.id);
+  }
 
   revalidatePath('/en/admin/articles');
   revalidatePath('/fa/admin/articles');

@@ -22,6 +22,9 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "fal.media" },
       { protocol: "https", hostname: "*.fal.media" },
       { protocol: "https", hostname: "fal.run" },
+      // Object storage (Google Cloud Storage / S3-compatible CDN)
+      { protocol: "https", hostname: "storage.googleapis.com" },
+      { protocol: "https", hostname: "*.storage.googleapis.com" },
     ],
   },
 

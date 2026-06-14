@@ -9,10 +9,12 @@ import Link from 'next/link';
 import { ArrowRight, Lock, ShieldCheck } from 'lucide-react';
 import type { Metadata } from 'next';
 
-export const metadata: Metadata = {
-  title: 'Client Access | SVR',
-  description: 'Secure entry for existing clients.',
-};
+import { metaFor } from '@/lib/pageMeta';
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  return metaFor('/login', locale);
+}
 
 export default function LoginPage() {
   return (

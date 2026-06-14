@@ -18,10 +18,12 @@ import {
 } from 'lucide-react';
 import type { Metadata } from 'next';
 
-export const metadata: Metadata = {
-   title: 'The Firm | About VisaRoads',
-   description: 'Our philosophy: Meritocracy, Precision, and Global Ambition.',
-};
+import { metaFor } from '@/lib/pageMeta';
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  return metaFor('/about', locale);
+}
 
 export default function AboutPage() {
    return (

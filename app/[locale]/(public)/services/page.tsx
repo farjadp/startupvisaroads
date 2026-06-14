@@ -19,10 +19,12 @@ import {
 } from 'lucide-react';
 import type { Metadata } from 'next';
 
-export const metadata: Metadata = {
-  title: 'Advisory Services | SVR',
-  description: 'Business architecture for the global founder. Strategy, Financials, and Market Validation.',
-};
+import { metaFor } from '@/lib/pageMeta';
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  return metaFor('/services', locale);
+}
 
 export default function ServicesPage() {
   return (

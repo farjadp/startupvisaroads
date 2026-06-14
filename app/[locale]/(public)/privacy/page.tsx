@@ -18,10 +18,12 @@ import {
 } from 'lucide-react';
 import type { Metadata } from 'next';
 
-export const metadata: Metadata = {
-  title: 'Privacy Protocol | VisaRoads Inc.',
-  description: 'Data governance, information security, and legal disclaimers.',
-};
+import { metaFor } from '@/lib/pageMeta';
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  return metaFor('/privacy', locale);
+}
 
 export default function PrivacyPage() {
   const lastUpdated = "December 27, 2025";

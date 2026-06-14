@@ -37,10 +37,14 @@ export default function Footer() {
                  Global mobility architecture for the 1%.
               </p>
               
-              {/* Socials */}
+              {/* Socials (Ashavid official profiles) */}
               <div className="flex gap-4 mt-12">
-                 {[Linkedin, Twitter, Instagram].map((Icon, i) => (
-                    <a key={i} href="#" className="w-12 h-12 rounded-full border border-[#F2F0E9]/20 flex items-center justify-center hover:bg-[#CCFF00] hover:text-black hover:border-[#CCFF00] transition-all duration-300">
+                 {[
+                    { Icon: Linkedin, href: 'https://www.linkedin.com/company/ashavid/', label: 'LinkedIn' },
+                    { Icon: Twitter, href: 'https://x.com/ashavidgroup', label: 'X (Twitter)' },
+                    { Icon: Instagram, href: 'https://www.instagram.com/ashavidgroup/', label: 'Instagram' },
+                 ].map(({ Icon, href, label }, i) => (
+                    <a key={i} href={href} target="_blank" rel="noopener noreferrer" aria-label={label} className="w-12 h-12 rounded-full border border-[#F2F0E9]/20 flex items-center justify-center hover:bg-[#CCFF00] hover:text-black hover:border-[#CCFF00] transition-all duration-300">
                        <Icon size={20} />
                     </a>
                  ))}

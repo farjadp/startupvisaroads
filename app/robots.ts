@@ -1,6 +1,9 @@
 import type { MetadataRoute } from 'next';
 import { SITE_URL } from '@/lib/seo';
 
+// Rendered per-request so the runtime SITE_URL (Cloud Run env) is honoured.
+export const dynamic = 'force-dynamic';
+
 export default function robots(): MetadataRoute.Robots {
   return {
     rules: [

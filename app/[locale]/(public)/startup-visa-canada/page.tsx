@@ -21,10 +21,12 @@ import {
 } from 'lucide-react';
 import type { Metadata } from 'next';
 
-export const metadata: Metadata = {
-  title: 'Canada Start-Up Visa Program | The Complete Guide',
-  description: 'Secure your Letter of Support and Permanent Residency with Canada’s leading business architects.',
-};
+import { metaFor } from '@/lib/pageMeta';
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  return metaFor('/startup-visa-canada', locale);
+}
 
 export default function CanadaSUVPage() {
   return (

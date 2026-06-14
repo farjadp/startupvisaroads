@@ -18,10 +18,12 @@ import {
 } from 'lucide-react';
 import type { Metadata } from 'next';
 
-export const metadata: Metadata = {
-  title: 'Nova Scotia (NSNP) | The Atlantic Strategy',
-  description: 'Business immigration for Halifax and coastal communities. Entrepreneur & Graduate streams.',
-};
+import { metaFor } from '@/lib/pageMeta';
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  return metaFor('/pnp/nova-scotia', locale);
+}
 
 export default function NovaScotiaPage() {
   return (

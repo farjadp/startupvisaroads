@@ -2,6 +2,7 @@ import OpenAI from 'openai';
 import * as cheerio from 'cheerio';
 import prisma from '@/lib/prisma';
 import { ensureDefaultCategories } from '@/lib/categories';
+import { storeImage } from '@/lib/storage';
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY || 'dummy-key-for-build',
@@ -35,13 +36,13 @@ export async function generateAndSaveImage(prompt: string): Promise<string> {
   const data = await response.json();
   const imageUrl = data.images[0].url;
 
-  // Download the image and return as Base64 data URL to prevent stateless 404s
+  // Download the generated image, then push it to object storage (or inline as
+  // base64 if storage isn't configured) so it survives stateless containers.
   const imageRes = await fetch(imageUrl);
   const arrayBuffer = await imageRes.arrayBuffer();
-  const buffer = Buffer.from(arrayBuffer);
-  const base64 = buffer.toString('base64');
-  
-  return `data:image/jpeg;base64,${base64}`;
+  const contentType = imageRes.headers.get('content-type') || 'image/jpeg';
+
+  return storeImage(new Uint8Array(arrayBuffer), contentType.startsWith('image/') ? contentType : 'image/jpeg');
 }
 
 export async function scrapeUrl(url: string): Promise<string> {

@@ -18,6 +18,12 @@ RUN cp prisma/schema.production.prisma prisma/schema.prisma
 RUN npx prisma generate
 
 ENV NEXT_TELEMETRY_DISABLED=1
+# Public site origin baked into statically-generated pages (canonical/OG/sitemap).
+# Override at build: docker build --build-arg NEXT_PUBLIC_SITE_URL=https://yourdomain.com
+# (On Cloud Run you can ALSO set a SITE_URL runtime env var to fix dynamic routes
+#  such as sitemap.xml and article canonicals without rebuilding.)
+ARG NEXT_PUBLIC_SITE_URL=https://visaroads.com
+ENV NEXT_PUBLIC_SITE_URL=$NEXT_PUBLIC_SITE_URL
 # Build with a placeholder DATABASE_URL so Next.js doesn't fail at build time
 ENV DATABASE_URL="postgresql://placeholder:placeholder@localhost/placeholder"
 RUN npm run build

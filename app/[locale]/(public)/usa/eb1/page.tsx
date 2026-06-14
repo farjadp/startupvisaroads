@@ -19,10 +19,12 @@ import {
 } from 'lucide-react';
 import type { Metadata } from 'next';
 
-export const metadata: Metadata = {
-  title: 'USA EB-1A | The Extraordinary Ability Visa',
-  description: 'Advisory for the "Einstein Visa". Building the evidence profile for the top 1% of entrepreneurs.',
-};
+import { metaFor } from '@/lib/pageMeta';
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  return metaFor('/usa/eb1', locale);
+}
 
 export default function EB1Page() {
   return (

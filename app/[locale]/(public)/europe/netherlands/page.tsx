@@ -18,10 +18,12 @@ import {
 } from 'lucide-react';
 import type { Metadata } from 'next';
 
-export const metadata: Metadata = {
-  title: 'Netherlands Startup Visa | The Orange Carpet',
-  description: 'Advisory for securing a recognized Facilitator. RVO criteria assessment.',
-};
+import { metaFor } from '@/lib/pageMeta';
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  return metaFor('/europe/netherlands', locale);
+}
 
 export default function NetherlandsPage() {
   return (

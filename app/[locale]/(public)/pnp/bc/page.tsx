@@ -17,10 +17,12 @@ import {
 } from 'lucide-react';
 import type { Metadata } from 'next';
 
-export const metadata: Metadata = {
-  title: 'BC PNP | The Pacific Gateway',
-  description: 'Immigration strategy for Vancouver and British Columbia. Tech, Entrepreneur, and Regional Pilots.',
-};
+import { metaFor } from '@/lib/pageMeta';
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  return metaFor('/pnp/bc', locale);
+}
 
 export default function BCPage() {
   return (

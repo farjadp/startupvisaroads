@@ -8,6 +8,7 @@ import prisma from '@/lib/prisma';
 import slugify from 'slugify';
 import { sanitizeHtml } from '@/lib/sanitize';
 import type { Locale } from '@/lib/seo';
+import { shareToSocials } from '@/lib/socials';
 
 export interface ArticlePayload {
   title: string;
@@ -74,7 +75,7 @@ export async function createArticleFromPayload(payload: ArticlePayload, options:
   const categoryId = await resolveCategoryId(payload.category);
   const tagConnections = await linkTags(payload.tags);
 
-  return prisma.article.create({
+  const article = await prisma.article.create({
     data: {
       title: payload.title,
       slug,
@@ -87,4 +88,10 @@ export async function createArticleFromPayload(payload: ArticlePayload, options:
       tags: { connect: tagConnections },
     },
   });
+
+  if (article.status === 'PUBLISHED') {
+    await shareToSocials(article.id);
+  }
+
+  return article;
 }

@@ -1,0 +1,22 @@
+# Cloud Build config — builds the image with the production domain baked in.
+# Usage:
+#   gcloud builds submit --config cloudbuild.yaml \
+#     --substitutions=_SITE_URL=https://yourdomain.com,_REGION=us-central1,_REPO=svr,_SERVICE=startupvisaroads
+substitutions:
+  _SITE_URL: "https://visaroads.com"
+  _REGION: "us-central1"
+  _REPO: "svr"
+  _SERVICE: "startupvisaroads"
+
+steps:
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - build
+      - --build-arg
+      - NEXT_PUBLIC_SITE_URL=${_SITE_URL}
+      - -t
+      - ${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/${_SERVICE}
+      - .
+
+images:
+  - ${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/${_SERVICE}

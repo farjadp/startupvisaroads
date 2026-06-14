@@ -18,10 +18,12 @@ import {
 } from 'lucide-react';
 import type { Metadata } from 'next';
 
-export const metadata: Metadata = {
-  title: 'PEI (PNP) | The Micro Economy',
-  description: 'Business Impact Category. Work Permit Stream and the critical interview process.',
-};
+import { metaFor } from '@/lib/pageMeta';
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  return metaFor('/pnp/pei', locale);
+}
 
 export default function PEIPage() {
   return (

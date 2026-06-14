@@ -18,10 +18,12 @@ import {
 } from 'lucide-react';
 import type { Metadata } from 'next';
 
-export const metadata: Metadata = {
-  title: 'Ontario (OINP) | The Economic Engine',
-  description: 'Business immigration strategy for Toronto and the Greater Golden Horseshoe.',
-};
+import { metaFor } from '@/lib/pageMeta';
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  return metaFor('/pnp/ontario', locale);
+}
 
 export default function OntarioPage() {
   return (

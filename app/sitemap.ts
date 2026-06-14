@@ -2,7 +2,9 @@ import type { MetadataRoute } from 'next';
 import prisma from '@/lib/prisma';
 import { SITE_URL, LOCALES } from '@/lib/seo';
 
-export const revalidate = 3600; // refresh hourly
+// Rendered per-request so the runtime SITE_URL (Cloud Run env) and freshly
+// published articles are always reflected without a rebuild.
+export const dynamic = 'force-dynamic';
 
 // Locale-agnostic static routes that exist for both en and fa.
 const STATIC_PATHS = [

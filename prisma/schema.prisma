@@ -30,6 +30,10 @@ model Article {
 
   tags        Tag[]     @relation("ArticleTags")
 
+  sharedToLinkedin Boolean @default(false)
+  sharedToTwitter  Boolean @default(false)
+  sharedToFacebook Boolean @default(false)
+
   @@index([locale, status, createdAt])
 }
 
@@ -54,3 +58,9 @@ model AiKeyword {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
+model Setting {
+  key   String @id
+  value String
+}
+

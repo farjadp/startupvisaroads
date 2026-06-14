@@ -16,10 +16,12 @@ import {
 } from 'lucide-react';
 import type { Metadata } from 'next';
 
-export const metadata: Metadata = {
-  title: 'The Board | SVR',
-  description: 'Meet the evaluation committee and strategic advisors.',
-};
+import { metaFor } from '@/lib/pageMeta';
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  return metaFor('/mentorship', locale);
+}
 
 export default function MentorshipPage() {
   

@@ -20,10 +20,12 @@ import {
 } from 'lucide-react';
 import type { Metadata } from 'next';
 
-export const metadata: Metadata = {
-  title: 'USA EB-2 NIW | National Interest Waiver',
-  description: 'Expert endeavor crafting for professionals bypassing the PERM process.',
-};
+import { metaFor } from '@/lib/pageMeta';
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  return metaFor('/usa/eb2-niw', locale);
+}
 
 export default function EB2NIWPage() {
   return (

@@ -19,10 +19,12 @@ import {
 } from 'lucide-react';
 import type { Metadata } from 'next';
 
-export const metadata: Metadata = {
-  title: 'Australia | The Innovation Continent',
-  description: 'Country profile and National Innovation Visa (NIV) advisory. Direct PR for global founders.',
-};
+import { metaFor } from '@/lib/pageMeta';
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  return metaFor('/country/australia', locale);
+}
 
 export default function AustraliaPage() {
   return (

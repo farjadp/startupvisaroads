@@ -19,10 +19,12 @@ import {
 } from 'lucide-react';
 import type { Metadata } from 'next';
 
-export const metadata: Metadata = {
-  title: 'USA | The National Interest',
-  description: 'EB-2 NIW, EB-1A, and Entrepreneur Parole. Strategic immigration for founders serving American critical technologies.',
-};
+import { metaFor } from '@/lib/pageMeta';
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  return metaFor('/country/usa', locale);
+}
 
 export default function USAPage() {
   return (

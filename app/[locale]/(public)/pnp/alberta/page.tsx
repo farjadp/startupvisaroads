@@ -18,10 +18,12 @@ import {
 } from 'lucide-react';
 import type { Metadata } from 'next';
 
-export const metadata: Metadata = {
-  title: 'Alberta (AAIP) | The Tax Haven',
-  description: 'Low taxes, high autonomy. The Rural Entrepreneur and Graduate streams.',
-};
+import { metaFor } from '@/lib/pageMeta';
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  return metaFor('/pnp/alberta', locale);
+}
 
 export default function AlbertaPage() {
   return (

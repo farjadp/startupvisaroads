@@ -17,10 +17,12 @@ import {
 } from 'lucide-react';
 import type { Metadata } from 'next';
 
-export const metadata: Metadata = {
-  title: 'Saskatchewan (SINP) | The Prairie Engine',
-  description: 'Entrepreneur and Farm Owner pathways. Low investment thresholds for rural communities.',
-};
+import { metaFor } from '@/lib/pageMeta';
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  return metaFor('/pnp/saskatchewan', locale);
+}
 
 export default function SaskatchewanPage() {
   return (
