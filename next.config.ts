@@ -25,6 +25,8 @@ const nextConfig: NextConfig = {
       // Object storage (Google Cloud Storage / S3-compatible CDN)
       { protocol: "https", hostname: "storage.googleapis.com" },
       { protocol: "https", hostname: "*.storage.googleapis.com" },
+      // Unsplash for editorial photography (Denmark page, etc.)
+      { protocol: "https", hostname: "images.unsplash.com" },
     ],
   },
 

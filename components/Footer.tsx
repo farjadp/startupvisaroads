@@ -60,11 +60,11 @@ export default function Footer() {
                     <Globe size={12}/> Global Access
                  </h4>
                  <ul className="space-y-4 font-serif text-2xl text-[#F2F0E9]/80">
-                    <li><Link href="/startup-visa-canada" className="hover:text-[#CCFF00] hover:pl-2 transition-all">Canada (SUV)</Link></li>
                     <li><Link href="/pnp" className="hover:text-[#CCFF00] hover:pl-2 transition-all">Canada (PNP)</Link></li>
-                    <li><Link href="/australia/entrepreneur-stream" className="hover:text-[#CCFF00] hover:pl-2 transition-all">Australia (NIV)</Link></li>
-                    <li><Link href="/country/uae" className="hover:text-[#CCFF00] hover:pl-2 transition-all">UAE (Golden)</Link></li>
-                    <li><Link href="/country/usa" className="hover:text-[#CCFF00] hover:pl-2 transition-all">USA (NIW)</Link></li>
+                    <li><Link href="/europe/denmark" className="hover:text-[#CCFF00] hover:pl-2 transition-all">Denmark (SUV)</Link></li>
+                    <li><Link href="/europe/netherlands" className="hover:text-[#CCFF00] hover:pl-2 transition-all">Netherlands (SUV)</Link></li>
+                    <li><Link href="/europe/finland" className="hover:text-[#CCFF00] hover:pl-2 transition-all">Finland (SUV)</Link></li>
+                    <li><Link href="/usa/eb2-niw" className="hover:text-[#CCFF00] hover:pl-2 transition-all">USA (NIW)</Link></li>
                  </ul>
               </div>
 
