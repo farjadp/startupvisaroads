@@ -61,7 +61,7 @@ export default function Footer() {
                  </h4>
                  <ul className="space-y-4 font-serif text-2xl text-[#F2F0E9]/80">
                     <li><Link href="/pnp" className="hover:text-[#CCFF00] hover:pl-2 transition-all">Canada (PNP)</Link></li>
-                    <li><Link href="/europe/denmark" className="hover:text-[#CCFF00] hover:pl-2 transition-all">Denmark (SUV)</Link></li>
+                    <li><Link href="/country/denmark" className="hover:text-[#CCFF00] hover:pl-2 transition-all">Denmark (SUV)</Link></li>
                     <li><Link href="/europe/netherlands" className="hover:text-[#CCFF00] hover:pl-2 transition-all">Netherlands (SUV)</Link></li>
                     <li><Link href="/europe/finland" className="hover:text-[#CCFF00] hover:pl-2 transition-all">Finland (SUV)</Link></li>
                     <li><Link href="/usa/eb2-niw" className="hover:text-[#CCFF00] hover:pl-2 transition-all">USA (NIW)</Link></li>

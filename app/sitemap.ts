@@ -31,7 +31,6 @@ const STATIC_PATHS = [
   '/usa/eb5',
   '/europe/netherlands',
   '/europe/finland',
-  '/europe/denmark',
   '/australia/entrepreneur-stream',
   '/uae/golden-visa',
   '/country/canada',

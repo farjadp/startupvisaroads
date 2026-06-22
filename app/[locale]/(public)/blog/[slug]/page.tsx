@@ -62,7 +62,7 @@ function getRecommendedService(title: string, categoryName: string, locale: stri
     },
     {
       keywords: ['denmark', 'danish', 'دانمارک', 'اقامت دانمارک'],
-      path: '/europe/denmark',
+      path: '/country/denmark',
       title: isRtl ? 'ویزای استارتاپ دانمارک' : 'Denmark Start-up Denmark',
       desc: isRtl 
         ? 'شتاب‌دهی کسب‌وکار در دانمارک با دسترسی به بازارهای پیشرفته اسکاندیناوی.' 
