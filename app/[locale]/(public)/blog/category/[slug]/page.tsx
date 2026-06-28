@@ -1,11 +1,12 @@
 import React from 'react';
 import type { Metadata } from 'next';
-import prisma from '@/lib/prisma';
 import { notFound } from 'next/navigation';
 import { Link } from '@/navigation';
 import { Clock, ArrowLeft, ArrowRight } from 'lucide-react';
 import JsonLd from '@/components/JsonLd';
 import { buildMetadata, breadcrumbJsonLd, SITE_URL } from '@/lib/seo';
+import { getCategoryArchiveData } from '@/lib/blog';
+import prisma from '@/lib/prisma';
 
 export const revalidate = 600;
 
@@ -36,25 +37,11 @@ export default async function CategoryArchivePage({
 
   const isRtl = locale === 'fa';
 
-  // Find the category
-  const category = await prisma.category.findUnique({
-    where: { slug }
-  });
-
-  if (!category) {
+  const data = await getCategoryArchiveData(locale, slug);
+  if (!data) {
     return notFound();
   }
-
-  // Find articles belonging to this category (current locale)
-  const articles = await prisma.article.findMany({
-    where: {
-      status: 'PUBLISHED',
-      locale,
-      categoryId: category.id
-    },
-    orderBy: { createdAt: 'desc' },
-    include: { category: true, tags: true }
-  });
+  const { category, articles } = data;
 
   // Localized texts
   const t = isRtl ? {

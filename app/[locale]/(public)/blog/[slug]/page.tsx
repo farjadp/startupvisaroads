@@ -8,6 +8,7 @@ import { Link } from '@/navigation';
 import JsonLd from '@/components/JsonLd';
 import { sanitizeHtml, extractFaqs } from '@/lib/sanitize';
 import { SITE_URL, articleJsonLd, breadcrumbJsonLd, faqJsonLd, ogLocale } from '@/lib/seo';
+import { getArticleBySlug, getRelatedArticle } from '@/lib/blog';
 import { 
   Clock, 
   BarChart, 
@@ -144,10 +145,7 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string; slug: string }> }): Promise<Metadata> {
   const { locale, slug } = await params;
-  const article = await prisma.article.findUnique({
-    where: { slug },
-    include: { category: true, tags: true },
-  });
+  const article = await getArticleBySlug(slug, locale);
 
   if (!article || article.status !== 'PUBLISHED') {
     return { title: 'Not Found', robots: { index: false, follow: false } };
@@ -188,30 +186,13 @@ export default async function BlogPostPage({ params }: { params: Promise<{ local
   const { locale, slug } = resolvedParams;
   setRequestLocale(locale);
 
-  const article = await prisma.article.findUnique({
-    where: { slug },
-    include: { category: true, tags: true }
-  });
+  const article = await getArticleBySlug(slug, locale);
 
   if (!article || article.status !== 'PUBLISHED') {
     return notFound();
   }
 
-  // Fetch a related article from the same category if possible, or another published article
-  const relatedArticle = await prisma.article.findFirst({
-    where: {
-      NOT: { id: article.id },
-      status: 'PUBLISHED',
-      ...(article.categoryId ? { categoryId: article.categoryId } : {})
-    },
-    orderBy: { createdAt: 'desc' }
-  }) || await prisma.article.findFirst({
-    where: {
-      NOT: { id: article.id },
-      status: 'PUBLISHED'
-    },
-    orderBy: { createdAt: 'desc' }
-  });
+  const relatedArticle = await getRelatedArticle(article);
 
   const isRtl = locale === 'fa';
 

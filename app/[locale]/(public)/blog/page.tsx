@@ -1,9 +1,9 @@
 import React from 'react';
 import type { Metadata } from 'next';
-import prisma from '@/lib/prisma';
 import { Link } from '@/navigation';
-import { Clock, Tag } from 'lucide-react';
+import { Clock } from 'lucide-react';
 import { buildMetadata } from '@/lib/seo';
+import { getBlogIndexData } from '@/lib/blog';
 
 export const revalidate = 600;
 
@@ -63,61 +63,12 @@ export default async function BlogPage({
     pageOf: 'Page {current} of {total}',
   };
 
-  // Fetch categories that have at least one published article in this locale
-  const categories = await prisma.category.findMany({
-    where: {
-      articles: {
-        some: { status: 'PUBLISHED', locale }
-      }
-    }
+  const { categories, totalCount, featuredArticle, gridArticles } = await getBlogIndexData({
+    locale,
+    activeCategorySlug,
+    page,
+    pageSize,
   });
-
-  // Fetch total count of articles matching filter
-  const totalCount = await prisma.article.count({
-    where: {
-      status: 'PUBLISHED',
-      locale,
-      ...(activeCategorySlug ? { category: { slug: activeCategorySlug } } : {})
-    }
-  });
-
-  // Fetch articles based on filter and pagination
-  let featuredArticle = null;
-  let gridArticles = [];
-  
-  if (activeCategorySlug) {
-    gridArticles = await prisma.article.findMany({
-      where: {
-        status: 'PUBLISHED',
-        locale,
-        category: { slug: activeCategorySlug }
-      },
-      orderBy: { createdAt: 'desc' },
-      skip: (page - 1) * pageSize,
-      take: pageSize,
-      include: { category: true, tags: true }
-    });
-  } else {
-    if (page === 1) {
-      const articles = await prisma.article.findMany({
-        where: { status: 'PUBLISHED', locale },
-        orderBy: { createdAt: 'desc' },
-        skip: 0,
-        take: pageSize + 1,
-        include: { category: true, tags: true }
-      });
-      featuredArticle = articles.length > 0 ? articles[0] : null;
-      gridArticles = featuredArticle ? articles.slice(1) : articles;
-    } else {
-      gridArticles = await prisma.article.findMany({
-        where: { status: 'PUBLISHED', locale },
-        orderBy: { createdAt: 'desc' },
-        skip: 1 + (page - 1) * pageSize,
-        take: pageSize,
-        include: { category: true, tags: true }
-      });
-    }
-  }
 
   // Calculate total pages safely
   const totalPages = totalCount > 0

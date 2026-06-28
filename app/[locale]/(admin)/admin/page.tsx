@@ -3,14 +3,23 @@ import { Users, FileText, Activity, Eye, ArrowUpRight } from 'lucide-react';
 import prisma from '@/lib/prisma';
 
 export default async function AdminDashboard() {
-  const totalViews = await prisma.pageView.count();
-  
-  const topPages = await prisma.pageView.groupBy({
-    by: ['path'],
-    _count: { path: true },
-    orderBy: { _count: { path: 'desc' } },
-    take: 10,
-  });
+  let totalViews = 0;
+  let topPages: Array<{ path: string; _count: { path: number } }> = [];
+  let dataWarning: string | null = null;
+
+  try {
+    totalViews = await prisma.pageView.count();
+    const groupedPages = await prisma.pageView.groupBy({
+      by: ['path'],
+      _count: { path: true },
+      orderBy: { _count: { path: 'desc' } },
+      take: 10,
+    });
+    topPages = groupedPages as Array<{ path: string; _count: { path: number } }>;
+  } catch (error) {
+    console.error('Admin dashboard analytics query failed:', error);
+    dataWarning = 'Analytics data is temporarily unavailable. Authentication and admin navigation still work.';
+  }
 
   return (
     <div>
@@ -20,6 +29,12 @@ export default async function AdminDashboard() {
           <p className="font-sans text-[#1a1a1a]/60">Real-time statistics and analytics.</p>
         </div>
       </div>
+
+      {dataWarning && (
+        <div className="mb-6 rounded-2xl border border-amber-300 bg-amber-50 px-5 py-4 text-sm text-amber-900">
+          {dataWarning}
+        </div>
+      )}
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
         <div className="bg-white p-6 rounded-2xl border border-[#1a1a1a]/5 flex flex-col justify-between shadow-sm">
