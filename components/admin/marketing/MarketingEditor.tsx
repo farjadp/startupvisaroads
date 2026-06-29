@@ -4,7 +4,7 @@ import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Image from '@tiptap/extension-image';
 import Link from '@tiptap/extension-link';
-import { useCallback, useState, useEffect } from 'react';
+import { useCallback, useState, useEffect, useRef } from 'react';
 import {
   Bold, Italic, List, ListOrdered, Link as LinkIcon, Image as ImageIcon,
   Heading1, Heading2, Heading3, AlignLeft, AlignCenter, AlignRight,
@@ -36,6 +36,18 @@ export default function MarketingEditor({ content, onChange, minHeight = 500 }: 
 
   const isCustomHtml = /<!DOCTYPE|<html>|<head|<style|<table|<tr|<td/i.test(htmlSource);
 
+  // Keep a Ref of the latest values to prevent stale closures in Tiptap's callbacks
+  const isCustomHtmlRef = useRef(isCustomHtml);
+  const onChangeRef = useRef(onChange);
+
+  useEffect(() => {
+    isCustomHtmlRef.current = isCustomHtml;
+  }, [isCustomHtml]);
+
+  useEffect(() => {
+    onChangeRef.current = onChange;
+  }, [onChange]);
+
   const editor = useEditor({
     extensions: [
       StarterKit,
@@ -46,9 +58,9 @@ export default function MarketingEditor({ content, onChange, minHeight = 500 }: 
     onUpdate: ({ editor }) => {
       const html = editor.getHTML();
       // Only let visual editor updates propagate if we are NOT in custom HTML mode
-      if (!isCustomHtml) {
+      if (!isCustomHtmlRef.current) {
         setHtmlSource(html);
-        onChange(html);
+        onChangeRef.current(html);
       }
     },
     editorProps: {
@@ -70,6 +82,17 @@ export default function MarketingEditor({ content, onChange, minHeight = 500 }: 
       }
     }
   }, [content, editor]);
+
+  // Sync state and Tiptap content safely when user manually switches view mode
+  const handleViewModeChange = (mode: ViewMode) => {
+    if (mode === 'editor') {
+      const isCurrentCustom = /<!DOCTYPE|<html>|<head|<style|<table|<tr|<td/i.test(htmlSource);
+      if (!isCurrentCustom) {
+        editor?.commands.setContent(htmlSource);
+      }
+    }
+    setViewMode(mode);
+  };
 
   const addImage = useCallback(async () => {
     const input = document.createElement('input');
@@ -280,7 +303,7 @@ export default function MarketingEditor({ content, onChange, minHeight = 500 }: 
             <button
               key={mode}
               type="button"
-              onClick={() => setViewMode(mode)}
+              onClick={() => handleViewModeChange(mode)}
               className={`px-3 py-1.5 text-xs font-medium transition-colors capitalize ${
                 viewMode === mode
                   ? 'bg-[#1a1a1a] text-white'
