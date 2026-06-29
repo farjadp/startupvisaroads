@@ -42,7 +42,6 @@ export async function POST(req: NextRequest) {
       phone: phoneIdx >= 0 ? cols[phoneIdx] || null : null,
       name: nameIdx >= 0 ? cols[nameIdx] || null : null,
       groupId: groupId || null,
-      tags: '[]',
     };
   }).filter((r) => r.email || r.phone);
 

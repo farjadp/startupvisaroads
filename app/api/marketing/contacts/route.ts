@@ -60,7 +60,6 @@ export async function POST(req: NextRequest) {
       email: email ?? null,
       phone: phone ?? null,
       groupId: groupId ?? null,
-      tags: JSON.stringify(tags ?? []),
     },
   });
 
