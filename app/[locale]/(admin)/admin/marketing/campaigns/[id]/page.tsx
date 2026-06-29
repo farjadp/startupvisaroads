@@ -27,8 +27,19 @@ export default async function CampaignDetailPage({ params }: Props) {
   const emailLogs = campaign.logs.filter((l) => l.channel === 'EMAIL');
   const smsLogs = campaign.logs.filter((l) => l.channel === 'SMS');
 
+  const opens = campaign.logs.filter((l) => l.openCount > 0).length;
+  const clicks = campaign.logs.filter((l) => l.clickCount > 0).length;
+
   const successRate = campaign.logs.length > 0
     ? Math.round((sent / campaign.logs.length) * 100)
+    : 0;
+
+  const openRate = sent > 0
+    ? Math.round((opens / sent) * 100)
+    : 0;
+
+  const clickRate = sent > 0
+    ? Math.round((clicks / sent) * 100)
     : 0;
 
   return (
@@ -62,10 +73,10 @@ export default async function CampaignDetailPage({ params }: Props) {
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-5 mb-8">
         {[
-          { label: 'Total Logs', value: campaign.logs.length, color: 'text-[#1a1a1a]', bg: 'bg-[#1a1a1a]/5' },
-          { label: 'Sent', value: sent, color: 'text-green-600', bg: 'bg-green-50' },
-          { label: 'Failed', value: failed, color: 'text-red-500', bg: 'bg-red-50' },
-          { label: 'Success Rate', value: `${successRate}%`, color: successRate > 80 ? 'text-green-600' : 'text-orange-500', bg: successRate > 80 ? 'bg-green-50' : 'bg-orange-50' },
+          { label: 'Total Sent', value: sent, color: 'text-[#1a1a1a]', bg: 'bg-[#1a1a1a]/5' },
+          { label: 'Opened', value: `${opens} (${openRate}%)`, color: 'text-blue-600', bg: 'bg-blue-50' },
+          { label: 'Clicked', value: `${clicks} (${clickRate}%)`, color: 'text-purple-600', bg: 'bg-purple-50' },
+          { label: 'Delivery Success', value: `${successRate}%`, color: successRate > 80 ? 'text-green-600' : 'text-orange-500', bg: successRate > 80 ? 'bg-green-50' : 'bg-orange-50' },
         ].map((stat) => (
           <div key={stat.label} className={`${stat.bg} rounded-2xl p-6`}>
             <p className="font-sans text-xs font-bold uppercase tracking-widest text-[#1a1a1a]/50 mb-1">{stat.label}</p>
@@ -142,6 +153,8 @@ export default async function CampaignDetailPage({ params }: Props) {
                   <th className="px-4 py-3 text-left text-xs font-bold text-[#1a1a1a]/50 uppercase tracking-widest">Contact ID</th>
                   <th className="px-4 py-3 text-left text-xs font-bold text-[#1a1a1a]/50 uppercase tracking-widest">Channel</th>
                   <th className="px-4 py-3 text-left text-xs font-bold text-[#1a1a1a]/50 uppercase tracking-widest">Status</th>
+                  <th className="px-4 py-3 text-center text-xs font-bold text-[#1a1a1a]/50 uppercase tracking-widest">Opens</th>
+                  <th className="px-4 py-3 text-center text-xs font-bold text-[#1a1a1a]/50 uppercase tracking-widest">Clicks</th>
                   <th className="px-4 py-3 text-left text-xs font-bold text-[#1a1a1a]/50 uppercase tracking-widest">Error</th>
                   <th className="px-4 py-3 text-left text-xs font-bold text-[#1a1a1a]/50 uppercase tracking-widest">Time</th>
                 </tr>
@@ -149,7 +162,7 @@ export default async function CampaignDetailPage({ params }: Props) {
               <tbody className="divide-y divide-[#1a1a1a]/5">
                 {campaign.logs.length === 0 ? (
                   <tr>
-                    <td colSpan={5} className="px-4 py-10 text-center text-[#1a1a1a]/40 italic">
+                    <td colSpan={7} className="px-4 py-10 text-center text-[#1a1a1a]/40 italic">
                       No send logs yet. Campaign has not been sent.
                     </td>
                   </tr>
@@ -167,6 +180,24 @@ export default async function CampaignDetailPage({ params }: Props) {
                         {log.status === 'SENT' ? <CheckCircle className="w-3 h-3" /> : <XCircle className="w-3 h-3" />}
                         {log.status}
                       </span>
+                    </td>
+                    <td className="px-4 py-3 text-center">
+                      {log.openCount > 0 ? (
+                        <span className="bg-blue-50 text-blue-700 font-bold px-2 py-0.5 rounded text-xs">
+                          {log.openCount}
+                        </span>
+                      ) : (
+                        <span className="text-[#1a1a1a]/20">—</span>
+                      )}
+                    </td>
+                    <td className="px-4 py-3 text-center">
+                      {log.clickCount > 0 ? (
+                        <span className="bg-purple-50 text-purple-700 font-bold px-2 py-0.5 rounded text-xs" title={log.clickedUrls}>
+                          {log.clickCount}
+                        </span>
+                      ) : (
+                        <span className="text-[#1a1a1a]/20">—</span>
+                      )}
                     </td>
                     <td className="px-4 py-3 text-red-500 text-xs max-w-xs truncate">{log.error ?? '—'}</td>
                     <td className="px-4 py-3 text-[#1a1a1a]/40 text-xs">

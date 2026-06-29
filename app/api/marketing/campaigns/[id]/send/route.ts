@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { getSessionFromRequest } from '@/lib/auth';
 import { getMarketingSettings, sendEmail, sendSms, getTodaySentCount } from '@/lib/marketing';
+import * as cheerio from 'cheerio';
 
 async function checkAuth(req: NextRequest) {
   const session = await getSessionFromRequest(req);
@@ -71,13 +72,16 @@ export async function POST(
     if (testEmail && (campaign.type === 'EMAIL' || campaign.type === 'BOTH')) {
       if (!resendKey) return NextResponse.json({ error: 'Resend API Key not configured' }, { status: 422 });
       
-      const unsubBase = unsubscribeUrl || `${process.env.SITE_URL || ''}/unsubscribe`;
+      const unsubBase = unsubscribeUrl || `${process.env.SITE_URL || new URL(req.url).origin}/unsubscribe`;
       const unsubUrl = unsubBase
         ? (unsubBase.includes('?') 
             ? `${unsubBase}&email=${encodeURIComponent(testEmail)}` 
             : `${unsubBase}?email=${encodeURIComponent(testEmail)}`)
         : '';
-      const html = appendUnsubscribeFooter(campaign.body, unsubUrl);
+      let html = appendUnsubscribeFooter(campaign.body, unsubUrl);
+      
+      const siteUrl = process.env.SITE_URL || new URL(req.url).origin;
+      html = trackifyHtml(html, 'test-log-id', siteUrl);
       
       try {
         emailResult = await sendEmail({
@@ -146,15 +150,30 @@ export async function POST(
         await logResult(id, contact.id, 'EMAIL', 'FAILED', 'Resend API Key not configured');
         failedCount++;
       } else {
+        let logId = '';
         try {
-          const unsubBase = unsubscribeUrl || `${process.env.SITE_URL || ''}/unsubscribe`;
+          // Pre-create the log to get a unique CUID for tracking
+          const logRecord = await prisma.campaignLog.create({
+            data: {
+              campaignId: id,
+              contactId: contact.id,
+              channel: 'EMAIL',
+              status: 'SENT',
+            },
+          });
+          logId = logRecord.id;
+
+          const unsubBase = unsubscribeUrl || `${process.env.SITE_URL || new URL(req.url).origin}/unsubscribe`;
           const unsubUrl = unsubBase
             ? (unsubBase.includes('?') 
                 ? `${unsubBase}&email=${encodeURIComponent(contact.email)}` 
                 : `${unsubBase}?email=${encodeURIComponent(contact.email)}`)
             : '';
-          const html = appendUnsubscribeFooter(campaign.body, unsubUrl);
+          let html = appendUnsubscribeFooter(campaign.body, unsubUrl);
           
+          const siteUrl = process.env.SITE_URL || new URL(req.url).origin;
+          html = trackifyHtml(html, logId, siteUrl);
+
           await sendEmail({
             to: contact.email,
             subject: campaign.subject ?? campaign.name,
@@ -163,10 +182,20 @@ export async function POST(
             fromEmail: senderEmail,
             apiKey: resendKey,
           });
-          await logResult(id, contact.id, 'EMAIL', 'SENT', null);
+          
           sentCount++;
         } catch (e: unknown) {
-          await logResult(id, contact.id, 'EMAIL', 'FAILED', String(e));
+          if (logId) {
+            await prisma.campaignLog.update({
+              where: { id: logId },
+              data: {
+                status: 'FAILED',
+                error: String(e),
+              },
+            });
+          } else {
+            await logResult(id, contact.id, 'EMAIL', 'FAILED', String(e));
+          }
           failedCount++;
         }
       }
@@ -214,6 +243,33 @@ async function logResult(
   await prisma.campaignLog.create({
     data: { campaignId, contactId, channel, status, error: error ?? undefined },
   });
+}
+
+function trackifyHtml(html: string, logId: string, siteUrl: string): string {
+  if (!html) return html;
+  
+  const $ = cheerio.load(html);
+  
+  // 1. Rewrite all link hrefs (excluding anchors, mailto/tel, and unsubscribe)
+  $('a').each((_, elem) => {
+    const href = $(elem).attr('href');
+    if (href && !href.startsWith('#') && !href.startsWith('mailto:') && !href.startsWith('tel:')) {
+      if (!href.includes('/unsubscribe') && !href.includes('/track/')) {
+        const trackingUrl = `${siteUrl}/api/marketing/track/click?logId=${logId}&url=${encodeURIComponent(href)}`;
+        $(elem).attr('href', trackingUrl);
+      }
+    }
+  });
+
+  // 2. Append the tracking pixel at the end of body
+  const pixelHtml = `<img src="${siteUrl}/api/marketing/track/open?logId=${logId}" width="1" height="1" alt="" style="display:none;" />`;
+  if ($('body').length > 0) {
+    $('body').append(pixelHtml);
+  } else {
+    $.root().append(pixelHtml);
+  }
+
+  return $.html();
 }
 
 function appendUnsubscribeFooter(html: string, url: string): string {

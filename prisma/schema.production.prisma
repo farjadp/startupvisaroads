@@ -113,14 +113,22 @@ model CampaignGroup {
 }
 
 model CampaignLog {
-  id         String   @id @default(cuid())
-  campaignId String
-  campaign   Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
-  contactId  String
-  channel    String
-  status     String
-  error      String?
-  sentAt     DateTime @default(now())
+  id          String    @id @default(cuid())
+  campaignId  String
+  campaign    Campaign  @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  contactId   String
+  channel     String
+  status      String
+  error       String?
+  sentAt      DateTime  @default(now())
+
+  // Tracking fields
+  openCount   Int       @default(0)
+  openedAt    DateTime?
+  clickCount  Int       @default(0)
+  clickedAt   DateTime?
+  clickedUrls String    @default("[]")
+
   @@index([campaignId])
   @@index([campaignId, status])
 }
