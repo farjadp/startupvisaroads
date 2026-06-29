@@ -107,7 +107,7 @@ export default function MarketingSettingsPage() {
           </h3>
           <div className="grid grid-cols-2 gap-4">
             <Field label="Sender Name" k="marketing_sender_name" placeholder="Startup Visa Roads" />
-            <Field label="Sender Email" k="marketing_sender_email" placeholder="hello@startupvisaroads.com"
+            <Field label="Sender Email" k="marketing_sender_email" placeholder="hello@farjadp.info"
               hint="Must be verified in your Resend domain settings." />
           </div>
           <Field label="Unsubscribe URL" k="marketing_unsubscribe_url" placeholder="https://yourdomain.com/unsubscribe"
