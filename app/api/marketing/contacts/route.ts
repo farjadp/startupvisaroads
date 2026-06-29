@@ -56,10 +56,10 @@ export async function POST(req: NextRequest) {
 
   const contact = await prisma.marketingContact.create({
     data: {
-      name: name ?? null,
-      email: email ?? null,
-      phone: phone ?? null,
-      groupId: groupId ?? null,
+      name: name || null,
+      email: email || null,
+      phone: phone || null,
+      groupId: groupId || null,
     },
   });
 
