@@ -90,13 +90,22 @@ export default function ContactImporter({ groups, onImportComplete }: ContactImp
         method: 'POST',
         body: formData,
       });
-      const data = await res.json();
+
+      const contentType = res.headers.get('content-type');
+      let data;
+      if (contentType && contentType.includes('application/json')) {
+        data = await res.json();
+      } else {
+        const errorText = await res.text();
+        throw new Error(errorText || `Server error: ${res.status} ${res.statusText}`);
+      }
+
       if (!res.ok) throw new Error(data.error ?? 'Import failed');
       setResult(data);
       setStatus('done');
       onImportComplete?.({ created: data.created, skipped: data.skipped });
     } catch (e: unknown) {
-      setError(String(e));
+      setError(e instanceof Error ? e.message : String(e));
       setStatus('error');
     }
   };

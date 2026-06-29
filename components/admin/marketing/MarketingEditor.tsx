@@ -4,7 +4,7 @@ import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Image from '@tiptap/extension-image';
 import Link from '@tiptap/extension-link';
-import { useCallback, useState } from 'react';
+import { useCallback, useState, useEffect } from 'react';
 import {
   Bold, Italic, List, ListOrdered, Link as LinkIcon, Image as ImageIcon,
   Heading1, Heading2, Heading3, AlignLeft, AlignCenter, AlignRight,
@@ -34,6 +34,8 @@ export default function MarketingEditor({ content, onChange, minHeight = 500 }: 
   const [htmlSource, setHtmlSource] = useState(content);
   const [showColorPicker, setShowColorPicker] = useState(false);
 
+  const isCustomHtml = /<!DOCTYPE|<html>|<head|<style|<table|<tr|<td/i.test(htmlSource);
+
   const editor = useEditor({
     extensions: [
       StarterKit,
@@ -43,8 +45,11 @@ export default function MarketingEditor({ content, onChange, minHeight = 500 }: 
     content,
     onUpdate: ({ editor }) => {
       const html = editor.getHTML();
-      setHtmlSource(html);
-      onChange(html);
+      // Only let visual editor updates propagate if we are NOT in custom HTML mode
+      if (!isCustomHtml) {
+        setHtmlSource(html);
+        onChange(html);
+      }
     },
     editorProps: {
       attributes: {
@@ -53,6 +58,18 @@ export default function MarketingEditor({ content, onChange, minHeight = 500 }: 
       },
     },
   });
+
+  // Sync content updates from parent (e.g. template selection)
+  useEffect(() => {
+    if (!editor) return;
+    if (content !== htmlSource) {
+      setHtmlSource(content);
+      const isNewCustom = /<!DOCTYPE|<html>|<head|<style|<table|<tr|<td/i.test(content);
+      if (!isNewCustom) {
+        editor.commands.setContent(content);
+      }
+    }
+  }, [content, editor]);
 
   const addImage = useCallback(async () => {
     const input = document.createElement('input');
@@ -86,9 +103,11 @@ export default function MarketingEditor({ content, onChange, minHeight = 500 }: 
   }, [editor]);
 
   const applyHtmlSource = () => {
-    editor?.commands.setContent(htmlSource);
+    if (!isCustomHtml) {
+      editor?.commands.setContent(htmlSource);
+    }
     onChange(htmlSource);
-    setViewMode('editor');
+    setViewMode(isCustomHtml ? 'preview' : 'editor');
   };
 
   const ToolBtn = ({
@@ -278,14 +297,50 @@ export default function MarketingEditor({ content, onChange, minHeight = 500 }: 
 
       {/* Editor / Preview / HTML */}
       {viewMode === 'editor' && (
-        <EditorContent editor={editor} className="flex-1" />
+        isCustomHtml ? (
+          <div className="p-8 flex flex-col items-center justify-center text-center bg-gray-50 border-b border-gray-100 flex-1 min-h-[400px]">
+            <div className="p-4 rounded-full bg-yellow-50 text-yellow-600 mb-4">
+              <Code2 className="w-8 h-8" />
+            </div>
+            <h3 className="font-serif text-lg text-[#1a1a1a] mb-2">Custom HTML Template Detected</h3>
+            <p className="text-sm text-[#1a1a1a]/60 max-w-md mb-6 font-sans">
+              This campaign uses custom styling, tables, or a full HTML document.
+              To prevent losing your design and code structure, editing is only available in the <strong>HTML</strong> tab.
+            </p>
+            <div className="flex gap-3">
+              <button
+                type="button"
+                onClick={() => setViewMode('html')}
+                className="px-4 py-2 bg-[#1a1a1a] text-white text-sm font-bold rounded-lg hover:bg-[#1a1a1a]/80 transition-colors"
+              >
+                Go to HTML Editor
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  if (confirm("Are you sure you want to convert to rich text? This will permanently remove all custom CSS, structures, and headers.")) {
+                    editor.commands.setContent(htmlSource);
+                    const stripped = editor.getHTML();
+                    setHtmlSource(stripped);
+                    onChange(stripped);
+                  }
+                }}
+                className="px-4 py-2 border border-red-200 text-red-600 text-sm font-bold rounded-lg hover:bg-red-50 transition-colors"
+              >
+                Convert to Rich Text
+              </button>
+            </div>
+          </div>
+        ) : (
+          <EditorContent editor={editor} className="flex-1" />
+        )
       )}
 
       {viewMode === 'preview' && (
         <div
           className="prose prose-sm sm:prose-base p-6 max-w-none bg-white font-sans"
           style={{ minHeight: `${minHeight}px` }}
-          dangerouslySetInnerHTML={{ __html: editor.getHTML() }}
+          dangerouslySetInnerHTML={{ __html: htmlSource }}
         />
       )}
 
@@ -293,7 +348,11 @@ export default function MarketingEditor({ content, onChange, minHeight = 500 }: 
         <div className="flex flex-col flex-1">
           <textarea
             value={htmlSource}
-            onChange={(e) => setHtmlSource(e.target.value)}
+            onChange={(e) => {
+              const val = e.target.value;
+              setHtmlSource(val);
+              onChange(val);
+            }}
             className="flex-1 font-mono text-xs p-4 bg-[#1a1a1a] text-[#CCFF00] resize-none focus:outline-none"
             style={{ minHeight: `${minHeight}px` }}
             spellCheck={false}
@@ -304,7 +363,7 @@ export default function MarketingEditor({ content, onChange, minHeight = 500 }: 
               onClick={applyHtmlSource}
               className="px-4 py-2 bg-[#CCFF00] text-[#1a1a1a] text-sm font-bold rounded-lg hover:bg-[#b8e600] transition-colors"
             >
-              Apply HTML
+              {isCustomHtml ? 'Apply & Preview' : 'Apply HTML'}
             </button>
           </div>
         </div>

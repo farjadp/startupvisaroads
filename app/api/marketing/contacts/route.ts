@@ -48,17 +48,42 @@ export async function POST(req: NextRequest) {
   if (!(await checkAuth(req))) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   const body = await req.json();
-  const { name, email, phone, groupId, tags } = body;
+  const { name, email, phone, groupId } = body;
 
   if (!email && !phone) {
     return NextResponse.json({ error: 'Email or phone required' }, { status: 400 });
   }
 
+  const cleanEmail = email ? email.trim().toLowerCase() : null;
+  const cleanPhone = phone ? phone.trim() : null;
+
+  if (cleanEmail) {
+    const existing = await prisma.marketingContact.findFirst({
+      where: {
+        email: cleanEmail,
+      },
+    });
+    if (existing) {
+      return NextResponse.json({ error: 'Contact with this email already exists' }, { status: 400 });
+    }
+  }
+
+  if (cleanPhone) {
+    const existing = await prisma.marketingContact.findFirst({
+      where: {
+        phone: cleanPhone,
+      },
+    });
+    if (existing) {
+      return NextResponse.json({ error: 'Contact with this phone already exists' }, { status: 400 });
+    }
+  }
+
   const contact = await prisma.marketingContact.create({
     data: {
       name: name || null,
-      email: email || null,
-      phone: phone || null,
+      email: cleanEmail,
+      phone: cleanPhone,
       groupId: groupId || null,
     },
   });

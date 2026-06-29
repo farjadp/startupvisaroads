@@ -37,8 +37,9 @@ export async function POST(req: NextRequest) {
 
   const rows = lines.slice(1).map((line) => {
     const cols = line.split(',').map((c) => c.trim().replace(/^["']|["']$/g, ''));
+    const emailVal = emailIdx >= 0 ? cols[emailIdx] || null : null;
     return {
-      email: emailIdx >= 0 ? cols[emailIdx] || null : null,
+      email: emailVal ? emailVal.trim().toLowerCase() : null,
       phone: phoneIdx >= 0 ? cols[phoneIdx] || null : null,
       name: nameIdx >= 0 ? cols[nameIdx] || null : null,
       groupId: groupId || null,
@@ -48,13 +49,64 @@ export async function POST(req: NextRequest) {
   let created = 0;
   let skipped = 0;
 
+  // 1. Fetch all existing emails and phones in a single query
+  const existingContacts = await prisma.marketingContact.findMany({
+    select: {
+      email: true,
+      phone: true,
+    },
+  });
+
+  const dbEmails = new Set<string>();
+  const dbPhones = new Set<string>();
+
+  for (const c of existingContacts) {
+    if (c.email) dbEmails.add(c.email.toLowerCase());
+    if (c.phone) dbPhones.add(c.phone.trim());
+  }
+
+  // 2. Filter rows to find only non-duplicates
+  const seenEmails = new Set<string>();
+  const seenPhones = new Set<string>();
+  const toCreate: typeof rows = [];
+
   for (const row of rows) {
+    let isDuplicate = false;
+
     if (row.email) {
-      const existing = await prisma.marketingContact.findFirst({ where: { email: row.email } });
-      if (existing) { skipped++; continue; }
+      const emailLower = row.email.toLowerCase();
+      if (seenEmails.has(emailLower) || dbEmails.has(emailLower)) {
+        isDuplicate = true;
+      } else {
+        seenEmails.add(emailLower);
+      }
     }
-    await prisma.marketingContact.create({ data: row });
-    created++;
+
+    if (!isDuplicate && row.phone) {
+      const phoneTrimmed = row.phone.trim();
+      if (seenPhones.has(phoneTrimmed) || dbPhones.has(phoneTrimmed)) {
+        isDuplicate = true;
+      } else {
+        seenPhones.add(phoneTrimmed);
+      }
+    }
+
+    if (isDuplicate) {
+      skipped++;
+      continue;
+    }
+
+    toCreate.push(row);
+  }
+
+  // 3. Batch insert new contacts using createMany
+  const batchSize = 1000;
+  for (let i = 0; i < toCreate.length; i += batchSize) {
+    const batch = toCreate.slice(i, i + batchSize);
+    await prisma.marketingContact.createMany({
+      data: batch,
+    });
+    created += batch.length;
   }
 
   return NextResponse.json({ created, skipped, total: rows.length });
