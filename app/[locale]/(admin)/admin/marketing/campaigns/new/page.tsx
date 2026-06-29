@@ -118,18 +118,35 @@ export default function NewCampaignPage() {
   };
 
   const handleTest = async () => {
-    if (!name) { setTestStatus('Save the campaign name first.'); return; }
+    if ((type === 'EMAIL' || type === 'BOTH') && !testEmail) {
+      setTestStatus('❌ Please enter a test email.');
+      return;
+    }
+    if ((type === 'SMS' || type === 'BOTH') && !testPhone) {
+      setTestStatus('❌ Please enter a test phone.');
+      return;
+    }
+
     setTestStatus('Saving and sending test…');
+
+    const draftName = name || 'Test Campaign Draft';
+    const draftSubject = subject || draftName;
 
     // First save draft
     const res = await fetch('/api/marketing/campaigns', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name: `${name} [TEST DRAFT]`, type, subject, body: emailBody, smsBody }),
+      body: JSON.stringify({ 
+        name: `${draftName} [TEST DRAFT]`, 
+        type, 
+        subject: draftSubject, 
+        body: emailBody, 
+        smsBody 
+      }),
     });
     const data = await res.json();
     const id = data.campaign?.id;
-    if (!id) { setTestStatus('Failed to create draft.'); return; }
+    if (!id) { setTestStatus('❌ Failed to create draft.'); return; }
 
     const sendRes = await fetch(`/api/marketing/campaigns/${id}/send`, {
       method: 'POST',
@@ -148,7 +165,7 @@ export default function NewCampaignPage() {
     if (sendRes.ok) {
       setTestStatus('✅ Test sent successfully!');
     } else {
-      setTestStatus(`❌ ${sendData.error}`);
+      setTestStatus(`❌ ${sendData.error || 'Unknown error'}`);
     }
   };
 
