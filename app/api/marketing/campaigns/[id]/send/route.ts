@@ -57,11 +57,11 @@ export async function POST(
   const twilioSid = settings['marketing_twilio_sid'];
   const twilioToken = settings['marketing_twilio_token'];
   const twilioFrom = settings['marketing_twilio_from'];
-  const senderName = settings['marketing_sender_name'] ?? 'Startup Visa Roads';
-  const senderEmail = settings['marketing_sender_email'] ?? 'noreply@startupvisaroads.com';
-  const maxEmailsPerDay = parseInt(settings['marketing_max_emails_per_day'] ?? '500');
-  const maxSmsPerDay = parseInt(settings['marketing_max_sms_per_day'] ?? '100');
-  const unsubscribeUrl = settings['marketing_unsubscribe_url'] ?? '';
+  const senderName = settings['marketing_sender_name'] || 'Startup Visa Roads';
+  const senderEmail = settings['marketing_sender_email'] || 'noreply@startupvisaroads.com';
+  const maxEmailsPerDay = parseInt(settings['marketing_max_emails_per_day'] || '500');
+  const maxSmsPerDay = parseInt(settings['marketing_max_sms_per_day'] || '100');
+  const unsubscribeUrl = settings['marketing_unsubscribe_url'] || '';
 
   // ── Test send mode ──────────────────────────────────────────────────────────
   if (testEmail || testPhone) {
