@@ -33,6 +33,16 @@ export async function GET(
   return NextResponse.json({ campaign, stats: { sent, failed, total: campaign.logs.length } });
 }
 
+function getSiteUrl(req: NextRequest): string {
+  if (process.env.SITE_URL) return process.env.SITE_URL;
+  const forwardedHost = req.headers.get('x-forwarded-host');
+  const forwardedProto = req.headers.get('x-forwarded-proto') || 'https';
+  if (forwardedHost) {
+    return `${forwardedProto}://${forwardedHost}`;
+  }
+  return new URL(req.url).origin;
+}
+
 export async function POST(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> },
@@ -40,6 +50,7 @@ export async function POST(
   if (!(await checkAuth(req))) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   const { id } = await params;
+  const siteUrl = getSiteUrl(req);
   const bodyData = await req.json().catch(() => ({}));
   const { testEmail, testPhone } = bodyData;
 
@@ -72,7 +83,7 @@ export async function POST(
     if (testEmail && (campaign.type === 'EMAIL' || campaign.type === 'BOTH')) {
       if (!resendKey) return NextResponse.json({ error: 'Resend API Key not configured' }, { status: 422 });
       
-      const unsubBase = unsubscribeUrl || `${process.env.SITE_URL || new URL(req.url).origin}/unsubscribe`;
+      const unsubBase = unsubscribeUrl || `${siteUrl}/unsubscribe`;
       const unsubUrl = unsubBase
         ? (unsubBase.includes('?') 
             ? `${unsubBase}&email=${encodeURIComponent(testEmail)}` 
@@ -80,7 +91,6 @@ export async function POST(
         : '';
       let html = appendUnsubscribeFooter(campaign.body, unsubUrl);
       
-      const siteUrl = process.env.SITE_URL || new URL(req.url).origin;
       html = trackifyHtml(html, 'test-log-id', siteUrl);
       
       try {
@@ -163,7 +173,7 @@ export async function POST(
           });
           logId = logRecord.id;
 
-          const unsubBase = unsubscribeUrl || `${process.env.SITE_URL || new URL(req.url).origin}/unsubscribe`;
+          const unsubBase = unsubscribeUrl || `${siteUrl}/unsubscribe`;
           const unsubUrl = unsubBase
             ? (unsubBase.includes('?') 
                 ? `${unsubBase}&email=${encodeURIComponent(contact.email)}` 
@@ -171,7 +181,6 @@ export async function POST(
             : '';
           let html = appendUnsubscribeFooter(campaign.body, unsubUrl);
           
-          const siteUrl = process.env.SITE_URL || new URL(req.url).origin;
           html = trackifyHtml(html, logId, siteUrl);
 
           await sendEmail({
