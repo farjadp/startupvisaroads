@@ -71,8 +71,8 @@ export async function POST(
   const twilioFrom = settings['marketing_twilio_from'];
   const senderName = settings['marketing_sender_name'] || 'Startup Visa Roads';
   const senderEmail = settings['marketing_sender_email'] || 'noreply@farjadp.info';
-  const maxEmailsPerDay = parseInt(settings['marketing_max_emails_per_day'] || '500');
-  const maxSmsPerDay = parseInt(settings['marketing_max_sms_per_day'] || '100');
+  const maxEmailsPerDay = parseInt(settings['marketing_max_emails_per_day'] || '20000');
+  const maxSmsPerDay = parseInt(settings['marketing_max_sms_per_day'] || '1000');
   const unsubscribeUrl = settings['marketing_unsubscribe_url'] || '';
 
   // ── Test send mode ──────────────────────────────────────────────────────────
