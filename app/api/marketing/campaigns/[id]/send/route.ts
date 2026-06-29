@@ -70,7 +70,15 @@ export async function POST(
 
     if (testEmail && (campaign.type === 'EMAIL' || campaign.type === 'BOTH')) {
       if (!resendKey) return NextResponse.json({ error: 'Resend API Key not configured' }, { status: 422 });
-      const html = appendUnsubscribeFooter(campaign.body, unsubscribeUrl);
+      
+      const unsubBase = unsubscribeUrl || `${process.env.SITE_URL || ''}/unsubscribe`;
+      const unsubUrl = unsubBase
+        ? (unsubBase.includes('?') 
+            ? `${unsubBase}&email=${encodeURIComponent(testEmail)}` 
+            : `${unsubBase}?email=${encodeURIComponent(testEmail)}`)
+        : '';
+      const html = appendUnsubscribeFooter(campaign.body, unsubUrl);
+      
       try {
         emailResult = await sendEmail({
           to: testEmail,
@@ -139,7 +147,14 @@ export async function POST(
         failedCount++;
       } else {
         try {
-          const html = appendUnsubscribeFooter(campaign.body, unsubscribeUrl);
+          const unsubBase = unsubscribeUrl || `${process.env.SITE_URL || ''}/unsubscribe`;
+          const unsubUrl = unsubBase
+            ? (unsubBase.includes('?') 
+                ? `${unsubBase}&email=${encodeURIComponent(contact.email)}` 
+                : `${unsubBase}?email=${encodeURIComponent(contact.email)}`)
+            : '';
+          const html = appendUnsubscribeFooter(campaign.body, unsubUrl);
+          
           await sendEmail({
             to: contact.email,
             subject: campaign.subject ?? campaign.name,
@@ -205,8 +220,8 @@ function appendUnsubscribeFooter(html: string, url: string): string {
   if (!url) return html;
   return (
     html +
-    `<div style="margin-top:32px;padding-top:16px;border-top:1px solid #eee;font-size:12px;color:#999;text-align:center;">
-      <a href="${url}" style="color:#999;">Unsubscribe</a>
+    `<div style="margin-top:32px;padding-top:16px;border-top:1px solid #eee;font-size:12px;color:#999;text-align:center;font-family:sans-serif;" dir="auto">
+      <a href="${url}" style="color:#999;text-decoration:underline;">لغو عضویت / Unsubscribe</a>
     </div>`
   );
 }
