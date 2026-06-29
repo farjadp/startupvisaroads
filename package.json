@@ -33,7 +33,9 @@
     "prisma": "^5.22.0",
     "react": "^19.2.1",
     "react-dom": "^19.2.1",
+    "resend": "^6.16.0",
     "slugify": "^1.6.9",
+    "twilio": "^6.0.2",
     "twitter-api-v2": "^1.29.0"
   },
   "devDependencies": {

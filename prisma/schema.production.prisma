@@ -64,3 +64,64 @@ model Setting {
   value String
 }
 
+// ─── Marketing ───────────────────────────────────────────────────────────────
+
+model MarketingContact {
+  id        String              @id @default(cuid())
+  email     String?
+  phone     String?
+  name      String?
+  tags      String[]            @default([])
+  groupId   String?
+  group     MarketingGroup?     @relation(fields: [groupId], references: [id])
+  createdAt DateTime            @default(now())
+  @@index([email])
+  @@index([groupId])
+}
+
+model MarketingGroup {
+  id        String               @id @default(cuid())
+  name      String
+  color     String               @default("#CCFF00")
+  contacts  MarketingContact[]
+  campaigns CampaignGroup[]
+  createdAt DateTime             @default(now())
+}
+
+model Campaign {
+  id          String          @id @default(cuid())
+  name        String
+  type        String          @default("EMAIL")
+  status      String          @default("DRAFT")
+  subject     String?
+  body        String          @default("")
+  smsBody     String?
+  scheduledAt DateTime?
+  sentAt      DateTime?
+  groups      CampaignGroup[]
+  logs        CampaignLog[]
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+}
+
+model CampaignGroup {
+  campaignId String
+  groupId    String
+  campaign   Campaign        @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  group      MarketingGroup  @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  @@id([campaignId, groupId])
+}
+
+model CampaignLog {
+  id         String   @id @default(cuid())
+  campaignId String
+  campaign   Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  contactId  String
+  channel    String
+  status     String
+  error      String?
+  sentAt     DateTime @default(now())
+  @@index([campaignId])
+  @@index([campaignId, status])
+}
+
