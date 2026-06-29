@@ -127,7 +127,7 @@ export async function POST(
     return NextResponse.json({ test: true, emailResult, smsResult });
   }
 
-  // ── Full send ───────────────────────────────────────────────────────────────
+  // ── Full send (Background execution) ──────────────────────────────────────────
   const contactMap = new Map<string, { id: string; email: string | null; phone: string | null }>();
   for (const cg of campaign.groups) {
     for (const contact of cg.group.contacts) {
@@ -151,6 +151,37 @@ export async function POST(
 
   await prisma.campaign.update({ where: { id }, data: { status: 'SENDING' } });
 
+  // Fire and forget (Node.js will process this asynchronously)
+  processCampaignInBackground({
+    id,
+    contacts,
+    campaign,
+    siteUrl,
+    resendKey,
+    twilioSid,
+    twilioToken,
+    twilioFrom,
+    senderName,
+    senderEmail,
+    unsubscribeUrl,
+  }).catch(e => console.error("Background campaign error:", e));
+
+  return NextResponse.json({ success: true, message: 'Campaign sending started in the background.', total: contacts.length });
+}
+
+async function processCampaignInBackground({
+  id,
+  contacts,
+  campaign,
+  siteUrl,
+  resendKey,
+  twilioSid,
+  twilioToken,
+  twilioFrom,
+  senderName,
+  senderEmail,
+  unsubscribeUrl,
+}: any) {
   let sentCount = 0;
   let failedCount = 0;
 
@@ -238,8 +269,6 @@ export async function POST(
     where: { id },
     data: { status: finalStatus, sentAt: new Date() },
   });
-
-  return NextResponse.json({ sent: sentCount, failed: failedCount });
 }
 
 async function logResult(
