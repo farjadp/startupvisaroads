@@ -167,6 +167,7 @@ export default function FinlandPage() {
           alt="Finland Winter Landscape"
           fill
           priority
+          unoptimized={true}
           className="object-cover object-center"
         />
 
@@ -262,6 +263,7 @@ export default function FinlandPage() {
               src="https://images.unsplash.com/photo-1521319696238-d9d15c195f2a?w=900&q=80&auto=format&fit=crop&crop=left"
               alt="Helsinki Cathedral and cityscape"
               fill
+              unoptimized={true}
               className="object-cover"
             />
             <div className="absolute inset-0 bg-gradient-to-r from-transparent to-[#F2F0E9] hidden lg:block" />
@@ -284,6 +286,30 @@ export default function FinlandPage() {
               With the highest amount of VC investment per capita in Europe and a deep-tech heritage rooted in companies like Nokia, Finland offers an unparalleled environment for innovation. 
               The process begins with an Eligibility Statement from Business Finland, focusing heavily on team capacity and global scalability.
             </p>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════════════════════
+          YOUTUBE VIDEO SECTION
+      ═══════════════════════════════════════════════════════ */}
+      <section className="py-28 px-6 bg-white border-y border-[#1a1a1a]/10">
+        <div className="container mx-auto max-w-5xl text-center">
+          <span className="font-sans text-xs font-bold uppercase tracking-[0.2em] text-[#002F6C] block mb-4">
+            Ultimate Step-by-Step Guide
+          </span>
+          <h2 className="font-serif text-4xl md:text-5xl leading-tight mb-12 text-[#1a1a1a]" style={{ letterSpacing: '-0.02em' }}>
+            Watch the Comprehensive<br />
+            <span className="italic text-[#00BFA5]">Masterclass</span>
+          </h2>
+          <div className="relative w-full overflow-hidden shadow-2xl shadow-[#002F6C]/10 border border-[#1a1a1a]/10" style={{ paddingTop: '56.25%' }}>
+            <iframe 
+              className="absolute top-0 left-0 w-full h-full border-0" 
+              src="https://www.youtube.com/embed/onSFM-LkXxU" 
+              title="How to Get the Finland Startup Visa in 2026: Ultimate Guide" 
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+              allowFullScreen
+            ></iframe>
           </div>
         </div>
       </section>
@@ -356,6 +382,7 @@ export default function FinlandPage() {
           src="https://images.unsplash.com/photo-1483347756197-71ef80e95f73?w=1600&q=80&auto=format&fit=crop"
           alt="Northern Lights over Finland"
           fill
+          unoptimized={true}
           className="object-cover object-center"
         />
         <div className="absolute inset-0 bg-gradient-to-r from-[#001B3D]/90 to-[#001B3D]/30" />
@@ -424,6 +451,7 @@ export default function FinlandPage() {
               src="https://images.unsplash.com/photo-1549646690-cb64ecfdf4e4?w=900&q=80&auto=format&fit=crop&crop=right"
               alt="Helsinki Coastline"
               fill
+              unoptimized={true}
               className="object-cover"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-[#001B3D] via-transparent to-transparent lg:bg-gradient-to-l lg:from-[#001B3D] lg:via-transparent" />
@@ -550,6 +578,7 @@ export default function FinlandPage() {
               src="https://images.unsplash.com/photo-1510798831971-661eb04b3739?w=900&q=80&auto=format&fit=crop"
               alt="Scandinavian lifestyle"
               fill
+              unoptimized={true}
               className="object-cover"
             />
           </div>
