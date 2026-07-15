@@ -90,7 +90,7 @@ export default function Footer() {
                     <a href="mailto:hello@ashavid.ca" className="hover:text-white transition-colors">hello@ashavid.ca</a>
                  </address>
                  
-                 <Link href="/contact" className="inline-flex items-center gap-2 font-sans font-bold border-b border-[#CCFF00] pb-1 hover:text-[#CCFF00] transition-colors text-sm tracking-widest uppercase">
+                 <Link href="/book-meeting" className="inline-flex items-center gap-2 font-sans font-bold border-b border-[#CCFF00] pb-1 hover:text-[#CCFF00] transition-colors text-sm tracking-widest uppercase">
                     Schedule Audit <ArrowUpRight size={14} />
                  </Link>
                  

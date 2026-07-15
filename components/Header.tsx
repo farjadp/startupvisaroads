@@ -107,6 +107,7 @@ export default function Header() {
       subLinks: [
         { href: '/about', label: t('our_story') },
         { href: '/contact', label: t('contact') },
+        { href: '/book-meeting', label: t('book_consultation') },
       ]
     },
   ];
@@ -243,7 +244,7 @@ export default function Header() {
 
             {/* Desktop CTA */}
             <Link
-              href="/contact"
+              href="/book-meeting"
               className={`hidden lg:flex items-center gap-3 font-sans text-xs font-bold uppercase tracking-widest px-6 py-3 border transition-all duration-300 group
                     ${scrolled
                   ? 'border-[#CCFF00] text-[#1a1a1a] bg-[#CCFF00] hover:bg-white hover:border-white'
@@ -354,7 +355,7 @@ export default function Header() {
             </div>
 
             <Link
-              href="/contact"
+              href="/book-meeting"
               className="w-full md:w-auto bg-[#CCFF00] text-[#1a1a1a] font-sans text-sm font-bold uppercase tracking-widest px-8 py-4 hover:bg-white transition-colors text-center"
             >
               {t('book_consultation')}

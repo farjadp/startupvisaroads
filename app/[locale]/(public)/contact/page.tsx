@@ -8,6 +8,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import BookingCTA from '@/components/BookingCTA';
 import { sendContactForm } from './actions';
 import {
    ArrowRight,
@@ -264,7 +265,12 @@ export default function ContactPage() {
 
 
          {/* =========================================
-          4. PRE-SUBMISSION FAQ
+          4. GOOGLE MEET BOOKING CTA
+      ========================================= */}
+         <BookingCTA />
+
+         {/* =========================================
+          5. PRE-SUBMISSION FAQ
       ========================================= */}
          <section className="py-24 bg-[#1a1a1a] text-[#F2F0E9] -mx-4 md:-mx-8 px-4 md:px-8">
             <div className="max-w-[1400px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16">
@@ -303,7 +309,7 @@ export default function ContactPage() {
 
 
          {/* =========================================
-          5. THE FOOTER MANIFESTO
+          6. THE FOOTER MANIFESTO
       ========================================= */}
          <section className="py-32 text-center">
             <p className="font-serif text-3xl md:text-5xl max-w-4xl mx-auto leading-tight">

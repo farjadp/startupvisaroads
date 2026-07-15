@@ -44,6 +44,7 @@ export default function CanadaSUVPage() {
             src="https://images.unsplash.com/photo-1506443350257-252d065f4265?q=80&w=2070&auto=format&fit=crop"
             alt="Toronto Financial District"
             fill
+            unoptimized
             className="object-cover grayscale hover:grayscale-0 transition-all duration-[2s] ease-in-out"
             priority
           />
@@ -52,7 +53,9 @@ export default function CanadaSUVPage() {
 
         <div className="relative z-10 container mx-auto px-6 lg:px-12">
            <div className="flex items-center gap-2 mb-6">
-              <span className="bg-[#CCFF00] text-[#1a1a1a] px-3 py-1 text-xs font-bold uppercase tracking-widest">Open for 2025</span>
+              <span className="bg-[#b91c1c] text-white px-3 py-1 text-xs font-bold uppercase tracking-widest flex items-center gap-2">
+                 <ShieldAlert size={14}/> Program Paused
+              </span>
               <span className="text-[#F2F0E9] text-xs font-bold uppercase tracking-widest border border-[#F2F0E9]/30 px-3 py-1">Direct PR Pathway</span>
            </div>
            
@@ -61,8 +64,8 @@ export default function CanadaSUVPage() {
               Start-Up Visa.
            </h1>
            
-           <p className="text-xl text-[#F2F0E9]/80 font-sans max-w-2xl mb-12 leading-relaxed border-l-4 border-[#CCFF00] pl-6">
-              Build your legacy in the North. The only federal program offering direct Permanent Residency to 5 co-founders and their families.
+           <p className="text-xl text-[#F2F0E9]/80 font-sans max-w-2xl mb-12 leading-relaxed border-l-4 border-[#b91c1c] pl-6">
+              Due to recent policy changes and overwhelming backlog, Canada's Federal Start-Up Visa program is temporarily paused. Our strategic focus is currently on the <Link href="/pnp" className="text-[#CCFF00] underline">Provincial Nominee Program (PNP)</Link> and European jurisdictions.
            </p>
 
            <div className="flex flex-col sm:flex-row gap-4">
@@ -179,6 +182,7 @@ export default function CanadaSUVPage() {
                         src="https://images.unsplash.com/photo-1556761175-5973dc0f32e7?q=80&w=1932&auto=format&fit=crop"
                         alt="Business Strategy Meeting"
                         fill
+                        unoptimized
                         className="object-cover rounded-sm grayscale contrast-125"
                      />
                      {/* Overlay Graphic */}
@@ -328,6 +332,7 @@ export default function CanadaSUVPage() {
                 src="https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=2069&auto=format&fit=crop"
                 alt="Modern Office"
                 fill
+                unoptimized
                 className="object-cover brightness-[0.3]"
              />
          </div>
