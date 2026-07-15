@@ -36,5 +36,12 @@
         "contact": "Contact",
         "client_login": "Client Login",
         "book_consultation": "Book Consultation"
+    },
+    "NotFound": {
+        "title": "404",
+        "subtitle": "Destination Unknown",
+        "description": "It looks like you've navigated off the map. This route might be under construction or doesn't exist in our immigration catalog.",
+        "return_home": "Return to Base",
+        "contact_us": "Contact Support"
     }
 }
