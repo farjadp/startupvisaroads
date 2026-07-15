@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import type { Metadata } from 'next';
 import { Link } from '@/navigation';
 import { Clock } from 'lucide-react';
@@ -135,7 +135,9 @@ export default async function BlogPage({
             </Link>
           ))}
         </div>
-        <BlogSearchInput placeholder={t.search} isRtl={isRtl} />
+        <Suspense fallback={<div className="w-full md:w-[300px] h-10 bg-[#1a1a1a]/5 rounded-full animate-pulse" />}>
+          <BlogSearchInput placeholder={t.search} isRtl={isRtl} />
+        </Suspense>
       </div>
 
       {/* Empty State */}
