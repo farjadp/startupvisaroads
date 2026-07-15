@@ -34,12 +34,17 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
    const t = await getTranslations({ locale, namespace: 'Hero' });
    
    // Fetch latest 3 published articles
-   const latestArticles = await prisma.article.findMany({
-      where: { status: 'PUBLISHED', locale },
-      orderBy: { createdAt: 'desc' },
-      take: 3,
-      include: { category: true }
-   });
+   let latestArticles: any[] = [];
+   try {
+      latestArticles = await prisma.article.findMany({
+         where: { status: 'PUBLISHED', locale },
+         orderBy: { createdAt: 'desc' },
+         take: 3,
+         include: { category: true }
+      });
+   } catch (error) {
+      console.warn("Could not fetch latest articles. If this is a build step, this is expected:", error);
+   }
 
    return (
       <div className="w-full px-4 md:px-8 border-x border-[#1a1a1a]/10 max-w-[1400px] mx-auto bg-[#F2F0E9]">
