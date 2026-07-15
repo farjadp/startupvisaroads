@@ -20,6 +20,7 @@ import {
 import type { Metadata } from 'next';
 
 import { metaFor } from '@/lib/pageMeta';
+import BookingCTA from '@/components/BookingCTA';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
@@ -250,6 +251,7 @@ export default function ServicesPage() {
          </div>
       </section>
 
+      <BookingCTA />
 
       {/* =========================================
           5. CTA

@@ -235,9 +235,8 @@ export default function StrategicAssessment() {
          </p>
          <div className="flex flex-col gap-4 max-w-xs mx-auto">
             <a 
-               href="https://calendly.com/YOUR_LINK" 
-               target="_blank"
-               className="bg-[#1a1a1a] text-[#F2F0E9] px-8 py-4 font-sans font-bold uppercase tracking-widest hover:bg-[#CCFF00] hover:text-[#1a1a1a] transition-colors"
+               href="/book-meeting" 
+               className="bg-[#1a1a1a] text-[#F2F0E9] px-8 py-4 font-sans font-bold uppercase tracking-widest hover:bg-[#CCFF00] hover:text-[#1a1a1a] transition-colors text-center"
             >
                Book Strategy Call
             </a>

@@ -18,6 +18,7 @@ import {
 import type { Metadata } from 'next';
 
 import { metaFor } from '@/lib/pageMeta';
+import BookingCTA from '@/components/BookingCTA';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
@@ -246,6 +247,7 @@ export default function BCPage() {
          </div>
       </section>
 
+      <BookingCTA />
 
       {/* =========================================
           6. CTA
@@ -259,7 +261,7 @@ export default function BCPage() {
             BC has a pathway for you. Let's calculate your SIRS score.
          </p>
          <div className="flex flex-col sm:flex-row justify-center gap-6">
-            <Link href="/contact" className="bg-[#1a1a1a] text-[#F2F0E9] px-10 py-5 font-sans font-bold uppercase tracking-widest hover:bg-[#CCFF00] hover:text-[#1a1a1a] transition-colors">
+            <Link href="/book-meeting" className="bg-[#1a1a1a] text-[#F2F0E9] px-10 py-5 font-sans font-bold uppercase tracking-widest hover:bg-[#CCFF00] hover:text-[#1a1a1a] transition-colors">
                Book Consultation
             </Link>
             <Link href="/pnp" className="border border-[#1a1a1a] text-[#1a1a1a] px-10 py-5 font-sans font-bold uppercase tracking-widest hover:bg-[#1a1a1a] hover:text-[#F2F0E9] transition-colors">

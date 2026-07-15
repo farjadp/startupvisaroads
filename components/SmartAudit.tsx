@@ -125,7 +125,7 @@ export default function SmartAudit() {
            </p>
 
            <div className="flex flex-col gap-4">
-             <Link href="/contact" className="bg-[#1a1a1a] text-[#CCFF00] py-4 px-8 font-bold uppercase tracking-widest hover:bg-white hover:text-[#1a1a1a] hover:border-[#1a1a1a] border border-transparent transition-all">
+             <Link href="/book-meeting" className="bg-[#1a1a1a] text-[#CCFF00] py-4 px-8 font-bold uppercase tracking-widest hover:bg-white hover:text-[#1a1a1a] hover:border-[#1a1a1a] border border-transparent transition-all">
                Book Strategic Consultation
              </Link>
              <button onClick={reset} className="flex items-center justify-center gap-2 text-sm uppercase tracking-widest opacity-50 hover:opacity-100">

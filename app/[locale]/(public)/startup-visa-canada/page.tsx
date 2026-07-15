@@ -22,6 +22,7 @@ import {
 import type { Metadata } from 'next';
 
 import { metaFor } from '@/lib/pageMeta';
+import BookingCTA from '@/components/BookingCTA';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
@@ -315,6 +316,7 @@ export default function CanadaSUVPage() {
          </div>
       </section>
 
+      <BookingCTA />
 
       {/* =========================================
           7. FINAL CTA: BIG IMAGE BACKGROUND
@@ -339,7 +341,7 @@ export default function CanadaSUVPage() {
                Don't leave your legacy to chance. Partner with the architects of global mobility.
             </p>
             <div className="flex flex-col sm:flex-row justify-center gap-6">
-               <Link href="/contact" className="bg-[#CCFF00] text-[#1a1a1a] px-10 py-5 font-sans font-bold uppercase tracking-widest hover:bg-white transition-colors">
+               <Link href="/book-meeting" className="bg-[#CCFF00] text-[#1a1a1a] px-10 py-5 font-sans font-bold uppercase tracking-widest hover:bg-white transition-colors">
                   Book Consultation
                </Link>
                <a href="tel:+14376611674" className="border border-white text-white px-10 py-5 font-sans font-bold uppercase tracking-widest hover:bg-white hover:text-[#1a1a1a] transition-colors">
