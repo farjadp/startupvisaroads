@@ -141,11 +141,13 @@ async function queryLegacyTags(articleId: string) {
 export async function getBlogIndexData({
   locale,
   activeCategorySlug,
+  searchQuery,
   page,
   pageSize,
 }: {
   locale: string;
   activeCategorySlug?: string;
+  searchQuery?: string;
   page: number;
   pageSize: number;
 }) {
@@ -158,24 +160,28 @@ export async function getBlogIndexData({
       },
     });
 
+    const whereClause: Prisma.ArticleWhereInput = {
+      status: 'PUBLISHED',
+      locale,
+      ...(activeCategorySlug ? { category: { slug: activeCategorySlug } } : {}),
+      ...(searchQuery ? {
+        OR: [
+          { title: { contains: searchQuery } },
+          { excerpt: { contains: searchQuery } },
+        ]
+      } : {})
+    };
+
     const totalCount = await prisma.article.count({
-      where: {
-        status: 'PUBLISHED',
-        locale,
-        ...(activeCategorySlug ? { category: { slug: activeCategorySlug } } : {}),
-      },
+      where: whereClause,
     });
 
     let featuredArticle: ArticleRecord | null = null;
     let gridArticles: ArticleRecord[] = [];
 
-    if (activeCategorySlug) {
+    if (activeCategorySlug || searchQuery) {
       gridArticles = await prisma.article.findMany({
-        where: {
-          status: 'PUBLISHED',
-          locale,
-          category: { slug: activeCategorySlug },
-        },
+        where: whereClause,
         orderBy: { createdAt: 'desc' },
         skip: (page - 1) * pageSize,
         take: pageSize,
@@ -183,7 +189,7 @@ export async function getBlogIndexData({
       });
     } else if (page === 1) {
       const articles = await prisma.article.findMany({
-        where: { status: 'PUBLISHED', locale },
+        where: whereClause,
         orderBy: { createdAt: 'desc' },
         take: pageSize + 1,
         include: { category: true, tags: true },
@@ -192,7 +198,7 @@ export async function getBlogIndexData({
       gridArticles = featuredArticle ? articles.slice(1) : articles;
     } else {
       gridArticles = await prisma.article.findMany({
-        where: { status: 'PUBLISHED', locale },
+        where: whereClause,
         orderBy: { createdAt: 'desc' },
         skip: 1 + (page - 1) * pageSize,
         take: pageSize,

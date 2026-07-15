@@ -4,6 +4,7 @@ import { Link } from '@/navigation';
 import { Clock } from 'lucide-react';
 import { buildMetadata } from '@/lib/seo';
 import { getBlogIndexData } from '@/lib/blog';
+import BlogSearchInput from '@/components/blog/BlogSearchInput';
 
 export const revalidate = 600;
 
@@ -25,12 +26,13 @@ export default async function BlogPage({
   searchParams 
 }: { 
   params: { locale: string }; 
-  searchParams: { category?: string; page?: string }; 
+  searchParams: { category?: string; page?: string; q?: string }; 
 }) {
   const resolvedParams = await params;
   const { locale } = resolvedParams;
   const resolvedSearchParams = await searchParams;
   const activeCategorySlug = resolvedSearchParams.category;
+  const searchQuery = resolvedSearchParams.q;
   const page = Math.max(1, parseInt(resolvedSearchParams.page || '1', 10));
   const pageSize = 6;
 
@@ -49,6 +51,7 @@ export default async function BlogPage({
     next: 'بعدی',
     prev: 'قبلی',
     pageOf: 'صفحه {current} از {total}',
+    search: 'جستجو در مقالات...',
   } : {
     title: 'The Journal',
     subtitle: 'Insights, step-by-step guides, and regulatory updates on global startup visas and mobility.',
@@ -61,11 +64,13 @@ export default async function BlogPage({
     next: 'Next',
     prev: 'Previous',
     pageOf: 'Page {current} of {total}',
+    search: 'Search articles...',
   };
 
   const { categories, totalCount, featuredArticle, gridArticles } = await getBlogIndexData({
     locale,
     activeCategorySlug,
+    searchQuery,
     page,
     pageSize,
   });
@@ -103,31 +108,34 @@ export default async function BlogPage({
         </p>
       </div>
 
-      {/* Category Filter Bar */}
-      <div className="flex flex-wrap gap-3 mb-16 border-b border-[#1a1a1a]/10 pb-6 sticky top-20 bg-[#F2F0E9] z-10 py-2">
-        <Link 
-          href="/blog"
-          className={`px-4 py-2 font-sans text-xs font-bold uppercase tracking-wider rounded-full border-2 border-[#1a1a1a] transition-all duration-200 ${
-            !activeCategorySlug 
-              ? 'bg-[#1a1a1a] text-[#CCFF00] shadow-[2px_2px_0px_0px_#1a1a1a]' 
-              : 'bg-transparent text-[#1a1a1a] hover:bg-[#1a1a1a] hover:text-[#CCFF00]'
-          }`}
-        >
-          {t.allArticles}
-        </Link>
-        {categories.map(category => (
-          <Link
-            key={category.id}
-            href={`/blog?category=${category.slug}`}
+      {/* Category Filter Bar & Search */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-16 border-b border-[#1a1a1a]/10 pb-6 sticky top-20 bg-[#F2F0E9] z-10 py-2">
+        <div className="flex flex-wrap gap-3">
+          <Link 
+            href="/blog"
             className={`px-4 py-2 font-sans text-xs font-bold uppercase tracking-wider rounded-full border-2 border-[#1a1a1a] transition-all duration-200 ${
-              activeCategorySlug === category.slug 
+              !activeCategorySlug 
                 ? 'bg-[#1a1a1a] text-[#CCFF00] shadow-[2px_2px_0px_0px_#1a1a1a]' 
                 : 'bg-transparent text-[#1a1a1a] hover:bg-[#1a1a1a] hover:text-[#CCFF00]'
             }`}
           >
-            {category.name}
+            {t.allArticles}
           </Link>
-        ))}
+          {categories.map(category => (
+            <Link
+              key={category.id}
+              href={`/blog?category=${category.slug}`}
+              className={`px-4 py-2 font-sans text-xs font-bold uppercase tracking-wider rounded-full border-2 border-[#1a1a1a] transition-all duration-200 ${
+                activeCategorySlug === category.slug 
+                  ? 'bg-[#1a1a1a] text-[#CCFF00] shadow-[2px_2px_0px_0px_#1a1a1a]' 
+                  : 'bg-transparent text-[#1a1a1a] hover:bg-[#1a1a1a] hover:text-[#CCFF00]'
+              }`}
+            >
+              {category.name}
+            </Link>
+          ))}
+        </div>
+        <BlogSearchInput placeholder={t.search} isRtl={isRtl} />
       </div>
 
       {/* Empty State */}

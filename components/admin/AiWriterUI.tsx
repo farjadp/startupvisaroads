@@ -11,29 +11,42 @@ export default function AiWriterUI({ queuedKeywords }: any) {
   const [isGenerating, setIsGenerating] = useState(false);
   const router = useRouter();
 
-  const handleGenerate = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const submitGeneration = async (input: string, force: boolean = false) => {
     setIsGenerating(true);
-    const formData = new FormData(e.currentTarget);
-    const input = formData.get('input') as string;
-
     try {
       const res = await fetch('/api/ai/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ mode: activeTab, input, locale: language })
+        body: JSON.stringify({ mode: activeTab, input, locale: language, force })
       });
       const data = await res.json();
+      
+      if (data.duplicateDetected) {
+        setIsGenerating(false);
+        const confirmMsg = `This content is ${data.maxSimilarity}% similar to an existing article: "${data.matchedArticleTitle}".\nAre you sure you want to generate it anyway?`;
+        if (window.confirm(confirmMsg)) {
+          await submitGeneration(input, true);
+        }
+        return;
+      }
+
       if (data.success) {
         alert('Article generated and published successfully!');
         router.push(`/en/admin/articles/${data.articleId}/edit`);
       } else {
-        alert('Generation failed: ' + data.error);
+        alert('Generation failed: ' + (data.error || 'Unknown error'));
       }
     } catch (error) {
       alert('An error occurred during generation.');
     }
     setIsGenerating(false);
+  };
+
+  const handleGenerate = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const input = formData.get('input') as string;
+    submitGeneration(input, false);
   };
 
   return (
