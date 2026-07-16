@@ -19,7 +19,27 @@ export default function AiWriterUI({ queuedKeywords }: any) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ mode: activeTab, input, locale: language, force })
       });
-      const data = await res.json();
+      
+      let data;
+      try {
+        const reader = res.body?.getReader();
+        const decoder = new TextDecoder();
+        let result = '';
+        
+        if (reader) {
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            const chunk = decoder.decode(value, { stream: true });
+            result += chunk;
+          }
+        }
+        
+        // The stream might contain leading spaces (keep-alive). We need to trim them before parsing.
+        data = JSON.parse(result.trim());
+      } catch (jsonError: any) {
+        throw new Error(`Failed to parse response stream. Status: ${res.status}.`);
+      }
       
       if (data.duplicateDetected) {
         setIsGenerating(false);
@@ -36,8 +56,8 @@ export default function AiWriterUI({ queuedKeywords }: any) {
       } else {
         alert('Generation failed: ' + (data.error || 'Unknown error'));
       }
-    } catch (error) {
-      alert('An error occurred during generation.');
+    } catch (error: any) {
+      alert(`An error occurred during generation. Details: ${error?.message || error}`);
     }
     setIsGenerating(false);
   };
