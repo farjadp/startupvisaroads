@@ -1,3 +1,5 @@
+export const maxDuration = 300; // Allow long execution time
+
 import { NextRequest, NextResponse } from 'next/server';
 import { generateArticlePayload } from '@/lib/ai';
 import { createArticleFromPayload } from '@/lib/articles';
