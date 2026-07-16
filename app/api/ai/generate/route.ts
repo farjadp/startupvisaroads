@@ -75,16 +75,46 @@ export async function POST(req: NextRequest) {
         });
       }
     }
-    const payload = await generateArticlePayload(mode, input, articleLocale);
 
-    const article = await createArticleFromPayload(payload, {
-      locale: articleLocale,
-      status: 'PUBLISHED',
+    // Bypass Cloudflare 100s timeout using a ReadableStream with keep-alive spaces
+    const stream = new ReadableStream({
+      async start(controller) {
+        const keepAlive = setInterval(() => {
+          controller.enqueue(new TextEncoder().encode(' '));
+        }, 15000); // 15 seconds
+
+        try {
+          const payload = await generateArticlePayload(mode, input, articleLocale);
+          const article = await createArticleFromPayload(payload, {
+            locale: articleLocale,
+            status: 'PUBLISHED',
+          });
+          
+          clearInterval(keepAlive);
+          controller.enqueue(
+            new TextEncoder().encode(JSON.stringify({ success: true, articleId: article.id }))
+          );
+          controller.close();
+        } catch (error: any) {
+          clearInterval(keepAlive);
+          console.error('AI Generation Error:', error);
+          controller.enqueue(
+            new TextEncoder().encode(JSON.stringify({ success: false, error: error.message }))
+          );
+          controller.close();
+        }
+      }
     });
 
-    return NextResponse.json({ success: true, articleId: article.id });
+    return new Response(stream, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Cache-Control': 'no-cache, no-transform',
+      },
+    });
+
   } catch (error: any) {
-    console.error('AI Generation Error:', error);
+    console.error('AI Generation Route Error:', error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
