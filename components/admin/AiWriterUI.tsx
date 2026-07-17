@@ -14,52 +14,77 @@ export default function AiWriterUI({ queuedKeywords }: any) {
   const submitGeneration = async (input: string, force: boolean = false) => {
     setIsGenerating(true);
     try {
-      const res = await fetch('/api/ai/generate', {
+      // Step 1: Queue the generation request
+      const queueRes = await fetch('/api/ai/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ mode: activeTab, input, locale: language, force })
       });
       
-      let data;
+      const queueText = await queueRes.text();
+      let queueData: any;
       try {
-        const reader = res.body?.getReader();
-        const decoder = new TextDecoder();
-        let result = '';
-        
-        if (reader) {
-          while (true) {
-            const { done, value } = await reader.read();
-            if (done) break;
-            const chunk = decoder.decode(value, { stream: true });
-            result += chunk;
-          }
-        }
-        
-        // The stream might contain leading spaces (keep-alive). We need to trim them before parsing.
-        data = JSON.parse(result.trim());
-      } catch (jsonError: any) {
-        throw new Error(`Failed to parse response stream. Status: ${res.status}.`);
+        queueData = JSON.parse(queueText);
+      } catch (parseErr) {
+        throw new Error(`Server returned non-JSON (status ${queueRes.status}): ${queueText.substring(0, 200)}`);
       }
-      
-      if (data.duplicateDetected) {
+
+      if (queueData.duplicateDetected) {
         setIsGenerating(false);
-        const confirmMsg = `This content is ${data.maxSimilarity}% similar to an existing article: "${data.matchedArticleTitle}".\nAre you sure you want to generate it anyway?`;
+        const confirmMsg = `This content is ${queueData.maxSimilarity}% similar to an existing article: "${queueData.matchedArticleTitle}".\nAre you sure you want to generate it anyway?`;
         if (window.confirm(confirmMsg)) {
           await submitGeneration(input, true);
         }
         return;
       }
 
-      if (data.success) {
-        alert('Article generated and published successfully!');
-        router.push(`/en/admin/articles/${data.articleId}/edit`);
-      } else {
-        alert('Generation failed: ' + (data.error || 'Unknown error'));
+      if (!queueData.success || !queueData.jobId) {
+        throw new Error(queueData.error || 'Failed to queue generation job');
       }
+
+      const jobId = queueData.jobId;
+
+      // Step 2: Trigger the processing in the background (fire and forget).
+      // We don't await this because it might time out on Cloudflare (100s).
+      fetch('/api/ai/process', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ jobId })
+      }).catch(() => {
+        // We ignore network errors (like Cloudflare 524 timeouts)
+        // because Cloud Run continues processing in the background!
+      });
+
+      // Step 3: Poll the status endpoint until completed
+      const pollStatus = async () => {
+        try {
+          const statusRes = await fetch(`/api/ai/status?jobId=${jobId}`);
+          const statusData = await statusRes.json();
+
+          if (statusData.status === 'COMPLETED') {
+            alert('Article generated and published successfully!');
+            router.push(`/en/admin/articles/${statusData.articleId}/edit`);
+          } else if (statusData.status === 'ERROR') {
+            alert('Generation failed: ' + (statusData.error || 'Unknown error'));
+            setIsGenerating(false);
+          } else {
+            // Still PENDING or PROCESSING, wait 5 seconds and poll again
+            setTimeout(pollStatus, 5000);
+          }
+        } catch (pollError: any) {
+          console.error("Polling error:", pollError);
+          // If polling fails (e.g. temporary network drop), retry after 5 seconds
+          setTimeout(pollStatus, 5000);
+        }
+      };
+
+      // Start polling
+      setTimeout(pollStatus, 5000);
+
     } catch (error: any) {
       alert(`An error occurred during generation. Details: ${error?.message || error}`);
+      setIsGenerating(false);
     }
-    setIsGenerating(false);
   };
 
   const handleGenerate = (e: React.FormEvent<HTMLFormElement>) => {

@@ -1,8 +1,6 @@
 export const maxDuration = 300; // Allow long execution time
 export const dynamic = 'force-dynamic';
 import { NextRequest, NextResponse } from 'next/server';
-import { generateArticlePayload } from '@/lib/ai';
-import { createArticleFromPayload } from '@/lib/articles';
 import { getSessionFromRequest } from '@/lib/auth';
 import prisma from '@/lib/prisma';
 
@@ -76,46 +74,16 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // Bypass Cloudflare 100s timeout using a ReadableStream with keep-alive spaces
-    // Send 2048 bytes of padding to force Cloud Run / Next.js to flush the buffer
-    const stream = new ReadableStream({
-      async start(controller) {
-        // Initial padding to force flush
-        controller.enqueue(new TextEncoder().encode(' '.repeat(2048)));
-        
-        const keepAlive = setInterval(() => {
-          controller.enqueue(new TextEncoder().encode(' '.repeat(1024)));
-        }, 10000); // 10 seconds
-
-        try {
-          const payload = await generateArticlePayload(mode, input, articleLocale);
-          const article = await createArticleFromPayload(payload, {
-            locale: articleLocale,
-            status: 'PUBLISHED',
-          });
-          
-          clearInterval(keepAlive);
-          controller.enqueue(
-            new TextEncoder().encode(JSON.stringify({ success: true, articleId: article.id }))
-          );
-          controller.close();
-        } catch (error: any) {
-          clearInterval(keepAlive);
-          console.error('AI Generation Error:', error);
-          controller.enqueue(
-            new TextEncoder().encode(JSON.stringify({ success: false, error: error.message }))
-          );
-          controller.close();
-        }
-      }
-    });
-
-    return new Response(stream, {
-      headers: {
-        'Content-Type': 'application/json',
-        'Cache-Control': 'no-cache, no-transform',
+    // Queue the job using AiKeyword model with a special status to avoid cron pickup
+    const payloadObj = { mode, input, locale: articleLocale };
+    const job = await prisma.aiKeyword.create({
+      data: {
+        keyword: JSON.stringify(payloadObj),
+        status: 'INTERACTIVE_PENDING',
       },
     });
+
+    return NextResponse.json({ success: true, jobId: job.id });
 
   } catch (error: any) {
     console.error('AI Generation Route Error:', error);

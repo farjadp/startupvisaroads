@@ -7,15 +7,15 @@ export default function BlogSearchInput({ placeholder, isRtl }: { placeholder: s
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const router = useRouter();
-  const [query, setQuery] = useState(searchParams.get('q') || '');
+  const [query, setQuery] = useState(searchParams?.get('q') || '');
 
   useEffect(() => {
-    setQuery(searchParams.get('q') || '');
+    setQuery(searchParams?.get('q') || '');
   }, [searchParams]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    const params = new URLSearchParams(searchParams.toString());
+    const params = new URLSearchParams(searchParams?.toString() || '');
     if (query.trim()) {
       params.set('q', query.trim());
     } else {

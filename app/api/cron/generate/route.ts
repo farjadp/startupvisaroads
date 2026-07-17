@@ -50,9 +50,24 @@ export async function GET(request: NextRequest) {
     }
 
     keywordJobId = keywordJob.id;
-    const locale = detectLocale(keywordJob.keyword);
+    
+    let mode: 'KEYWORD' | 'URL' | 'TEXT' = 'KEYWORD';
+    let input = keywordJob.keyword;
+    let locale: 'en' | 'fa' = 'en';
 
-    const payload = await generateArticlePayload('KEYWORD', keywordJob.keyword, locale);
+    try {
+      const parsed = JSON.parse(keywordJob.keyword);
+      if (parsed.mode && parsed.input) {
+        mode = parsed.mode as 'KEYWORD' | 'URL' | 'TEXT';
+        input = parsed.input;
+        locale = parsed.locale || 'en';
+      }
+    } catch (e) {
+      // Not JSON, assume it's just a keyword
+      locale = detectLocale(keywordJob.keyword);
+    }
+
+    const payload = await generateArticlePayload(mode, input, locale);
     await createArticleFromPayload(payload, { locale, status: 'PUBLISHED' });
 
     await prisma.aiKeyword.update({

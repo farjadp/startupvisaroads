@@ -13,7 +13,7 @@ function UnsubscribeContent() {
 
   // Autofill email from query parameters
   useEffect(() => {
-    const emailParam = searchParams.get('email');
+    const emailParam = searchParams?.get('email');
     if (emailParam) {
       setEmail(emailParam);
     }
