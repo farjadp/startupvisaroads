@@ -1,5 +1,5 @@
 export const maxDuration = 300; // Allow long execution time
-
+export const dynamic = 'force-dynamic';
 import { NextRequest, NextResponse } from 'next/server';
 import { generateArticlePayload } from '@/lib/ai';
 import { createArticleFromPayload } from '@/lib/articles';
@@ -77,11 +77,15 @@ export async function POST(req: NextRequest) {
     }
 
     // Bypass Cloudflare 100s timeout using a ReadableStream with keep-alive spaces
+    // Send 2048 bytes of padding to force Cloud Run / Next.js to flush the buffer
     const stream = new ReadableStream({
       async start(controller) {
+        // Initial padding to force flush
+        controller.enqueue(new TextEncoder().encode(' '.repeat(2048)));
+        
         const keepAlive = setInterval(() => {
-          controller.enqueue(new TextEncoder().encode(' '));
-        }, 15000); // 15 seconds
+          controller.enqueue(new TextEncoder().encode(' '.repeat(1024)));
+        }, 10000); // 10 seconds
 
         try {
           const payload = await generateArticlePayload(mode, input, articleLocale);
