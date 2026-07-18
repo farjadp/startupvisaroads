@@ -1,0 +1,97 @@
+{
+  "rulesVersion": "2026.1",
+  "lastVerified": "2025-07-01",
+  "source": "https://www.canada.ca/en/immigration-refugees-citizenship/services/immigrate-canada/express-entry/submit-profile/rounds-invitations.html",
+
+  "_note": "Pathway advisor thresholds and CTA configuration. These values drive the pathway-advisor logic module. Update cut-off references whenever IRCC holds a new round of invitations.",
+
+  "cutoffReferences": {
+    "generalDraw": {
+      "recentScore": 541,
+      "drawDate": "2025-06-25",
+      "_todoVerify": "TODO:VERIFY — update general draw cut-off with most recent IRCC round"
+    },
+    "cecDraw": {
+      "recentScore": 522,
+      "drawDate": "2025-06-11",
+      "_todoVerify": "TODO:VERIFY — update CEC draw cut-off with most recent IRCC round"
+    },
+    "frenchDraw": {
+      "recentScore": 336,
+      "drawDate": "2025-06-18",
+      "_todoVerify": "TODO:VERIFY — update French draw cut-off with most recent IRCC round"
+    }
+  },
+
+  "pathwayThresholds": {
+    "competitiveForGeneralDraw": {
+      "marginAboveCutoff": 0,
+      "_note": "CRS >= generalDraw.recentScore → candidate is competitive for general draws"
+    },
+    "nearCompetitiveForGeneralDraw": {
+      "marginBelowCutoff": 100,
+      "_note": "CRS within 100 points of general cutoff → 'Getting close' message with score improvement levers"
+    },
+    "pnpRecommendationThreshold": {
+      "scoreBelow": 400,
+      "_note": "If CRS < 400 and no category match, PNP should be the primary recommendation"
+    },
+    "frenchPathwayThreshold": {
+      "nclcMinimumForRecommendation": 5,
+      "_note": "If candidate has NCLC 5+ in any French ability, surface French pathway as an option. NCLC 7+ in all 4 abilities triggers the actual bonus."
+    }
+  },
+
+  "scoreImprovementLevers": [
+    {
+      "id": "improve_first_language",
+      "titleEn": "Improve first official language score",
+      "titleFa": "بهبود نمره زبان رسمی اول",
+      "targetCLB": 9,
+      "priority": 1,
+      "applicableWhen": "firstLangMaxAbility < 9"
+    },
+    {
+      "id": "gain_canadian_experience",
+      "titleEn": "Gain more Canadian work experience",
+      "titleFa": "کسب تجربه کاری بیشتر در کانادا",
+      "targetYears": 3,
+      "priority": 2,
+      "applicableWhen": "canadianWorkExperienceYears < 3"
+    },
+    {
+      "id": "improve_education",
+      "titleEn": "Complete a higher level of education",
+      "titleFa": "تکمیل مدرک تحصیلی بالاتر",
+      "targetTier": 6,
+      "priority": 3,
+      "applicableWhen": "education < 6"
+    },
+    {
+      "id": "learn_french",
+      "titleEn": "Develop French language skills (NCLC 7+)",
+      "titleFa": "یادگیری زبان فرانسه (NCLC ۷+)",
+      "targetNCLC": 7,
+      "priority": 4,
+      "applicableWhen": "frenchSkills.speaking < 7 || frenchSkills.listening < 7 || frenchSkills.reading < 7 || frenchSkills.writing < 7"
+    },
+    {
+      "id": "improve_second_language",
+      "titleEn": "Add or improve second official language score",
+      "titleFa": "افزودن یا بهبود نمره زبان رسمی دوم",
+      "priority": 5,
+      "applicableWhen": "!secondLang"
+    }
+  ],
+
+  "ctaConfig": {
+    "link": "/book-meeting",
+    "labelEn": "Book a Free Consultation",
+    "labelFa": "رزرو مشاوره رایگان",
+    "note": "Update this link if the booking page URL changes"
+  },
+
+  "disclaimerEn": "This tool provides general information only. It is not legal advice and is not a substitute for a Regulated Canadian Immigration Consultant (RCIC) or immigration lawyer. CRS scores are estimates and may differ from official IRCC calculations. The only authoritative source for Express Entry is IRCC / canada.ca. Cut-off scores change with every draw — verify current cut-offs on the official IRCC rounds of invitations page before making any decisions.",
+
+  "disclaimerFa": "این ابزار اطلاعات عمومی ارائه می‌دهد و مشاوره حقوقی نیست. جایگزین مشاور مهاجرتی مجاز کانادا (RCIC) یا وکیل مهاجرت نمی‌شود. امتیاز CRS تخمینی است و ممکن است با محاسبات رسمی IRCC متفاوت باشد. تنها منبع معتبر برای Express Entry، وب‌سایت IRCC / canada.ca است. حد نصاب‌های هر دوره انتخاب تغییر می‌کنند — قبل از هرگونه تصمیم‌گیری، آخرین آمار را از صفحه رسمی IRCC بررسی کنید."
+}

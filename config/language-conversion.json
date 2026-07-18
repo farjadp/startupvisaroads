@@ -1,0 +1,110 @@
+{
+  "rulesVersion": "2026.1",
+  "lastVerified": "2025-03-01",
+  "source": "https://www.canada.ca/en/immigration-refugees-citizenship/services/immigrate-canada/express-entry/eligibility/language-requirements/language-testing.html",
+
+  "_note": "Official CLB conversion tables for recognized language tests. CLB = Canadian Language Benchmark. All values must be verified against the canada.ca language testing page. Entries marked TODO:VERIFY should be cross-checked before production use.",
+
+  "clbLevels": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+
+  "english": {
+    "IELTS_General": {
+      "testName": "IELTS General Training",
+      "testNameFa": "آیلتس (آموزش عمومی)",
+      "officialUrl": "https://www.canada.ca/en/immigration-refugees-citizenship/services/immigrate-canada/express-entry/eligibility/language-requirements/language-testing.html",
+      "_todoVerify": "TODO:VERIFY — confirm all IELTS General band score → CLB mappings against canada.ca",
+      "speaking": {
+        "4.0": 4, "4.5": 5, "5.0": 6, "5.5": 7, "6.0": 8, "6.5": 9, "7.0": 10, "7.5": 11, "8.0": 12
+      },
+      "listening": {
+        "4.5": 4, "5.0": 5, "5.5": 6, "6.0": 7, "7.5": 8, "8.0": 9, "8.5": 10, "9.0": 12
+      },
+      "reading": {
+        "3.5": 4, "4.0": 5, "5.0": 6, "6.0": 7, "6.5": 8, "7.0": 9, "8.0": 10, "9.0": 12
+      },
+      "writing": {
+        "4.0": 4, "4.5": 5, "5.0": 6, "5.5": 7, "6.0": 8, "6.5": 9, "7.0": 10, "7.5": 11, "8.0": 12
+      }
+    },
+    "CELPIP_General": {
+      "testName": "CELPIP General",
+      "testNameFa": "سلپیپ (عمومی)",
+      "officialUrl": "https://www.canada.ca/en/immigration-refugees-citizenship/services/immigrate-canada/express-entry/eligibility/language-requirements/language-testing.html",
+      "_note": "CELPIP scores map 1:1 to CLB levels 4–12. Score 4 = CLB 4, score 12 = CLB 12.",
+      "_todoVerify": "TODO:VERIFY — confirm CELPIP 1:1 CLB mapping against canada.ca",
+      "speaking": { "4": 4, "5": 5, "6": 6, "7": 7, "8": 8, "9": 9, "10": 10, "11": 11, "12": 12 },
+      "listening": { "4": 4, "5": 5, "6": 6, "7": 7, "8": 8, "9": 9, "10": 10, "11": 11, "12": 12 },
+      "reading": { "4": 4, "5": 5, "6": 6, "7": 7, "8": 8, "9": 9, "10": 10, "11": 11, "12": 12 },
+      "writing": { "4": 4, "5": 5, "6": 6, "7": 7, "8": 8, "9": 9, "10": 10, "11": 11, "12": 12 }
+    }
+  },
+
+  "french": {
+    "TEF_Canada": {
+      "testName": "TEF Canada",
+      "testNameFa": "تی‌ای‌اف کانادا",
+      "officialUrl": "https://www.canada.ca/en/immigration-refugees-citizenship/services/immigrate-canada/express-entry/eligibility/language-requirements/language-testing.html",
+      "_todoVerify": "TODO:VERIFY — confirm TEF Canada score → NCLC mappings against canada.ca",
+      "speaking": {
+        "181": 4, "226": 5, "271": 6, "310": 7, "349": 8, "371": 9, "393": 10, "415": 11, "450": 12
+      },
+      "listening": {
+        "145": 4, "181": 5, "217": 6, "249": 7, "280": 8, "298": 9, "316": 10, "334": 11, "360": 12
+      },
+      "reading": {
+        "121": 4, "151": 5, "181": 6, "207": 7, "233": 8, "248": 9, "263": 10, "278": 11, "300": 12
+      },
+      "writing": {
+        "181": 4, "226": 5, "271": 6, "310": 7, "349": 8, "371": 9, "393": 10, "415": 11, "450": 12
+      }
+    },
+    "TCF_Canada": {
+      "testName": "TCF Canada",
+      "testNameFa": "تی‌سی‌اف کانادا",
+      "officialUrl": "https://www.canada.ca/en/immigration-refugees-citizenship/services/immigrate-canada/express-entry/eligibility/language-requirements/language-testing.html",
+      "_todoVerify": "TODO:VERIFY — confirm TCF Canada score → NCLC mappings against canada.ca",
+      "speaking": {
+        "4": 4, "6": 5, "10": 6, "14": 7, "16": 8, "18": 9, "20": 10
+      },
+      "listening": {
+        "331": 4, "369": 5, "398": 6, "458": 7, "503": 8, "523": 9, "549": 10, "699": 12
+      },
+      "reading": {
+        "342": 4, "375": 5, "406": 6, "453": 7, "499": 8, "524": 9, "549": 10, "699": 12
+      },
+      "writing": {
+        "4": 4, "6": 5, "8": 6, "10": 7, "12": 8, "14": 9, "16": 10
+      }
+    }
+  },
+
+  "clbDescriptions": {
+    "1": "Beginner",
+    "2": "Beginner",
+    "3": "Beginner",
+    "4": "Basic",
+    "5": "Basic",
+    "6": "Intermediate",
+    "7": "Intermediate",
+    "8": "Adequate",
+    "9": "Fluent",
+    "10": "Advanced",
+    "11": "Advanced",
+    "12": "Mastery"
+  },
+
+  "clbDescriptionsFa": {
+    "1": "مبتدی",
+    "2": "مبتدی",
+    "3": "مبتدی",
+    "4": "پایه",
+    "5": "پایه",
+    "6": "متوسط",
+    "7": "متوسط",
+    "8": "مناسب",
+    "9": "روان",
+    "10": "پیشرفته",
+    "11": "پیشرفته",
+    "12": "تسلط کامل"
+  }
+}

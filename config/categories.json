@@ -1,0 +1,364 @@
+{
+  "rulesVersion": "2026.1",
+  "lastVerified": "2025-06-01",
+  "source": "https://www.canada.ca/en/immigration-refugees-citizenship/services/immigrate-canada/express-entry/submit-profile/rounds-invitations/category-based-selection.html",
+
+  "_note": "2026 IRCC category-based draw definitions. Eligibility threshold is encoded here (not in code) so it can be updated without a code deploy. All NOC codes listed are from the NOC 2021 classification.",
+
+  "eligibilityThreshold": {
+    "minimumWorkExperienceMonths": 12,
+    "workExperienceLookbackYears": 3,
+    "continuousNotRequired": true,
+    "_note": "Must have at least 12 months of qualifying work experience in an eligible occupation within the last 3 years. Need not be continuous."
+  },
+
+  "categories": [
+    {
+      "id": "french",
+      "name": "French-language proficiency",
+      "nameFa": "مهارت زبان فرانسه",
+      "description": "For candidates with strong French-language proficiency, regardless of occupation.",
+      "descriptionFa": "برای متقاضیانی با مهارت قوی در زبان فرانسه، صرف نظر از شغل.",
+      "eligibilityCriteria": {
+        "type": "languageOnly",
+        "minimumNCLC": 7,
+        "allFourAbilitiesRequired": true,
+        "nocRestriction": false
+      },
+      "nocCodes": [],
+      "_nocNote": "No NOC restriction for French category",
+      "recentCutoff": {
+        "score": 336,
+        "drawDate": "2025-06-18",
+        "drawType": "French-language proficiency",
+        "_todoVerify": "TODO:VERIFY — update with most recent draw cut-off from IRCC rounds-of-invitations page",
+        "source": "https://www.canada.ca/en/immigration-refugees-citizenship/services/immigrate-canada/express-entry/submit-profile/rounds-invitations.html"
+      }
+    },
+    {
+      "id": "healthcare",
+      "name": "Healthcare and social services workers",
+      "nameFa": "کارکنان بهداشت و خدمات اجتماعی",
+      "description": "For candidates with work experience in healthcare or social services occupations.",
+      "descriptionFa": "برای متقاضیانی با سابقه کار در مشاغل بهداشتی یا خدمات اجتماعی.",
+      "eligibilityCriteria": {
+        "type": "nocBased",
+        "nocRestriction": true
+      },
+      "nocCodes": [
+        { "code": "31100", "title": "Specialist physicians" },
+        { "code": "31102", "title": "General practitioners and family physicians" },
+        { "code": "31103", "title": "Dentists" },
+        { "code": "31110", "title": "Optometrists" },
+        { "code": "31111", "title": "Chiropractors" },
+        { "code": "31112", "title": "Other health diagnosing and treating professionals" },
+        { "code": "31120", "title": "Pharmacists" },
+        { "code": "31200", "title": "Audiologists and speech-language pathologists" },
+        { "code": "31201", "title": "Dietitians and nutritionists" },
+        { "code": "31202", "title": "Physiotherapists" },
+        { "code": "31203", "title": "Occupational therapists" },
+        { "code": "31204", "title": "Kinesiologists and other professional occupations in therapy and assessment" },
+        { "code": "31205", "title": "Respiratory therapists, clinical perfusionists and cardiopulmonary technologists" },
+        { "code": "31209", "title": "Other professional occupations in health diagnosing and treating" },
+        { "code": "31300", "title": "Nursing coordinators and supervisors" },
+        { "code": "31301", "title": "Registered nurses and registered psychiatric nurses" },
+        { "code": "31302", "title": "Nurse practitioners" },
+        { "code": "31303", "title": "Physician assistants, midwives and allied health professionals" },
+        { "code": "32100", "title": "Paramedical occupations" },
+        { "code": "32101", "title": "Medical laboratory technologists" },
+        { "code": "32102", "title": "Medical radiation technologists" },
+        { "code": "32103", "title": "Medical sonographers" },
+        { "code": "32109", "title": "Other medical technologists and technicians" },
+        { "code": "32110", "title": "Denturists" },
+        { "code": "32111", "title": "Dental hygienists and dental therapists" },
+        { "code": "32112", "title": "Dental technologists and technicians" },
+        { "code": "32120", "title": "Pharmacy technicians" },
+        { "code": "32121", "title": "Naturopathic doctors and other practitioners of natural healing" },
+        { "code": "32122", "title": "Traditional Chinese medicine practitioners and acupuncturists" },
+        { "code": "32123", "title": "Massage therapists" },
+        { "code": "33100", "title": "Nurse aides, orderlies and patient service associates" },
+        { "code": "33101", "title": "Dental assistants and dental laboratory assistants" },
+        { "code": "33102", "title": "Therapy and assessment aides" },
+        { "code": "33109", "title": "Other support occupations in personal care services" },
+        { "code": "41300", "title": "Social workers" },
+        { "code": "41301", "title": "Family, marriage and other related counsellors" },
+        { "code": "41400", "title": "Probation and parole officers and related occupations" },
+        { "code": "44100", "title": "Home support workers and related occupations" }
+      ],
+      "recentCutoff": {
+        "score": 475,
+        "drawDate": "2025-05-07",
+        "drawType": "Healthcare occupations",
+        "_todoVerify": "TODO:VERIFY — update with most recent draw cut-off from IRCC rounds-of-invitations page",
+        "source": "https://www.canada.ca/en/immigration-refugees-citizenship/services/immigrate-canada/express-entry/submit-profile/rounds-invitations.html"
+      }
+    },
+    {
+      "id": "stem",
+      "name": "STEM occupations",
+      "nameFa": "مشاغل STEM (علوم، فناوری، مهندسی، ریاضیات)",
+      "description": "For candidates with work experience in science, technology, engineering or math occupations.",
+      "descriptionFa": "برای متقاضیانی با سابقه کار در مشاغل علم، فناوری، مهندسی یا ریاضیات.",
+      "eligibilityCriteria": {
+        "type": "nocBased",
+        "nocRestriction": true
+      },
+      "nocCodes": [
+        { "code": "21100", "title": "Physicists and astronomers" },
+        { "code": "21101", "title": "Chemists" },
+        { "code": "21102", "title": "Geologists, geochemists and geophysicists" },
+        { "code": "21109", "title": "Other physical sciences professionals" },
+        { "code": "21200", "title": "Biologists and related scientists" },
+        { "code": "21201", "title": "Forestry professionals" },
+        { "code": "21202", "title": "Agricultural representatives, consultants and specialists" },
+        { "code": "21210", "title": "Cybersecurity specialists" },
+        { "code": "21211", "title": "Data scientists" },
+        { "code": "21220", "title": "Cybersecurity specialists" },
+        { "code": "21221", "title": "Business systems specialists" },
+        { "code": "21222", "title": "Information systems specialists" },
+        { "code": "21223", "title": "Database analysts and data administrators" },
+        { "code": "21230", "title": "Computer systems developers and programmers" },
+        { "code": "21231", "title": "Software engineers and designers" },
+        { "code": "21232", "title": "Software developers and programmers" },
+        { "code": "21233", "title": "Web designers" },
+        { "code": "21234", "title": "Web developers and programmers" },
+        { "code": "21300", "title": "Civil engineers" },
+        { "code": "21301", "title": "Mechanical engineers" },
+        { "code": "21302", "title": "Electrical and electronics engineers" },
+        { "code": "21303", "title": "Chemical engineers" },
+        { "code": "21310", "title": "Industrial and manufacturing engineers" },
+        { "code": "21311", "title": "Metallurgical and materials engineers" },
+        { "code": "21312", "title": "Mining engineers" },
+        { "code": "21320", "title": "Computer engineers (except software engineers and designers)" },
+        { "code": "21321", "title": "Petroleum engineers" },
+        { "code": "21399", "title": "Other professional engineers" },
+        { "code": "22100", "title": "Chemical technologists and technicians" },
+        { "code": "22101", "title": "Geological and mineral technologists and technicians" },
+        { "code": "22110", "title": "Biological technologists and technicians" },
+        { "code": "22111", "title": "Agricultural and fish products inspectors" },
+        { "code": "22120", "title": "Industrial instrument technicians and mechanics" },
+        { "code": "22210", "title": "Computer network and web technicians" },
+        { "code": "22211", "title": "User support technicians" },
+        { "code": "22212", "title": "Information systems testing technicians" },
+        { "code": "22220", "title": "Civil engineering technologists and technicians" },
+        { "code": "22221", "title": "Mechanical engineering technologists and technicians" },
+        { "code": "22222", "title": "Industrial engineering and manufacturing technologists and technicians" },
+        { "code": "22223", "title": "Construction estimators" },
+        { "code": "22230", "title": "Electrical and electronics engineering technologists and technicians" },
+        { "code": "22231", "title": "Electronic service technicians (household and business equipment)" },
+        { "code": "22232", "title": "Industrial electricians" },
+        { "code": "22233", "title": "Electricians" }
+      ],
+      "recentCutoff": {
+        "score": 486,
+        "drawDate": "2025-05-21",
+        "drawType": "STEM occupations",
+        "_todoVerify": "TODO:VERIFY — update with most recent draw cut-off from IRCC rounds-of-invitations page",
+        "source": "https://www.canada.ca/en/immigration-refugees-citizenship/services/immigrate-canada/express-entry/submit-profile/rounds-invitations.html"
+      }
+    },
+    {
+      "id": "trades",
+      "name": "Trade occupations",
+      "nameFa": "مشاغل فنی و حرفه‌ای",
+      "description": "For candidates with work experience in the trades.",
+      "descriptionFa": "برای متقاضیانی با سابقه کار در مشاغل فنی و حرفه‌ای.",
+      "eligibilityCriteria": {
+        "type": "nocBased",
+        "nocRestriction": true
+      },
+      "nocCodes": [
+        { "code": "72010", "title": "Contractors and supervisors, machining, metal forming, shaping and erecting trades" },
+        { "code": "72011", "title": "Contractors and supervisors, electrical trades and telecommunications occupations" },
+        { "code": "72012", "title": "Contractors and supervisors, pipefitting trades" },
+        { "code": "72013", "title": "Contractors and supervisors, carpentry trades" },
+        { "code": "72014", "title": "Contractors and supervisors, other construction trades, installers, repairers and servicers" },
+        { "code": "72100", "title": "Machinists and machining and tooling inspectors" },
+        { "code": "72101", "title": "Tool and die makers" },
+        { "code": "72102", "title": "Sheet metal workers" },
+        { "code": "72103", "title": "Boilermakers" },
+        { "code": "72104", "title": "Structural metal and platework fabricators and fitters" },
+        { "code": "72106", "title": "Ironworkers" },
+        { "code": "72200", "title": "Electricians (except industrial and power system)" },
+        { "code": "72201", "title": "Industrial electricians" },
+        { "code": "72202", "title": "Power system electricians" },
+        { "code": "72203", "title": "Electrical power line and cable workers" },
+        { "code": "72204", "title": "Telecommunications line and cable workers" },
+        { "code": "72300", "title": "Plumbers" },
+        { "code": "72301", "title": "Steamfitters, pipefitters and sprinkler system installers" },
+        { "code": "72302", "title": "Gas fitters" },
+        { "code": "72310", "title": "Carpenters" },
+        { "code": "72311", "title": "Cabinetmakers" },
+        { "code": "72320", "title": "Bricklayers" },
+        { "code": "72321", "title": "Insulators" },
+        { "code": "72400", "title": "Construction millwrights and industrial mechanics" },
+        { "code": "72401", "title": "Heavy-duty equipment mechanics" },
+        { "code": "72402", "title": "Heating, refrigeration and air conditioning mechanics" },
+        { "code": "72403", "title": "Railway carmen/women" },
+        { "code": "72404", "title": "Aircraft mechanics and aircraft inspectors" },
+        { "code": "72410", "title": "Elevator constructors and mechanics" },
+        { "code": "73100", "title": "Concrete finishers" },
+        { "code": "73101", "title": "Tilesetters" },
+        { "code": "73102", "title": "Plasterers, drywall installers and finishers and lathers" },
+        { "code": "73110", "title": "Painters and decorators (except interior decorators)" },
+        { "code": "73111", "title": "Floor covering installers" },
+        { "code": "73200", "title": "Glaziers" },
+        { "code": "73201", "title": "Roofers and shinglers" },
+        { "code": "73209", "title": "Other trades installers, repairers and servicers" },
+        { "code": "73300", "title": "Transport truck drivers" },
+        { "code": "73301", "title": "Bus drivers, subway operators and other transit operators" },
+        { "code": "73400", "title": "Longshore workers" },
+        { "code": "73401", "title": "Material handlers" }
+      ],
+      "recentCutoff": {
+        "score": 430,
+        "drawDate": "2025-04-16",
+        "drawType": "Trade occupations",
+        "_todoVerify": "TODO:VERIFY — update with most recent draw cut-off from IRCC rounds-of-invitations page",
+        "source": "https://www.canada.ca/en/immigration-refugees-citizenship/services/immigrate-canada/express-entry/submit-profile/rounds-invitations.html"
+      }
+    },
+    {
+      "id": "education",
+      "name": "Education occupations",
+      "nameFa": "مشاغل آموزشی",
+      "description": "For candidates with work experience in education occupations.",
+      "descriptionFa": "برای متقاضیانی با سابقه کار در مشاغل آموزشی.",
+      "eligibilityCriteria": {
+        "type": "nocBased",
+        "nocRestriction": true
+      },
+      "nocCodes": [
+        { "code": "40020", "title": "University professors and lecturers" },
+        { "code": "40021", "title": "Post-secondary teaching and research assistants" },
+        { "code": "40030", "title": "College and other vocational instructors" },
+        { "code": "40031", "title": "Instructors of persons with disabilities" },
+        { "code": "40040", "title": "Elementary school and kindergarten teachers" },
+        { "code": "40041", "title": "Secondary school teachers" },
+        { "code": "40042", "title": "Teachers of English or French as a second language" },
+        { "code": "41220", "title": "Early childhood educators and assistants" },
+        { "code": "43100", "title": "Elementary and secondary school teacher assistants" }
+      ],
+      "recentCutoff": {
+        "score": 479,
+        "drawDate": "2025-04-02",
+        "drawType": "Education occupations",
+        "_todoVerify": "TODO:VERIFY — update with most recent draw cut-off from IRCC rounds-of-invitations page",
+        "source": "https://www.canada.ca/en/immigration-refugees-citizenship/services/immigrate-canada/express-entry/submit-profile/rounds-invitations.html"
+      }
+    },
+    {
+      "id": "physicians",
+      "name": "Physicians (Canadian experience required)",
+      "nameFa": "پزشکان (نیازمند تجربه کاری در کانادا)",
+      "description": "For physicians with Canadian work experience.",
+      "descriptionFa": "برای پزشکانی با تجربه کاری در کانادا.",
+      "eligibilityCriteria": {
+        "type": "nocBasedWithCanadianExp",
+        "nocRestriction": true,
+        "minimumCanadianWorkExperienceMonths": 12
+      },
+      "nocCodes": [
+        { "code": "31100", "title": "Specialist physicians" },
+        { "code": "31102", "title": "General practitioners and family physicians" }
+      ],
+      "recentCutoff": {
+        "score": 401,
+        "drawDate": "2025-05-07",
+        "drawType": "Canadian experience (healthcare)",
+        "_todoVerify": "TODO:VERIFY — physicians may draw under healthcare category; confirm separate physician draw exists",
+        "source": "https://www.canada.ca/en/immigration-refugees-citizenship/services/immigrate-canada/express-entry/submit-profile/rounds-invitations.html"
+      }
+    },
+    {
+      "id": "senior_managers",
+      "name": "Senior managers (Canadian experience required)",
+      "nameFa": "مدیران ارشد (نیازمند تجربه کاری در کانادا)",
+      "description": "For senior managers and executives with Canadian work experience.",
+      "descriptionFa": "برای مدیران ارشد و مدیران اجرایی با تجربه کاری در کانادا.",
+      "eligibilityCriteria": {
+        "type": "nocBasedWithCanadianExp",
+        "nocRestriction": true,
+        "minimumCanadianWorkExperienceMonths": 12
+      },
+      "nocCodes": [
+        { "code": "00010", "title": "Legislators" },
+        { "code": "00011", "title": "Senior government managers and officials" },
+        { "code": "00012", "title": "Senior managers - financial, communications and other business services" },
+        { "code": "00013", "title": "Senior managers - trade, broadcasting and other services" },
+        { "code": "00014", "title": "Senior managers - health, education, social and community services and membership organizations" },
+        { "code": "00015", "title": "Senior managers - trade, broadcasting and other services, n.e.c." }
+      ],
+      "recentCutoff": {
+        "score": null,
+        "drawDate": null,
+        "drawType": "No dedicated draw yet observed in 2025",
+        "_todoVerify": "TODO:VERIFY — confirm if separate senior managers category draw has been held and find most recent cut-off",
+        "source": "https://www.canada.ca/en/immigration-refugees-citizenship/services/immigrate-canada/express-entry/submit-profile/rounds-invitations.html"
+      }
+    },
+    {
+      "id": "researchers",
+      "name": "Researchers (Canadian experience required)",
+      "nameFa": "محققان (نیازمند تجربه کاری در کانادا)",
+      "description": "For researchers in natural or applied sciences with Canadian experience.",
+      "descriptionFa": "برای محققان در علوم طبیعی یا کاربردی با تجربه کاری در کانادا.",
+      "eligibilityCriteria": {
+        "type": "nocBasedWithCanadianExp",
+        "nocRestriction": true,
+        "minimumCanadianWorkExperienceMonths": 12
+      },
+      "nocCodes": [
+        { "code": "21100", "title": "Physicists and astronomers" },
+        { "code": "21101", "title": "Chemists" },
+        { "code": "21200", "title": "Biologists and related scientists" },
+        { "code": "21201", "title": "Forestry professionals" }
+      ],
+      "recentCutoff": {
+        "score": null,
+        "drawDate": null,
+        "drawType": "No dedicated researchers draw observed in 2025",
+        "_todoVerify": "TODO:VERIFY — confirm researcher category draws and cut-offs",
+        "source": "https://www.canada.ca/en/immigration-refugees-citizenship/services/immigrate-canada/express-entry/submit-profile/rounds-invitations.html"
+      }
+    },
+    {
+      "id": "skilled_military",
+      "name": "Skilled military recruits",
+      "nameFa": "نیروهای نظامی ماهر",
+      "description": "For candidates with military experience in skilled occupations.",
+      "descriptionFa": "برای متقاضیانی با تجربه نظامی در مشاغل ماهر.",
+      "eligibilityCriteria": {
+        "type": "nocBased",
+        "nocRestriction": true
+      },
+      "nocCodes": [
+        { "code": "V1", "title": "Officer occupations in the Canadian Armed Forces" },
+        { "code": "V2", "title": "Non-commissioned ranks of the Canadian Armed Forces" }
+      ],
+      "recentCutoff": {
+        "score": null,
+        "drawDate": null,
+        "drawType": "No dedicated military draw observed in 2025",
+        "_todoVerify": "TODO:VERIFY — confirm military category eligibility requirements and any draws held",
+        "source": "https://www.canada.ca/en/immigration-refugees-citizenship/services/immigrate-canada/express-entry/submit-profile/rounds-invitations.html"
+      }
+    }
+  ],
+
+  "generalDrawReference": {
+    "recentCutoff": 541,
+    "drawDate": "2025-06-25",
+    "drawType": "No program specified (general)",
+    "_todoVerify": "TODO:VERIFY — update with most recent general draw cut-off",
+    "source": "https://www.canada.ca/en/immigration-refugees-citizenship/services/immigrate-canada/express-entry/submit-profile/rounds-invitations.html"
+  },
+
+  "cecDrawReference": {
+    "recentCutoff": 522,
+    "drawDate": "2025-06-11",
+    "drawType": "Canadian Experience Class",
+    "_todoVerify": "TODO:VERIFY — update with most recent CEC draw cut-off",
+    "source": "https://www.canada.ca/en/immigration-refugees-citizenship/services/immigrate-canada/express-entry/submit-profile/rounds-invitations.html"
+  }
+}
