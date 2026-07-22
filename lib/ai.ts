@@ -56,14 +56,22 @@ export async function generateAndSaveImage(prompt: string): Promise<string> {
   const data = await response.json();
   const imageUrl = data.images[0].url;
 
+  // Download the generated image from Fal.ai's CDN.
+  // IMPORTANT: validate the response before storing — if the CDN returns an
+  // error page (non-ok status or non-image content-type), we must throw so
+  // the caller's catch block can skip this visual rather than persisting an
+  // "Internal server error" string as a JPEG file.
   const imageRes = await fetch(imageUrl);
+  if (!imageRes.ok) {
+    throw new Error(`Failed to download generated image (${imageRes.status}): ${imageUrl}`);
+  }
+  const contentType = imageRes.headers.get('content-type') || '';
+  if (!contentType.startsWith('image/')) {
+    throw new Error(`Fal.ai CDN returned non-image content-type "${contentType}" for: ${imageUrl}`);
+  }
   const arrayBuffer = await imageRes.arrayBuffer();
-  const contentType = imageRes.headers.get('content-type') || 'image/jpeg';
 
-  return storeImage(
-    new Uint8Array(arrayBuffer),
-    contentType.startsWith('image/') ? contentType : 'image/jpeg',
-  );
+  return storeImage(new Uint8Array(arrayBuffer), contentType);
 }
 
 // ─── Diagram Helpers ──────────────────────────────────────────────────────────

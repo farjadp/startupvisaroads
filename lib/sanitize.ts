@@ -6,11 +6,19 @@
 // Note: dangerouslySetInnerHTML does not run <script> tags, but it DOES run
 // inline event handlers (onerror/onload/...) and `javascript:` URLs. We remove
 // all of those, plus dangerous tags. data: URLs are only allowed for images.
+//
+// SVG IS allowed — AI-generated diagrams use inline SVG for crisp rendering.
+// However, dangerous SVG sub-elements (script, use[href], foreignObject) are
+// stripped to prevent XSS via SVG vectors.
 // ============================================================================
 
 import * as cheerio from 'cheerio';
 
-const DISALLOWED_TAGS = ['script', 'style', 'iframe', 'object', 'embed', 'form', 'input', 'button', 'link', 'meta', 'base', 'svg', 'math'];
+// Tags that are unconditionally removed (SVG itself is intentionally NOT here).
+const DISALLOWED_TAGS = ['script', 'style', 'iframe', 'object', 'embed', 'form', 'input', 'button', 'link', 'meta', 'base', 'math'];
+
+// Dangerous tags that may appear inside <svg> and must be stripped.
+const DISALLOWED_SVG_CHILDREN = ['script', 'use', 'foreignObject', 'animate', 'set', 'animateMotion', 'animateTransform'];
 
 function isSafeUrl(value: string, attr: string): boolean {
   const v = value.trim().toLowerCase();
@@ -26,7 +34,19 @@ export function sanitizeHtml(html: string): string {
   if (!html) return '';
   const $ = cheerio.load(html, null, false);
 
+  // Remove globally disallowed tags
   $(DISALLOWED_TAGS.join(',')).remove();
+
+  // Strip dangerous elements that can appear inside <svg> blocks
+  $('svg').find(DISALLOWED_SVG_CHILDREN.join(',')).remove();
+
+  // Strip SVG <use> elements that reference external URLs (href/xlink:href)
+  $('svg use').each((_, el) => {
+    const href = $(el).attr('href') || $(el).attr('xlink:href') || '';
+    if (href.startsWith('http') || href.startsWith('//')) {
+      $(el).remove();
+    }
+  });
 
   $('*').each((_, node) => {
     const attribs: Record<string, string> = (node as any).attribs || {};
@@ -45,7 +65,7 @@ export function sanitizeHtml(html: string): string {
         continue;
       }
       // Block CSS-based script execution
-      if (lower === 'style' && /expression\s*\(|javascript:|url\s*\(\s*['"]?\s*javascript:/i.test(value)) {
+      if (lower === 'style' && /expression\s*\(|javascript:|url\s*\(\s*['"']?\s*javascript:/i.test(value)) {
         $(node).removeAttr(attr);
       }
     }
