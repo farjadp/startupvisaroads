@@ -47,17 +47,26 @@ export async function POST(req: NextRequest) {
     const articleLocale = locale === 'fa' ? 'fa' : 'en';
 
     if (!force && mode !== 'URL') {
+      // ─── Duplicate detection ────────────────────────────────────────────────
+      // Only fetch titles — never content. Loading full article HTML for every
+      // article would transfer megabytes from the DB and make the bigram
+      // comparison O(input_len × content_len × article_count), which caused
+      // Cloudflare 524 timeouts on large TEXT mode inputs.
+      //
+      // We also cap the input used for comparison at 400 chars. Article titles
+      // are ~60-100 chars, so the bigram check becomes trivially fast.
       const existingArticles = await prisma.article.findMany({
-        select: { title: true, content: true },
-        where: { locale: articleLocale }
+        select: { title: true },
+        where: { locale: articleLocale },
       });
+
+      const inputForCheck = input.trim().substring(0, 400);
 
       let maxSimilarity = 0;
       let matchedTitle = '';
 
       for (const article of existingArticles) {
-        const targetString = mode === 'TEXT' ? article.content : article.title;
-        const similarity = getDiceCoefficient(input, targetString);
+        const similarity = getDiceCoefficient(inputForCheck, article.title);
         if (similarity > maxSimilarity) {
           maxSimilarity = similarity;
           matchedTitle = article.title;
