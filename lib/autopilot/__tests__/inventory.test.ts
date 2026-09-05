@@ -28,9 +28,18 @@ describe('FA_SITE_PAGES', () => {
 });
 
 describe('SITE_PAGES', () => {
-  it('is the English list and keeps the province pages', () => {
+  it('does not recommend closed entrepreneur and work-permit routes', () => {
     const paths = SITE_PAGES.map((p) => p.path);
-    expect(paths).toContain('/pnp/ontario');
+    expect(paths).not.toContain('/startupworkpermit');
+    expect(paths).not.toContain('/pnp/ontario');
+    expect(paths).not.toContain('/pnp/saskatchewan');
     expect(paths).toContain('/usa/eb5');
+  });
+
+  it('keeps Canada SUV only as an informational status guide', () => {
+    expect(SITE_PAGES.find((p) => p.path === '/startup-visa-canada')?.kind).toBe('page');
+    expect(FA_SITE_PAGES.filter((p) => p.path.startsWith('/canada-startup-visa'))).toEqual([
+      expect.objectContaining({ path: '/canada-startup-visa', kind: 'page' }),
+    ]);
   });
 });

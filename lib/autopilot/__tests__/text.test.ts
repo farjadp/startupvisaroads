@@ -62,9 +62,25 @@ describe('enforceLinks', () => {
     expect(html).toBe('<p>Read Quebec now.</p>');
     expect(links).toEqual([]);
   });
-  it('strips outbound links to plain text', () => {
-    const { html } = enforceLinks('<a href="https://canada.ca/x">IRCC</a>', inv);
-    expect(html).toBe('IRCC');
+  it('keeps allowlisted official HTTPS citations with safe external-link attributes', () => {
+    const { html, links, officialLinks, officialCitationCount } = enforceLinks(
+      '<a href="https://www.canada.ca/en/immigration-refugees-citizenship.html" rel="nofollow">IRCC</a>',
+      inv,
+    );
+    expect(html).toContain('href="https://www.canada.ca/en/immigration-refugees-citizenship.html"');
+    expect(html).toContain('target="_blank"');
+    expect(html).toContain('rel="noopener noreferrer"');
+    expect(links).toEqual([]);
+    expect(officialLinks).toEqual(['https://www.canada.ca/en/immigration-refugees-citizenship.html']);
+    expect(officialCitationCount).toBe(1);
+  });
+  it('strips arbitrary, insecure, and lookalike outbound links to plain text', () => {
+    const { html, officialCitationCount } = enforceLinks(
+      '<a href="https://example.com/x">other</a> <a href="http://www.canada.ca/x">insecure</a> <a href="https://canada.ca.evil.test/x">lookalike</a> <a href="https://www.canada.ca:444/x">wrong port</a>',
+      inv,
+    );
+    expect(html).toBe('other insecure lookalike wrong port');
+    expect(officialCitationCount).toBe(0);
   });
   it('treats absolute URLs on our own domain as internal', () => {
     const { html, links } = enforceLinks('<a href="https://visaroads.com/fa/pnp/ontario">x</a>', inv);

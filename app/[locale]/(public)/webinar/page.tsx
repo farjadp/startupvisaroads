@@ -6,6 +6,7 @@
 import type { Metadata } from 'next';
 import { setRequestLocale } from 'next-intl/server';
 import { buildMetadata } from '@/lib/seo';
+import { metaFor } from '@/lib/pageMeta';
 import { faImageUrl } from '@/lib/fa/content';
 import WebinarEn from './WebinarEn';
 import FaWebinar from '@/components/fa/FaWebinar';
@@ -15,7 +16,7 @@ type Props = { params: Promise<{ locale: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
-  if (locale !== 'fa') return {};
+  if (locale !== 'fa') return metaFor('/webinar', locale);
   return buildMetadata({ locale, path: webinar.meta.path, title: webinar.meta.title, description: webinar.meta.description, image: faImageUrl('webinar') });
 }
 

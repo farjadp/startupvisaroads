@@ -31,13 +31,10 @@ type Page = { path: string; en: string; kind: LinkTarget['kind'] };
 
 /** English static pages. Keep in step with EN_PATHS in app/sitemap.ts. */
 export const SITE_PAGES: Page[] = [
-  { path: '/startup-visa-canada', en: 'Canada Start-up Visa (SUV) programme guide', kind: 'program' },
-  { path: '/startupworkpermit', en: 'Canada start-up work permit', kind: 'program' },
+  { path: '/startup-visa-canada', en: 'Canada Start-up Visa (SUV) status guide', kind: 'page' },
   { path: '/pnp', en: 'Provincial Nominee Programs overview', kind: 'program' },
-  { path: '/pnp/ontario', en: 'Ontario Immigrant Nominee Program (OINP)', kind: 'program' },
   { path: '/pnp/bc', en: 'British Columbia PNP (BC PNP)', kind: 'program' },
   { path: '/pnp/alberta', en: 'Alberta Advantage Immigration Program', kind: 'program' },
-  { path: '/pnp/saskatchewan', en: 'Saskatchewan Immigrant Nominee Program', kind: 'program' },
   { path: '/pnp/manitoba', en: 'Manitoba Provincial Nominee Program', kind: 'program' },
   { path: '/pnp/new-brunswick', en: 'New Brunswick PNP', kind: 'program' },
   { path: '/pnp/newfoundland', en: 'Newfoundland and Labrador PNP', kind: 'program' },
@@ -65,6 +62,7 @@ export const SITE_PAGES: Page[] = [
   { path: '/book-meeting', en: 'Book a strategy call', kind: 'page' },
   { path: '/contact', en: 'Request a free advisory', kind: 'page' },
   { path: '/about', en: 'About Startup Visa Roads', kind: 'page' },
+  { path: '/team', en: 'Our team — startup mentors and advisors', kind: 'page' },
   { path: '/blog', en: 'Journal', kind: 'page' },
 ];
 
@@ -77,10 +75,7 @@ export type FaPage = { path: string; label: string; kind: LinkTarget['kind'] };
  * out of Persian mid-article.
  */
 export const FA_SITE_PAGES: FaPage[] = [
-  { path: '/canada-startup-visa', label: 'راهنمای کامل ویزای استارتاپ کانادا (SUV)', kind: 'program' },
-  { path: '/canada-startup-visa/requirements', label: 'شرایط و مدارک ویزای استارتاپ کانادا', kind: 'program' },
-  { path: '/canada-startup-visa/cost', label: 'هزینه‌های ویزای استارتاپ کانادا', kind: 'program' },
-  { path: '/canada-startup-visa/designated-organizations', label: 'سازمان‌های تأییدشده (Designated Organizations)', kind: 'program' },
+  { path: '/canada-startup-visa', label: 'راهنمای وضعیت ویزای استارتاپ کانادا (SUV)', kind: 'page' },
   { path: '/pnp', label: 'برنامه‌های استانی کانادا (PNP)', kind: 'program' },
   { path: '/pnp/new-brunswick', label: 'مسیر کارآفرینی نیوبرانزویک (NBBIS)', kind: 'program' },
   { path: '/pnp/nova-scotia', label: 'مسیر کارآفرینی نوااسکوشیا', kind: 'program' },
@@ -93,6 +88,7 @@ export const FA_SITE_PAGES: FaPage[] = [
   { path: '/faq', label: 'سؤالات متداول مهاجرت استارتاپی', kind: 'page' },
   { path: '/webinar', label: 'وبینار رایگان مهاجرت استارتاپی', kind: 'page' },
   { path: '/about', label: 'درباره ما', kind: 'page' },
+  { path: '/team', label: 'تیم ما — منتورهای استارتاپ', kind: 'page' },
   { path: '/contact', label: 'تماس و مشاوره', kind: 'page' },
   { path: '/blog', label: 'مجله', kind: 'page' },
 ];

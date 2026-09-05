@@ -25,13 +25,13 @@ export type Brief = {
 /** What is on a founder's or skilled worker's mind this month. */
 export function seasonalHooks(now = new Date()): string[] {
   const m = now.getMonth() + 1;
-  const hooks: string[] = ['Express Entry draws happen roughly every two weeks; category-based draws favour specific occupations'];
-  if (m >= 1 && m <= 2) hooks.push('IRCC publishes the year\'s immigration levels and provinces open new PNP allocations', 'US H-1B registration opens in March — founders compare it with EB-2 NIW');
-  if (m >= 2 && m <= 4) hooks.push('Canadian tax season (T1 due 30 April) — first-year filers, RRSP/TFSA questions');
-  if (m >= 3 && m <= 5) hooks.push('Spring intake for accelerator and incubator cohorts — Start-up Visa designated organisations');
-  if (m >= 6 && m <= 8) hooks.push('Summer: relocation season, school registration for September, provincial draws slow down');
-  if (m >= 8 && m <= 10) hooks.push('Fall intake: study-permit changes, PGWP rules, provinces spend remaining nomination allocations');
-  if (m >= 10 && m <= 12) hooks.push('Year-end: IRCC levels plan for next year, provinces exhaust allocations, EB-5 and NIW planning for next fiscal year');
+  const hooks: string[] = ['Express Entry candidates should verify recent draw types and results with IRCC before acting'];
+  if (m >= 1 && m <= 2) hooks.push('Verify current federal immigration levels and provincial nomination availability with the responsible authority', 'Founders comparing H-1B with EB-2 NIW should verify current USCIS instructions and dates');
+  if (m >= 2 && m <= 4) hooks.push('First-year Canadian filers can verify current tax deadlines and registered-account rules with the responsible authority');
+  if (m >= 3 && m <= 5) hooks.push('Founders considering a designated organisation should verify its current status directly with IRCC');
+  if (m >= 6 && m <= 8) hooks.push('Families planning a move should verify current school registration and provincial immigration information');
+  if (m >= 8 && m <= 10) hooks.push('Students and graduates should verify current study-permit and PGWP rules with IRCC');
+  if (m >= 10 && m <= 12) hooks.push('Applicants planning next year should verify published federal, provincial and US programme updates with the responsible authorities');
   if (m === 3) hooks.push('Nowruz — Persian founders planning the year');
   return hooks;
 }
@@ -91,7 +91,7 @@ Rules:
 - workingTitle: a statement or how-to, not a rhetorical question, ≤ 70 characters, specific (a programme, a province or a document in it). In ${lang}.
 - Each brief has a distinct angle; no two briefs about the same programme.
 - At least one brief tied to a calendar hook; at least one comparison piece (two programmes or two provinces side by side).
-- depth: "deep" for a core pathway guide (SUV requirements, EB-2 NIW evidence, PNP comparison) — 2000–2800 words; "standard" otherwise — 1100–1500 words. At most one "deep" per day.
+- depth: "deep" for a core pathway guide (EB-2 NIW evidence, active PNP comparison) — 2000–2800 words; "standard" otherwise — 1100–1500 words. At most one "deep" per day.
 - imageScenes: two sentences for an editorial photograph, cover then inline — a concrete object, workspace or place, no people's faces, no text, no flags.
 - category: exactly one of ${JSON.stringify(inv.categories.map((c) => c.name))}.
 

@@ -4,7 +4,7 @@
 // (paired with /en/country/denmark in FA_PAIRED).
 // ============================================================================
 import type { Metadata } from 'next';
-import { redirect } from 'next/navigation';
+import { permanentRedirect } from 'next/navigation';
 import { setRequestLocale } from 'next-intl/server';
 import { buildMetadata } from '@/lib/seo';
 import FaPageLayout from '@/components/fa/FaPageLayout';
@@ -21,7 +21,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function DenmarkEurope({ params }: Props) {
   const { locale } = await params;
-  if (locale !== 'fa') redirect(`/${locale}/country/denmark`);
+  if (locale !== 'fa') permanentRedirect(`/${locale}/country/denmark`);
   setRequestLocale(locale);
   return <FaPageLayout page={page} trail={[{ name: 'دانمارک', path: page.path }]} />;
 }

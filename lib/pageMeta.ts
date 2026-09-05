@@ -13,6 +13,48 @@ interface Entry {
   noindex?: boolean;
 }
 
+export const EN_INDEXABLE_PATHS = [
+  '',
+  '/about',
+  '/services',
+  '/mentorship',
+  '/contact',
+  '/team',
+  '/blog',
+  '/startup-visa-canada',
+  '/startupworkpermit',
+  '/pnp',
+  '/pnp/ontario',
+  '/pnp/bc',
+  '/pnp/alberta',
+  '/pnp/saskatchewan',
+  '/pnp/manitoba',
+  '/pnp/new-brunswick',
+  '/pnp/newfoundland',
+  '/pnp/nova-scotia',
+  '/pnp/pei',
+  '/usa/eb1',
+  '/usa/eb2-niw',
+  '/usa/eb5',
+  '/europe/netherlands',
+  '/europe/finland',
+  '/australia/entrepreneur-stream',
+  '/uae/golden-visa',
+  '/country',
+  '/country/canada',
+  '/country/usa',
+  '/country/australia',
+  '/country/uae',
+  '/country/denmark',
+  '/country/finland',
+  '/tools',
+  '/tools/express-entry',
+  '/book-meeting',
+  '/webinar',
+  '/privacy',
+  '/terms',
+] as const;
+
 const META: Record<string, Entry> = {
   '/about': {
     en: { title: 'About Us', description: 'Startup Visa Roads pairs founders with mentorship and investor-grade documents to win Startup Visa and global migration cases.' },
@@ -29,6 +71,10 @@ const META: Record<string, Entry> = {
   '/contact': {
     en: { title: 'Contact & Free Advisory', description: 'Talk to a strategic immigration advisor. Request a free advisory to map your fastest, lowest-risk path to global residency.' },
     fa: { title: 'تماس و مشاوره رایگان', description: 'با مشاور استراتژیک مهاجرت گفت‌وگو کنید. درخواست مشاوره رایگان برای ترسیم سریع‌ترین و کم‌ریسک‌ترین مسیر اقامت جهانی.' },
+  },
+  '/team': {
+    en: { title: 'Our Team — Startup Mentors & Advisors', description: 'Meet the Startup Visa Roads team: startup mentors, product managers, and operations leads who prepare founders for startup visa and entrepreneur immigration pathways.' },
+    fa: { title: 'تیم ما — منتورهای استارتاپ و مشاوران', description: 'با تیم استارتاپ ویزا رودز آشنا شوید: منتورهای استارتاپ، پروداکت منیجرها و مسئولان عملیات که بنیان‌گذاران را برای ویزای استارتاپ و مسیرهای مهاجرت کارآفرینی آماده می‌کنند.' },
   },
   '/startup-visa-canada': {
     en: { title: 'Canada Startup Visa (SUV)', description: 'Complete guide and end-to-end support for the Canada Startup Visa: eligibility, designated organizations, letters of support, and permanent residency.' },
@@ -68,6 +114,19 @@ const META: Record<string, Entry> = {
   '/country/finland': { en: { title: 'Immigrate to Finland', description: 'Finland residency pathways for innovative tech startups via the Finnish Startup Permit.' }, fa: { title: 'مهاجرت به فنلاند', description: 'مسیرهای اقامت فنلاند برای استارتاپ‌های نوآور تکنولوژی از طریق مجوز استارتاپ فنلاند.' } },
   '/privacy': { en: { title: 'Privacy Policy', description: 'How Startup Visa Roads collects, uses, and protects your personal information.' }, fa: { title: 'سیاست حریم خصوصی', description: 'نحوه جمع‌آوری، استفاده و حفاظت از اطلاعات شخصی شما توسط راه‌های ویزای استارتاپ.' } },
   '/terms': { en: { title: 'Terms of Service', description: 'The terms and conditions governing your use of the Startup Visa Roads website and services.' }, fa: { title: 'شرایط استفاده از خدمات', description: 'شرایط و ضوابط حاکم بر استفاده شما از وب‌سایت و خدمات راه‌های ویزای استارتاپ.' } },
+  '/book-meeting': {
+    en: { title: 'Paid Startup Mentorship Session', description: 'Book a 60-minute online startup mentorship session for $140, paid directly to a reputable charity, with meeting details provided after booking.' },
+    fa: { title: 'جلسه منتورشیپ پولی استارتاپ', description: 'یک جلسه آنلاین ۶۰ دقیقه‌ای منتورشیپ استارتاپ با هزینه ۱۴۰ دلار رزرو کنید؛ مبلغ مستقیماً به یک خیریه معتبر پرداخت می‌شود.' },
+  },
+  '/webinar': {
+    en: { title: 'Startup Visa Canada Webinar', description: 'Register for the July 1, 2026 online meetup covering Canada Startup Visa updates, current priorities, alternative pathways, and live questions.' },
+    fa: { title: 'وبینار استارتاپ ویزای کانادا', description: 'ثبت‌نام دورهمی آنلاین درباره به‌روزرسانی‌های استارتاپ ویزای کانادا در سال ۲۰۲۶، اولویت‌های فعلی، مسیرهای جایگزین و پرسش و پاسخ زنده.' },
+  },
+  '/unsubscribe': {
+    en: { title: 'Unsubscribe from Newsletter', description: 'Confirm your email address to stop receiving marketing emails from Startup Visa Roads.' },
+    fa: { title: 'لغو عضویت از خبرنامه', description: 'برای توقف دریافت ایمیل‌های بازاریابی راه‌های ویزای استارتاپ، نشانی ایمیل خود را تأیید کنید.' },
+    noindex: true,
+  },
   '/landing': { en: { title: 'Start Your Global Mobility Journey', description: 'Map your fastest, lowest-risk path to global residency with mentorship and investor-grade documents.' }, fa: { title: 'سفر مهاجرت جهانی خود را آغاز کنید', description: 'سریع‌ترین و کم‌ریسک‌ترین مسیر اقامت جهانی را با منتورشیپ و اسناد سرمایه‌گذارپسند ترسیم کنید.' } },
   '/landing/pnp-landing': { en: { title: 'Canada PNP Assessment', description: 'Discover which Canadian Provincial Nominee Program fits your profile, capital, and goals.' }, fa: { title: 'ارزیابی برنامه استانی کانادا (PNP)', description: 'کشف کنید کدام برنامه نامزدی استانی کانادا با پروفایل، سرمایه و اهداف شما هماهنگ است.' } },
   '/landing/pnp-landing/pnp-brochure': { en: { title: 'Canada PNP Brochure', description: 'A concise overview of Canada\'s Provincial Nominee Programs for entrepreneurs and investors.' }, fa: { title: 'بروشور برنامه استانی کانادا', description: 'مروری فشرده بر برنامه‌های نامزدی استانی کانادا برای کارآفرینان و سرمایه‌گذاران.' } },

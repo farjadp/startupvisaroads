@@ -13,7 +13,7 @@ import { getMessages, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { routing } from '@/routing';
 import JsonLd from '@/components/JsonLd';
-import { SITE_URL, SITE_NAME, DEFAULT_OG_IMAGE, buildAlternates, ogLocale, organizationJsonLd, websiteJsonLd } from '@/lib/seo';
+import { SITE_URL, SITE_NAME, defaultOgImage, buildAlternates, ogLocale, organizationJsonLd, websiteJsonLd } from '@/lib/seo';
 
 // English Fonts
 const dmSerif = DM_Serif_Display({
@@ -79,7 +79,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
       url: `${SITE_URL}/${locale}`,
       title,
       description,
-      images: [{ url: DEFAULT_OG_IMAGE, width: 1200, height: 630, alt: SITE_NAME }],
+      images: [{ url: defaultOgImage(locale), width: 1200, height: 630, alt: SITE_NAME }],
     },
     twitter: { card: 'summary_large_image', title, description },
     robots: { index: true, follow: true },

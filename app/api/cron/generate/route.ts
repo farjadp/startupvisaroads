@@ -68,7 +68,7 @@ export async function GET(request: NextRequest) {
     }
 
     const payload = await generateArticlePayload(mode, input, locale);
-    await createArticleFromPayload(payload, { locale, status: 'PUBLISHED' });
+    await createArticleFromPayload(payload, { locale, status: 'DRAFT' });
 
     await prisma.aiKeyword.update({
       where: { id: keywordJob.id },

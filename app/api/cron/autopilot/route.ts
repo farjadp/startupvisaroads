@@ -3,8 +3,8 @@
 //
 // The daily planned writer. Cloud Scheduler calls it with
 // `Authorization: Bearer $CRON_SECRET`; an admin session can call it by hand.
-// The query string is the schedule: n articles, in one locale, straight to
-// PUBLISHED when publish=1 (otherwise DRAFT). dry=1 plans and drafts but
+// The query string is the schedule: n articles, in one locale, eligible for
+// PUBLISHED when publish=1 and an official citation survives (otherwise DRAFT). dry=1 plans and drafts but
 // spends nothing on images and inserts nothing.
 //
 // Call the Cloud Run URL directly (run.app), not the Cloudflare-proxied

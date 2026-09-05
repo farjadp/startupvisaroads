@@ -177,7 +177,7 @@ function sourcesBlock(article: SourceArticle, locale: Locale): string {
   const label = locale === 'fa' ? 'منبع' : 'Source';
   const date = article.publishedAt ? ` (${article.publishedAt.toISOString().slice(0, 10)})` : '';
   const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
-  return `\n<section class="mt-12 pt-6 border-t border-[#1a1a1a]/10 font-sans text-sm text-[#1a1a1a]/60 not-prose"><p><strong>${label}:</strong> <a href="${esc(article.url)}" rel="nofollow noopener" target="_blank">${esc(article.title)}</a> — ${esc(article.sourceName)}${date}</p></section>`;
+  return `\n<section class="mt-12 pt-6 border-t border-[#1a1a1a]/10 font-sans text-sm text-[#1a1a1a]/60 not-prose"><p><strong>${label}:</strong> <a href="${esc(article.url)}" rel="noopener noreferrer" target="_blank">${esc(article.title)}</a> — ${esc(article.sourceName)}${date}</p></section>`;
 }
 
 // ---------------------------------------------------------------------------
@@ -191,7 +191,7 @@ type RunOpts = { publish?: boolean; dryRun?: boolean };
  * this run does not reach stays `new` in the ledger for the next run.
  */
 export async function runFromSources(n: number, locale: Locale, opts: RunOpts = {}): Promise<GenerateResult & { notes: string[] }> {
-  const result: GenerateResult & { notes: string[] } = { created: [], errors: [], skipped: [], notes: [] };
+  const result: GenerateResult & { notes: string[] } = { created: [], errors: [], skipped: [], warnings: [], notes: [] };
   const run = await prisma.autopilotRun.create({ data: { requested: n, locale, mode: 'source', notes: opts.dryRun ? 'dry-run' : null } });
 
   let inv: Inventory;
@@ -255,8 +255,9 @@ export async function runFromSources(n: number, locale: Locale, opts: RunOpts = 
         depth: brief.depth,
       };
       const d = await draftMeta(planBrief, body, inv);
+      body = await placeVisuals(body, d.inTextVisuals, !!opts.dryRun);
       const linked = enforceLinks(body, inv);
-      body = await placeVisuals(linked.html, d.inTextVisuals, !!opts.dryRun);
+      body = linked.html;
       if (Object.keys(d.quickFacts).length) {
         body = `<script type="application/json" id="quick-facts-data">${JSON.stringify(d.quickFacts)}</script>\n${body}`;
       }

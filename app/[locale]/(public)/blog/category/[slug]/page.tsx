@@ -1,41 +1,43 @@
 import React from 'react';
 import type { Metadata } from 'next';
+import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { Link } from '@/navigation';
 import { Clock, ArrowLeft, ArrowRight } from 'lucide-react';
 import JsonLd from '@/components/JsonLd';
-import { buildMetadata, breadcrumbJsonLd, SITE_URL } from '@/lib/seo';
-import { getCategoryArchiveData } from '@/lib/blog';
-import prisma from '@/lib/prisma';
-import { toPersianDigits } from '@/lib/fa/format';
+import { buildMetadata, breadcrumbJsonLd, collectionPageJsonLd, isDataImageUrl, localizedArchiveAlternates, SITE_URL } from '@/lib/seo';
+import { computeReadingTime, getCategoryArchiveData } from '@/lib/blog';
 import { faCategoryLabel } from '@/lib/fa/categories';
 
 export const revalidate = 600;
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string; slug: string }> }): Promise<Metadata> {
   const { locale, slug } = await params;
-  const category = await prisma.category.findUnique({ where: { slug } });
-  if (!category) {
+  const data = await getCategoryArchiveData(locale, slug);
+  if (!data) {
     return { title: 'Not Found', robots: { index: false, follow: false } };
   }
+  const { category, availableLocales } = data;
   const isRtl = locale === 'fa';
-  return buildMetadata({
+  const categoryName = isRtl ? faCategoryLabel(category.slug, category.name) : category.name;
+  const path = `/blog/category/${slug}`;
+  const metadata = buildMetadata({
     locale,
-    path: `/blog/category/${slug}`,
-    title: isRtl ? `${isRtl ? faCategoryLabel(category.slug, category.name) : category.name} — مقالات` : `${isRtl ? faCategoryLabel(category.slug, category.name) : category.name} — Articles`,
+    path,
+    title: isRtl ? `${categoryName} — مقالات` : `${categoryName} — Articles`,
     description: isRtl
-      ? `جدیدترین راهنماها و تحلیل‌های دسته‌ی «${isRtl ? faCategoryLabel(category.slug, category.name) : category.name}» در راه‌های ویزای استارتاپ.`
-      : `The latest guides and analysis in the "${isRtl ? faCategoryLabel(category.slug, category.name) : category.name}" collection from Startup Visa Roads.`,
+      ? `جدیدترین راهنماها و تحلیل‌های دسته‌ی «${categoryName}» در راه‌های ویزای استارتاپ.`
+      : `The latest guides and analysis in the "${categoryName}" collection from Startup Visa Roads.`,
   });
+  return { ...metadata, alternates: localizedArchiveAlternates(path, locale, availableLocales) };
 }
 
 export default async function CategoryArchivePage({
   params 
 }: { 
-  params: { locale: string; slug: string } 
+  params: Promise<{ locale: string; slug: string }>;
 }) {
-  const resolvedParams = await params;
-  const { locale, slug } = resolvedParams;
+  const { locale, slug } = await params;
 
   const isRtl = locale === 'fa';
 
@@ -60,27 +62,22 @@ export default async function CategoryArchivePage({
     emptyState: 'No articles have been published in this collection yet.',
   };
 
-  // Helper to get reading time
-  const getReadingTime = (content: string) => {
-    const match = content.match(/<script\s+type="application\/json"\s+id="quick-facts-data">([\s\S]*?)<\/script>/i);
-    if (match) {
-      try {
-        const qf = JSON.parse(match[1].trim());
-        if (qf.readingTime) return qf.readingTime;
-      } catch (e) {}
-    }
-    const wordCount = content.replace(/<[^>]*>/g, '').split(/\s+/).filter(Boolean).length;
-    const readMin = Math.ceil(wordCount / 200) || 1;
-    return isRtl ? `${toPersianDigits(readMin)} دقیقه مطالعه` : `${readMin} min read`;
-  };
+  const categoryName = isRtl ? faCategoryLabel(category.slug, category.name) : category.name;
+  const categoryUrl = `${SITE_URL}/${locale}/blog/category/${category.slug}`;
+  const categoryDescription = isRtl
+    ? `جدیدترین راهنماها و تحلیل‌های دسته‌ی «${categoryName}» در راه‌های ویزای استارتاپ.`
+    : `The latest guides and analysis in the "${categoryName}" collection from Startup Visa Roads.`;
 
   return (
     <div className="container mx-auto px-6 py-12 md:py-20 max-w-5xl" dir={isRtl ? 'rtl' : 'ltr'}>
-      <JsonLd data={breadcrumbJsonLd([
-        { name: isRtl ? 'خانه' : 'Home', url: `${SITE_URL}/${locale}` },
-        { name: isRtl ? 'مجله خبری' : 'Journal', url: `${SITE_URL}/${locale}/blog` },
-        { name: category.name, url: `${SITE_URL}/${locale}/blog/category/${category.slug}` },
-      ])} />
+      <JsonLd data={[
+        collectionPageJsonLd({ title: categoryName, description: categoryDescription, url: categoryUrl, locale }),
+        breadcrumbJsonLd([
+          { name: isRtl ? 'خانه' : 'Home', url: `${SITE_URL}/${locale}` },
+          { name: isRtl ? 'مجله خبری' : 'Journal', url: `${SITE_URL}/${locale}/blog` },
+          { name: categoryName, url: categoryUrl },
+        ]),
+      ]} />
       {/* Editorial Header */}
       <div className="border-b-4 border-[#1a1a1a] pb-10 mb-12">
         <Link 
@@ -94,7 +91,7 @@ export default async function CategoryArchivePage({
           {t.archiveTitle}
         </div>
         <h1 className="font-serif text-4xl md:text-7xl mb-4 text-[#1a1a1a] leading-tight">
-          {isRtl ? faCategoryLabel(category.slug, category.name) : category.name}
+          {categoryName}
         </h1>
         <p className="text-sm font-sans text-[#1a1a1a]/50">
           {t.articleCount(articles.length)}
@@ -113,12 +110,15 @@ export default async function CategoryArchivePage({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-16">
           {articles.map(article => (
             <Link key={article.id} href={`/blog/${article.slug}`} className="group block">
-              <div className="aspect-video w-full bg-[#1a1a1a]/5 rounded-2xl overflow-hidden mb-6 border-2 border-[#1a1a1a] shadow-[4px_4px_0px_0px_#1a1a1a] group-hover:shadow-[6px_6px_0px_0px_#CCFF00] group-hover:scale-[1.01] transition-all duration-300">
+              <div className="relative aspect-video w-full bg-[#1a1a1a]/5 rounded-2xl overflow-hidden mb-6 border-2 border-[#1a1a1a] shadow-[4px_4px_0px_0px_#1a1a1a] group-hover:shadow-[6px_6px_0px_0px_#CCFF00] group-hover:scale-[1.01] transition-all duration-300">
                 {article.coverImage ? (
-                  <img 
-                    src={article.coverImage} 
-                    alt={article.title} 
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" 
+                  <Image
+                    src={article.coverImage}
+                    alt={article.title}
+                    fill
+                    sizes="(min-width: 768px) 50vw, 100vw"
+                    unoptimized={isDataImageUrl(article.coverImage)}
+                    className="object-cover group-hover:scale-105 transition-transform duration-700"
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center font-serif text-[#1a1a1a]/10 text-4xl">SVR.</div>
@@ -126,11 +126,11 @@ export default async function CategoryArchivePage({
               </div>
               <div className="flex items-center gap-3 mb-3 flex-wrap">
                 <span className="text-[10px] font-bold uppercase tracking-widest text-[#CCFF00] bg-[#1a1a1a] px-2.5 py-1 rounded-full">
-                  {isRtl ? faCategoryLabel(category.slug, category.name) : category.name}
+                  {categoryName}
                 </span>
                 <span className="text-xs text-[#1a1a1a]/50 font-sans flex items-center gap-1">
                   <Clock className="w-3 h-3" />
-                  {getReadingTime(article.content)}
+                  {computeReadingTime(article.content, locale)}
                 </span>
               </div>
               <h2 className="font-serif text-2xl md:text-3xl mb-3 text-[#1a1a1a] leading-snug group-hover:text-[#CCFF00] group-hover:bg-[#1a1a1a] group-hover:px-1.5 transition-all duration-200 rounded inline-block">

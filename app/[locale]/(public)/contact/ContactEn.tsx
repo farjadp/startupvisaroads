@@ -10,6 +10,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import BookingCTA from '@/components/BookingCTA';
 import { sendContactForm } from './actions';
+import { TEAM_MEMBERS } from '@/content/team';
 import {
    ArrowRight,
    Mail,
@@ -21,7 +22,10 @@ import {
    Send,
    FileSearch,
    PenTool,
-   Rocket
+   Rocket,
+   Phone,
+   MessageCircle,
+   Users
 } from 'lucide-react';
 
 export default function ContactPage() {
@@ -265,12 +269,74 @@ export default function ContactPage() {
 
 
          {/* =========================================
-          4. GOOGLE MEET BOOKING CTA
+          4. TEAM CONTACT DIRECTORY
+      ========================================= */}
+         <section className="py-24 border-b border-[#1a1a1a]/10">
+            <div className="container mx-auto max-w-[1400px]">
+               <div className="flex items-center gap-4 mb-12">
+                  <Users className="w-8 h-8" />
+                  <div>
+                     <span className="font-sans text-xs font-bold uppercase tracking-widest text-[#1a1a1a]/60 block mb-1">Direct Lines</span>
+                     <h2 className="font-serif text-4xl md:text-5xl">Talk to the team directly.</h2>
+                  </div>
+               </div>
+
+               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px bg-[#1a1a1a]/20 border border-[#1a1a1a]/20">
+                  {TEAM_MEMBERS.filter((m) => m.telegram || m.whatsapp || m.phoneNumbers?.length).map((member) => (
+                     <div key={member.id} className="bg-[#F2F0E9] p-8 flex flex-col justify-between min-h-[280px] group hover:bg-white transition-colors duration-300">
+                        <div>
+                           <h3 className="font-serif text-2xl mb-1">{member.name}</h3>
+                           <p className="font-sans text-xs font-bold uppercase tracking-widest text-[#1a1a1a]/50 mb-4">{member.role}</p>
+                           {member.location && (
+                              <div className="flex items-center gap-2 text-sm text-[#1a1a1a]/60 mb-4">
+                                 <MapPin className="w-3.5 h-3.5 shrink-0" />
+                                 <span>{member.location}</span>
+                              </div>
+                           )}
+                           {member.phoneNumbers && member.phoneNumbers.length > 0 && (
+                              <div className="space-y-1 mb-4">
+                                 {member.phoneNumbers.map((phone) => (
+                                    <div key={phone} className="flex items-center gap-2 text-sm text-[#1a1a1a]/70" dir="ltr">
+                                       <Phone className="w-3.5 h-3.5 shrink-0 text-[#1a1a1a]/40" />
+                                       <span>{phone}</span>
+                                    </div>
+                                 ))}
+                              </div>
+                           )}
+                        </div>
+                        <div className="flex flex-wrap gap-4 pt-4 border-t border-[#1a1a1a]/10">
+                           {member.telegram && (
+                              <a href={member.telegram} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 font-sans text-xs font-bold uppercase tracking-widest border-b border-[#1a1a1a] pb-0.5 hover:text-[#CCFF00] hover:border-[#CCFF00] transition-colors">
+                                 <Send className="w-3.5 h-3.5" />
+                                 {member.telegramHandle}
+                              </a>
+                           )}
+                           {member.whatsapp && (
+                              <a href={member.whatsapp} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 font-sans text-xs font-bold uppercase tracking-widest text-[#1a1a1a]/60 hover:text-[#1a1a1a] transition-colors">
+                                 <MessageCircle className="w-3.5 h-3.5" />
+                                 WhatsApp
+                              </a>
+                           )}
+                        </div>
+                     </div>
+                  ))}
+               </div>
+
+               <div className="mt-8 text-right">
+                  <Link href="/team" className="inline-flex items-center gap-2 font-sans text-xs font-bold uppercase tracking-widest border-b-2 border-[#1a1a1a] pb-1 hover:text-[#CCFF00] hover:border-[#CCFF00] transition-colors">
+                     Meet the full team <ArrowRight size={14} />
+                  </Link>
+               </div>
+            </div>
+         </section>
+
+         {/* =========================================
+          5. GOOGLE MEET BOOKING CTA
       ========================================= */}
          <BookingCTA />
 
          {/* =========================================
-          5. PRE-SUBMISSION FAQ
+          6. PRE-SUBMISSION FAQ
       ========================================= */}
          <section className="py-24 bg-[#1a1a1a] text-[#F2F0E9] -mx-4 md:-mx-8 px-4 md:px-8">
             <div className="max-w-[1400px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16">
@@ -309,7 +375,7 @@ export default function ContactPage() {
 
 
          {/* =========================================
-          6. THE FOOTER MANIFESTO
+          7. THE FOOTER MANIFESTO
       ========================================= */}
          <section className="py-32 text-center">
             <p className="font-serif text-3xl md:text-5xl max-w-4xl mx-auto leading-tight">

@@ -116,7 +116,7 @@ export function faqJsonLd(faqs: FaFaq[]) {
   };
 }
 
-import { SITE_URL, SITE_NAME, ASHAVID } from '@/lib/seo';
+import { SITE_URL, SITE_NAME, ASHAVID, WEBSITE_ID } from '@/lib/seo';
 
 /** Absolute URL of a page's brand image, for OG and structured data. */
 export function faImageUrl(image?: string): string | null {
@@ -236,7 +236,7 @@ export function faWebPageJsonLd(page: FaPage) {
     description: page.description,
     inLanguage: 'fa-IR',
     dateModified: page.updated,
-    isPartOf: { '@type': 'WebSite', '@id': `${SITE_URL}#website`, name: SITE_NAME },
+    isPartOf: { '@id': WEBSITE_ID },
     ...(img ? { primaryImageOfPage: { '@type': 'ImageObject', url: img } } : {}),
     ...(about ? { about } : {}),
     provider: { '@type': 'ProfessionalService', '@id': `${SITE_URL}/fa#service` },
