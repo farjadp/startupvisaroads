@@ -223,7 +223,7 @@ export default function WebinarPage() {
                                             name="name"
                                             value={name}
                                             onChange={(e) => setName(e.target.value)}
-                                            placeholder="مثال: آرش علوی"
+                                            placeholder="مثال: فرجاد"
                                             className="w-full p-4 bg-[#F2F0E9]/40 border border-[#1a1a1a]/15 rounded-xl focus:border-[#1a1a1a] focus:bg-white outline-none transition-all text-sm text-[#1a1a1a]"
                                         />
                                     </div>
