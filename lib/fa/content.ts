@@ -16,6 +16,8 @@ export type FaSection = {
   body: string[];
   /** Optional bullet list rendered after the paragraphs. */
   bullets?: string[];
+  /** Optional emphasised callout rendered after the bullets — a warning, a rule of thumb. */
+  callout?: string;
 };
 
 export type FaCta = {
@@ -32,11 +34,27 @@ export type FaPage = {
   description: string;
   /** The Persian queries this page is written for. Documentation, not output. */
   keywords: string[];
-  hero: { headline: string; sub: string; cta: FaCta };
+  hero: { eyebrow: string; headline: string; sub: string; cta: FaCta };
+  /** ISO date of the last substantive review, shown as Jalali and emitted as dateModified. */
+  updated: string;
   sections: FaSection[];
   faqs: FaFaq[];
   closing: FaCta[];
 };
+
+/** Breadcrumb structured data for a Persian page under the site root. */
+export function breadcrumbJsonLd(siteUrl: string, trail: { name: string; path: string }[]) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: trail.map((t, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      name: t.name,
+      item: `${siteUrl}/fa${t.path}`,
+    })),
+  };
+}
 
 /** Persian FAQPage structured data — the AEO/GEO surface for this page. */
 export function faqJsonLd(faqs: FaFaq[]) {
