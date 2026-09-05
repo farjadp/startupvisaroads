@@ -8,7 +8,7 @@
 // ============================================================================
 import { recommendPath, type QuizAnswers } from '@/lib/fa/path-quiz';
 
-const KEYS: (keyof QuizAnswers)[] = ['goal', 'business', 'language', 'capital', 'background', 'horizon'];
+const KEYS: (keyof QuizAnswers)[] = ['goal', 'team', 'business', 'language', 'capital', 'background', 'horizon'];
 
 export async function sendWhichPathLead(formData: FormData): Promise<{ success: boolean; message: string }> {
   const token = process.env.TELEGRAM_BOT_TOKEN;
@@ -46,6 +46,7 @@ export async function sendWhichPathLead(formData: FormData): Promise<{ success: 
 Recommended: ${rec.path} → ${rec.href}
 ----------------------------
 goal=${answers.goal}
+team=${answers.team}
 business=${answers.business}
 language=${answers.language}
 capital=${answers.capital}

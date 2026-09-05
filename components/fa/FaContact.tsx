@@ -38,7 +38,7 @@ export default function FaContact() {
                   <Link href={ch.cta.href} className={cls}>{ch.cta.label}<ArrowLeft className="w-4 h-4" /></Link>
                 )}
                 {'secondary' in ch && ch.secondary && (
-                  <a href={ch.secondary.href} target="_blank" rel="noopener noreferrer" className="text-sm text-[#1a1a1a]/60 hover:text-[#1a1a1a] self-end">{ch.secondary.label}</a>
+                  <a href={ch.secondary.href} {...(ch.secondary.href.startsWith('mailto:') ? {} : { target: '_blank', rel: 'noopener noreferrer' })} className="text-sm text-[#1a1a1a]/60 hover:text-[#1a1a1a] self-end" dir="ltr">{ch.secondary.label}</a>
                 )}
               </div>
             </div>

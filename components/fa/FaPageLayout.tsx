@@ -12,7 +12,7 @@ import JsonLd from '@/components/JsonLd';
 import { SITE_URL } from '@/lib/seo';
 import { faqJsonLd, breadcrumbJsonLd, type FaPage, type FaCta } from '@/lib/fa/content';
 import { faDate, isoDate } from '@/lib/fa/format';
-import { TELEGRAM_URL } from '@/content/fa/home';
+import { TELEGRAM_URL, CONTACT } from '@/content/fa/home';
 import StatusBanner from './StatusBanner';
 
 // Absolute URLs and explicit /en/ paths render as plain anchors; everything
@@ -96,6 +96,9 @@ export default function FaPageLayout({ page, trail }: { page: FaPage; trail: { n
             >
               <Send className="w-3.5 h-3.5" />
               سؤال دارید؟ در تلگرام بپرسید
+            </a>
+            <a href={CONTACT.whatsapp} target="_blank" rel="noopener noreferrer" className="mt-3 block text-xs text-[#1a1a1a]/60 hover:text-[#1a1a1a]" dir="ltr">
+              WhatsApp {CONTACT.whatsappNumber}
             </a>
           </div>
         </aside>
