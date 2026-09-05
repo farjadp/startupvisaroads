@@ -14,6 +14,12 @@ import { getTranslations } from 'next-intl/server';
 import { buildMetadata } from '@/lib/seo';
 import prisma from '@/lib/prisma';
 
+// The journal strip below reads the database. Without this the page is
+// prerendered once at build time — where Prisma cannot reach the DB — and the
+// empty result is served for a year (s-maxage=31536000). Five minutes is well
+// inside the autopilot's publishing cadence.
+export const revalidate = 300;
+
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
   const isRtl = locale === 'fa';
@@ -314,6 +320,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
          {/* =========================================
           7. INSIGHTS & JOURNAL
       ========================================= */}
+         {latestArticles.length > 0 && (
          <section className="py-24 border-t border-[#1a1a1a]/10">
             <div className="flex flex-col md:flex-row justify-between items-end mb-16">
                <div>
@@ -326,7 +333,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-               {latestArticles.length > 0 ? latestArticles.map((post) => (
+               {latestArticles.map((post) => (
                   <Link href={`/blog/${post.slug}`} key={post.id} className="group block cursor-pointer">
                      <div className="relative aspect-[4/3] overflow-hidden mb-6 border border-[#1a1a1a]/10">
                         {post.coverImage ? (
@@ -350,30 +357,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
                      </div>
                      <h3 className="font-serif text-2xl leading-snug group-hover:text-[#CCFF00] transition-colors">{post.title}</h3>
                   </Link>
-               )) : (
-                  // Fallback if no articles in DB
-                  [
-                     { tag: "Policy", date: "Oct 12, 2026", title: "Canada's SUV Cap: How it affects SaaS Founders", img: "https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?q=80&w=2070&auto=format&fit=crop" },
-                     { tag: "Venture", date: "Sep 28, 2026", title: "Structuring Equity for North American VCs", img: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=2015&auto=format&fit=crop" },
-                     { tag: "Case Study", date: "Sep 15, 2026", title: "MedTech Startup's 8-Month Journey to Toronto", img: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=2070&auto=format&fit=crop" }
-                  ].map((post, i) => (
-                     <Link href="/blog" key={i} className="group block cursor-pointer">
-                        <div className="relative aspect-[4/3] overflow-hidden mb-6 border border-[#1a1a1a]/10">
-                           <Image 
-                              src={post.img}
-                              alt={post.title}
-                              fill
-                              className="object-cover grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700"
-                           />
-                        </div>
-                        <div className="flex items-center gap-4 mb-4">
-                           <span className="font-sans text-[10px] font-bold text-[#1a1a1a] border border-[#1a1a1a] px-2 py-1 uppercase tracking-widest">{post.tag}</span>
-                           <span className="font-sans text-[10px] uppercase tracking-widest text-[#1a1a1a]/50">{post.date}</span>
-                        </div>
-                        <h3 className="font-serif text-2xl leading-snug group-hover:text-[#CCFF00] transition-colors">{post.title}</h3>
-                     </Link>
-                  ))
-               )}
+               ))}
             </div>
             
             <div className="mt-12 text-center md:hidden">
@@ -382,6 +366,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
                </Link>
             </div>
          </section>
+         )}
 
          {/* =========================================
           8. FOOTER CTA (Minimal)
