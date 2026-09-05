@@ -92,7 +92,7 @@ export default function AutopilotConsole({ initialRuns, stats, recentSkips }: Pr
     fetch(`${path}?${qs}`, { cache: 'no-store' }).catch(() => {});
   };
 
-  const card = (label: string, value: number, Icon: React.ElementType, tone: string) => (
+  const card = (label: string, value: number, Icon: React.ComponentType<{ className?: string }>, tone: string) => (
     <div className="bg-white p-6 rounded-2xl border border-[#1a1a1a]/5 shadow-sm">
       <div className={`inline-flex p-3 rounded-xl mb-6 ${tone}`}>
         <Icon className="w-5 h-5" />

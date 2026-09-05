@@ -14,6 +14,7 @@ import { faqJsonLd } from '@/lib/fa/content';
 import { faDate, isoDate } from '@/lib/fa/format';
 import { home } from '@/content/fa/home';
 import VideoRail from './VideoRail';
+import RoadsScene from './three/RoadsScene';
 import { videosById } from '@/content/fa/videos';
 
 type Article = {
@@ -39,8 +40,12 @@ export default function FaHome({ articles }: { articles: Article[] }) {
           <span className="text-xs tracking-wide hidden md:block">{h.hero.kicker}</span>
         </div>
 
-        <div className="mt-20">
-          <h1 className="font-estedad font-black text-[14vw] leading-[0.95] text-[#1a1a1a]">
+        <div className="mt-20 relative">
+          <RoadsScene
+            to={['helsinki', 'copenhagen', 'tallinn', 'fredericton', 'halifax']}
+            className="pointer-events-none absolute -top-16 end-0 w-[42vw] max-w-[560px] aspect-square opacity-90"
+          />
+          <h1 className="relative font-estedad font-black text-[14vw] leading-[0.95] text-[#1a1a1a]">
             {h.hero.headline_1}
             <br />
             <span className="ms-[12vw] font-bold text-[#1a1a1a]/60">{h.hero.headline_2}</span>
