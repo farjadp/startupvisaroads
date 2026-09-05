@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import createMiddleware from 'next-intl/middleware';
 import { routing } from './routing';
 import { verifyJWT, getJwtSecret } from './lib/auth';
+import { faRedirectTarget } from './lib/fa/redirects';
 
 const intlMiddleware = createMiddleware(routing);
 
@@ -43,6 +44,14 @@ export default async function middleware(request: NextRequest) {
       const locale = localeMatch ? localeMatch[1] : 'en';
       return NextResponse.redirect(new URL(`/${locale}/admin`, request.url));
     }
+  }
+
+  // A /fa path with no Persian page goes to English with a 301, so the
+  // signal is permanent for crawlers and the reader never sees English
+  // rendered inside the Persian shell.
+  const faTarget = faRedirectTarget(pathname);
+  if (faTarget) {
+    return NextResponse.redirect(new URL(faTarget, request.url), 301);
   }
 
   return intlMiddleware(request);
