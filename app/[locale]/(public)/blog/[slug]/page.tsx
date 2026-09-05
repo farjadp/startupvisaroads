@@ -290,6 +290,8 @@ export default async function BlogPostPage({ params }: { params: Promise<{ local
     ctaTitle: 'آماده‌اید مسیر مهاجرتی خود را آغاز کنید؟',
     ctaDesc: 'با بیزینس پلن‌های حرفه‌ای، مدل‌های مالی پروفرما و دفاعیه پیچ دک شانس خود را در دریافت پذیرش به حداکثر برسانید.',
     ctaBtn: 'ثبت درخواست مشاوره رایگان',
+    takeaway: 'پاسخ کوتاه',
+    faq: 'پرسش‌های پرتکرار',
   } : {
     home: 'Home',
     blog: 'Journal',
@@ -311,6 +313,8 @@ export default async function BlogPostPage({ params }: { params: Promise<{ local
     ctaTitle: 'Ready to architect your startup path?',
     ctaDesc: 'Accelerate your global mobility with investor-grade business documents, financial models, and strategic immigration advisor review.',
     ctaBtn: 'Request Free Advisory',
+    takeaway: 'Key takeaway',
+    faq: 'Frequently asked questions',
   };
 
   const defaultFacts = isRtl ? {
@@ -356,7 +360,18 @@ export default async function BlogPostPage({ params }: { params: Promise<{ local
   // 7. Build structured data (Article + Breadcrumb + FAQ) for SEO/AEO/GEO
   const articleLocale = article.locale === 'fa' ? 'fa' : 'en';
   const articleUrl = `${SITE_URL}/${articleLocale}/blog/${article.slug}`;
-  const faqs = extractFaqs(safeContent);
+  // Structured FAQ written by the autopilot wins; older articles fall back to
+  // heading extraction. Both feed the same FAQPage JSON-LD.
+  let structuredFaq: { question: string; answer: string }[] = [];
+  const rawFaq = (article as { faq?: string | null }).faq;
+  if (rawFaq) {
+    try {
+      const parsed = JSON.parse(rawFaq) as { q: string; a: string }[];
+      structuredFaq = parsed.filter((f) => f?.q && f?.a).map((f) => ({ question: f.q, answer: f.a }));
+    } catch {}
+  }
+  const faqs = structuredFaq.length ? structuredFaq : extractFaqs(safeContent);
+  const keyTakeaway = (article as { keyTakeaway?: string | null }).keyTakeaway ?? null;
   const structuredData = [
     articleJsonLd({
       title: article.title,
@@ -433,6 +448,14 @@ export default async function BlogPostPage({ params }: { params: Promise<{ local
         </div>
       )}
 
+      {/* Key takeaway — the passage an answer engine quotes */}
+      {keyTakeaway && (
+        <div className="my-10 p-6 md:p-7 bg-[#1a1a1a] text-[#F2F0E9] rounded-2xl font-sans shadow-[4px_4px_0px_0px_#CCFF00]">
+          <span className="text-[10px] font-bold uppercase tracking-widest text-[#CCFF00] block mb-3">{t.takeaway}</span>
+          <p className="font-serif text-lg md:text-xl leading-relaxed">{keyTakeaway}</p>
+        </div>
+      )}
+
       {/* Premium Brutalist Quick Facts Card */}
       <div 
         className="relative my-12 p-6 md:p-8 bg-[#1a1a1a]/[0.02] border-2 border-[#1a1a1a] rounded-2xl shadow-[4px_4px_0px_0px_#1a1a1a] hover:shadow-[6px_6px_0px_0px_#CCFF00] transition-all duration-300 font-sans"
@@ -465,6 +488,24 @@ export default async function BlogPostPage({ params }: { params: Promise<{ local
         className="prose prose-lg md:prose-xl prose-headings:font-serif prose-headings:font-bold prose-a:text-[#1a1a1a] prose-a:underline max-w-none text-[#1a1a1a]/80"
         dangerouslySetInnerHTML={{ __html: safeContent }}
       />
+
+      {/* Structured FAQ (autopilot articles) */}
+      {structuredFaq.length > 0 && (
+        <section className="my-12 font-sans" aria-labelledby="faq-heading">
+          <h2 id="faq-heading" className="font-serif text-3xl font-bold text-[#1a1a1a] mb-6">{t.faq}</h2>
+          <div className="divide-y divide-[#1a1a1a]/10 border-y border-[#1a1a1a]/10">
+            {structuredFaq.map((f, i) => (
+              <details key={i} className="group py-4">
+                <summary className="cursor-pointer list-none flex items-start justify-between gap-4 font-bold text-[#1a1a1a] text-base md:text-lg">
+                  <span>{f.question}</span>
+                  <span className="text-[#1a1a1a]/40 group-open:rotate-45 transition-transform text-2xl leading-none shrink-0">+</span>
+                </summary>
+                <p className="mt-3 text-[#1a1a1a]/70 leading-relaxed text-sm md:text-base">{f.answer}</p>
+              </details>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* Context-Aware Recommended Service Card */}
       <div 

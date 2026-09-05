@@ -30,6 +30,14 @@ model Article {
 
   tags        Tag[]     @relation("ArticleTags")
 
+  // ─── Autopilot / AIO fields (nullable: hand-written articles leave them empty)
+  keyTakeaway   String?   // 40–60 words that answer the article's question outright (answer-engine quote)
+  summaryEn     String?   // 2–3 English sentences for GEO, even on fa articles
+  faq           String?   // JSON [{q,a}] → FAQPage JSON-LD (falls back to heading extraction when null)
+  aiModel       String?
+  topicSeed     String?   // why this topic was chosen (planner angle + why_now)
+  internalLinks String    @default("[]") // JSON array of site paths linked from the body
+
   sharedToLinkedin Boolean @default(false)
   sharedToTwitter  Boolean @default(false)
   sharedToFacebook Boolean @default(false)
@@ -57,6 +65,22 @@ model AiKeyword {
   error     String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+// One row per autopilot invocation, so the admin can see what ran and what failed.
+model AutopilotRun {
+  id         String    @id @default(cuid())
+  startedAt  DateTime  @default(now())
+  finishedAt DateTime?
+  locale     String    @default("en")
+  mode       String    @default("planned") // planned | source
+  requested  Int
+  created    Int       @default(0)
+  errors     String?   // JSON [{title?, error}]
+  skipped    String?   // JSON [{title, reason}]
+  notes      String?
+
+  @@index([startedAt])
 }
 
 model Setting {

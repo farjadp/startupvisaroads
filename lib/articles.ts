@@ -17,6 +17,15 @@ export interface ArticlePayload {
   tags?: string[];
   content: string;
   coverImage?: string | null;
+  /** Preferred slug source (an English slug for a Persian title, so fa posts do not all become "article-N"). */
+  slugSource?: string;
+  // Autopilot / AIO fields — optional so the manual writer is unchanged.
+  keyTakeaway?: string | null;
+  summaryEn?: string | null;
+  faq?: { q: string; a: string }[] | null;
+  aiModel?: string | null;
+  topicSeed?: string | null;
+  internalLinks?: string[];
 }
 
 export interface CreateArticleOptions {
@@ -24,7 +33,7 @@ export interface CreateArticleOptions {
   status?: 'DRAFT' | 'PUBLISHED';
 }
 
-async function generateUniqueSlug(title: string): Promise<string> {
+export async function generateUniqueSlug(title: string): Promise<string> {
   const baseSlug = slugify(title, { lower: true, strict: true }) || 'article';
   let slug = baseSlug;
   let counter = 1;
@@ -71,7 +80,7 @@ async function linkTags(tagNames: string[] = []): Promise<{ id: string }[]> {
 }
 
 export async function createArticleFromPayload(payload: ArticlePayload, options: CreateArticleOptions) {
-  const slug = await generateUniqueSlug(payload.title);
+  const slug = await generateUniqueSlug(payload.slugSource?.trim() || payload.title);
   const categoryId = await resolveCategoryId(payload.category);
   const tagConnections = await linkTags(payload.tags);
 
@@ -82,6 +91,12 @@ export async function createArticleFromPayload(payload: ArticlePayload, options:
       excerpt: payload.excerpt,
       content: sanitizeHtml(payload.content),
       coverImage: payload.coverImage || null,
+      keyTakeaway: payload.keyTakeaway ?? null,
+      summaryEn: payload.summaryEn ?? null,
+      faq: payload.faq && payload.faq.length ? JSON.stringify(payload.faq) : null,
+      aiModel: payload.aiModel ?? null,
+      topicSeed: payload.topicSeed ?? null,
+      internalLinks: JSON.stringify(payload.internalLinks ?? []),
       status: options.status ?? 'PUBLISHED',
       locale: options.locale,
       ...(categoryId ? { categoryId } : {}),

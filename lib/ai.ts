@@ -81,7 +81,7 @@ export async function generateAndSaveImage(prompt: string): Promise<string> {
  * SVG code is embedded directly — no image encoding needed, fully crisp at
  * any resolution, and text inside the diagram remains selectable/searchable.
  */
-function wrapDiagram(svgCode: string, caption: string): string {
+export function wrapDiagram(svgCode: string, caption: string): string {
   const cap = caption
     ? `<figcaption class="text-center text-sm text-[#1c3b6e]/60 pb-5 italic px-6">${caption}</figcaption>`
     : '';
@@ -96,7 +96,7 @@ function wrapDiagram(svgCode: string, caption: string): string {
  * Wrap a generated photo in a styled article container with lazy-loading
  * and a proper figcaption for accessibility and SEO.
  */
-function wrapPhoto(url: string, caption: string, index: number): string {
+export function wrapPhoto(url: string, caption: string, index: number): string {
   const alt = caption || `Article visual ${index + 1}`;
   const cap = caption
     ? `<figcaption class="text-center text-sm text-gray-500 mt-3 italic">${caption}</figcaption>`
