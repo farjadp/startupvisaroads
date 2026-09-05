@@ -14,7 +14,11 @@ import { faqJsonLd, breadcrumbJsonLd, type FaPage, type FaCta } from '@/lib/fa/c
 import { faDate, isoDate } from '@/lib/fa/format';
 import { TELEGRAM_URL } from '@/content/fa/home';
 
-const isExternal = (href: string) => /^https?:\/\//.test(href);
+// Absolute URLs and explicit /en/ paths render as plain anchors; everything
+// else goes through the locale-aware Link. A Persian page may deliberately
+// send the reader to English (province detail, the IRCC list) — but only
+// when the copy says so.
+const isExternal = (href: string) => /^https?:\/\//.test(href) || href.startsWith('/en/');
 
 function Cta({ cta, primary }: { cta: FaCta; primary?: boolean }) {
   const cls = primary
@@ -23,11 +27,11 @@ function Cta({ cta, primary }: { cta: FaCta; primary?: boolean }) {
   const inner = (
     <>
       <span className="font-bold">{cta.label}</span>
-      {isExternal(cta.href) ? <Send className="w-4 h-4" /> : <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />}
+      {/^https?:/.test(cta.href) ? <Send className="w-4 h-4" /> : <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />}
     </>
   );
   return isExternal(cta.href) ? (
-    <a href={cta.href} target="_blank" rel="noopener noreferrer" className={cls}>{inner}</a>
+    <a href={cta.href} {...(/^https?:/.test(cta.href) ? { target: '_blank', rel: 'noopener noreferrer' } : {})} className={cls}>{inner}</a>
   ) : (
     <Link href={cta.href} className={cls}>{inner}</Link>
   );

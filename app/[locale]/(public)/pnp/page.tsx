@@ -19,13 +19,28 @@ import PNPMasterAssessment from '@/components/PNPMasterAssessment'; // Import
 
 
 import { metaFor } from '@/lib/pageMeta';
+import { buildMetadata } from '@/lib/seo';
+import { setRequestLocale } from 'next-intl/server';
+import FaPageLayout from '@/components/fa/FaPageLayout';
+import { page as faPage } from '@/content/fa/pnp';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
+  if (locale === 'fa') {
+    return buildMetadata({ locale, path: faPage.path, title: faPage.title, description: faPage.description, modifiedTime: faPage.updated });
+  }
   return metaFor('/pnp', locale);
 }
 
-export default function PNPPage() {
+export default async function PNPPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+
+  // /fa/pnp is one Persian hub, not a translation of the nine-province English page.
+  if (locale === 'fa') {
+    return <FaPageLayout page={faPage} trail={[{ name: 'برنامه‌های استانی', path: faPage.path }]} />;
+  }
+
   return (
     <div className="w-full px-4 md:px-8 border-x border-[#1a1a1a]/10 max-w-[1400px] mx-auto bg-[#F2F0E9] text-[#1a1a1a]">
       
