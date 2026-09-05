@@ -13,6 +13,8 @@ import { useTranslations } from 'next-intl';
 import { getTranslations } from 'next-intl/server';
 import { buildMetadata } from '@/lib/seo';
 import prisma from '@/lib/prisma';
+import FaHome from '@/components/fa/FaHome';
+import { home as faHome } from '@/content/fa/home';
 
 // The journal strip below reads the database. Without this the page is
 // prerendered once at build time — where Prisma cannot reach the DB — and the
@@ -26,11 +28,9 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   return buildMetadata({
     locale,
     path: '/',
-    title: isRtl
-      ? 'مشاوره ویزای استارتاپ و مهاجرت کارآفرینی'
-      : 'Startup Visa & Global Mobility Mentorship',
+    title: isRtl ? faHome.meta.title : 'Startup Visa & Global Mobility Mentorship',
     description: isRtl
-      ? 'مسیر سرمایه‌گذاری و کارآفرینی به سمت اقامت جهانی: ویزای استارتاپ کانادا، PNP، EB-1/EB-2 NIW/EB-5 آمریکا و برنامه‌های اروپا و استرالیا.'
+      ? faHome.meta.description
       : 'Your curated path to global residency: Canada Startup Visa, Provincial Nominee Programs, US EB-1/EB-2 NIW/EB-5, and European & Australian entrepreneur pathways.',
   });
 }
@@ -50,6 +50,11 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       });
    } catch (error) {
       console.warn("Could not fetch latest articles. If this is a build step, this is expected:", error);
+   }
+
+   // /fa is its own site, not a translation of this page.
+   if (locale === 'fa') {
+      return <FaHome articles={latestArticles} />;
    }
 
    return (
