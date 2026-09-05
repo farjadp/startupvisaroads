@@ -25,6 +25,8 @@ export type FaEntity = {
   provider?: string;
   /** English country name, for areaServed. */
   country?: string;
+  /** GovernmentService for a state programme (default), Service for our own. */
+  type?: 'GovernmentService' | 'Service';
 };
 
 export type FaSection = {
@@ -208,9 +210,9 @@ export function faWebPageJsonLd(page: FaPage) {
   const url = `${SITE_URL}/fa${page.path}`;
   const img = faImageUrl(page.image);
   const about = page.entity && {
-    '@type': 'GovernmentService',
+    '@type': page.entity.type ?? 'GovernmentService',
     name: page.entity.name,
-    serviceType: 'Immigration programme',
+    serviceType: page.entity.type === 'Service' ? 'Startup visa mentorship' : 'Immigration programme',
     ...(page.entity.provider ? { provider: { '@type': 'GovernmentOrganization', name: page.entity.provider } } : {}),
     ...(page.entity.country ? { areaServed: { '@type': 'Country', name: page.entity.country } } : {}),
     ...(page.facts && page.facts.length
