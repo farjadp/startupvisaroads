@@ -27,45 +27,74 @@ export type Inventory = {
   categories: { name: string; slug: string }[];
 };
 
-type Page = { path: string; en: string; fa: string; kind: LinkTarget['kind'] };
+type Page = { path: string; en: string; kind: LinkTarget['kind'] };
 
-/** Static pages. Keep in step with app/sitemap.ts STATIC_PATHS. */
+/** English static pages. Keep in step with EN_PATHS in app/sitemap.ts. */
 export const SITE_PAGES: Page[] = [
-  { path: '/startup-visa-canada', en: 'Canada Start-up Visa (SUV) programme guide', fa: 'راهنمای ویزای استارتاپ کانادا (SUV)', kind: 'program' },
-  { path: '/startupworkpermit', en: 'Canada start-up work permit', fa: 'مجوز کار استارتاپی کانادا', kind: 'program' },
-  { path: '/pnp', en: 'Provincial Nominee Programs overview', fa: 'برنامه‌های استانی کانادا (PNP)', kind: 'program' },
-  { path: '/pnp/ontario', en: 'Ontario Immigrant Nominee Program (OINP)', fa: 'برنامه استانی انتاریو (OINP)', kind: 'program' },
-  { path: '/pnp/bc', en: 'British Columbia PNP (BC PNP)', fa: 'برنامه استانی بریتیش کلمبیا', kind: 'program' },
-  { path: '/pnp/alberta', en: 'Alberta Advantage Immigration Program', fa: 'برنامه استانی آلبرتا', kind: 'program' },
-  { path: '/pnp/saskatchewan', en: 'Saskatchewan Immigrant Nominee Program', fa: 'برنامه استانی ساسکاچوان', kind: 'program' },
-  { path: '/pnp/manitoba', en: 'Manitoba Provincial Nominee Program', fa: 'برنامه استانی منیتوبا', kind: 'program' },
-  { path: '/pnp/new-brunswick', en: 'New Brunswick PNP', fa: 'برنامه استانی نیوبرانزویک', kind: 'program' },
-  { path: '/pnp/newfoundland', en: 'Newfoundland and Labrador PNP', fa: 'برنامه استانی نیوفاندلند', kind: 'program' },
-  { path: '/pnp/nova-scotia', en: 'Nova Scotia Nominee Program', fa: 'برنامه استانی نوا اسکوشیا', kind: 'program' },
-  { path: '/pnp/pei', en: 'Prince Edward Island PNP', fa: 'برنامه استانی جزیره پرنس ادوارد', kind: 'program' },
-  { path: '/usa/eb1', en: 'US EB-1 extraordinary ability green card', fa: 'ویزای EB-1 آمریکا', kind: 'program' },
-  { path: '/usa/eb2-niw', en: 'US EB-2 National Interest Waiver', fa: 'ویزای EB-2 NIW آمریکا', kind: 'program' },
-  { path: '/usa/eb5', en: 'US EB-5 investor green card', fa: 'ویزای سرمایه‌گذاری EB-5 آمریکا', kind: 'program' },
-  { path: '/europe/netherlands', en: 'Netherlands start-up visa', fa: 'ویزای استارتاپ هلند', kind: 'program' },
-  { path: '/europe/finland', en: 'Finland start-up permit', fa: 'ویزای استارتاپ فنلاند', kind: 'program' },
-  { path: '/europe/denmark', en: 'Start-up Denmark', fa: 'ویزای استارتاپ دانمارک', kind: 'program' },
-  { path: '/australia/entrepreneur-stream', en: 'Australia entrepreneur pathway', fa: 'ویزای کارآفرینی استرالیا', kind: 'program' },
-  { path: '/uae/golden-visa', en: 'UAE Golden Visa', fa: 'ویزای طلایی امارات', kind: 'program' },
-  { path: '/country/canada', en: 'Immigrate to Canada as a founder', fa: 'مهاجرت به کانادا برای بنیان‌گذاران', kind: 'page' },
-  { path: '/country/usa', en: 'Immigrate to the USA as a founder', fa: 'مهاجرت به آمریکا برای بنیان‌گذاران', kind: 'page' },
-  { path: '/country/australia', en: 'Immigrate to Australia as a founder', fa: 'مهاجرت به استرالیا', kind: 'page' },
-  { path: '/country/uae', en: 'Relocate to the UAE', fa: 'اقامت امارات', kind: 'page' },
-  { path: '/country/denmark', en: 'Immigrate to Denmark', fa: 'مهاجرت به دانمارک', kind: 'page' },
-  { path: '/country/finland', en: 'Immigrate to Finland', fa: 'مهاجرت به فنلاند', kind: 'page' },
-  { path: '/tools/express-entry', en: 'Free Express Entry pathway diagnostic (CRS calculator)', fa: 'ابزار رایگان تشخیص مسیر اکسپرس انتری (محاسبه CRS)', kind: 'tool' },
-  { path: '/tools', en: 'Free immigration tools', fa: 'ابزارهای رایگان مهاجرتی', kind: 'tool' },
-  { path: '/services', en: 'Business plan, financial model and pitch deck services', fa: 'خدمات بیزینس پلن، مدل مالی و پیچ‌دک', kind: 'page' },
-  { path: '/mentorship', en: 'Founder mentorship programme', fa: 'برنامه منتورشیپ بنیان‌گذاران', kind: 'page' },
-  { path: '/webinar', en: 'Free immigration webinar registration', fa: 'ثبت‌نام وبینار رایگان مهاجرت', kind: 'page' },
-  { path: '/book-meeting', en: 'Book a strategy call', fa: 'رزرو جلسه مشاوره', kind: 'page' },
-  { path: '/contact', en: 'Request a free advisory', fa: 'درخواست مشاوره رایگان', kind: 'page' },
-  { path: '/about', en: 'About Startup Visa Roads', fa: 'درباره ما', kind: 'page' },
-  { path: '/blog', en: 'Journal', fa: 'مجله', kind: 'page' },
+  { path: '/startup-visa-canada', en: 'Canada Start-up Visa (SUV) programme guide', kind: 'program' },
+  { path: '/startupworkpermit', en: 'Canada start-up work permit', kind: 'program' },
+  { path: '/pnp', en: 'Provincial Nominee Programs overview', kind: 'program' },
+  { path: '/pnp/ontario', en: 'Ontario Immigrant Nominee Program (OINP)', kind: 'program' },
+  { path: '/pnp/bc', en: 'British Columbia PNP (BC PNP)', kind: 'program' },
+  { path: '/pnp/alberta', en: 'Alberta Advantage Immigration Program', kind: 'program' },
+  { path: '/pnp/saskatchewan', en: 'Saskatchewan Immigrant Nominee Program', kind: 'program' },
+  { path: '/pnp/manitoba', en: 'Manitoba Provincial Nominee Program', kind: 'program' },
+  { path: '/pnp/new-brunswick', en: 'New Brunswick PNP', kind: 'program' },
+  { path: '/pnp/newfoundland', en: 'Newfoundland and Labrador PNP', kind: 'program' },
+  { path: '/pnp/nova-scotia', en: 'Nova Scotia Nominee Program', kind: 'program' },
+  { path: '/pnp/pei', en: 'Prince Edward Island PNP', kind: 'program' },
+  { path: '/usa/eb1', en: 'US EB-1 extraordinary ability green card', kind: 'program' },
+  { path: '/usa/eb2-niw', en: 'US EB-2 National Interest Waiver', kind: 'program' },
+  { path: '/usa/eb5', en: 'US EB-5 investor green card', kind: 'program' },
+  { path: '/europe/netherlands', en: 'Netherlands start-up visa', kind: 'program' },
+  { path: '/europe/finland', en: 'Finland start-up permit', kind: 'program' },
+  { path: '/europe/denmark', en: 'Start-up Denmark', kind: 'program' },
+  { path: '/australia/entrepreneur-stream', en: 'Australia entrepreneur pathway', kind: 'program' },
+  { path: '/uae/golden-visa', en: 'UAE Golden Visa', kind: 'program' },
+  { path: '/country/canada', en: 'Immigrate to Canada as a founder', kind: 'page' },
+  { path: '/country/usa', en: 'Immigrate to the USA as a founder', kind: 'page' },
+  { path: '/country/australia', en: 'Immigrate to Australia as a founder', kind: 'page' },
+  { path: '/country/uae', en: 'Relocate to the UAE', kind: 'page' },
+  { path: '/country/denmark', en: 'Immigrate to Denmark', kind: 'page' },
+  { path: '/country/finland', en: 'Immigrate to Finland', kind: 'page' },
+  { path: '/tools/express-entry', en: 'Free Express Entry pathway diagnostic (CRS calculator)', kind: 'tool' },
+  { path: '/tools', en: 'Free immigration tools', kind: 'tool' },
+  { path: '/services', en: 'Business plan, financial model and pitch deck services', kind: 'page' },
+  { path: '/mentorship', en: 'Founder mentorship programme', kind: 'page' },
+  { path: '/webinar', en: 'Free immigration webinar registration', kind: 'page' },
+  { path: '/book-meeting', en: 'Book a strategy call', kind: 'page' },
+  { path: '/contact', en: 'Request a free advisory', kind: 'page' },
+  { path: '/about', en: 'About Startup Visa Roads', kind: 'page' },
+  { path: '/blog', en: 'Journal', kind: 'page' },
+];
+
+export type FaPage = { path: string; label: string; kind: LinkTarget['kind'] };
+
+/**
+ * The Persian site's link inventory. It is a different set of pages from the
+ * English one, not a translation of it — /fa has its own IA. Every path here
+ * must be in FA_PATHS, otherwise the writer mints links that 301 the reader
+ * out of Persian mid-article.
+ */
+export const FA_SITE_PAGES: FaPage[] = [
+  { path: '/canada-startup-visa', label: 'راهنمای کامل ویزای استارتاپ کانادا (SUV)', kind: 'program' },
+  { path: '/canada-startup-visa/requirements', label: 'شرایط و مدارک ویزای استارتاپ کانادا', kind: 'program' },
+  { path: '/canada-startup-visa/cost', label: 'هزینه‌های ویزای استارتاپ کانادا', kind: 'program' },
+  { path: '/canada-startup-visa/designated-organizations', label: 'سازمان‌های تأییدشده (Designated Organizations)', kind: 'program' },
+  { path: '/pnp', label: 'برنامه‌های استانی کانادا (PNP)', kind: 'program' },
+  { path: '/pnp/new-brunswick', label: 'مسیر کارآفرینی نیوبرانزویک (NBBIS)', kind: 'program' },
+  { path: '/pnp/nova-scotia', label: 'مسیر کارآفرینی نوااسکوشیا', kind: 'program' },
+  { path: '/europe/finland', label: 'ویزای استارتاپ فنلاند', kind: 'program' },
+  { path: '/europe/denmark', label: 'ویزای استارتاپ دانمارک (Start-up Denmark)', kind: 'program' },
+  { path: '/europe/estonia', label: 'ویزای استارتاپ استونی', kind: 'program' },
+  { path: '/usa-eb2-niw', label: 'ویزای EB-2 NIW آمریکا برای متخصصان ایرانی', kind: 'program' },
+  { path: '/which-path', label: 'کدام مسیر مهاجرت برای شما مناسب است؟ (ارزیابی رایگان)', kind: 'tool' },
+  { path: '/mentorship', label: 'برنامه منتورشیپ و آماده‌سازی بنیان‌گذاران', kind: 'page' },
+  { path: '/faq', label: 'سؤالات متداول مهاجرت استارتاپی', kind: 'page' },
+  { path: '/webinar', label: 'وبینار رایگان مهاجرت استارتاپی', kind: 'page' },
+  { path: '/about', label: 'درباره ما', kind: 'page' },
+  { path: '/contact', label: 'تماس و مشاوره', kind: 'page' },
+  { path: '/blog', label: 'مجله', kind: 'page' },
 ];
 
 /** Facts about us the writer may state. Nothing else about us may be claimed. */
@@ -83,7 +112,10 @@ export async function buildInventory(locale: Locale): Promise<Inventory> {
     }),
   ]);
 
-  const targets: LinkTarget[] = SITE_PAGES.map((p) => ({ path: p.path, label: p[locale], kind: p.kind }));
+  const targets: LinkTarget[] =
+    locale === 'fa'
+      ? FA_SITE_PAGES.map((p) => ({ path: p.path, label: p.label, kind: p.kind }))
+      : SITE_PAGES.map((p) => ({ path: p.path, label: p.en, kind: p.kind }));
   for (const a of recent) targets.push({ path: `/blog/${a.slug}`, label: a.title, kind: 'article' });
 
   return {

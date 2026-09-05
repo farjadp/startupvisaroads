@@ -125,7 +125,6 @@
         "out_of": "out of",
         "breakdown_title": "Full Score Breakdown",
         "core_hc": "A. Core Human Capital Factors",
-        "age": "Age",
         "education": "Education",
         "first_lang": "First official language",
         "second_lang": "Second official language",
@@ -154,5 +153,22 @@
         "last_verified": "Rules verified",
         "restart": "Start over",
         "no_category_match": "Based on your profile, you do not currently qualify for a category-based draw. Consider the pathway recommendations below."
+    },
+    "Footer": {
+        "tagline_1": "We build the bridges for the ambitious to walk across.",
+        "tagline_2": "Global mobility architecture for the 1%.",
+        "col_access": "Global Access",
+        "col_strategy": "Strategy",
+        "col_hq": "Headquarters",
+        "entity": "Visa Roads Inc.",
+        "address_1": "Financial District",
+        "address_2": "Toronto, ON, Canada",
+        "schedule_audit": "Schedule Audit",
+        "client_portal": "Client Portal Access",
+        "disclaimer_heading": "Disclaimer",
+        "disclaimer_body": "Visa Roads Inc. is a strategic business advisory firm specializing in international expansion and startup consulting. We are NOT a law firm and do not provide legal advice or immigration representation. Our services are strictly limited to business plan development, market research, and corporate structuring. All legal filings, visa petitions, and government forms must be handled by licensed immigration attorneys or RCICs. We do not guarantee visa issuance, as such decisions remain the sole prerogative of the respective government authorities.",
+        "privacy": "Privacy Policy",
+        "terms": "Terms of Service",
+        "rights": "Visa Roads Inc."
     }
 }

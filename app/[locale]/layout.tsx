@@ -5,6 +5,7 @@
 // ============================================================================
 import type { Metadata } from "next";
 import { DM_Serif_Display, Space_Grotesk, Vazirmatn } from "next/font/google";
+import localFont from "next/font/local";
 import "../globals.css";
 
 import { NextIntlClientProvider } from 'next-intl';
@@ -33,6 +34,19 @@ const vazir = Vazirmatn({
   subsets: ["arabic"],
   display: "swap",
   variable: "--font-vazir",
+});
+
+// Persian display face. Vazirmatn is a text font; without a display weight
+// the Persian headings flatten to a single voice, so the hierarchy that
+// DM Serif Display gives the English site simply does not exist in Persian.
+// Estedad is SIL OFL and is not on Google Fonts, hence self-hosted.
+const estedad = localFont({
+  src: [
+    { path: "../../public/fonts/Estedad-Bold.woff2", weight: "700", style: "normal" },
+    { path: "../../public/fonts/Estedad-Black.woff2", weight: "900", style: "normal" },
+  ],
+  display: "swap",
+  variable: "--font-estedad",
 });
 
 export function generateStaticParams() {
@@ -94,7 +108,7 @@ export default async function RootLayout({
   // Choose fonts based on locale
   // For 'fa', we primarily want Vazir. For 'en', the serif and sans.
   // We'll inject all variables but apply the main font class on body.
-  const fontVariables = `${dmSerif.variable} ${space.variable} ${vazir.variable}`;
+  const fontVariables = `${dmSerif.variable} ${space.variable} ${vazir.variable} ${estedad.variable}`;
 
   return (
     <html lang={locale} dir={isRtl ? 'rtl' : 'ltr'} className={fontVariables}>

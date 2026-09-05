@@ -10,6 +10,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link, usePathname, useRouter } from '@/navigation'; // Use internationalized navigation
 import { Menu, X, ArrowRight, ChevronDown, User, Globe } from 'lucide-react';
 import { useTranslations, useLocale } from 'next-intl';
+import { localeSwitchTarget } from '@/lib/fa/paths';
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -63,15 +64,61 @@ export default function Header() {
     }
   }, [mobileMenuOpen]);
 
+  // /fa and /en are different sites, so the switcher maps to the paired page
+  // (or the other home) instead of assuming the same path exists in both.
   const switchLocale = (newLocale: string) => {
-    router.replace(pathname, { locale: newLocale });
+    const to = newLocale === 'fa' ? 'fa' : 'en';
+    const target = localeSwitchTarget(pathname, to) || '/';
+    router.replace(target as any, { locale: newLocale });
     setLangMenuOpen(false);
   };
 
   // ==========================================
   // NAVIGATION DATA STRUCTURE
   // ==========================================
-  const navLinks = [
+  const isFa = locale === 'fa';
+
+  // The Persian nav is a different menu, not a translated one: /fa has its
+  // own IA and most English targets 301 out of it.
+  const faNavLinks = [
+    { href: '/', label: 'خانه' },
+    {
+      label: 'مسیرها',
+      key: 'jurisdictions',
+      subLinks: [
+        { header: 'اروپا' },
+        { href: '/europe/finland', label: 'فنلاند' },
+        { href: '/europe/denmark', label: 'دانمارک' },
+        { href: '/europe/estonia', label: 'استونی' },
+
+        { header: 'کانادا' },
+        { href: '/pnp/new-brunswick', label: 'نیوبرانزویک (کارآفرینی)' },
+        { href: '/pnp/nova-scotia', label: 'نوااسکوشیا (کارآفرینی)' },
+        { href: '/pnp', label: 'همه‌ی برنامه‌های استانی' },
+        { href: '/canada-startup-visa', label: 'ویزای استارتاپ — وضعیت فعلی' },
+
+        { header: 'آمریکا' },
+        { href: '/usa-eb2-niw', label: 'EB-2 NIW' },
+
+        { header: 'شروع' },
+        { href: '/which-path', label: 'کدام مسیر برای من؟' },
+      ],
+    },
+    { href: '/mentorship', label: 'منتورشیپ' },
+    { href: '/faq', label: 'سؤالات متداول' },
+    { href: '/blog', label: 'مجله' },
+    {
+      label: 'ما',
+      key: 'firm',
+      subLinks: [
+        { href: '/about', label: 'درباره ما' },
+        { href: '/webinar', label: 'وبینار' },
+        { href: '/contact', label: 'تماس و مشاوره' },
+      ],
+    },
+  ];
+
+  const enNavLinks = [
     { href: '/', label: t('home') },
     { href: '/services', label: t('advisory') },
     {
@@ -111,6 +158,11 @@ export default function Header() {
       ]
     },
   ];
+
+  const navLinks = isFa ? faNavLinks : enNavLinks;
+  // Persian has no client portal or booking page; both CTAs go to /contact.
+  const bookHref = isFa ? '/contact' : '/book-meeting';
+  const loginHref = isFa ? '/contact' : '/login';
 
   // Colors Helper
   const getTextColor = () => {
@@ -238,13 +290,13 @@ export default function Header() {
             </div>
 
             {/* Login Icon */}
-            <Link href="/login" className={`hidden lg:block p-2 rounded-full border transition-all hover:bg-[#CCFF00] hover:text-[#1a1a1a] hover:border-[#CCFF00] ${getBorderColor()} ${getTextColor()}`}>
+            <Link href={loginHref as any} className={`hidden lg:block p-2 rounded-full border transition-all hover:bg-[#CCFF00] hover:text-[#1a1a1a] hover:border-[#CCFF00] ${getBorderColor()} ${getTextColor()}`}>
               <User className="w-4 h-4" />
             </Link>
 
             {/* Desktop CTA */}
             <Link
-              href="/book-meeting"
+              href={bookHref as any}
               className={`hidden lg:flex items-center gap-3 font-sans text-xs font-bold uppercase tracking-widest px-6 py-3 border transition-all duration-300 group
                     ${scrolled
                   ? 'border-[#CCFF00] text-[#1a1a1a] bg-[#CCFF00] hover:bg-white hover:border-white'
@@ -343,7 +395,7 @@ export default function Header() {
           {/* Bottom Info */}
           <div className="flex flex-col md:flex-row justify-between items-end gap-8 mt-12">
             <div className="flex gap-4 items-center">
-              <Link href="/login" className="text-[#F2F0E9] font-sans text-xs uppercase tracking-widest border border-[#F2F0E9]/30 px-6 py-3 hover:bg-[#F2F0E9] hover:text-[#1a1a1a] transition-colors">
+              <Link href={loginHref as any} className="text-[#F2F0E9] font-sans text-xs uppercase tracking-widest border border-[#F2F0E9]/30 px-6 py-3 hover:bg-[#F2F0E9] hover:text-[#1a1a1a] transition-colors">
                 {t('client_login')}
               </Link>
             </div>
@@ -355,7 +407,7 @@ export default function Header() {
             </div>
 
             <Link
-              href="/book-meeting"
+              href={bookHref as any}
               className="w-full md:w-auto bg-[#CCFF00] text-[#1a1a1a] font-sans text-sm font-bold uppercase tracking-widest px-8 py-4 hover:bg-white transition-colors text-center"
             >
               {t('book_consultation')}

@@ -17,14 +17,30 @@ import {
 import type { Metadata } from 'next';
 
 import { metaFor } from '@/lib/pageMeta';
+import { buildMetadata } from '@/lib/seo';
+import { setRequestLocale } from 'next-intl/server';
+import FaPageLayout from '@/components/fa/FaPageLayout';
+import { page as faPage } from '@/content/fa/mentorship';
+import { faMeta } from '@/lib/fa/content';
 import BookingCTA from '@/components/BookingCTA';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
+  if (locale === 'fa') {
+    return buildMetadata(faMeta(faPage, locale));
+  }
   return metaFor('/mentorship', locale);
 }
 
-export default function MentorshipPage() {
+export default async function MentorshipPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+
+  // /fa/mentorship is Persian-first copy, not a translation of the English page.
+  if (locale === 'fa') {
+    return <FaPageLayout page={faPage} trail={[{ name: 'منتورشیپ', path: faPage.path }]} />;
+  }
+
   
   // Data: The Full Team Roster
   const team = [

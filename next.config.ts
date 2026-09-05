@@ -27,6 +27,8 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "*.storage.googleapis.com" },
       // Unsplash for editorial photography (Denmark page, etc.)
       { protocol: "https", hostname: "images.unsplash.com" },
+      // YouTube thumbnails for the Persian video cards
+      { protocol: "https", hostname: "i.ytimg.com" },
     ],
   },
 

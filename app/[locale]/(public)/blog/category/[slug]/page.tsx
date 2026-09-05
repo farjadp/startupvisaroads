@@ -7,6 +7,8 @@ import JsonLd from '@/components/JsonLd';
 import { buildMetadata, breadcrumbJsonLd, SITE_URL } from '@/lib/seo';
 import { getCategoryArchiveData } from '@/lib/blog';
 import prisma from '@/lib/prisma';
+import { toPersianDigits } from '@/lib/fa/format';
+import { faCategoryLabel } from '@/lib/fa/categories';
 
 export const revalidate = 600;
 
@@ -20,10 +22,10 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   return buildMetadata({
     locale,
     path: `/blog/category/${slug}`,
-    title: isRtl ? `${category.name} — مقالات` : `${category.name} — Articles`,
+    title: isRtl ? `${isRtl ? faCategoryLabel(category.slug, category.name) : category.name} — مقالات` : `${isRtl ? faCategoryLabel(category.slug, category.name) : category.name} — Articles`,
     description: isRtl
-      ? `جدیدترین راهنماها و تحلیل‌های دسته‌ی «${category.name}» در راه‌های ویزای استارتاپ.`
-      : `The latest guides and analysis in the "${category.name}" collection from Startup Visa Roads.`,
+      ? `جدیدترین راهنماها و تحلیل‌های دسته‌ی «${isRtl ? faCategoryLabel(category.slug, category.name) : category.name}» در راه‌های ویزای استارتاپ.`
+      : `The latest guides and analysis in the "${isRtl ? faCategoryLabel(category.slug, category.name) : category.name}" collection from Startup Visa Roads.`,
   });
 }
 
@@ -69,7 +71,7 @@ export default async function CategoryArchivePage({
     }
     const wordCount = content.replace(/<[^>]*>/g, '').split(/\s+/).filter(Boolean).length;
     const readMin = Math.ceil(wordCount / 200) || 1;
-    return isRtl ? `${readMin} دقیقه مطالعه` : `${readMin} min read`;
+    return isRtl ? `${toPersianDigits(readMin)} دقیقه مطالعه` : `${readMin} min read`;
   };
 
   return (
@@ -92,7 +94,7 @@ export default async function CategoryArchivePage({
           {t.archiveTitle}
         </div>
         <h1 className="font-serif text-4xl md:text-7xl mb-4 text-[#1a1a1a] leading-tight">
-          {category.name}
+          {isRtl ? faCategoryLabel(category.slug, category.name) : category.name}
         </h1>
         <p className="text-sm font-sans text-[#1a1a1a]/50">
           {t.articleCount(articles.length)}
@@ -124,7 +126,7 @@ export default async function CategoryArchivePage({
               </div>
               <div className="flex items-center gap-3 mb-3 flex-wrap">
                 <span className="text-[10px] font-bold uppercase tracking-widest text-[#CCFF00] bg-[#1a1a1a] px-2.5 py-1 rounded-full">
-                  {category.name}
+                  {isRtl ? faCategoryLabel(category.slug, category.name) : category.name}
                 </span>
                 <span className="text-xs text-[#1a1a1a]/50 font-sans flex items-center gap-1">
                   <Clock className="w-3 h-3" />

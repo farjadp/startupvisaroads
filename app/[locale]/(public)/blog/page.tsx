@@ -5,6 +5,8 @@ import { Clock } from 'lucide-react';
 import { buildMetadata } from '@/lib/seo';
 import { getBlogIndexData } from '@/lib/blog';
 import BlogSearchInput from '@/components/blog/BlogSearchInput';
+import { toPersianDigits } from '@/lib/fa/format';
+import { faCategoryLabel } from '@/lib/fa/categories';
 
 export const revalidate = 600;
 
@@ -40,7 +42,7 @@ export default async function BlogPage({
 
   // Localized text translations
   const t = isRtl ? {
-    title: 'نشریه راه ویزا',
+    title: 'مجله',
     subtitle: 'آخرین تحلیل‌ها، راهنماهای گام‌به‌گام مهاجرت استارتاپی و قوانین مهاجرتی روز دنیا.',
     allArticles: 'همه مقالات',
     readArticle: 'مطالعه مقاله',
@@ -93,7 +95,7 @@ export default async function BlogPage({
     }
     const wordCount = content.replace(/<[^>]*>/g, '').split(/\s+/).filter(Boolean).length;
     const readMin = Math.ceil(wordCount / 200) || 1;
-    return isRtl ? `${readMin} دقیقه مطالعه` : `${readMin} min read`;
+    return isRtl ? `${toPersianDigits(readMin)} دقیقه مطالعه` : `${readMin} min read`;
   };
 
   return (
@@ -131,7 +133,7 @@ export default async function BlogPage({
                   : 'bg-transparent text-[#1a1a1a] hover:bg-[#1a1a1a] hover:text-[#CCFF00]'
               }`}
             >
-              {category.name}
+              {isRtl ? faCategoryLabel(category.slug, category.name) : category.name}
             </Link>
           ))}
         </div>
@@ -170,7 +172,7 @@ export default async function BlogPage({
               <div className="flex items-center gap-3 mb-4 flex-wrap">
                 {featuredArticle.category && (
                   <span className="text-[10px] font-bold uppercase tracking-widest text-[#CCFF00] bg-[#1a1a1a] px-3 py-1.5 rounded-full">
-                    {featuredArticle.category.name}
+                    {isRtl ? faCategoryLabel(featuredArticle.category.slug, featuredArticle.category.name) : featuredArticle.category.name}
                   </span>
                 )}
                 <span className="text-xs text-[#1a1a1a]/50 font-sans flex items-center gap-1.5">
@@ -217,7 +219,7 @@ export default async function BlogPage({
                 <div className="flex items-center gap-3 mb-3 flex-wrap">
                   {article.category && (
                     <span className="text-[10px] font-bold uppercase tracking-widest text-[#CCFF00] bg-[#1a1a1a] px-2.5 py-1 rounded-full">
-                      {article.category.name}
+                      {isRtl ? faCategoryLabel(article.category.slug, article.category.name) : article.category.name}
                     </span>
                   )}
                   <span className="text-xs text-[#1a1a1a]/50 font-sans flex items-center gap-1">

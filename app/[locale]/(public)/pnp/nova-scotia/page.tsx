@@ -19,13 +19,29 @@ import {
 import type { Metadata } from 'next';
 
 import { metaFor } from '@/lib/pageMeta';
+import { buildMetadata } from '@/lib/seo';
+import { setRequestLocale } from 'next-intl/server';
+import FaPageLayout from '@/components/fa/FaPageLayout';
+import { page as faPage } from '@/content/fa/pnp-nova-scotia';
+import { faMeta } from '@/lib/fa/content';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
+  if (locale === 'fa') {
+    return buildMetadata(faMeta(faPage, locale));
+  }
   return metaFor('/pnp/nova-scotia', locale);
 }
 
-export default function NovaScotiaPage() {
+export default async function NovaScotiaPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+
+  // /fa/pnp/nova-scotia is Persian-first copy, not a translation of the English page.
+  if (locale === 'fa') {
+    return <FaPageLayout page={faPage} trail={[{ name: 'برنامه‌های استانی', path: '/pnp' }, { name: 'نوااسکوشیا', path: faPage.path }]} />;
+  }
+
   return (
     <div className="w-full px-4 md:px-8 border-x border-[#1a1a1a]/10 max-w-[1400px] mx-auto bg-[#F2F0E9] text-[#1a1a1a]">
       

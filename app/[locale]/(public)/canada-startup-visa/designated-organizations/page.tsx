@@ -1,0 +1,34 @@
+// ============================================================================
+// Page: /fa/canada-startup-visa/designated-organizations — Persian-only, no English twin.
+// ============================================================================
+import type { Metadata } from 'next';
+import { notFound } from 'next/navigation';
+import { setRequestLocale } from 'next-intl/server';
+import { buildMetadata } from '@/lib/seo';
+import FaPageLayout from '@/components/fa/FaPageLayout';
+import { page } from '@/content/fa/canada-startup-visa-designated-organizations';
+import { faMeta } from '@/lib/fa/content';
+
+type Props = { params: Promise<{ locale: string }> };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { locale } = await params;
+  if (locale !== 'fa') return {};
+  return buildMetadata(faMeta(page, locale));
+}
+
+export default async function CanadaSuvDesignatedOrgsFa({ params }: Props) {
+  const { locale } = await params;
+  if (locale !== 'fa') notFound();
+  setRequestLocale(locale);
+
+  return (
+    <FaPageLayout
+      page={page}
+      trail={[
+        { name: 'ویزای استارتاپ کانادا', path: '/canada-startup-visa' },
+        { name: 'سازمان‌های تأییدشده', path: page.path },
+      ]}
+    />
+  );
+}
