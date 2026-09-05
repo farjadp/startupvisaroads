@@ -5,6 +5,7 @@
 // ============================================================================
 
 import type { Metadata } from 'next';
+import { FA_PAIRED, isFaPath, type FaPath } from '@/lib/fa/paths';
 
 // Resolution order:
 //  1. SITE_URL              — server runtime env (override dynamic routes on
@@ -56,17 +57,33 @@ function normalizePath(path: string): string {
   return p === '/' ? '' : p;
 }
 
-/** Build canonical + hreflang alternates for a locale-agnostic path. */
+/** English path -> Persian path, derived from FA_PAIRED so there is one table. */
+const EN_TO_FA = new Map<string, string>(
+  (Object.entries(FA_PAIRED) as [FaPath, string | null][])
+    .filter((e): e is [FaPath, string] => e[1] !== null)
+    .map(([fa, en]) => [en, fa]),
+);
+
+/**
+ * Build canonical + hreflang alternates.
+ *
+ * `/fa` is not a mirror of `/en`, so an alternate is emitted only when the
+ * page genuinely exists in that locale. Advertising a twin that 301s (or
+ * 404s) is worse than advertising nothing.
+ */
 export function buildAlternates(path: string, locale: string): Metadata['alternates'] {
   const clean = normalizePath(path);
-  return {
-    canonical: `${SITE_URL}/${locale}${clean}`,
-    languages: {
-      en: `${SITE_URL}/en${clean}`,
-      fa: `${SITE_URL}/fa${clean}`,
-      'x-default': `${SITE_URL}/en${clean}`,
-    },
-  };
+  const isFa = locale === 'fa';
+
+  const faPath = isFa ? (isFaPath(clean) ? clean : null) : (EN_TO_FA.get(clean) ?? null);
+  const enPath = isFa ? (FA_PAIRED[clean as FaPath] ?? null) : clean;
+
+  const languages: Record<string, string> = {};
+  if (enPath !== null) languages.en = `${SITE_URL}/en${enPath}`;
+  if (faPath !== null) languages.fa = `${SITE_URL}/fa${faPath}`;
+  languages['x-default'] = enPath !== null ? `${SITE_URL}/en${enPath}` : `${SITE_URL}/fa${faPath}`;
+
+  return { canonical: `${SITE_URL}/${locale}${clean}`, languages };
 }
 
 interface PageMetaInput {
