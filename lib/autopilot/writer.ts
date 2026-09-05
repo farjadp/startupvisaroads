@@ -88,7 +88,9 @@ export async function draftMeta(brief: Brief, body: string, inv: Inventory): Pro
 
 BRIEF: ${JSON.stringify({ workingTitle: brief.workingTitle, angle: brief.angle, primaryKeyword: brief.primaryKeyword, imageScenes: brief.imageScenes })}
 
-Visuals: the article contains [VISUAL_1] and [VISUAL_2]. For each decide PHOTO or DIAGRAM from what surrounds it. PHOTO — a rich editorial photography prompt (scene, objects, lighting, angle, mood; no people's faces, no text, no flags). ${DIAGRAM_SPEC}
+Visuals: the article contains [VISUAL_1] and [VISUAL_2]. For each decide PHOTO or DIAGRAM from what surrounds it. Prefer DIAGRAM wherever the surrounding section contains a process, a comparison, a timeline or a decision — a diagram earns its place, a photograph only decorates.
+PHOTO — write ONE sentence naming a concrete scene: the objects, the place, the time of day. Nothing else. Do NOT describe lighting, lens, mood, colour grading, film stock or composition, and do not write the words "editorial", "cinematic" or "photorealistic": the house art direction supplies all of that and your adjectives fight with it. No people's faces, no crowds, no meeting rooms, no handshakes, no flags, no landmarks, no visible writing on paper or screens. The scene must contain NOTHING WITH WRITING ON IT — no paper, documents, forms, books, notebooks, sticky notes, passports, maps, signage or screens showing content; those render as garbled pseudo-text. Good: "A bicycle leaning against a concrete wall beside a glass stairwell in Vancouver." Bad: "A dramatic cinematic shot of diverse professionals reviewing documents."
+${DIAGRAM_SPEC}
 
 Return JSON with ALL keys (article-language fields in ${lang}; summaryEn and slugEn always in English):
 {
