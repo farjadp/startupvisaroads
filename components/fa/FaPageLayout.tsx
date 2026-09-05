@@ -77,9 +77,13 @@ export default function FaPageLayout({ page, trail }: { page: FaPage; trail: { n
                   <a href={`#s${i + 1}`} className="text-[#1a1a1a]/70 hover:text-[#1a1a1a] hover:border-b hover:border-[#CCFF00] transition-colors">{s.heading}</a>
                 </li>
               ))}
-              {page.faqs.length > 0 && (
-                <li><a href="#faq" className="text-[#1a1a1a]/70 hover:text-[#1a1a1a]">سؤالات متداول</a></li>
-              )}
+              {page.faqGroups
+                ? page.faqGroups.map((g, gi) => (
+                    <li key={gi}><a href={`#faq-${gi + 1}`} className="text-[#1a1a1a]/70 hover:text-[#1a1a1a]">{g.heading}</a></li>
+                  ))
+                : page.faqs.length > 0 && (
+                    <li><a href="#faq" className="text-[#1a1a1a]/70 hover:text-[#1a1a1a]">سؤالات متداول</a></li>
+                  )}
             </ol>
             <a
               href={TELEGRAM_URL}
@@ -122,19 +126,22 @@ export default function FaPageLayout({ page, trail }: { page: FaPage; trail: { n
           {page.faqs.length > 0 && (
             <section id="faq" className="scroll-mt-28 border-t border-[#1a1a1a] pt-16">
               <h2 className="font-estedad font-black text-3xl md:text-4xl mb-10">سؤالات متداول</h2>
-              <div>
-                {page.faqs.map((f) => (
-                  <div key={f.q} className="border-b border-[#1a1a1a]/20 py-6 group">
-                    <details>
-                      <summary className="list-none cursor-pointer flex justify-between items-start gap-4 font-estedad font-bold text-xl hover:text-[#555] transition-colors">
-                        <span>{f.q}</span>
-                        <span className="shrink-0 text-sm text-[#CCFF00] bg-black px-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">+</span>
-                      </summary>
-                      <p className="mt-4 text-[#1a1a1a]/70 leading-[1.9] max-w-3xl">{f.a}</p>
-                    </details>
-                  </div>
-                ))}
-              </div>
+              {(page.faqGroups ?? [{ heading: '', faqs: page.faqs }]).map((g, gi) => (
+                <div key={gi} id={g.heading ? `faq-${gi + 1}` : undefined} className={gi > 0 ? 'mt-14 scroll-mt-28' : ''}>
+                  {g.heading && <h3 className="font-estedad font-bold text-xl text-[#1a1a1a]/60 mb-4 border-b border-[#1a1a1a]/20 pb-3">{g.heading}</h3>}
+                  {g.faqs.map((f) => (
+                    <div key={f.q} className="border-b border-[#1a1a1a]/20 py-6 group">
+                      <details>
+                        <summary className="list-none cursor-pointer flex justify-between items-start gap-4 font-estedad font-bold text-xl hover:text-[#555] transition-colors">
+                          <span>{f.q}</span>
+                          <span className="shrink-0 text-sm text-[#CCFF00] bg-black px-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">+</span>
+                        </summary>
+                        <p className="mt-4 text-[#1a1a1a]/70 leading-[1.9] max-w-3xl">{f.a}</p>
+                      </details>
+                    </div>
+                  ))}
+                </div>
+              ))}
             </section>
           )}
         </div>

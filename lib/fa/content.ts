@@ -38,7 +38,14 @@ export type FaPage = {
   /** ISO date of the last substantive review, shown as Jalali and emitted as dateModified. */
   updated: string;
   sections: FaSection[];
+  /** All FAQs on the page, flat — this is what FAQPage JSON-LD is built from. */
   faqs: FaFaq[];
+  /**
+   * Optional grouping for rendering only. When present, the layout renders
+   * these groups instead of the flat list; `faqs` must still contain every
+   * question so the structured data stays complete.
+   */
+  faqGroups?: { heading: string; faqs: FaFaq[] }[];
   closing: FaCta[];
 };
 
