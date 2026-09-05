@@ -8,6 +8,7 @@
 // ============================================================================
 import type { FaPage } from '@/lib/fa/content';
 import { TELEGRAM_URL } from './home';
+import { suvSubpageStatus, SUV_STATUS } from './suv-status';
 
 export const page: FaPage = {
   path: '/canada-startup-visa/cost',
@@ -15,7 +16,8 @@ export const page: FaPage = {
   description:
     'هزینه‌های دولتی IRCC، هزینه‌ی سازمان تأییدشده و بازه‌های واقعی آن، هزینه‌ی آماده‌سازی و بیزینس‌پلن، هزینه‌های جانبی برای متقاضی ایرانی (ترجمه، سفر بیومتریک، پزشکی) و جدول جمع‌بندی — به‌علاوه‌ی هزینه‌هایی که نشانه‌ی کلاهبرداری است.',
   keywords: ['هزینه ویزای استارتاپ کانادا', 'قیمت استارتاپ ویزا', 'هزینه سازمان تأییدشده', 'هزینه مهاجرت استارتاپی کانادا'],
-  updated: '2026-09-05',
+  updated: SUV_STATUS.updated,
+  status: suvSubpageStatus,
 
   hero: {
     eyebrow: 'کانادا · SUV · هزینه‌ها',

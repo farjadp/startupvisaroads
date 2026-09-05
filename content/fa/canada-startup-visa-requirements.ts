@@ -7,6 +7,7 @@
 // ============================================================================
 import type { FaPage } from '@/lib/fa/content';
 import { TELEGRAM_URL } from './home';
+import { suvSubpageStatus, SUV_STATUS } from './suv-status';
 
 export const page: FaPage = {
   path: '/canada-startup-visa/requirements',
@@ -14,7 +15,8 @@ export const page: FaPage = {
   description:
     'شرایط زبان (CLB 5)، تمکن مالی به تفکیک اندازه‌ی خانواده، شرایط استارتاپ و سهام، و فهرست مدارک — به‌علاوه‌ی مدارک خاص ایرانی: ترجمه‌ی رسمی، تأییدیه‌ی تحصیلی، روزنامه‌ی رسمی.',
   keywords: ['شرایط ویزای استارتاپ کانادا', 'مدارک استارتاپ ویزا', 'تمکن مالی ویزای استارتاپ کانادا', 'مدارک ویزای استارتاپ کانادا'],
-  updated: '2026-09-05',
+  updated: SUV_STATUS.updated,
+  status: suvSubpageStatus,
 
   hero: {
     eyebrow: 'کانادا · SUV · شرایط و مدارک',

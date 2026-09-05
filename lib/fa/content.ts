@@ -20,6 +20,14 @@ export type FaSection = {
   callout?: string;
 };
 
+/** A programme-status notice rendered under the hero: closed, paused, or changed. */
+export type FaStatus = {
+  tone: 'closed' | 'paused' | 'changed';
+  title: string;
+  body: string;
+  cta?: FaCta;
+};
+
 export type FaCta = {
   label: string;
   /** Locale-agnostic internal path (must be in FA_PATHS) or an absolute URL. */
@@ -35,6 +43,8 @@ export type FaPage = {
   /** The Persian queries this page is written for. Documentation, not output. */
   keywords: string[];
   hero: { eyebrow: string; headline: string; sub: string; cta: FaCta };
+  /** Optional programme-status notice, shown directly under the hero. */
+  status?: FaStatus;
   /** ISO date of the last substantive review, shown as Jalali and emitted as dateModified. */
   updated: string;
   sections: FaSection[];

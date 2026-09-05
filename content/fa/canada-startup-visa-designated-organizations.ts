@@ -6,6 +6,7 @@
 // ============================================================================
 import type { FaPage } from '@/lib/fa/content';
 import { TELEGRAM_URL } from './home';
+import { suvSubpageStatus, SUV_STATUS } from './suv-status';
 
 export const IRCC_DO_LIST_URL =
   'https://www.canada.ca/en/immigration-refugees-citizenship/services/immigrate-canada/start-visa/designated-organizations.html';
@@ -16,7 +17,8 @@ export const page: FaPage = {
   description:
     'Designated Organization چیست و چرا وجود دارد؛ تفاوت انکوباتور، گروه فرشته و صندوق VC؛ چطور یک سازمان تأییدشده را ارزیابی کنیم؛ علائم هشدار؛ و آماده‌سازی برای مصاحبه‌ی سازمان تأییدشده.',
   keywords: ['سازمان تأییدشده کانادا', 'designated organization', 'انکوباتور مورد تأیید کانادا', 'نامه حمایت ویزای استارتاپ', 'لیست سازمان های تایید شده'],
-  updated: '2026-09-05',
+  updated: SUV_STATUS.updated,
+  status: suvSubpageStatus,
 
   hero: {
     eyebrow: 'کانادا · SUV · سازمان تأییدشده',

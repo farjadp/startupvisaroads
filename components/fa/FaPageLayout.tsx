@@ -13,6 +13,7 @@ import { SITE_URL } from '@/lib/seo';
 import { faqJsonLd, breadcrumbJsonLd, type FaPage, type FaCta } from '@/lib/fa/content';
 import { faDate, isoDate } from '@/lib/fa/format';
 import { TELEGRAM_URL } from '@/content/fa/home';
+import StatusBanner from './StatusBanner';
 
 // Absolute URLs and explicit /en/ paths render as plain anchors; everything
 // else goes through the locale-aware Link. A Persian page may deliberately
@@ -64,6 +65,8 @@ export default function FaPageLayout({ page, trail }: { page: FaPage; trail: { n
           آخرین بازبینی: <time dateTime={isoDate(page.updated)}>{faDate(page.updated)}</time>
         </p>
       </header>
+
+      {page.status && <StatusBanner status={page.status} />}
 
       {/* BODY */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 py-16 md:py-24">
