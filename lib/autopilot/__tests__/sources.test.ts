@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { parseFeed, htmlToText } from '../sources';
 import { originality, tooClose, shingles } from '../originality';
+import { seasonalHooks } from '../planner';
 
 const RSS = `<?xml version="1.0"?><rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>X</title>
 <item><title>Draw one</title><link>https://ex.com/a</link><pubDate>Fri, 04 Sep 2026 13:53:47 +0000</pubDate><description><![CDATA[<p>short</p>]]></description><content:encoded><![CDATA[<p>Full <a href="https://ex.com/t">text</a> here.</p>]]></content:encoded></item>
@@ -31,6 +32,14 @@ describe('htmlToText', () => {
   it('drops chrome and flattens links', () => {
     const t = htmlToText('<nav>menu</nav><article><h2>Heading</h2><p>See <a href="https://x">this</a> now.</p><figure>cap</figure><script>x()</script></article><footer>f</footer>');
     expect(t).toBe('Heading\nSee this now.');
+  });
+});
+
+describe('seasonalHooks', () => {
+  it('uses neutral verification hooks rather than claiming cadence or intake state', () => {
+    const hooks = seasonalHooks(new Date('2026-03-15T12:00:00Z')).join(' ');
+    expect(hooks).toContain('verify');
+    expect(hooks).not.toMatch(/roughly every two weeks|opens? in|intake|slow down|exhaust|spend remaining/i);
   });
 });
 

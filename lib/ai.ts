@@ -203,14 +203,8 @@ export async function generateArticlePayload(
       "tags": ["tag1", "tag2", "tag3"],
       "content": "<h1>...</h1>...[VISUAL_1]...[VISUAL_2]...",
       "quickFacts": {
-        "readingTime": "e.g., 4 min read (or ۴ دقیقه مطالعه in Persian)",
-        "level": "e.g., Strategic / Deep Dive (or راهبردی / پیشرفته in Persian)",
         "suitableFor": "e.g., Tech Founders & Co-founders (or بنیان‌گذاران استارتاپ in Persian)",
-        "compliance": "e.g., 95% (IRCC Official Guidelines) (or ۹۵٪ تطابق با مستندات رسمی in Persian)",
-        "keyBenefit": "e.g., Pathway selection clarity (or شفافیت در انتخاب مسیر in Persian)",
-        "status": "e.g., Validated for 2026 regulations (or تایید شده برای قوانین ۲۰۲۶ in Persian)",
-        "actionability": "e.g., High (Step-by-step roadmap) (or بالا (راهنمای عملی گام‌به‌گام) in Persian)",
-        "requirements": "e.g., Business Plan & IELTS 5.5 (or بیزینس پلن و مدرک زبان in Persian)"
+        "requirements": "Include only requirements explicitly grounded in the input (in the article language)"
       },
       "coverImagePrompt": "High quality editorial photo of...",
       "inTextVisuals": [

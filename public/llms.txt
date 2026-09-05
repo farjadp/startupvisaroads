@@ -1,0 +1,54 @@
+# Startup Visa Roads
+
+> Startup Visa Roads (visaroads.com) is a product of Ashavid Inc., based in Toronto, Ontario, Canada. We are not lawyers or licensed immigration consultants (RCIC). We are exited founders, investment bankers, and grant-committee members who build the business side of a startup visa or entrepreneur immigration case: business plans, financial models, pitch decks, founder mentorship, and a free Express Entry diagnostic tool.
+
+## What we do
+
+- Founder mentorship and startup readiness for startup visa and entrepreneur immigration programs
+- Business plan, financial model, and pitch deck preparation
+- Free Express Entry CRS diagnostic tool
+- Program status guides that link to official government sources
+
+## What we do not do
+
+- We do not provide legal representation or immigration legal advice
+- We are not a regulated Canadian immigration consultant (RCIC)
+- We do not guarantee visa approval or program outcomes
+- We do not process applications on behalf of any government
+
+## Important status note (2026)
+
+Several immigration programs have changed or closed. Always verify current status with the official government source before making decisions. Key changes include:
+
+- Canada Start-Up Visa: check IRCC for current intake status
+- Ontario OINP Entrepreneur stream: check Ontario.ca for current status
+- Saskatchewan SINP Entrepreneur stream: check Saskatchewan.ca for current status
+- Australia BIIP subclass 188: closed; check Home Affairs for current alternatives
+
+## Key pages
+
+- https://visaroads.com/en — English homepage
+- https://visaroads.com/fa — Persian homepage
+- https://visaroads.com/en/blog — English journal
+- https://visaroads.com/fa/blog — Persian journal
+- https://visaroads.com/en/mentorship — Founder mentorship program
+- https://visaroads.com/fa/mentorship — Persian mentorship program
+- https://visaroads.com/en/tools/express-entry — Free Express Entry CRS calculator
+- https://visaroads.com/fa/which-path — Free pathway assessment (Persian)
+
+## Official sources we reference
+
+- Canada: https://www.canada.ca/ (IRCC)
+- USA: https://www.uscis.gov/
+- Finland: https://migri.fi/ and https://www.businessfinland.fi/
+- Denmark: https://www.nyidanmark.dk/ and https://danishbusinessauthority.dk/
+- Estonia: https://startupestonia.ee/
+- Netherlands: https://ind.nl/
+- Australia: https://immi.homeaffairs.gov.au/
+- UAE: https://u.ae/
+
+## Feeds
+
+- https://visaroads.com/rss.xml — English RSS feed
+- https://visaroads.com/fa/rss.xml — Persian RSS feed
+- https://visaroads.com/sitemap.xml — Sitemap

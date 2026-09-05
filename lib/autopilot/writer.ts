@@ -14,7 +14,8 @@ import type { Locale } from '@/lib/seo';
 import { BRAND_FACTS, buildInventory, linkBlock, type Inventory } from './inventory';
 import { AIO_RULES, FACT_RULES, WRITER_MODEL, chatJson, chatText, expand, houseStyle, humanise, type GenerateResult } from './pipeline';
 import { planBriefs, type Brief } from './planner';
-import { enforceLinks, wordCountHtml } from './text';
+import { officialSourcePromptForBrief } from './official-sources';
+import { decidePlannedPublication, enforceLinks, wordCountHtml } from './text';
 
 type Visual =
   | { type: 'PHOTO'; prompt: string; caption: string }
@@ -65,6 +66,8 @@ BRAND FACTS (the only things you may say about us): ${BRAND_FACTS}
 Linkable paths (use ONLY these for internal links, as <a href="/path">natural anchor</a> with locale-agnostic paths; every path in brief.mustLink must appear at least once; link 3–6 times in total, spread through the body, never two links in one sentence, never the path as the visible text):
 ${linkBlock(inv)}
 
+${officialSourcePromptForBrief(brief)}
+
 ${FACT_RULES}
 
 ${AIO_RULES}
@@ -101,7 +104,7 @@ Return JSON with ALL keys (article-language fields in ${lang}; summaryEn and slu
   "summaryEn": "2–3 English sentences an answer engine can quote; name the programme and the authority; no site paths",
   "faq": [{"q":"question a person would type","a":"2–3 sentence direct answer, from the article"}] (4–6 items),
   "tags": ["3–6 tags"],
-  "quickFacts": {"readingTime":"e.g. 7 min read","level":"e.g. Strategic / Deep Dive","suitableFor":"e.g. Tech founders","compliance":"e.g. Aligned with IRCC guidelines","keyBenefit":"…","status":"e.g. Reflects 2026 rules","actionability":"e.g. High (step-by-step)","requirements":"…"},
+  "quickFacts": {"suitableFor":"e.g. Tech founders","requirements":"include only when grounded in the cited article body"},
   "coverImagePrompt": "editorial photo prompt for the cover, built from brief.imageScenes[0]",
   "inTextVisuals": [{"type":"PHOTO","prompt":"…","caption":"…"},{"type":"DIAGRAM","svgCode":"<svg …>…</svg>","caption":"…"}]
 }
@@ -163,8 +166,11 @@ async function writeOne(brief: Brief, inv: Inventory, opts: RunOpts, result: Gen
     stages.push(`humanise ${wordCountHtml(body)}`);
     console.log(`autopilot/writer: "${brief.workingTitle}" words: ${stages.join(' → ')} (min ${min})`);
     const d = await draftMeta(brief, body, inv);
+    body = await placeVisuals(body, d.inTextVisuals, !!opts.dryRun);
     const linked = enforceLinks(body, inv);
-    body = await placeVisuals(linked.html, d.inTextVisuals, !!opts.dryRun);
+    body = linked.html;
+    const publication = decidePlannedPublication(!!opts.publish, linked.officialCitationCount);
+    if (publication.warning) result.warnings.push({ title: d.title, warning: publication.warning });
 
     if (Object.keys(d.quickFacts).length) {
       body = `<script type="application/json" id="quick-facts-data">${JSON.stringify(d.quickFacts)}</script>\n${body}`;
@@ -194,7 +200,7 @@ async function writeOne(brief: Brief, inv: Inventory, opts: RunOpts, result: Gen
         topicSeed: `${brief.whyNow} — ${brief.angle}`,
         internalLinks: linked.links,
       },
-      { locale: inv.locale, status: opts.publish ? 'PUBLISHED' : 'DRAFT' },
+      { locale: inv.locale, status: publication.status },
     );
     result.created.push({ id: article.id, slug: article.slug, title: article.title });
   } catch (e) {
@@ -208,7 +214,7 @@ async function writeOne(brief: Brief, inv: Inventory, opts: RunOpts, result: Gen
  * not stop the run. Every run leaves an AutopilotRun row.
  */
 export async function runPlanned(n: number, locale: Locale, opts: RunOpts = {}): Promise<GenerateResult> {
-  const result: GenerateResult = { created: [], errors: [], skipped: [] };
+  const result: GenerateResult = { created: [], errors: [], skipped: [], warnings: [] };
   const run = await prisma.autopilotRun.create({ data: { requested: n, locale, mode: 'planned', notes: opts.dryRun ? 'dry-run' : null } });
 
   let inv: Inventory;
@@ -236,7 +242,7 @@ async function finish(runId: string, r: GenerateResult, opts: RunOpts) {
       created: r.created.length,
       errors: r.errors.length ? JSON.stringify(r.errors) : null,
       skipped: r.skipped.length ? JSON.stringify(r.skipped) : null,
-      notes: [opts.dryRun ? 'dry-run' : null, blocked ? `images skipped: ${blocked}` : null].filter(Boolean).join(' · ') || null,
+      notes: [opts.dryRun ? 'dry-run' : null, ...r.warnings.map((w) => w.warning), blocked ? `images skipped: ${blocked}` : null].filter(Boolean).join(' · ').slice(0, 1000) || null,
     },
   });
 }

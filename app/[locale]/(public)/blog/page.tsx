@@ -1,37 +1,48 @@
 import React, { Suspense } from 'react';
 import type { Metadata } from 'next';
+import Image from 'next/image';
 import { Link } from '@/navigation';
 import { Clock } from 'lucide-react';
-import { buildMetadata } from '@/lib/seo';
-import { getBlogIndexData } from '@/lib/blog';
+import JsonLd from '@/components/JsonLd';
+import { blogJsonLd, buildMetadata, collectionPageJsonLd, isDataImageUrl, selfLocalizedAlternates, SITE_URL } from '@/lib/seo';
+import { buildBlogPageHref, computeReadingTime, getBlogIndexData } from '@/lib/blog';
 import BlogSearchInput from '@/components/blog/BlogSearchInput';
-import { toPersianDigits } from '@/lib/fa/format';
 import { faCategoryLabel } from '@/lib/fa/categories';
 
 export const revalidate = 600;
 
-export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+export async function generateMetadata({ params, searchParams }: {
+  params: Promise<{ locale: string }>;
+  searchParams: Promise<{ category?: string; page?: string; q?: string }>;
+}): Promise<Metadata> {
   const { locale } = await params;
+  const query = await searchParams;
   const isRtl = locale === 'fa';
-  return buildMetadata({
+  const isQueryVariant = Boolean(query.category || query.q || (query.page && query.page !== '1'));
+  const canonicalPath = query.category ? `/blog/category/${query.category}` : '/blog';
+  const metadata = buildMetadata({
     locale,
-    path: '/blog',
+    path: canonicalPath,
     title: isRtl ? 'مجله — راهنماها و تحلیل‌های ویزای استارتاپ' : 'The Journal — Startup Visa Guides & Analysis',
     description: isRtl
       ? 'آخرین تحلیل‌ها، راهنماهای گام‌به‌گام مهاجرت استارتاپی و به‌روزرسانی قوانین مهاجرتی جهان.'
       : 'Insights, step-by-step guides, and regulatory updates on global startup visas and mobility.',
+    noindex: isQueryVariant,
+    nofollow: false,
   });
+  return query.category
+    ? { ...metadata, alternates: selfLocalizedAlternates(canonicalPath, locale) }
+    : metadata;
 }
 
 export default async function BlogPage({
   params, 
   searchParams 
 }: { 
-  params: { locale: string }; 
-  searchParams: { category?: string; page?: string; q?: string }; 
+  params: Promise<{ locale: string }>;
+  searchParams: Promise<{ category?: string; page?: string; q?: string }>;
 }) {
-  const resolvedParams = await params;
-  const { locale } = resolvedParams;
+  const { locale } = await params;
   const resolvedSearchParams = await searchParams;
   const activeCategorySlug = resolvedSearchParams.category;
   const searchQuery = resolvedSearchParams.q;
@@ -78,28 +89,25 @@ export default async function BlogPage({
   });
 
   // Calculate total pages safely
+  const isFiltered = Boolean(activeCategorySlug || searchQuery);
   const totalPages = totalCount > 0
-    ? (activeCategorySlug 
-        ? Math.ceil(totalCount / pageSize) 
+    ? (isFiltered
+        ? Math.ceil(totalCount / pageSize)
         : 1 + Math.ceil(Math.max(0, totalCount - (pageSize + 1)) / pageSize))
     : 1;
+  const paginationFilters = { category: activeCategorySlug, q: searchQuery };
 
-  // Helper to get reading time
-  const getReadingTime = (content: string) => {
-    const match = content.match(/<script\s+type="application\/json"\s+id="quick-facts-data">([\s\S]*?)<\/script>/i);
-    if (match) {
-      try {
-        const qf = JSON.parse(match[1].trim());
-        if (qf.readingTime) return qf.readingTime;
-      } catch (e) {}
-    }
-    const wordCount = content.replace(/<[^>]*>/g, '').split(/\s+/).filter(Boolean).length;
-    const readMin = Math.ceil(wordCount / 200) || 1;
-    return isRtl ? `${toPersianDigits(readMin)} دقیقه مطالعه` : `${readMin} min read`;
-  };
+  const pageUrl = `${SITE_URL}/${locale}/blog`;
+  const pageDescription = isRtl
+    ? 'آخرین تحلیل‌ها، راهنماهای گام‌به‌گام مهاجرت استارتاپی و به‌روزرسانی قوانین مهاجرتی جهان.'
+    : 'Insights, step-by-step guides, and regulatory updates on global startup visas and mobility.';
 
   return (
     <div className="container mx-auto px-6 py-12 md:py-20 max-w-5xl" dir={isRtl ? 'rtl' : 'ltr'}>
+      <JsonLd data={[
+        collectionPageJsonLd({ title: t.title, description: pageDescription, url: pageUrl, locale }),
+        blogJsonLd({ title: t.title, description: pageDescription, url: pageUrl, locale }),
+      ]} />
       {/* Editorial Header */}
       <div className="border-b-4 border-[#1a1a1a] pb-12 mb-12">
         <h1 className="font-serif text-5xl md:text-8xl mb-6 text-[#1a1a1a] tracking-tight uppercase">
@@ -126,7 +134,7 @@ export default async function BlogPage({
           {categories.map(category => (
             <Link
               key={category.id}
-              href={`/blog?category=${category.slug}`}
+              href={`/blog/category/${category.slug}`}
               className={`px-4 py-2 font-sans text-xs font-bold uppercase tracking-wider rounded-full border-2 border-[#1a1a1a] transition-all duration-200 ${
                 activeCategorySlug === category.slug 
                   ? 'bg-[#1a1a1a] text-[#CCFF00] shadow-[2px_2px_0px_0px_#1a1a1a]' 
@@ -157,12 +165,16 @@ export default async function BlogPage({
             {t.featured}
           </div>
           <Link href={`/blog/${featuredArticle.slug}`} className="group grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12 items-center">
-            <div className="md:col-span-7 aspect-video w-full bg-[#1a1a1a]/5 rounded-3xl overflow-hidden border-2 border-[#1a1a1a] shadow-[4px_4px_0px_0px_#1a1a1a] group-hover:shadow-[6px_6px_0px_0px_#CCFF00] group-hover:scale-[1.01] transition-all duration-300">
+            <div className="relative md:col-span-7 aspect-video w-full bg-[#1a1a1a]/5 rounded-3xl overflow-hidden border-2 border-[#1a1a1a] shadow-[4px_4px_0px_0px_#1a1a1a] group-hover:shadow-[6px_6px_0px_0px_#CCFF00] group-hover:scale-[1.01] transition-all duration-300">
               {featuredArticle.coverImage ? (
-                <img 
-                  src={featuredArticle.coverImage} 
-                  alt={featuredArticle.title} 
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" 
+                <Image
+                  src={featuredArticle.coverImage}
+                  alt={featuredArticle.title}
+                  fill
+                  priority
+                  sizes="(min-width: 768px) 58vw, 100vw"
+                  unoptimized={isDataImageUrl(featuredArticle.coverImage)}
+                  className="object-cover group-hover:scale-105 transition-transform duration-700"
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center font-serif text-[#1a1a1a]/10 text-7xl">SVR.</div>
@@ -177,7 +189,7 @@ export default async function BlogPage({
                 )}
                 <span className="text-xs text-[#1a1a1a]/50 font-sans flex items-center gap-1.5">
                   <Clock className="w-3.5 h-3.5" />
-                  {getReadingTime(featuredArticle.content)}
+                  {computeReadingTime(featuredArticle.content, locale)}
                 </span>
               </div>
               <h2 className="font-serif text-3xl md:text-5xl mb-4 text-[#1a1a1a] leading-tight group-hover:text-[#CCFF00] group-hover:bg-[#1a1a1a] group-hover:px-2 transition-all duration-200 rounded inline-block">
@@ -205,12 +217,15 @@ export default async function BlogPage({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-16">
             {gridArticles.map(article => (
               <Link key={article.id} href={`/blog/${article.slug}`} className="group block">
-                <div className="aspect-video w-full bg-[#1a1a1a]/5 rounded-2xl overflow-hidden mb-6 border-2 border-[#1a1a1a] shadow-[4px_4px_0px_0px_#1a1a1a] group-hover:shadow-[6px_6px_0px_0px_#CCFF00] group-hover:scale-[1.01] transition-all duration-300">
+                <div className="relative aspect-video w-full bg-[#1a1a1a]/5 rounded-2xl overflow-hidden mb-6 border-2 border-[#1a1a1a] shadow-[4px_4px_0px_0px_#1a1a1a] group-hover:shadow-[6px_6px_0px_0px_#CCFF00] group-hover:scale-[1.01] transition-all duration-300">
                   {article.coverImage ? (
-                    <img 
-                      src={article.coverImage} 
-                      alt={article.title} 
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" 
+                    <Image
+                      src={article.coverImage}
+                      alt={article.title}
+                      fill
+                      sizes="(min-width: 768px) 50vw, 100vw"
+                      unoptimized={isDataImageUrl(article.coverImage)}
+                      className="object-cover group-hover:scale-105 transition-transform duration-700"
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center font-serif text-[#1a1a1a]/10 text-4xl">SVR.</div>
@@ -224,7 +239,7 @@ export default async function BlogPage({
                   )}
                   <span className="text-xs text-[#1a1a1a]/50 font-sans flex items-center gap-1">
                     <Clock className="w-3 h-3" />
-                    {getReadingTime(article.content)}
+                    {computeReadingTime(article.content, locale)}
                   </span>
                 </div>
                 <h4 className="font-serif text-2xl md:text-3xl mb-3 text-[#1a1a1a] leading-snug group-hover:text-[#CCFF00] group-hover:bg-[#1a1a1a] group-hover:px-1.5 transition-all duration-200 rounded inline-block">
@@ -251,21 +266,21 @@ export default async function BlogPage({
           
           <div className="flex items-center gap-4">
             <Link
-              href={page > 1 ? `/blog?${activeCategorySlug ? `category=${activeCategorySlug}&` : ''}page=${page - 1}` : '#'}
+              href={page > 1 ? buildBlogPageHref(page - 1, paginationFilters) : '#'}
               className={`px-6 py-3 font-sans text-xs font-bold uppercase tracking-wider rounded-xl border-2 border-[#1a1a1a] transition-all duration-200 ${
-                page > 1 
-                  ? 'bg-transparent text-[#1a1a1a] hover:bg-[#1a1a1a] hover:text-[#CCFF00] active:translate-y-0.5' 
+                page > 1
+                  ? 'bg-transparent text-[#1a1a1a] hover:bg-[#1a1a1a] hover:text-[#CCFF00] active:translate-y-0.5'
                   : 'opacity-40 cursor-not-allowed pointer-events-none'
               }`}
             >
               &larr; {t.prev}
             </Link>
-            
+
             <div className="hidden sm:flex items-center gap-2">
               {Array.from({ length: totalPages }, (_, idx) => idx + 1).map((p) => (
                 <Link
                   key={p}
-                  href={`/blog?${activeCategorySlug ? `category=${activeCategorySlug}&` : ''}page=${p}`}
+                  href={buildBlogPageHref(p, paginationFilters)}
                   className={`w-10 h-10 flex items-center justify-center font-sans text-xs font-bold rounded-xl border-2 border-[#1a1a1a] transition-all duration-200 ${
                     page === p
                       ? 'bg-[#1a1a1a] text-[#CCFF00] shadow-[2px_2px_0px_0px_#1a1a1a]'
@@ -278,7 +293,7 @@ export default async function BlogPage({
             </div>
 
             <Link
-              href={page < totalPages ? `/blog?${activeCategorySlug ? `category=${activeCategorySlug}&` : ''}page=${page + 1}` : '#'}
+              href={page < totalPages ? buildBlogPageHref(page + 1, paginationFilters) : '#'}
               className={`px-6 py-3 font-sans text-xs font-bold uppercase tracking-wider rounded-xl border-2 border-[#1a1a1a] transition-all duration-200 ${
                 page < totalPages 
                   ? 'bg-transparent text-[#1a1a1a] hover:bg-[#1a1a1a] hover:text-[#CCFF00] active:translate-y-0.5' 

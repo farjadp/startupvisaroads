@@ -1,6 +1,13 @@
 import React from 'react';
+import type { Metadata } from 'next';
 import { Clock, Video, ShieldCheck, Target, CreditCard, HeartHandshake, Receipt, Info, Mail, Phone, MessageSquare, AlertTriangle, CheckCircle2 } from 'lucide-react';
 import { Link } from '@/navigation';
+import { metaFor } from '@/lib/pageMeta';
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+   const { locale } = await params;
+   return metaFor('/book-meeting', locale);
+}
 
 export default function BookMeetingPage() {
    return (

@@ -3,10 +3,11 @@
 // The Persian contact page: four channels, a form, the booking calendar.
 // ============================================================================
 import React from 'react';
-import { ArrowLeft, Send } from 'lucide-react';
+import { ArrowLeft, Send, MessageCircle, Phone, MapPin } from 'lucide-react';
 import { Link } from '@/navigation';
 import FaContactForm from './FaContactForm';
 import { contact, BOOKING_IFRAME_URL } from '@/content/fa/contact';
+import { TEAM_MEMBERS } from '@/content/team';
 
 export default function FaContact() {
   const c = contact;
@@ -53,6 +54,62 @@ export default function FaContact() {
         </div>
         <div className="lg:col-span-8"><FaContactForm /></div>
       </section>
+
+      {/* Team direct contact */}
+      {c.teamSection && (
+        <section className="py-16 border-t border-[#1a1a1a]/10">
+          <div className="mb-10">
+            <h2 className="font-estedad font-black text-3xl md:text-4xl mb-4">{c.teamSection.heading}</h2>
+            <p className="text-[#1a1a1a]/70 leading-relaxed max-w-2xl">{c.teamSection.body}</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px bg-[#1a1a1a]/20 border border-[#1a1a1a]/20">
+            {TEAM_MEMBERS.filter((m) => m.telegram || m.whatsapp || m.phoneNumbers?.length).map((member) => (
+              <div key={member.id} className="bg-[#F2F0E9] p-6 md:p-8 flex flex-col justify-between min-h-[240px] group hover:bg-white transition-colors duration-300">
+                <div>
+                  <h3 className="font-estedad font-black text-2xl mb-1">{member.nameFa}</h3>
+                  <p className="text-xs font-bold text-[#1a1a1a]/50 mb-4">{member.roleFa}</p>
+                  {member.locationFa && (
+                    <div className="flex items-center gap-2 text-sm text-[#1a1a1a]/60 mb-3">
+                      <MapPin className="w-3.5 h-3.5 shrink-0" />
+                      <span>{member.locationFa}</span>
+                    </div>
+                  )}
+                  {member.phoneNumbers && member.phoneNumbers.length > 0 && (
+                    <div className="space-y-1 mb-3">
+                      {member.phoneNumbers.map((phone) => (
+                        <div key={phone} className="flex items-center gap-2 text-sm text-[#1a1a1a]/70" dir="ltr">
+                          <Phone className="w-3.5 h-3.5 shrink-0 text-[#1a1a1a]/40" />
+                          <span>{phone}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+                <div className="flex flex-wrap gap-4 pt-3 border-t border-[#1a1a1a]/10">
+                  {member.telegram && (
+                    <a href={member.telegram} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 font-bold text-xs border-b border-[#1a1a1a] pb-0.5 hover:text-[#CCFF00] hover:border-[#CCFF00] transition-colors">
+                      <Send className="w-3.5 h-3.5" />
+                      {member.telegramHandle}
+                    </a>
+                  )}
+                  {member.whatsapp && (
+                    <a href={member.whatsapp} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 font-bold text-xs text-[#1a1a1a]/60 hover:text-[#1a1a1a] transition-colors">
+                      <MessageCircle className="w-3.5 h-3.5" />
+                      واتساپ
+                    </a>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="mt-6 text-left">
+            <Link href="/team" className="inline-flex items-center gap-2 font-bold text-xs border-b border-[#1a1a1a] pb-0.5 hover:text-[#CCFF00] hover:border-[#CCFF00] transition-colors">
+              {c.teamSection.teamPageLink}
+              <ArrowLeft className="w-3.5 h-3.5" />
+            </Link>
+          </div>
+        </section>
+      )}
 
       <section id="booking" className="py-16 border-t border-[#1a1a1a]/10 scroll-mt-28">
         <h2 className="font-estedad font-black text-3xl md:text-4xl mb-4">{c.booking.heading}</h2>

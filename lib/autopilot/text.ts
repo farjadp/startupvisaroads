@@ -8,13 +8,14 @@
 //    invented a fact. Comparing digit tokens before/after catches that class
 //    without another model call.
 //  · enforceLinks — the writer never invents a path. Every <a href> is checked
-//    against the inventory after the prose is final; unknown paths and all
-//    outbound links are demoted to plain text. A blog that 404s inside itself
-//    is worse than no blog.
+//    against the inventory after the prose is final; unknown paths and
+//    non-official outbound links are demoted to plain text. A blog that 404s
+//    inside itself is worse than no blog.
 // ============================================================================
 import * as cheerio from 'cheerio';
 import type { Inventory } from './inventory';
 import { SITE_URL, type Locale } from '@/lib/seo';
+import { officialCitationUrl } from './official-sources';
 
 const OWN_HOSTS = new Set([new URL(SITE_URL).host, 'visaroads.com', 'www.visaroads.com']);
 
@@ -67,15 +68,31 @@ export function normalisePath(href: string, locale: Locale): string {
  * Keep only links we can prove exist; everything else becomes plain text.
  * Known paths are rewritten with the locale prefix the router expects.
  */
-export function enforceLinks(html: string, inv: Inventory): { html: string; links: string[] } {
+export function enforceLinks(html: string, inv: Inventory): {
+  html: string;
+  links: string[];
+  officialLinks: string[];
+  officialCitationCount: number;
+} {
   const label = new Map(inv.targets.map((t) => [t.path, t.label]));
   const used = new Set<string>();
+  const officialLinks = new Set<string>();
+  let officialCitationCount = 0;
   const $ = cheerio.load(html, null, false);
 
   $('a').each((_, el) => {
     const $a = $(el);
     const rawHref = ($a.attr('href') ?? '').trim();
     const text = $a.text();
+    const officialUrl = officialCitationUrl(rawHref);
+    if (officialUrl) {
+      officialLinks.add(officialUrl);
+      officialCitationCount++;
+      $a.attr('href', officialUrl);
+      $a.attr('target', '_blank');
+      $a.attr('rel', 'noopener noreferrer');
+      return;
+    }
 
     const href = rawHref && !/^(mailto:|tel:)/i.test(rawHref) ? ownPath(rawHref) : null;
     if (!href) {
@@ -92,5 +109,16 @@ export function enforceLinks(html: string, inv: Inventory): { html: string; link
     if (text.trim().startsWith('/')) $a.text(label.get(path) ?? text);
   });
 
-  return { html: $.html(), links: [...used] };
+  return { html: $.html(), links: [...used], officialLinks: [...officialLinks], officialCitationCount };
+}
+
+export function decidePlannedPublication(
+  publishRequested: boolean,
+  officialCitationCount: number,
+): { status: 'DRAFT' | 'PUBLISHED'; warning?: string } {
+  if (!publishRequested || officialCitationCount > 0) return { status: publishRequested ? 'PUBLISHED' : 'DRAFT' };
+  return {
+    status: 'DRAFT',
+    warning: 'Publication downgraded to DRAFT: no allowlisted official citation survived link enforcement.',
+  };
 }

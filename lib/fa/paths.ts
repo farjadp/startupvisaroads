@@ -29,6 +29,7 @@ export const FA_PATHS = [
   '/blog',
   '/about',
   '/contact',
+  '/team',
   '/webinar',
 ] as const;
 
@@ -72,6 +73,7 @@ export const FA_PAIRED: Record<FaPath, string | null> = {
   '/blog': '/blog',
   '/about': '/about',
   '/contact': '/contact',
+  '/team': '/team',
   '/webinar': '/webinar',
 };
 

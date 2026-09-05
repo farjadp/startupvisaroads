@@ -1,21 +1,20 @@
 import React from 'react';
 import type { Metadata } from 'next';
+import Image from 'next/image';
 import prisma from '@/lib/prisma';
 import { setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import * as cheerio from 'cheerio';
 import { Link } from '@/navigation';
 import JsonLd from '@/components/JsonLd';
-import { sanitizeHtml, extractFaqs } from '@/lib/sanitize';
-import { SITE_URL, articleJsonLd, breadcrumbJsonLd, faqJsonLd, ogLocale } from '@/lib/seo';
-import { getArticleBySlug, getRelatedArticle } from '@/lib/blog';
+import { sanitizeHtml } from '@/lib/sanitize';
+import { SITE_URL, articleJsonLd, breadcrumbJsonLd, buildMetadata, faqJsonLd, isDataImageUrl, selfLocalizedAlternates, stripHtml } from '@/lib/seo';
+import { buildRelatedArticleBox, computeReadingTime, getArticleBySlug, getRecommendedService, getRelatedArticle, getSafeQuickFacts } from '@/lib/blog';
 import { 
   Clock, 
   BarChart, 
   Target, 
-  ShieldCheck, 
   Sparkles, 
-  RefreshCw, 
   Compass, 
   ClipboardList,
   ArrowLeft,
@@ -24,111 +23,6 @@ import {
 import { ScrollProgressBar, ShareButtons } from '@/components/blog/BlogClientHelper';
 import { faDate, isoDate } from '@/lib/fa/format';
 import { faCategoryLabel } from '@/lib/fa/categories';
-
-// Helper function to map blog content to website services/programs
-function getRecommendedService(title: string, categoryName: string, locale: string) {
-  const contentToAnalyze = `${title} ${categoryName}`.toLowerCase();
-  const isRtl = locale === 'fa';
-
-  const services = [
-    {
-      keywords: ['canada', 'suv', 'startup visa', 'کانادا', 'استارتاپ کانادا'],
-      path: '/startup-visa-canada',
-      title: isRtl ? 'ویزای استارتاپ کانادا (SUV)' : 'Canada Startup Visa (SUV)',
-      desc: isRtl 
-        ? 'برنامه رسمی ویزای استارتاپ کانادا برای کارآفرینان نوآور به همراه پشتیبانی کامل در تدوین بیزینس پلن و دریافت نامه حمایتی.' 
-        : 'The official Canada Startup Visa pathway for innovative founders. Complete support from business concept to letter of support.',
-    },
-    {
-      keywords: ['work permit', 'startup work permit', 'مجوز کار', 'ورک پرمیت'],
-      path: '/startupworkpermit',
-      title: isRtl ? 'مجوز کار استارتاپی کانادا' : 'Canada Startup Work Permit',
-      desc: isRtl 
-        ? 'سریع‌ترین راه برای راه‌اندازی کسب‌وکار خود در کانادا در حین بررسی پرونده اقامت دائم.' 
-        : 'Fast-track your business operations in Canada while your PR application is being processed.',
-    },
-    {
-      keywords: ['netherlands', 'dutch', 'هلند', 'اقامت هلند'],
-      path: '/europe/netherlands',
-      title: isRtl ? 'ویزای استارتاپ هلند' : 'Netherlands Startup Visa',
-      desc: isRtl 
-        ? 'کارآفرینی در قلب اتحادیه اروپا. دریافت اقامت موقت هلند برای راه‌اندازی استارتاپ نوآورانه.' 
-        : 'Establish your innovative business in the heart of Europe with a direct Dutch residency path.',
-    },
-    {
-      keywords: ['finland', 'finnish', 'فنلاند', 'اقامت فنلاند'],
-      path: '/europe/finland',
-      title: isRtl ? 'ویزای استارتاپ فنلاند' : 'Finland Startup Visa',
-      desc: isRtl 
-        ? 'ورود به شادترین کشور دنیا با سیستم حمایتی بی‌نظیر برای استارتاپ‌های تکنولوژی.' 
-        : 'Enter the world\'s happiest country with direct residency matching for innovative tech startups.',
-    },
-    {
-      keywords: ['denmark', 'danish', 'دانمارک', 'اقامت دانمارک'],
-      path: '/country/denmark',
-      title: isRtl ? 'ویزای استارتاپ دانمارک' : 'Denmark Start-up Denmark',
-      desc: isRtl 
-        ? 'شتاب‌دهی کسب‌وکار در دانمارک با دسترسی به بازارهای پیشرفته اسکاندیناوی.' 
-        : 'Accelerate your business in Denmark with direct access to advanced Nordic markets.',
-    },
-    {
-      keywords: ['australia', 'استرالیا', 'ویزای کارآفرینی استرالیا'],
-      path: '/australia/entrepreneur-stream',
-      title: isRtl ? 'ویزای کارآفرینی استرالیا' : 'Australia Entrepreneur Pathway',
-      desc: isRtl 
-        ? 'دریافت اقامت استرالیا از طریق سرمایه‌گذاری و اجرای طرح‌های نوآورانه تجاری.' 
-        : 'Secure Australian residency by developing and exporting innovative concepts to global markets.',
-    },
-    {
-      keywords: ['eb1', 'eb-1', 'ای بی ۱'],
-      path: '/usa/eb1',
-      title: isRtl ? 'ویزای نخبگان آمریکا (EB-1)' : 'US EB-1 Extraordinary Ability',
-      desc: isRtl 
-        ? 'مسیر اقامت دائم ایالات متحده (گرین کارت) ویژه افراد با توانایی‌های خارق‌العاده علمی، تجاری و هنری.' 
-        : 'Direct Green Card pathway for founders and professionals with extraordinary achievements.',
-    },
-    {
-      keywords: ['eb2', 'eb-2', 'niw', 'ان آی دبلیو'],
-      path: '/usa/eb2-niw',
-      title: isRtl ? 'ویزای ملی منافع آمریکا (EB-2 NIW)' : 'US EB-2 National Interest Waiver',
-      desc: isRtl 
-        ? 'دریافت گرین کارت آمریکا بدون نیاز به اسپانسر شغلی، بر اساس اهمیت ملی طرح تجاری شما.' 
-        : 'Secure your US Green Card based on the national interest of your business model, no sponsor required.',
-    },
-    {
-      keywords: ['eb5', 'eb-5', 'ای بی ۵'],
-      path: '/usa/eb5',
-      title: isRtl ? 'ویزای سرمایه‌گذاری آمریکا (EB-5)' : 'US EB-5 Investor Green Card',
-      desc: isRtl 
-        ? 'مسیر مستقیم دریافت گرین کارت آمریکا از طریق سرمایه‌گذاری در پروژه‌های اشتغال‌زا.' 
-        : 'Direct path to permanent US residency through targeted job-creating capital investments.',
-    },
-    {
-      keywords: ['pnp', 'provincial', 'ontario', 'bc', 'alberta', 'ساسکاچوان', 'انتاریو', 'بریتیش کلمبیا'],
-      path: '/pnp',
-      title: isRtl ? 'برنامه‌های نامزدی استانی کانادا (PNP)' : 'Provincial Nominee Programs (PNP)',
-      desc: isRtl 
-        ? 'مهاجرت از طریق برنامه‌های استانی کانادا متناسب با سرمایه، تخصص و سوابق مدیریتی شما.' 
-        : 'Tailored pathways to Canadian residency via provincial investment and entrepreneurial streams.',
-    },
-  ];
-
-  // Search for matching keyword in title or category name
-  for (const service of services) {
-    if (service.keywords.some(kw => contentToAnalyze.includes(kw))) {
-      return service;
-    }
-  }
-
-  // Fallback to general advisory services page
-  return {
-    path: '/services',
-    title: isRtl ? 'خدمات مشاوره بیزینس آرشیتکت' : 'Business Architect Services',
-    desc: isRtl 
-      ? 'تدوین و توسعه اسناد استراتژیک تجاری اعم از بیزینس پلن، مالی پروفرما و پیچ دک برای موفقیت در پرونده‌های مهاجرتی.' 
-      : 'Transforming ideas into data-driven artifacts: Business Plans, Financial Projections, and Pitch Decks.',
-  };
-}
 
 // Incrementally regenerate article pages (ISR) — fast, cacheable, SEO-friendly.
 export const revalidate = 3600;
@@ -153,33 +47,23 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     return { title: 'Not Found', robots: { index: false, follow: false } };
   }
 
-  // Single-locale article: canonical points at its own locale to avoid
-  // duplicate content if it is reachable under both /en and /fa prefixes.
   const articleLocale = article.locale === 'fa' ? 'fa' : 'en';
-  const canonical = `${SITE_URL}/${articleLocale}/blog/${article.slug}`;
-  const description = (article.excerpt || article.title).slice(0, 200);
-
-  return {
+  const description = stripHtml(article.excerpt || article.title).slice(0, 200);
+  const metadata = buildMetadata({
     title: article.title,
     description,
-    alternates: { canonical, languages: { [articleLocale]: canonical } },
-    openGraph: {
-      type: 'article',
-      url: canonical,
-      title: article.title,
-      description,
-      locale: ogLocale(articleLocale),
-      publishedTime: new Date(article.createdAt).toISOString(),
-      modifiedTime: new Date(article.updatedAt).toISOString(),
-      tags: article.tags.map((t) => t.name),
-      images: article.coverImage ? [{ url: article.coverImage, alt: article.title }] : undefined,
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title: article.title,
-      description,
-      images: article.coverImage ? [article.coverImage] : undefined,
-    },
+    path: `/blog/${article.slug}`,
+    locale: articleLocale,
+    image: article.coverImage,
+    type: 'article',
+    publishedTime: new Date(article.createdAt).toISOString(),
+    modifiedTime: new Date(article.updatedAt).toISOString(),
+    tags: article.tags.map((tag) => tag.name),
+  });
+
+  return {
+    ...metadata,
+    alternates: selfLocalizedAlternates(`/blog/${article.slug}`, articleLocale),
   };
 }
 
@@ -221,14 +105,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ local
 
     // Inject Related Article recommendation box using Cheerio!
     if (relatedArticle) {
-      const label = isRtl ? 'مطالعه پیشنهادی' : 'RECOMMENDED READING';
-      const boxHtml = `
-        <div class="my-8 p-6 bg-[#1a1a1a]/[0.03] ${isRtl ? 'border-r-4 text-right' : 'border-l-4 text-left'} border-[#CCFF00] font-sans not-prose rounded-lg" dir="${isRtl ? 'rtl' : 'ltr'}">
-          <span class="text-[10px] font-bold uppercase tracking-widest text-[#1a1a1a]/40 block mb-2">${label}</span>
-          <a href="/${locale}/blog/${relatedArticle.slug}" class="font-serif text-xl font-bold text-[#1a1a1a] hover:text-[#CCFF00] transition-colors block mb-1">${relatedArticle.title}</a>
-          ${relatedArticle.excerpt ? `<p class="text-xs text-[#1a1a1a]/60 line-clamp-2 mt-1 leading-relaxed">${relatedArticle.excerpt}</p>` : ''}
-        </div>
-      `;
+      const boxHtml = buildRelatedArticleBox({ locale, isRtl, article: relatedArticle });
       
       const paragraphs = $('p');
       if (paragraphs.length > 3) {
@@ -254,21 +131,13 @@ export default async function BlogPostPage({ params }: { params: Promise<{ local
 
     // Fallback injection: append to end
     if (relatedArticle) {
-      const label = isRtl ? 'مطالعه پیشنهادی' : 'RECOMMENDED READING';
-      const boxHtml = `
-        <div class="my-8 p-6 bg-[#1a1a1a]/[0.03] ${isRtl ? 'border-r-4 text-right' : 'border-l-4 text-left'} border-[#CCFF00] font-sans not-prose rounded-lg" dir="${isRtl ? 'rtl' : 'ltr'}">
-          <span class="text-[10px] font-bold uppercase tracking-widest text-[#1a1a1a]/40 block mb-2">${label}</span>
-          <a href="/${locale}/blog/${relatedArticle.slug}" class="font-serif text-xl font-bold text-[#1a1a1a] hover:text-[#CCFF00] transition-colors block mb-1">${relatedArticle.title}</a>
-          ${relatedArticle.excerpt ? `<p class="text-xs text-[#1a1a1a]/60 line-clamp-2 mt-1 leading-relaxed">${relatedArticle.excerpt}</p>` : ''}
-        </div>
-      `;
+      const boxHtml = buildRelatedArticleBox({ locale, isRtl, article: relatedArticle });
       cleanContent = cleanContent + boxHtml;
     }
   }
   
-  // 2. Compute word count and reading time fallbacks
-  const wordCount = cleanContent.replace(/<[^>]*>/g, '').split(/\s+/).filter(Boolean).length;
-  const readMin = Math.ceil(wordCount / 200) || 1;
+  // 2. Compute reading time from the visible article text
+  const readingTime = computeReadingTime(cleanContent, locale);
 
   // 3. Define localized translations
   const t = isRtl ? {
@@ -278,20 +147,21 @@ export default async function BlogPostPage({ params }: { params: Promise<{ local
     share: 'اشتراک‌گذاری مقاله',
     copied: 'کپی شد!',
     publishedOn: 'تاریخ انتشار',
+    updatedOn: 'آخرین به‌روزرسانی',
+    byline: 'نویسنده',
+    author: 'تیم تحریریه استارتاپ ویزا رودز',
     readingTime: 'زمان مطالعه',
     level: 'سطح مقاله',
     suitableFor: 'مناسب برای',
-    compliance: 'تطابق رسمی قوانین',
     keyBenefit: 'دستاورد کلیدی',
-    status: 'آخرین وضعیت قوانین',
     actionability: 'میزان کاربردی بودن',
     requirements: 'پیش‌نیازها',
     cardTitle: 'شناسنامه و اطلاعات سریع مقاله',
     relatedServiceBadge: 'سرویس پیشنهادی مرتبط',
     viewServiceBtn: 'مشاهده جزئیات سرویس',
     ctaTitle: 'آماده‌اید مسیر مهاجرتی خود را آغاز کنید؟',
-    ctaDesc: 'با بیزینس پلن‌های حرفه‌ای، مدل‌های مالی پروفرما و دفاعیه پیچ دک شانس خود را در دریافت پذیرش به حداکثر برسانید.',
-    ctaBtn: 'ثبت درخواست مشاوره رایگان',
+    ctaDesc: 'با خدمات برنامه‌ریزی کسب‌وکار، مدل‌سازی مالی و آماده‌سازی پیچ‌دک آشنا شوید.',
+    ctaBtn: 'تماس با تیم',
     takeaway: 'پاسخ کوتاه',
     faq: 'پرسش‌های پرتکرار',
   } : {
@@ -300,57 +170,41 @@ export default async function BlogPostPage({ params }: { params: Promise<{ local
     back: 'Back to Journal',
     share: 'Share Article',
     copied: 'Copied!',
-    publishedOn: 'Published on',
+    publishedOn: 'Published',
+    updatedOn: 'Updated',
+    byline: 'By',
+    author: 'Startup Visa Roads Editorial Team',
     readingTime: 'Reading Time',
     level: 'Article Level',
     suitableFor: 'Suitable For',
-    compliance: 'Official Compliance',
     keyBenefit: 'Key Benefit',
-    status: 'Regulations Status',
     actionability: 'Actionability Level',
     requirements: 'Requirements',
     cardTitle: 'Article Quick Facts',
     relatedServiceBadge: 'RECOMMENDED SERVICE',
     viewServiceBtn: 'View Service Details',
     ctaTitle: 'Ready to architect your startup path?',
-    ctaDesc: 'Accelerate your global mobility with investor-grade business documents, financial models, and strategic immigration advisor review.',
-    ctaBtn: 'Request Free Advisory',
+    ctaDesc: 'Explore business planning, financial modelling, and pitch-deck preparation services.',
+    ctaBtn: 'Contact the Team',
     takeaway: 'Key takeaway',
     faq: 'Frequently asked questions',
   };
 
-  const defaultFacts = isRtl ? {
-    readingTime: `${readMin} دقیقه مطالعه`,
-    level: 'کاربردی / راهبردی',
-    suitableFor: 'کارآفرینان و کارجویان متخصص',
-    compliance: '۹۵٪ (دستورالعمل‌های رسمی)',
-    keyBenefit: 'شفافیت در انتخاب مسیر',
-    status: 'تایید شده برای قوانین ۲۰۲۶',
-    actionability: 'بالا (نقشه راه عملی)',
-    requirements: 'ایده و کانسپت تجاری',
-  } : {
-    readingTime: `${readMin} min read`,
-    level: 'Strategic / Practical',
-    suitableFor: 'Founders & Skilled Workers',
-    compliance: '95% (Official Guidelines)',
-    keyBenefit: 'Pathway selection clarity',
-    status: 'Validated for 2026 regulations',
-    actionability: 'High (Actionable Roadmap)',
-    requirements: 'Business Concept / Idea',
-  };
+  const safeQuickFacts = getSafeQuickFacts(quickFacts);
+  const optionalFacts = [
+    { key: 'level', label: t.level, icon: BarChart },
+    { key: 'suitableFor', label: t.suitableFor, icon: Target },
+    { key: 'actionability', label: t.actionability, icon: Compass },
+    { key: 'keyBenefit', label: t.keyBenefit, icon: Sparkles },
+    { key: 'requirements', label: t.requirements, icon: ClipboardList },
+  ];
 
-  const facts = { ...defaultFacts, ...quickFacts };
-
-  // 4. Set up layout items with icons
+  // 4. Set up layout items using only computed or article-stored values
   const factsItems = [
-    { label: t.readingTime, value: facts.readingTime, icon: Clock },
-    { label: t.level, value: facts.level, icon: BarChart },
-    { label: t.suitableFor, value: facts.suitableFor, icon: Target },
-    { label: t.compliance, value: facts.compliance, icon: ShieldCheck },
-    { label: t.actionability, value: facts.actionability, icon: Compass },
-    { label: t.keyBenefit, value: facts.keyBenefit, icon: Sparkles },
-    { label: t.requirements, value: facts.requirements, icon: ClipboardList },
-    { label: t.status, value: facts.status, icon: RefreshCw },
+    { label: t.readingTime, value: readingTime, icon: Clock },
+    ...optionalFacts.flatMap((fact) => safeQuickFacts[fact.key]
+      ? [{ label: fact.label, value: safeQuickFacts[fact.key], icon: fact.icon }]
+      : []),
   ];
 
   // 5. Context-aware service recommender calculation
@@ -362,8 +216,6 @@ export default async function BlogPostPage({ params }: { params: Promise<{ local
   // 7. Build structured data (Article + Breadcrumb + FAQ) for SEO/AEO/GEO
   const articleLocale = article.locale === 'fa' ? 'fa' : 'en';
   const articleUrl = `${SITE_URL}/${articleLocale}/blog/${article.slug}`;
-  // Structured FAQ written by the autopilot wins; older articles fall back to
-  // heading extraction. Both feed the same FAQPage JSON-LD.
   let structuredFaq: { question: string; answer: string }[] = [];
   const rawFaq = (article as { faq?: string | null }).faq;
   if (rawFaq) {
@@ -372,12 +224,12 @@ export default async function BlogPostPage({ params }: { params: Promise<{ local
       structuredFaq = parsed.filter((f) => f?.q && f?.a).map((f) => ({ question: f.q, answer: f.a }));
     } catch {}
   }
-  const faqs = structuredFaq.length ? structuredFaq : extractFaqs(safeContent);
+  const faqs = structuredFaq;
   const keyTakeaway = (article as { keyTakeaway?: string | null }).keyTakeaway ?? null;
   const structuredData = [
     articleJsonLd({
       title: article.title,
-      description: (article.excerpt || article.title).slice(0, 200),
+      description: stripHtml(article.excerpt || article.title).slice(0, 200),
       url: articleUrl,
       image: article.coverImage,
       datePublished: article.createdAt,
@@ -392,7 +244,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ local
       ...(article.category ? [{ name: isRtl ? faCategoryLabel(article.category.slug, article.category.name) : article.category.name, url: `${SITE_URL}/${locale}/blog/category/${article.category.slug}` }] : []),
       { name: article.title, url: articleUrl },
     ]),
-    faqJsonLd(faqs),
+    faqJsonLd(faqs, articleLocale),
   ];
 
   return (
@@ -410,7 +262,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ local
           {article.category && (
             <>
               <span className="text-[10px] text-[#1a1a1a]/30">&rarr;</span>
-              <Link href={`/blog?category=${article.category.slug}`} className="hover:text-[#1a1a1a] font-bold transition-colors">
+              <Link href={`/blog/category/${article.category.slug}`} className="hover:text-[#1a1a1a] font-bold transition-colors">
                 {isRtl ? faCategoryLabel(article.category.slug, article.category.name) : article.category.name}
               </Link>
             </>
@@ -429,7 +281,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ local
       {/* Main Title Header */}
       <div className="mb-12 text-center md:text-start">
         {article.category && (
-          <Link href={`/blog?category=${article.category.slug}`} className="inline-block mb-6">
+          <Link href={`/blog/category/${article.category.slug}`} className="inline-block mb-6">
             <span className="text-xs font-bold uppercase tracking-widest text-[#CCFF00] bg-[#1a1a1a] px-4 py-1.5 rounded-full hover:bg-neutral-800 transition-colors shadow-[2px_2px_0px_0px_#1a1a1a]">
               {isRtl ? faCategoryLabel(article.category.slug, article.category.name) : article.category.name}
             </span>
@@ -438,20 +290,41 @@ export default async function BlogPostPage({ params }: { params: Promise<{ local
         <h1 className="font-serif text-4xl md:text-6xl mb-6 text-[#1a1a1a] leading-tight font-bold">
           {article.title}
         </h1>
-        <p className="font-sans text-[#1a1a1a]/50 text-sm">
-          {t.publishedOn}:{' '}
-          <time dateTime={isoDate(article.createdAt)}>
-            {isRtl
-              ? faDate(article.createdAt)
-              : new Date(article.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' })}
-          </time>
-        </p>
+        <div className="font-sans text-[#1a1a1a]/60 text-sm flex flex-wrap items-center justify-center md:justify-start gap-x-3 gap-y-1">
+          <span>{t.byline} <strong className="text-[#1a1a1a]">{t.author}</strong></span>
+          <span aria-hidden="true">·</span>
+          <span>
+            {t.publishedOn}:{' '}
+            <time dateTime={isoDate(article.createdAt)}>
+              {isRtl
+                ? faDate(article.createdAt)
+                : new Date(article.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' })}
+            </time>
+          </span>
+          <span aria-hidden="true">·</span>
+          <span>
+            {t.updatedOn}:{' '}
+            <time dateTime={isoDate(article.updatedAt)}>
+              {isRtl
+                ? faDate(article.updatedAt)
+                : new Date(article.updatedAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' })}
+            </time>
+          </span>
+        </div>
       </div>
 
       {/* Cover Image */}
       {article.coverImage && (
-        <div className="aspect-video w-full rounded-3xl overflow-hidden mb-16 border-2 border-[#1a1a1a] shadow-[6px_6px_0px_0px_#1a1a1a]">
-          <img src={article.coverImage} alt={article.title} className="w-full h-full object-cover" />
+        <div className="relative aspect-video w-full rounded-3xl overflow-hidden mb-16 border-2 border-[#1a1a1a] shadow-[6px_6px_0px_0px_#1a1a1a]">
+          <Image
+            src={article.coverImage}
+            alt={article.title}
+            fill
+            priority
+            sizes="(min-width: 768px) 768px, 100vw"
+            unoptimized={isDataImageUrl(article.coverImage)}
+            className="object-cover"
+          />
         </div>
       )}
 
@@ -497,11 +370,11 @@ export default async function BlogPostPage({ params }: { params: Promise<{ local
       />
 
       {/* Structured FAQ (autopilot articles) */}
-      {structuredFaq.length > 0 && (
+      {faqs.length > 0 && (
         <section className="my-12 font-sans" aria-labelledby="faq-heading">
           <h2 id="faq-heading" className="font-serif text-3xl font-bold text-[#1a1a1a] mb-6">{t.faq}</h2>
           <div className="divide-y divide-[#1a1a1a]/10 border-y border-[#1a1a1a]/10">
-            {structuredFaq.map((f, i) => (
+            {faqs.map((f, i) => (
               <details key={i} className="group py-4">
                 <summary className="cursor-pointer list-none flex items-start justify-between gap-4 font-bold text-[#1a1a1a] text-base md:text-lg">
                   <span>{f.question}</span>

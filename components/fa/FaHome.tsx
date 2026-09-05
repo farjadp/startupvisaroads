@@ -20,9 +20,7 @@ import { faDate, isoDate } from '@/lib/fa/format';
 import { home, CONTACT } from '@/content/fa/home';
 import { videosById } from '@/content/fa/videos';
 import VideoRail from './VideoRail';
-import RoadsScene from './three/RoadsScene';
 import Reveal from './motion/Reveal';
-import HeroImage from './motion/HeroImage';
 import TiltCard from './motion/TiltCard';
 import Faq from './motion/Faq';
 
@@ -49,53 +47,75 @@ export default function FaHome({ articles }: { articles: Article[] }) {
       />
 
       {/* 1. HERO — the authored moment */}
-      <section className="border-b border-[#1a1a1a]">
-        <div className="px-4 md:px-8 max-w-[1400px] mx-auto border-x border-[#1a1a1a]/10">
-          <div className="flex justify-between items-start border-t border-[#1a1a1a] pt-4 text-xs tracking-wide">
-            <span>{h.hero.est}</span>
-            <span className="hidden md:block">{h.hero.kicker}</span>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-end pt-14 pb-16 md:pb-24">
-            <div className="lg:col-span-7">
-              <Reveal>
-                <h1 className="font-estedad font-black text-[13vw] md:text-[8vw] lg:text-[5.5rem] xl:text-[6.5rem] leading-[1.02] text-[#1a1a1a] [text-wrap:nowrap]">
-                  {h.hero.headline_1}
-                  <br />
-                  <span className="font-bold text-[#1a1a1a]/55">{h.hero.headline_2}</span>
-                </h1>
-              </Reveal>
-              <Reveal delay={0.1}>
-                <p className="mt-10 font-estedad font-bold text-2xl md:text-3xl leading-snug max-w-[26ch] [text-wrap:balance]">{h.hero.positioning}</p>
-                <p className="mt-4 text-lg leading-[1.9] text-[#1a1a1a]/70 max-w-[58ch]">{h.hero.sub}</p>
-              </Reveal>
-              <Reveal delay={0.18} className="mt-10 flex flex-wrap gap-3">
-                <Link href={h.hero.primary.href} className="group inline-flex items-center gap-4 bg-[#1a1a1a] text-[#F2F0E9] px-8 py-6 font-bold hover:bg-[#CCFF00] hover:text-black transition-colors duration-300">
+      <section aria-labelledby="fa-home-heading" className="border-b border-ink/20">
+        <div className="mx-auto max-w-[1400px] px-5 pb-7 pt-5 sm:px-8 lg:pb-9 lg:pt-8">
+          <div className="grid items-center gap-12 pb-10 lg:grid-cols-12 lg:gap-10 lg:pb-14 xl:gap-16">
+            <div className="min-w-0 lg:col-span-7">
+              <h1 id="fa-home-heading" className="font-estedad text-[clamp(2.5rem,7.6vw,4.5rem)] font-black leading-[1.5] text-ink lg:text-[clamp(3rem,4.7vw,4.25rem)]">
+                <span className="block">{h.hero.headline_1}</span>
+                <span className="block">{h.hero.headline_2}</span>
+                <span className="relative isolate inline-block">
+                  <span aria-hidden="true" className="absolute -inset-x-2 bottom-[0.17em] -z-10 h-[0.48em] -rotate-2 bg-acid" />
+                  {h.hero.headline_3}
+                </span>
+              </h1>
+              <p className="mt-6 max-w-[49ch] text-base leading-[2] text-ink/80 sm:text-lg">{h.hero.sub}</p>
+              <div className="mt-8 flex flex-col items-stretch gap-3 sm:flex-row sm:items-center sm:gap-5">
+                <Link href={h.hero.primary.href} aria-describedby="hero-assessment-note" className="group inline-flex min-h-14 items-center justify-center gap-5 rounded-xl bg-ink px-6 py-4 font-bold text-paper transition-colors duration-200 hover:bg-acid hover:text-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink">
                   {h.hero.primary.label}
-                  <ArrowLeft className="w-5 h-5 group-hover:-translate-x-2 transition-transform" />
+                  <ArrowLeft aria-hidden="true" className="h-5 w-5 transition-transform duration-200 motion-safe:group-hover:-translate-x-1" />
                 </Link>
-                <a href={h.hero.secondary.href} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-3 border border-[#1a1a1a] px-6 py-4 font-bold text-sm hover:bg-[#1a1a1a] hover:text-[#F2F0E9] transition-colors duration-300">
+                <a href={h.hero.secondary.href} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-12 items-center justify-center gap-2 rounded-lg px-2 py-3 text-sm font-bold text-ink underline-offset-8 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink">
+                  <Send aria-hidden="true" className="h-4 w-4" />
                   {h.hero.secondary.label}
-                  <Send className="w-4 h-4" />
+                  <span className="sr-only"> در تلگرام (پنجره‌ی جدید)</span>
                 </a>
-              </Reveal>
+              </div>
+              <p id="hero-assessment-note" className="mt-3 text-xs leading-6 text-ink/70">{h.hero.assessmentNote}</p>
+              <p className="mt-7 max-w-[55ch] border-t border-ink/15 pt-4 text-xs leading-6 text-ink/75">{h.hero.positioning}</p>
             </div>
 
-            <div className="lg:col-span-5">
-              <HeroImage src="/fa/img/home.webp" alt="" className="aspect-[16/10] lg:aspect-[4/3]" />
-              <div className="mt-5 flex items-center gap-5 border border-[#1a1a1a] p-4">
-                <RoadsScene
-                  to={['helsinki', 'copenhagen', 'tallinn', 'fredericton', 'halifax']}
-                  className="relative shrink-0 w-28 h-28 md:w-36 md:h-36"
-                />
-                <p className="text-sm text-[#1a1a1a]/70 leading-[1.85]">
-                  پنج مسیر باز از تهران: هلسینکی، کپنهاگ، تالین، فردریکتون و هلیفکس.
-                  <br />
-                  <span className="text-[#1a1a1a]/50">ویزای استارتاپ کانادا فعلاً بسته است.</span>
-                </p>
+            <div className="min-w-0 lg:col-span-5">
+              <div className="relative overflow-hidden rounded-2xl bg-ink px-6 pb-6 pt-8 text-paper sm:px-8 sm:pt-10 lg:px-7 xl:px-9">
+                <div aria-hidden="true" className="absolute left-0 top-0 h-14 w-14 bg-acid [clip-path:polygon(0_0,100%_0,0_100%)]" />
+                <h2 className="max-w-[20ch] font-estedad text-2xl font-bold leading-[1.65] sm:text-3xl">{h.hero.roadmap.heading}</h2>
+                <p className="mt-2 text-sm leading-7 text-paper/75">{h.hero.roadmap.intro}</p>
+                <ol className="mt-8">
+                  {h.hero.roadmap.steps.map((step, i) => (
+                    <li key={step.n} className="group relative grid grid-cols-[2.5rem_minmax(0,1fr)] gap-4 pb-8 last:pb-0">
+                      {i < h.hero.roadmap.steps.length - 1 && <span aria-hidden="true" className="absolute bottom-0 right-5 top-10 w-px bg-paper/25" />}
+                      <span aria-hidden="true" className={`relative z-10 flex h-10 w-10 items-center justify-center rounded-full border font-estedad text-sm font-bold ${i === 0 ? 'border-acid bg-acid text-ink' : 'border-paper/35 bg-ink text-acid'}`}>{step.n}</span>
+                      <div className="pt-1">
+                        <h3 className="font-estedad text-lg font-bold leading-8">{step.title}</h3>
+                        <p className="mt-1 text-sm leading-[1.9] text-paper/75">{step.body}</p>
+                        <p className="mt-3 flex items-start gap-2 text-xs font-medium leading-6 text-acid">
+                          <ArrowLeft aria-hidden="true" className="mt-1 h-4 w-4 shrink-0" />
+                          {step.output}
+                        </p>
+                      </div>
+                    </li>
+                  ))}
+                </ol>
+                <Link href={h.hero.roadmap.cta.href} className="mt-8 flex min-h-12 items-center justify-between gap-4 border-t border-paper/25 pt-5 text-sm font-bold text-paper transition-colors hover:text-acid focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-acid">
+                  {h.hero.roadmap.cta.label}
+                  <ArrowUpLeft aria-hidden="true" className="h-5 w-5 shrink-0" />
+                </Link>
               </div>
             </div>
           </div>
+          <nav aria-label={h.hero.routesLabel} className="flex flex-col gap-3 border-t border-ink/20 pt-5 lg:flex-row lg:items-center lg:justify-between lg:gap-6">
+            <p className="text-sm text-ink/75">{h.hero.routesLabel}</p>
+            <ul className="flex flex-wrap gap-x-5 gap-y-1 sm:gap-x-7">
+              {h.hero.routes.map((route) => (
+                <li key={route.href}>
+                  <Link href={route.href} className="group inline-flex min-h-11 items-center gap-2 rounded-sm text-sm font-bold text-ink underline-offset-4 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink">
+                    {route.label}
+                    <ArrowUpLeft aria-hidden="true" className="h-3.5 w-3.5 text-ink/60 transition-transform motion-safe:group-hover:-translate-x-0.5 motion-safe:group-hover:-translate-y-0.5" />
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
         </div>
       </section>
 

@@ -23,6 +23,7 @@ export type GenerateResult = {
   created: { id: string; slug: string; title: string }[];
   errors: { title?: string; error: string }[];
   skipped: { title: string; reason: string }[];
+  warnings: { title?: string; warning: string }[];
 };
 
 // ---------------------------------------------------------------------------
@@ -31,8 +32,8 @@ export type GenerateResult = {
 
 /** What may be stated as fact, and how. */
 export const FACT_RULES = `Fact rules — follow all of them:
-- Official programme rules that are stable and well documented (who is eligible, which documents, which authority decides, the order of steps, published minimum thresholds) may be stated. Name the authority in full on first mention — "Immigration, Refugees and Citizenship Canada (IRCC)", "U.S. Citizenship and Immigration Services (USCIS)" — and attach a date qualifier to anything that changes ("as of 2026", "in the current programme year").
-- NEVER state a specific draw score, draw date, processing time in weeks, quota count, acceptance rate, fee amount or price unless it was given to you in this prompt. If a number would help but you were not given it, describe the shape ("a CRS score in the high range") without inventing the figure.
+- State a programme rule only when it is grounded in a source supplied in this prompt. Name the responsible authority in full on first mention. Mutable claims about eligibility, thresholds, documents, fees, dates, quotas, processing or programme availability need the citation or attribution required by this prompt; otherwise omit them and tell the reader to verify with the authority.
+- NEVER state a specific draw score, draw date, processing time in weeks, quota count, acceptance rate, fee amount or price unless it was given to you in this prompt. If a number would help but you were not given it, describe the shape without inventing the figure.
 - Never invent a case study, a named client, a quote, a statistic, a survey or a percentage.
 - Anything about Startup Visa Roads itself must come from BRAND FACTS only.`;
 
