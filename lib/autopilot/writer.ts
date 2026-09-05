@@ -7,7 +7,8 @@
 // and not by luck. Visuals reuse the photo/diagram machinery in lib/ai.ts.
 // ============================================================================
 import prisma from '@/lib/prisma';
-import { generateAndSaveImage, wrapDiagram, wrapPhoto } from '@/lib/ai';
+import { wrapDiagram, wrapPhoto } from '@/lib/ai';
+import { generateBrandImage, imagesBlocked } from './images';
 import { createArticleFromPayload } from '@/lib/articles';
 import type { Locale } from '@/lib/seo';
 import { BRAND_FACTS, buildInventory, linkBlock, type Inventory } from './inventory';
@@ -133,11 +134,8 @@ export async function placeVisuals(html: string, visuals: Visual[], dryRun: bool
       if (v.type === 'DIAGRAM' && v.svgCode?.trim().startsWith('<svg')) {
         replacement = wrapDiagram(v.svgCode, v.caption ?? '');
       } else if (v.type === 'PHOTO' && v.prompt && !dryRun) {
-        try {
-          replacement = wrapPhoto(await generateAndSaveImage(v.prompt), v.caption ?? '', i);
-        } catch (e) {
-          console.error(`autopilot/writer: visual ${i + 1} failed, continuing without it`, e);
-        }
+        const url = await generateBrandImage(v.prompt, 'inline');
+        if (url) replacement = wrapPhoto(url, v.caption ?? '', i);
       }
       out = out.replace(`[VISUAL_${i + 1}]`, replacement);
     }),
@@ -170,14 +168,7 @@ async function writeOne(brief: Brief, inv: Inventory, opts: RunOpts, result: Gen
       body = `<script type="application/json" id="quick-facts-data">${JSON.stringify(d.quickFacts)}</script>\n${body}`;
     }
 
-    let coverImage: string | null = null;
-    if (!opts.dryRun) {
-      try {
-        coverImage = await generateAndSaveImage(d.coverImagePrompt);
-      } catch (e) {
-        console.error('autopilot/writer: cover failed, continuing without it', e);
-      }
-    }
+    const coverImage = opts.dryRun ? null : await generateBrandImage(d.coverImagePrompt, 'cover');
 
     if (opts.dryRun) {
       result.created.push({ id: 'dry-run', slug: d.slugEn || 'dry-run', title: d.title });
@@ -225,16 +216,17 @@ export async function runPlanned(n: number, locale: Locale, opts: RunOpts = {}):
     briefs = await planBriefs(n, inv);
   } catch (e) {
     result.errors.push({ error: `plan: ${e instanceof Error ? e.message : String(e)}` });
-    await finish(run.id, result);
+    await finish(run.id, result, opts);
     return result;
   }
 
   await Promise.all(briefs.map((b) => writeOne(b, inv, opts, result)));
-  await finish(run.id, result);
+  await finish(run.id, result, opts);
   return result;
 }
 
-async function finish(runId: string, r: GenerateResult) {
+async function finish(runId: string, r: GenerateResult, opts: RunOpts) {
+  const blocked = opts.dryRun ? null : imagesBlocked();
   await prisma.autopilotRun.update({
     where: { id: runId },
     data: {
@@ -242,6 +234,7 @@ async function finish(runId: string, r: GenerateResult) {
       created: r.created.length,
       errors: r.errors.length ? JSON.stringify(r.errors) : null,
       skipped: r.skipped.length ? JSON.stringify(r.skipped) : null,
+      notes: [opts.dryRun ? 'dry-run' : null, blocked ? `images skipped: ${blocked}` : null].filter(Boolean).join(' · ') || null,
     },
   });
 }

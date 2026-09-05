@@ -28,7 +28,14 @@ const PHOTO_STYLE_SUFFIX =
  * Upgraded from flux/schnell (4 steps, low quality) to flux/dev (28 steps,
  * editorial quality) for noticeably better in-article visuals.
  */
-export async function generateAndSaveImage(prompt: string): Promise<string> {
+export type ImageOptions = {
+  /** Skip PHOTO_STYLE_SUFFIX — for prompts that carry their own art direction (the autopilot). */
+  raw?: boolean;
+  /** Fal image_size preset. Covers render in a 16:9 frame on the article page. */
+  size?: 'landscape_4_3' | 'landscape_16_9' | 'square_hd';
+};
+
+export async function generateAndSaveImage(prompt: string, opts: ImageOptions = {}): Promise<string> {
   console.log('[AI] Generating photo — prompt:', prompt.slice(0, 120));
 
   const response = await fetch('https://fal.run/fal-ai/flux/dev', {
@@ -38,8 +45,8 @@ export async function generateAndSaveImage(prompt: string): Promise<string> {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      prompt: `${prompt}${PHOTO_STYLE_SUFFIX}`,
-      image_size: 'landscape_4_3',
+      prompt: opts.raw ? prompt : `${prompt}${PHOTO_STYLE_SUFFIX}`,
+      image_size: opts.size ?? 'landscape_4_3',
       num_inference_steps: 28,
       guidance_scale: 3.5,
       num_images: 1,

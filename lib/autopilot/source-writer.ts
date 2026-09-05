@@ -19,12 +19,12 @@
 //      ledger keeps the provenance on the row.
 // ============================================================================
 import prisma from '@/lib/prisma';
-import { generateAndSaveImage } from '@/lib/ai';
 import { createArticleFromPayload } from '@/lib/articles';
 import type { Locale } from '@/lib/seo';
 import { BRAND_FACTS, buildInventory, linkBlock, type Inventory } from './inventory';
 import { originality, tooClose } from './originality';
 import { AIO_RULES, FACT_RULES, WRITER_MODEL, chatJson, chatText, expand, houseStyle, humanise, type GenerateResult } from './pipeline';
+import { generateBrandImage, imagesBlocked } from './images';
 import { harvest, markLedger, type SourceArticle } from './sources';
 import { enforceLinks, wordCountHtml } from './text';
 import { draftMeta, placeVisuals, wordTarget } from './writer';
@@ -268,12 +268,7 @@ export async function runFromSources(n: number, locale: Locale, opts: RunOpts = 
         continue;
       }
 
-      let coverImage: string | null = null;
-      try {
-        coverImage = await generateAndSaveImage(d.coverImagePrompt);
-      } catch (e) {
-        console.error('autopilot/source-writer: cover failed, continuing without it', e);
-      }
+      const coverImage = await generateBrandImage(d.coverImagePrompt, 'cover');
 
       const created = await createArticleFromPayload(
         {
@@ -302,6 +297,8 @@ export async function runFromSources(n: number, locale: Locale, opts: RunOpts = 
     }
   }
 
+  const blocked = opts.dryRun ? null : imagesBlocked();
+  if (blocked) result.notes.push(`images skipped: ${blocked}`);
   await finish(run.id, result);
   return result;
 }
