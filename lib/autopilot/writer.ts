@@ -40,7 +40,7 @@ const DIAGRAM_SPEC = `DIAGRAM — for a process, steps, timeline, comparison or 
 • Labels in <text> with font-size 13–14, inside or adjacent to their shapes; <rect rx="8"> for cards, <circle> for steps, <polygon> for decisions.
 • Generous padding, no external fonts, no images, no foreignObject.`;
 
-function wordTarget(depth: Brief['depth']): { min: number; target: number } {
+export function wordTarget(depth: Brief['depth']): { min: number; target: number } {
   return depth === 'deep' ? { min: 1900, target: 2300 } : { min: 1000, target: 1250 };
 }
 
@@ -80,7 +80,7 @@ Return ONLY the HTML body. No <html>/<body>, no code fence, no commentary.`,
 
 type Meta = Omit<Draft, 'contentHtml'>;
 
-async function draftMeta(brief: Brief, body: string, inv: Inventory): Promise<Meta> {
+export async function draftMeta(brief: Brief, body: string, inv: Inventory): Promise<Meta> {
   const lang = inv.locale === 'fa' ? 'Persian (Farsi)' : 'English';
   const d = await chatJson<Partial<Meta>>(
     `Below is a finished ${lang} article for visaroads.com. Produce its metadata and its two visuals. Everything must be consistent with the article; add no fact that is not in it.
@@ -125,7 +125,7 @@ ${body}`,
 }
 
 /** Fill [VISUAL_n] with photos/diagrams; a failed image never aborts the article. */
-async function placeVisuals(html: string, visuals: Visual[], dryRun: boolean): Promise<string> {
+export async function placeVisuals(html: string, visuals: Visual[], dryRun: boolean): Promise<string> {
   let out = html;
   await Promise.all(
     visuals.map(async (v, i) => {

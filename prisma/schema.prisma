@@ -83,6 +83,25 @@ model AutopilotRun {
   @@index([startedAt])
 }
 
+// Ledger of external articles we have seen, so "n new ones" means something
+// across daily runs. `text` is a working input for the fact-sheet step and is
+// never published.
+model SourceArticle {
+  id          String    @id @default(cuid())
+  sourceSlug  String
+  url         String    @unique
+  title       String
+  publishedAt DateTime?
+  text        String?   // plain text, capped; null until hydrated
+  status      String    @default("new") // new | used | skipped | failed
+  reason      String?
+  articleId   String?   // the Article we wrote from it
+  harvestedAt DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([sourceSlug, status, publishedAt])
+}
+
 model Setting {
   key   String @id
   value String
