@@ -1,14 +1,12 @@
 // ============================================================================
-// Page: /europe/denmark — in English this path is a redirect to the
-// canonical /country/denmark; in Persian it is the Start-up Denmark guide
-// (paired with /en/country/denmark in FA_PAIRED).
+// Page: /fa/europe/estonia — Persian-only; no English page exists.
 // ============================================================================
 import type { Metadata } from 'next';
-import { redirect } from 'next/navigation';
+import { notFound } from 'next/navigation';
 import { setRequestLocale } from 'next-intl/server';
 import { buildMetadata } from '@/lib/seo';
 import FaPageLayout from '@/components/fa/FaPageLayout';
-import { page } from '@/content/fa/europe-denmark';
+import { page } from '@/content/fa/europe-estonia';
 
 type Props = { params: Promise<{ locale: string }> };
 
@@ -18,9 +16,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return buildMetadata({ locale, path: page.path, title: page.title, description: page.description, modifiedTime: page.updated });
 }
 
-export default async function DenmarkEurope({ params }: Props) {
+export default async function EstoniaFa({ params }: Props) {
   const { locale } = await params;
-  if (locale !== 'fa') redirect(`/${locale}/country/denmark`);
+  if (locale !== 'fa') notFound();
   setRequestLocale(locale);
-  return <FaPageLayout page={page} trail={[{ name: 'دانمارک', path: page.path }]} />;
+  return <FaPageLayout page={page} trail={[{ name: 'استونی', path: page.path }]} />;
 }

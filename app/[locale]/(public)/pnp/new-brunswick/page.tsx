@@ -19,13 +19,28 @@ import {
 import type { Metadata } from 'next';
 
 import { metaFor } from '@/lib/pageMeta';
+import { buildMetadata } from '@/lib/seo';
+import { setRequestLocale } from 'next-intl/server';
+import FaPageLayout from '@/components/fa/FaPageLayout';
+import { page as faPage } from '@/content/fa/pnp-new-brunswick';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
+  if (locale === 'fa') {
+    return buildMetadata({ locale, path: faPage.path, title: faPage.title, description: faPage.description, modifiedTime: faPage.updated });
+  }
   return metaFor('/pnp/new-brunswick', locale);
 }
 
-export default function NewBrunswickPage() {
+export default async function NewBrunswickPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+
+  // /fa/pnp/new-brunswick is Persian-first copy, not a translation of the English page.
+  if (locale === 'fa') {
+    return <FaPageLayout page={faPage} trail={[{ name: 'برنامه‌های استانی', path: '/pnp' }, { name: 'نیوبرانزویک', path: faPage.path }]} />;
+  }
+
   return (
     <div className="w-full px-4 md:px-8 border-x border-[#1a1a1a]/10 max-w-[1400px] mx-auto bg-[#F2F0E9] text-[#1a1a1a]">
       
