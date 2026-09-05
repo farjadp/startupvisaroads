@@ -118,6 +118,7 @@ export const page: FaPage = {
     },
   ],
 
+  videos: ['cXAWOW-Wdco'],
   closing: [
     { label: 'برنامه‌ی آماده‌سازی برای مصاحبه', href: '/mentorship' },
     { label: 'فهرست رسمی سازمان‌های تأییدشده (IRCC)', href: IRCC_DO_LIST_URL },

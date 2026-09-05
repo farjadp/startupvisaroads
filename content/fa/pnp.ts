@@ -124,6 +124,7 @@ export const page: FaPage = {
     },
   ],
 
+  videos: ['I3tts3-vkos', 'Fl1Q7gUU06A', 'JZOl-te4JBM', 'KuAR_P2xJlI'],
   closing: [
     { label: 'کدام استان؟ ارزیابی رایگان', href: '/which-path' },
     { label: 'مسیر کارآفرینی نیوبرانزویک', href: '/pnp/new-brunswick' },

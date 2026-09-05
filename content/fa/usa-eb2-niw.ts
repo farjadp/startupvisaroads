@@ -135,6 +135,7 @@ export const page: FaPage = {
     },
   ],
 
+  videos: ['qODv_KLFGbk'],
   closing: [
     { label: 'ارزیابی رایگان پروفایل', href: '/which-path' },
     { label: 'برنامه‌ی آماده‌سازی بنیان‌گذاران', href: '/mentorship' },

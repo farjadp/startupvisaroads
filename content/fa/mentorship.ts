@@ -121,6 +121,7 @@ export const page: FaPage = {
     },
   ],
 
+  videos: ['qODv_KLFGbk', 'zI4-gPWSKhI', 'N6A9BVkiwrw'],
   closing: [
     { label: 'ارزیابی رایگان مسیر', href: '/which-path' },
     { label: 'رزرو جلسه‌ی مشاوره', href: '/contact' },

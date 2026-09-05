@@ -96,6 +96,7 @@ export const page: FaPage = {
     },
   ],
 
+  videos: ['qODv_KLFGbk', 'BlC2aMoecvE'],
   closing: [
     { label: 'ارزیابی رایگان مسیر', href: '/which-path' },
     { label: 'برنامه‌ی منتورشیپ', href: '/mentorship' },

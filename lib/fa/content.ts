@@ -57,6 +57,8 @@ export type FaPage = {
    */
   faqGroups?: { heading: string; faqs: FaFaq[] }[];
   closing: FaCta[];
+  /** YouTube ids from content/fa/videos.ts to show as a rail after the FAQ. */
+  videos?: string[];
 };
 
 /** Breadcrumb structured data for a Persian page under the site root. */

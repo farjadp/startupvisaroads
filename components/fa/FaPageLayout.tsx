@@ -14,6 +14,8 @@ import { faqJsonLd, breadcrumbJsonLd, type FaPage, type FaCta } from '@/lib/fa/c
 import { faDate, isoDate } from '@/lib/fa/format';
 import { TELEGRAM_URL, CONTACT } from '@/content/fa/home';
 import StatusBanner from './StatusBanner';
+import VideoRail from './VideoRail';
+import { videosById } from '@/content/fa/videos';
 
 // Absolute URLs and explicit /en/ paths render as plain anchors; everything
 // else goes through the locale-aware Link. A Persian page may deliberately
@@ -152,6 +154,10 @@ export default function FaPageLayout({ page, trail }: { page: FaPage; trail: { n
           )}
         </div>
       </div>
+
+      {page.videos && page.videos.length > 0 && (
+        <VideoRail videos={videosById(page.videos)} intro="توضیح ویدیویی همین مسیر، از زبان فرجاد — با جزئیاتی که در متن جا نمی‌گیرد." />
+      )}
 
       {/* CLOSING */}
       <section className="py-24 border-t border-[#1a1a1a] bg-[#1a1a1a] text-[#F2F0E9] -mx-4 md:-mx-8 px-4 md:px-8">

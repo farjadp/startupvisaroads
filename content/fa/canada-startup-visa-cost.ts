@@ -131,6 +131,7 @@ export const page: FaPage = {
     },
   ],
 
+  videos: ['oJ-00ZIYLEY'],
   closing: [
     { label: 'ارزیابی رایگان مسیر', href: '/which-path' },
     { label: 'سازمان‌های تأییدشده را بشناسید', href: '/canada-startup-visa/designated-organizations' },

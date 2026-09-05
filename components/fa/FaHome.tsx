@@ -13,6 +13,8 @@ import JsonLd from '@/components/JsonLd';
 import { faqJsonLd } from '@/lib/fa/content';
 import { faDate, isoDate } from '@/lib/fa/format';
 import { home } from '@/content/fa/home';
+import VideoRail from './VideoRail';
+import { videosById } from '@/content/fa/videos';
 
 type Article = {
   id: string;
@@ -262,6 +264,13 @@ export default function FaHome({ articles }: { articles: Article[] }) {
           </div>
         </section>
       )}
+
+      {/* 7b. VIDEOS */}
+      <VideoRail
+        heading="از یوتیوب فرجاد"
+        intro="آخرین وبینار درباره‌ی کشورهای دارای ویزای استارتاپ، مسیر شش‌ماهه‌ی نیوبرانزویک، و اینکه چطور یک استارتاپ برای مهاجرت می‌سازیم."
+        videos={videosById(['cXAWOW-Wdco', 'Fl1Q7gUU06A', 'qODv_KLFGbk'])}
+      />
 
       {/* 8. CHANNELS */}
       <section className="py-24 border-t border-[#1a1a1a]/10">

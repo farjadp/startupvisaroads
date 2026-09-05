@@ -139,6 +139,7 @@ export const page: FaPage = {
     },
   ],
 
+  videos: ['oJ-00ZIYLEY'],
   closing: [
     { label: 'ارزیابی رایگان مسیر', href: '/which-path' },
     { label: 'راهنمای کامل ویزای استارتاپ', href: '/canada-startup-visa' },

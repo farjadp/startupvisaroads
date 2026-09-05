@@ -204,6 +204,7 @@ export const page: FaPage = {
     },
   ],
 
+  videos: ['oJ-00ZIYLEY', 'cXAWOW-Wdco'],
   closing: [
     { label: 'کدام مسیر امروز باز است؟ ارزیابی رایگان', href: '/which-path' },
     { label: 'ویزای استارتاپ فنلاند', href: '/europe/finland' },
