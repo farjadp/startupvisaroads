@@ -15,6 +15,8 @@ export const page: FaPage = {
   keywords: ['ویزای استارتاپ دانمارک', 'Start-up Denmark', 'مهاجرت به دانمارک با استارتاپ', 'اقامت دانمارک کارآفرینی', 'ویزای کارآفرینی دانمارک'],
   updated: '2026-09-06',
 
+  image: 'denmark',
+  roads: ['copenhagen'],
   hero: {
     eyebrow: 'دانمارک · Start-up Denmark',
     headline: 'دانمارک: یک پنل کارشناس، شش هفته، و یک بنیان‌گذار هم کافی است',

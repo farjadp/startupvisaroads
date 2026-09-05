@@ -15,6 +15,8 @@ export const page: FaPage = {
   keywords: ['برنامه استانی کانادا', 'PNP کانادا', 'نامینیشن استانی', 'مهاجرت کارآفرینی استانی کانادا', 'PNP یا استارتاپ ویزا'],
   updated: '2026-09-06',
 
+  image: 'pnp',
+  roads: ['fredericton', 'halifax', 'toronto'],
   hero: {
     eyebrow: 'کانادا · Provincial Nominee Program',
     headline: 'برنامه‌های استانی: وقتی استان شما را انتخاب می‌کند',

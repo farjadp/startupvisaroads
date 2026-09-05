@@ -20,7 +20,7 @@ function toLatLng([x, y, z]: [number, number, number]) {
 export default function RoadsFallback({ destinations, className }: { destinations: Destination[]; className?: string }) {
   const center = centroidLatLng([TEHRAN, ...destinations]);
   const S = 200;
-  const px = (v: number) => S / 2 + v * (S / 2 - 6);
+  const px = (v: number) => Number((S / 2 + v * (S / 2 - 6)).toFixed(2));
   const t = project(TEHRAN, center);
 
   return (

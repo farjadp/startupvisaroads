@@ -15,6 +15,8 @@ export const page: FaPage = {
   keywords: ['نیوبرانزویک کارآفرینی', 'NBBIS', 'New Brunswick Business Immigration Stream', 'مهاجرت کارآفرینی نیوبرانزویک', 'PNP نیوبرانزویک', 'اقامت کانادا با سرمایه گذاری'],
   updated: '2026-09-06',
 
+  image: 'new-brunswick',
+  roads: ['fredericton'],
   hero: {
     eyebrow: 'کانادا · نیوبرانزویک · NBBIS',
     headline: 'نیوبرانزویک: راه سریع کانادا برای کارآفرینی که سرمایه دارد',

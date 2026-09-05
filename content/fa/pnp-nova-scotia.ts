@@ -14,6 +14,8 @@ export const page: FaPage = {
   keywords: ['نوااسکوشیا کارآفرینی', 'NSNP Entrepreneur', 'مهاجرت کارآفرینی نوااسکوشیا', 'PNP نوااسکوشیا', 'هلیفکس مهاجرت کارآفرینی'],
   updated: '2026-09-06',
 
+  image: 'nova-scotia',
+  roads: ['halifax'],
   hero: {
     eyebrow: 'کانادا · نوااسکوشیا · NSNP Entrepreneur',
     headline: 'نوااسکوشیا: اول کسب‌وکار را بساز، بعد استان نامزدت می‌کند',

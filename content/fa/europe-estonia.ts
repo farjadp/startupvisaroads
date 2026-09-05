@@ -14,6 +14,8 @@ export const page: FaPage = {
   keywords: ['ویزای استارتاپ استونی', 'Estonia startup visa', 'مهاجرت به استونی با استارتاپ', 'اقامت استونی', 'e-Residency استونی'],
   updated: '2026-09-06',
 
+  image: 'estonia',
+  roads: ['tallinn'],
   hero: {
     eyebrow: 'استونی · Startup Visa',
     headline: 'استونی: ده روز کاری تا تصمیم، ۸۰۰ یورو در ماه، و یک MVP',

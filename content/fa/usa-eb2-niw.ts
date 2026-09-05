@@ -17,6 +17,8 @@ export const page: FaPage = {
   keywords: ['EB-2 NIW', 'ویزای استعداد برتر آمریکا', 'گرین کارت بدون کارفرما', 'NIW ایرانی', 'EB2 NIW برای ایرانیان', 'مهاجرت متخصصان به آمریکا'],
   updated: '2026-09-05',
 
+  image: 'usa-eb2-niw',
+  roads: ['washington'],
   hero: {
     eyebrow: 'آمریکا · EB-2 National Interest Waiver',
     headline: 'EB-2 NIW: گرین‌کارت برای کسانی که کارشان به آمریکا سود می‌رساند',

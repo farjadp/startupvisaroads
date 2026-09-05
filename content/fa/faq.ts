@@ -95,6 +95,8 @@ export const page: FaPage = {
   keywords: ['سوالات متداول ویزای استارتاپ', 'آیا ویزای استارتاپ کانادا معتبر است', 'ویزای استارتاپ کانادا چقدر طول می‌کشد', 'هزینه ویزای استارتاپ', 'EB-2 NIW ایرانی'],
   updated: '2026-09-06',
 
+  image: 'which-path',
+  roads: ['helsinki', 'copenhagen', 'tallinn', 'fredericton', 'halifax'],
   hero: {
     eyebrow: `${groups.reduce((n, g) => n + g.faqs.length, 0)} پرسش · پاسخ کوتاه و مستقیم`.replace(/[0-9]/g, (d) => '۰۱۲۳۴۵۶۷۸۹'[+d]),
     headline: 'سؤالات متداول مهاجرت استارتاپی',

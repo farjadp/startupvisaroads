@@ -59,6 +59,10 @@ export type FaPage = {
   closing: FaCta[];
   /** YouTube ids from content/fa/videos.ts to show as a rail after the FAQ. */
   videos?: string[];
+  /** Key of public/fa/img/<key>.webp used in the hero and the mid-page band. */
+  image?: string;
+  /** Destination keys (lib/fa/geo DESTINATIONS) the roads globe draws to. */
+  roads?: string[];
 };
 
 /** Breadcrumb structured data for a Persian page under the site root. */

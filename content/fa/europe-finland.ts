@@ -16,6 +16,8 @@ export const page: FaPage = {
   keywords: ['ویزای استارتاپ فنلاند', 'مجوز استارتاپ فنلاند', 'Finland startup permit', 'مهاجرت به فنلاند با استارتاپ', 'Business Finland eligibility statement'],
   updated: '2026-09-06',
 
+  image: 'finland',
+  roads: ['helsinki'],
   hero: {
     eyebrow: 'فنلاند · Startup Permit',
     headline: 'فنلاند: همان منطق ویزای استارتاپ کانادا، با درِ باز',

@@ -16,6 +16,8 @@ export const page: FaPage = {
   keywords: ['درباره استارتاپ ویزا رودز', 'تیم مشاوره مهاجرت استارتاپی', 'Startup Visa Roads چیست', 'تشخیص مؤسسه مهاجرتی معتبر'],
   updated: '2026-09-05',
 
+  image: 'about',
+  roads: ['toronto'],
   hero: {
     eyebrow: 'Startup Visa Roads · محصولی از Ashavid · تورنتو',
     headline: 'ساخته شده توسط کسانی که آن سوی میز نشسته‌اند',

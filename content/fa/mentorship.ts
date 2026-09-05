@@ -16,6 +16,8 @@ export const page: FaPage = {
   keywords: ['منتورشیپ مهاجرت', 'دوره آماده‌سازی استارتاپ ویزا', 'مشاوره بیزینس پلن مهاجرت', 'منتور استارتاپ ایرانی', 'آماده‌سازی مصاحبه انکوباتور'],
   updated: '2026-09-05',
 
+  image: 'mentorship',
+  roads: ['helsinki', 'copenhagen', 'tallinn', 'fredericton', 'halifax'],
   hero: {
     eyebrow: 'برنامه‌ی ۸ هفته‌ای · گروه کوچک',
     headline: 'ما وکیل مهاجرتی نیستیم — شما را برای پذیرش آماده می‌کنیم.',

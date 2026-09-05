@@ -217,3 +217,18 @@
   box-shadow: 4px 4px 0px 0px #1a1a1a;
   margin: 3rem 0;
 }
+
+/* ---- Persian surfaces: the parts the browser draws still carry the design ---- */
+html[dir="rtl"] {
+  scrollbar-color: #1a1a1a #F2F0E9;
+  accent-color: #CCFF00;
+  caret-color: #1a1a1a;
+}
+html[dir="rtl"] ::selection { background: #CCFF00; color: #1a1a1a; }
+html[dir="rtl"] :focus-visible { outline: 2px solid #CCFF00; outline-offset: 3px; box-shadow: 0 0 0 2px #1a1a1a; }
+html[dir="rtl"] a { text-underline-offset: 0.2em; text-decoration-thickness: 1px; }
+html[dir="rtl"] details > summary { list-style: none; }
+html[dir="rtl"] details > summary::-webkit-details-marker { display: none; }
+@media (prefers-reduced-motion: reduce) {
+  html[dir="rtl"] .animate-marquee { animation: none; }
+}

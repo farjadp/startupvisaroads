@@ -20,6 +20,8 @@ export const page: FaPage = {
   updated: SUV_STATUS.updated,
   status: suvSubpageStatus,
 
+  image: 'canada-startup-visa',
+  roads: ['toronto'],
   hero: {
     eyebrow: 'کانادا · SUV · سازمان تأییدشده',
     headline: 'سازمان تأییدشده: دروازه‌بانی که همه‌چیز را تعیین می‌کند',

@@ -21,6 +21,8 @@ export const page: FaPage = {
   updated: SUV_STATUS.updated,
   status: suvPillarStatus,
 
+  image: 'canada-startup-visa',
+  roads: ['toronto'],
   hero: {
     eyebrow: 'کانادا · Start-up Visa (SUV)',
     headline: 'ویزای استارتاپ کانادا: چه چیزی بسته شد، چه چیزی می‌آید، و امروز کجا باید رفت',
