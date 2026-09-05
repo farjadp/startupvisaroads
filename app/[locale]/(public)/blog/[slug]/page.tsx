@@ -23,6 +23,7 @@ import {
 } from 'lucide-react';
 import { ScrollProgressBar, ShareButtons } from '@/components/blog/BlogClientHelper';
 import { faDate, isoDate } from '@/lib/fa/format';
+import { faCategoryLabel } from '@/lib/fa/categories';
 
 // Helper function to map blog content to website services/programs
 function getRecommendedService(title: string, categoryName: string, locale: string) {
@@ -410,7 +411,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ local
             <>
               <span className="text-[10px] text-[#1a1a1a]/30">&rarr;</span>
               <Link href={`/blog?category=${article.category.slug}`} className="hover:text-[#1a1a1a] font-bold transition-colors">
-                {article.category.name}
+                {isRtl ? faCategoryLabel(article.category.slug, article.category.name) : article.category.name}
               </Link>
             </>
           )}
@@ -430,7 +431,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ local
         {article.category && (
           <Link href={`/blog?category=${article.category.slug}`} className="inline-block mb-6">
             <span className="text-xs font-bold uppercase tracking-widest text-[#CCFF00] bg-[#1a1a1a] px-4 py-1.5 rounded-full hover:bg-neutral-800 transition-colors shadow-[2px_2px_0px_0px_#1a1a1a]">
-              {article.category.name}
+              {isRtl ? faCategoryLabel(article.category.slug, article.category.name) : article.category.name}
             </span>
           </Link>
         )}
