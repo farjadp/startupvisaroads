@@ -40,10 +40,11 @@ const EN_LINKS = {
 
 const FA_LINKS = {
   access: [
-    { href: '/canada-startup-visa', label: 'ویزای استارتاپ کانادا' },
-    { href: '/canada-startup-visa/requirements', label: 'شرایط و مدارک' },
-    { href: '/canada-startup-visa/cost', label: 'هزینه‌ها' },
-    { href: '/pnp', label: 'برنامه‌های استانی (PNP)' },
+    { href: '/europe/finland', label: 'فنلاند' },
+    { href: '/europe/denmark', label: 'دانمارک' },
+    { href: '/europe/estonia', label: 'استونی' },
+    { href: '/pnp/new-brunswick', label: 'نیوبرانزویک' },
+    { href: '/pnp/nova-scotia', label: 'نوااسکوشیا' },
     { href: '/usa-eb2-niw', label: 'EB-2 NIW آمریکا' },
   ],
   strategy: [

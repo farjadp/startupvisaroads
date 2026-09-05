@@ -7,6 +7,12 @@ describe('FA_PATHS', () => {
     expect(FA_PATHS).toContain('/canada-startup-visa');
   });
 
+  it('includes the Phase 3 destinations', () => {
+    for (const p of ['/europe/finland', '/europe/denmark', '/europe/estonia', '/pnp/new-brunswick', '/pnp/nova-scotia']) {
+      expect(FA_PATHS).toContain(p);
+    }
+  });
+
   it('excludes retired mirror paths', () => {
     expect(FA_PATHS).not.toContain('/pnp/ontario');
     expect(FA_PATHS).not.toContain('/country/denmark');
@@ -42,6 +48,11 @@ describe('FA_PAIRED', () => {
     expect(FA_PAIRED['']).toBe('');
     expect(FA_PAIRED['/mentorship']).toBe('/mentorship');
     expect(FA_PAIRED['/blog']).toBe('/blog');
+  });
+
+  it('pairs Denmark with the English country page, and leaves Estonia unpaired', () => {
+    expect(FA_PAIRED['/europe/denmark']).toBe('/country/denmark');
+    expect(FA_PAIRED['/europe/estonia']).toBeNull();
   });
 
   it('leaves Persian-only pages unpaired', () => {

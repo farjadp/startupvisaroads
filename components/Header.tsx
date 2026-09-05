@@ -86,12 +86,16 @@ export default function Header() {
       label: 'مسیرها',
       key: 'jurisdictions',
       subLinks: [
+        { header: 'اروپا' },
+        { href: '/europe/finland', label: 'فنلاند' },
+        { href: '/europe/denmark', label: 'دانمارک' },
+        { href: '/europe/estonia', label: 'استونی' },
+
         { header: 'کانادا' },
-        { href: '/canada-startup-visa', label: 'ویزای استارتاپ (SUV)' },
-        { href: '/canada-startup-visa/requirements', label: 'شرایط و مدارک' },
-        { href: '/canada-startup-visa/cost', label: 'هزینه‌ها' },
-        { href: '/canada-startup-visa/designated-organizations', label: 'سازمان‌های تأییدشده' },
-        { href: '/pnp', label: 'برنامه‌های استانی (PNP)' },
+        { href: '/pnp/new-brunswick', label: 'نیوبرانزویک (کارآفرینی)' },
+        { href: '/pnp/nova-scotia', label: 'نوااسکوشیا (کارآفرینی)' },
+        { href: '/pnp', label: 'همه‌ی برنامه‌های استانی' },
+        { href: '/canada-startup-visa', label: 'ویزای استارتاپ — وضعیت فعلی' },
 
         { header: 'آمریکا' },
         { href: '/usa-eb2-niw', label: 'EB-2 NIW' },
