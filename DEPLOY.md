@@ -120,19 +120,54 @@ otherwise canonical/sitemap/OG URLs will point at the wrong host.
 
 ---
 
-## 5. AI auto-pilot cron — Cloud Scheduler
+## 5. Content autopilot — Cloud Scheduler
 
-Generates one queued article per run via `/api/cron/generate`:
+Two writers, both behind `Authorization: Bearer $CRON_SECRET`:
+
+| Route | What it does |
+|---|---|
+| `/api/cron/autopilot?n=&locale=&publish=1` | Plans briefs from the site's own pages and the immigration calendar, writes, publishes. Always delivers `n`. |
+| `/api/cron/autopilot-source?n=&locale=&publish=1` | Harvests IRCC / CIC News / Moving2Canada, reads each item into a fact sheet, writes an original, runs the originality gate. Refuses roughly half of what it reads, so it may deliver fewer than `n`. |
+
+Add `&dry=1` to either for a run that spends nothing on images and saves nothing.
+The query string **is** the schedule — there are no `AUTOPILOT_*_PER_DAY` env vars
+to change; edit the job URI.
+
+**Two traps.** (1) Call the `run.app` URL, never the Cloudflare-proxied domain:
+a run takes minutes and Cloudflare cuts at 100 s (524). (2) The Cloud Run
+request timeout must cover a run; raise it once:
+
+```bash
+gcloud run services update $SERVICE --region $REGION --timeout=900
+```
+
+Schedule (UTC; 5 articles a day — 3 EN + 2 FA — as decided 5 Sep 2026):
 
 ```bash
 export RUN_URL=$(gcloud run services describe $SERVICE --region $REGION --format='value(status.url)')
-gcloud scheduler jobs create http svr-ai-writer \
-  --location $REGION \
-  --schedule "0 */6 * * *" \
-  --uri "$RUN_URL/api/cron/generate" \
-  --http-method GET \
-  --headers "Authorization=Bearer YOUR_CRON_SECRET"
+export AUTH="Authorization=Bearer YOUR_CRON_SECRET"
+
+gcloud scheduler jobs create http svr-autopilot-en        --location $REGION --schedule "0 6 * * *"  --uri "$RUN_URL/api/cron/autopilot?n=1&locale=en&publish=1"        --http-method GET --headers "$AUTH" --attempt-deadline 900s
+gcloud scheduler jobs create http svr-autopilot-fa        --location $REGION --schedule "0 7 * * *"  --uri "$RUN_URL/api/cron/autopilot?n=1&locale=fa&publish=1"        --http-method GET --headers "$AUTH" --attempt-deadline 900s
+gcloud scheduler jobs create http svr-autopilot-source-1  --location $REGION --schedule "0 11 * * *" --uri "$RUN_URL/api/cron/autopilot-source?n=1&locale=en&publish=1" --http-method GET --headers "$AUTH" --attempt-deadline 900s
+gcloud scheduler jobs create http svr-autopilot-source-2  --location $REGION --schedule "0 14 * * *" --uri "$RUN_URL/api/cron/autopilot-source?n=1&locale=en&publish=1" --http-method GET --headers "$AUTH" --attempt-deadline 900s
+gcloud scheduler jobs create http svr-autopilot-source-fa --location $REGION --schedule "0 16 * * *" --uri "$RUN_URL/api/cron/autopilot-source?n=1&locale=fa&publish=1" --http-method GET --headers "$AUTH" --attempt-deadline 900s
 ```
+
+One article per job rather than one job with `n=5`: each article is three
+model passes plus three images (two to four minutes), the source writer runs
+sequentially, and a job that overruns leaves nothing behind but a half-finished
+ledger row. Five small jobs also spread the day's publishing out, which is
+better for crawl freshness than one burst.
+
+Retire the old keyword-queue job when these are live:
+
+```bash
+gcloud scheduler jobs delete svr-ai-writer --location $REGION
+```
+
+Every run leaves a row in `AutopilotRun`; the admin console at
+`/en/admin/autopilot` shows the log, the reader's refusals, and a manual trigger.
 
 ---
 
