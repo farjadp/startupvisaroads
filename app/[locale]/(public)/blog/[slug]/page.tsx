@@ -22,6 +22,7 @@ import {
   ArrowRight
 } from 'lucide-react';
 import { ScrollProgressBar, ShareButtons } from '@/components/blog/BlogClientHelper';
+import { faDate, isoDate } from '@/lib/fa/format';
 
 // Helper function to map blog content to website services/programs
 function getRecommendedService(title: string, categoryName: string, locale: string) {
@@ -437,7 +438,12 @@ export default async function BlogPostPage({ params }: { params: Promise<{ local
           {article.title}
         </h1>
         <p className="font-sans text-[#1a1a1a]/50 text-sm">
-          {t.publishedOn}: {new Date(article.createdAt).toLocaleDateString(isRtl ? 'fa-IR' : 'en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+          {t.publishedOn}:{' '}
+          <time dateTime={isoDate(article.createdAt)}>
+            {isRtl
+              ? faDate(article.createdAt)
+              : new Date(article.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' })}
+          </time>
         </p>
       </div>
 
