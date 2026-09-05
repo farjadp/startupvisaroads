@@ -17,6 +17,14 @@ export const page: FaPage = {
 
   image: 'pnp',
   roads: ['fredericton', 'halifax', 'toronto'],
+  entity: { name: 'Provincial Nominee Program (PNP)', provider: 'Provinces of Canada', country: 'Canada' },
+  facts: [
+    { label: 'تعداد برنامه‌ها', value: 'بیش از ۱۰ استان', note: 'کبک سیستم جداگانه دارد' },
+    { label: 'امتیاز اکسپرس انتری', value: '۶۰۰ امتیاز', note: 'با نامزدی استان' },
+    { label: 'مسیرهای کارآفرینی آتلانتیک', value: 'سرمایه‌گذاری از ۱۵۰٬۰۰۰ دلار کانادا' },
+    { label: 'دارایی خالص لازم', value: '۴۰۰٬۰۰۰ تا ۶۰۰٬۰۰۰ دلار کانادا', note: 'بسته به استان و منطقه' },
+    { label: 'ترتیب مراحل', value: 'مجوز کار، سپس نامزدی، سپس اقامت دائم' },
+  ],
   hero: {
     eyebrow: 'کانادا · Provincial Nominee Program',
     headline: 'برنامه‌های استانی: وقتی استان شما را انتخاب می‌کند',

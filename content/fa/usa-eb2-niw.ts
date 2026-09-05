@@ -19,6 +19,15 @@ export const page: FaPage = {
 
   image: 'usa-eb2-niw',
   roads: ['washington'],
+  entity: { name: 'EB-2 National Interest Waiver', provider: 'USCIS', country: 'United States' },
+  facts: [
+    { label: 'کارفرما لازم است؟', value: 'خیر', note: 'متقاضی خودش درخواست می‌دهد' },
+    { label: 'حداقل تحصیلات', value: 'کارشناسی ارشد', note: 'یا کارشناسی + ۵ سال سابقه‌ی پیش‌رونده' },
+    { label: 'معیار ارزیابی', value: 'سه معیار Matter of Dhanasar' },
+    { label: 'پردازش سریع', value: 'حدود ۴۵ روز', note: 'با premium processing، هزینه‌ی جداگانه' },
+    { label: 'مانع اصلی برای ایرانیان', value: 'محدودیت ورود از ۲۰۲۵', note: 'در مرحله‌ی صدور ویزا، نه تأیید پرونده' },
+    { label: 'زمان کل', value: '۲ تا ۴ سال' },
+  ],
   hero: {
     eyebrow: 'آمریکا · EB-2 National Interest Waiver',
     headline: 'EB-2 NIW: گرین‌کارت برای کسانی که کارشان به آمریکا سود می‌رساند',

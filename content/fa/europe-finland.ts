@@ -18,6 +18,15 @@ export const page: FaPage = {
 
   image: 'finland',
   roads: ['helsinki'],
+  entity: { name: 'مجوز اقامت کارآفرین استارتاپی فنلاند (Startup Permit)', provider: 'Business Finland', country: 'Finland' },
+  facts: [
+    { label: 'حداقل بنیان‌گذاران', value: '۲ نفر', note: 'هر دو باید قصد انتقال به فنلاند داشته باشند' },
+    { label: 'سرمایه‌گذاری الزامی', value: 'ندارد' },
+    { label: 'تمکن مالی', value: '۱٬۰۳۰ تا ۱٬۲۱۰ یورو در ماه', note: 'بسته به شهر، برای دست‌کم یک سال، هر بنیان‌گذار' },
+    { label: 'نهاد ارزیاب', value: 'Business Finland', note: 'گواهی واجد شرایط بودن، رایگان، اعتبار ۴ ماه' },
+    { label: 'مدت مجوز', value: 'تا ۲ سال', note: 'قابل تمدید' },
+    { label: 'زمان تا ورود', value: '۳ تا ۶ ماه' },
+  ],
   hero: {
     eyebrow: 'فنلاند · Startup Permit',
     headline: 'فنلاند: همان منطق ویزای استارتاپ کانادا، با درِ باز',

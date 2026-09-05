@@ -15,11 +15,12 @@ import Image from 'next/image';
 import { Link } from '@/navigation';
 import JsonLd from '@/components/JsonLd';
 import { SITE_URL } from '@/lib/seo';
-import { faqJsonLd, breadcrumbJsonLd, type FaPage, type FaCta, type FaSection } from '@/lib/fa/content';
+import { faqJsonLd, breadcrumbJsonLd, faWebPageJsonLd, type FaPage, type FaCta, type FaSection } from '@/lib/fa/content';
 import { faDate, isoDate } from '@/lib/fa/format';
 import { TELEGRAM_URL, CONTACT } from '@/content/fa/home';
 import { videosById } from '@/content/fa/videos';
 import StatusBanner from './StatusBanner';
+import FactsPanel from './FactsPanel';
 import VideoRail from './VideoRail';
 import RoadsScene from './three/RoadsScene';
 import Reveal from './motion/Reveal';
@@ -108,7 +109,7 @@ export default function FaPageLayout({ page, trail }: { page: FaPage; trail: { n
   return (
     <article className="w-full bg-[#F2F0E9] font-vazir">
       <ScrollProgress />
-      <JsonLd data={[faqJsonLd(page.faqs), breadcrumbJsonLd(SITE_URL, [{ name: 'خانه', path: '' }, ...trail])]} />
+      <JsonLd data={[faWebPageJsonLd(page), faqJsonLd(page.faqs), breadcrumbJsonLd(SITE_URL, [{ name: 'خانه', path: '' }, ...trail])]} />
 
       {/* HERO — the authored moment */}
       <header className="border-b border-[#1a1a1a]">
@@ -151,6 +152,12 @@ export default function FaPageLayout({ page, trail }: { page: FaPage; trail: { n
 
       <div className="px-4 md:px-8 max-w-[1400px] mx-auto border-x border-[#1a1a1a]/10">
         {page.status && <StatusBanner status={page.status} />}
+        {page.facts && (
+          <FactsPanel
+            facts={page.facts}
+            caption={`ارقام به تاریخ بازبینی این صفحه است و مرجع رسمی هر برنامه ممکن است آن‌ها را تغییر دهد.`}
+          />
+        )}
 
         {/* BODY */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 py-16 md:py-24">

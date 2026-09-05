@@ -23,11 +23,12 @@ import { buildMetadata } from '@/lib/seo';
 import { setRequestLocale } from 'next-intl/server';
 import FaPageLayout from '@/components/fa/FaPageLayout';
 import { page as faPage } from '@/content/fa/pnp';
+import { faMeta } from '@/lib/fa/content';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
   if (locale === 'fa') {
-    return buildMetadata({ locale, path: faPage.path, title: faPage.title, description: faPage.description, modifiedTime: faPage.updated });
+    return buildMetadata(faMeta(faPage, locale));
   }
   return metaFor('/pnp', locale);
 }

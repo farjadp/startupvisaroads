@@ -7,6 +7,7 @@
 import type { Metadata } from 'next';
 import { setRequestLocale } from 'next-intl/server';
 import { buildMetadata } from '@/lib/seo';
+import { faImageUrl } from '@/lib/fa/content';
 import ContactEn from './ContactEn';
 import FaContact from '@/components/fa/FaContact';
 import { contact } from '@/content/fa/contact';
@@ -16,7 +17,7 @@ type Props = { params: Promise<{ locale: string }> };
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
   if (locale !== 'fa') return {};
-  return buildMetadata({ locale, path: contact.meta.path, title: contact.meta.title, description: contact.meta.description });
+  return buildMetadata({ locale, path: contact.meta.path, title: contact.meta.title, description: contact.meta.description, image: faImageUrl('contact') });
 }
 
 export default async function ContactPage({ params }: Props) {

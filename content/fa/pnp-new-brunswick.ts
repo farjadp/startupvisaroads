@@ -17,6 +17,17 @@ export const page: FaPage = {
 
   image: 'new-brunswick',
   roads: ['fredericton'],
+  entity: { name: 'New Brunswick Business Immigration Stream (NBBIS)', provider: 'Government of New Brunswick', country: 'Canada' },
+  facts: [
+    { label: 'حداقل دارایی خالص', value: '۵۰۰٬۰۰۰ دلار کانادا', note: '۳۰۰٬۰۰۰ برای کشاورزی' },
+    { label: 'حداقل سرمایه‌گذاری', value: '۱۵۰٬۰۰۰ دلار کانادا' },
+    { label: 'اشتغال‌زایی', value: 'دست‌کم ۱ شغل تمام‌وقت' },
+    { label: 'سن', value: '۲۲ تا ۵۵ سال' },
+    { label: 'زبان', value: 'حداقل CLB 5', note: 'انگلیسی یا فرانسه، هر چهار مهارت' },
+    { label: 'سابقه', value: '۳ سال مالکیت یا ۵ سال مدیریت ارشد' },
+    { label: 'امتیاز لازم', value: 'دست‌کم ۶۵ از ۱۰۰', note: 'سیستم EOI و دعوت‌نامه' },
+    { label: 'زمان تا اقامت دائم', value: '۲ تا ۳ سال', note: 'مجوز کار در بازه‌ی چند ماه' },
+  ],
   hero: {
     eyebrow: 'کانادا · نیوبرانزویک · NBBIS',
     headline: 'نیوبرانزویک: راه سریع کانادا برای کارآفرینی که سرمایه دارد',

@@ -6,6 +6,7 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { setRequestLocale } from 'next-intl/server';
 import { buildMetadata } from '@/lib/seo';
+import { faImageUrl } from '@/lib/fa/content';
 import PathQuiz from '@/components/fa/PathQuiz';
 import { meta } from '@/content/fa/which-path';
 
@@ -14,7 +15,7 @@ type Props = { params: Promise<{ locale: string }> };
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
   if (locale !== 'fa') return {};
-  return buildMetadata({ locale, path: meta.path, title: meta.title, description: meta.description });
+  return buildMetadata({ locale, path: meta.path, title: meta.title, description: meta.description, image: faImageUrl('which-path') });
 }
 
 export default async function WhichPathFa({ params }: Props) {

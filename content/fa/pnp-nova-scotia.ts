@@ -16,6 +16,16 @@ export const page: FaPage = {
 
   image: 'nova-scotia',
   roads: ['halifax'],
+  entity: { name: 'Nova Scotia Nominee Program — Entrepreneur stream', provider: 'Government of Nova Scotia', country: 'Canada' },
+  facts: [
+    { label: 'حداقل دارایی خالص', value: '۶۰۰٬۰۰۰ دلار کانادا', note: '۴۰۰٬۰۰۰ خارج از منطقه‌ی شهری هلیفکس' },
+    { label: 'حداقل سرمایه‌گذاری', value: '۱۵۰٬۰۰۰ دلار کانادا' },
+    { label: 'حداقل مالکیت', value: '۳۳٫۳ درصد' },
+    { label: 'زبان', value: 'حداقل CLB 5' },
+    { label: 'سابقه', value: '۳ سال مالکیت یا ۵ سال مدیریت ارشد' },
+    { label: 'دوره‌ی اجرا', value: '۱۲ ماه اداره‌ی فعال', note: 'با مجوز کار، پیش از نامزدی' },
+    { label: 'زمان تا اقامت دائم', value: '۲ تا ۳٫۵ سال' },
+  ],
   hero: {
     eyebrow: 'کانادا · نوااسکوشیا · NSNP Entrepreneur',
     headline: 'نوااسکوشیا: اول کسب‌وکار را بساز، بعد استان نامزدت می‌کند',

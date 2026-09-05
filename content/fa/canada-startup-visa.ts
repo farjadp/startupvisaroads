@@ -23,6 +23,16 @@ export const page: FaPage = {
 
   image: 'canada-startup-visa',
   roads: ['toronto'],
+  entity: { name: 'Canada Start-up Visa (SUV)', provider: 'IRCC', country: 'Canada' },
+  facts: [
+    { label: 'وضعیت فعلی', value: 'بسته به پرونده‌های جدید' },
+    { label: 'پایان پذیرش اقامت دائم', value: '۳۱ دسامبر ۲۰۲۵' },
+    { label: 'پایان مجوز کار', value: '۱۹ دسامبر ۲۰۲۵' },
+    { label: 'مهلت دارندگان گواهی ۲۰۲۵', value: '۳۰ ژوئن ۲۰۲۶', note: 'گذشته است' },
+    { label: 'برنامه‌ی جایگزین', value: 'پایلوت پرتأثیر ۲۰۲۶', note: 'تاریخ باز شدن اعلام نشده' },
+    { label: 'سقف پایلوت', value: 'حدود ۲٬۰۰۰ متقاضی اصلی در سال' },
+    { label: 'هدف زمان پردازش پایلوت', value: 'حدود ۱۲ ماه' },
+  ],
   hero: {
     eyebrow: 'کانادا · Start-up Visa (SUV)',
     headline: 'ویزای استارتاپ کانادا: چه چیزی بسته شد، چه چیزی می‌آید، و امروز کجا باید رفت',

@@ -16,6 +16,15 @@ export const page: FaPage = {
 
   image: 'estonia',
   roads: ['tallinn'],
+  entity: { name: 'ویزای استارتاپ استونی', provider: 'Estonian Startup Committee', country: 'Estonia' },
+  facts: [
+    { label: 'حداقل بنیان‌گذاران', value: '۱ نفر' },
+    { label: 'پیش‌نیاز محصول', value: 'MVP الزامی است' },
+    { label: 'تمکن مالی', value: '۸۰۰ یورو در ماه' },
+    { label: 'نهاد ارزیاب', value: 'Startup Committee', note: 'تصمیم معمولاً ظرف ۱۰ روز کاری' },
+    { label: 'هزینه‌ی دولتی', value: 'ویزای D ‏۱۲۰ یورو · مجوز اقامت ۳۵۰ تا ۳۸۰ یورو' },
+    { label: 'مدت مجوز', value: 'ویزای D تا ۱ سال · مجوز اقامت ۲+۳ سال' },
+  ],
   hero: {
     eyebrow: 'استونی · Startup Visa',
     headline: 'استونی: ده روز کاری تا تصمیم، ۸۰۰ یورو در ماه، و یک MVP',

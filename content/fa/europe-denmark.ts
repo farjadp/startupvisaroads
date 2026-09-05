@@ -17,6 +17,15 @@ export const page: FaPage = {
 
   image: 'denmark',
   roads: ['copenhagen'],
+  entity: { name: 'Start-up Denmark', provider: 'Danish Business Authority expert panel', country: 'Denmark' },
+  facts: [
+    { label: 'حداقل بنیان‌گذاران', value: '۱ نفر', note: 'تیم تا ۳ نفر با یک بیزینس‌پلن مشترک' },
+    { label: 'سرمایه‌گذاری الزامی', value: 'ندارد' },
+    { label: 'تمکن مالی سال اول', value: 'حدود ۱۵۳٬۷۰۰ کرون دانمارک', note: 'برای یک نفر؛ بیشتر با خانواده' },
+    { label: 'نهاد ارزیاب', value: 'پنل کارشناسان Start-up Denmark', note: 'ارزیابی تا حدود ۶ هفته' },
+    { label: 'مدت مجوز', value: 'تا ۲ سال', note: 'تمدید تا ۳ سال در هر نوبت' },
+    { label: 'زمان تا ورود', value: '۳ تا ۵ ماه' },
+  ],
   hero: {
     eyebrow: 'دانمارک · Start-up Denmark',
     headline: 'دانمارک: یک پنل کارشناس، شش هفته، و یک بنیان‌گذار هم کافی است',

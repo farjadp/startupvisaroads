@@ -15,6 +15,7 @@ import { buildMetadata } from '@/lib/seo';
 import prisma from '@/lib/prisma';
 import FaHome from '@/components/fa/FaHome';
 import { home as faHome } from '@/content/fa/home';
+import { faImageUrl } from '@/lib/fa/content';
 
 // The journal strip below reads the database. Without this the page is
 // prerendered once at build time — where Prisma cannot reach the DB — and the
@@ -29,6 +30,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     locale,
     path: '/',
     title: isRtl ? faHome.meta.title : 'Startup Visa & Global Mobility Mentorship',
+    image: isRtl ? faImageUrl('home') : undefined,
     description: isRtl
       ? faHome.meta.description
       : 'Your curated path to global residency: Canada Startup Visa, Provincial Nominee Programs, US EB-1/EB-2 NIW/EB-5, and European & Australian entrepreneur pathways.',

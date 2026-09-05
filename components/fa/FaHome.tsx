@@ -15,7 +15,7 @@ import Image from 'next/image';
 import { ArrowLeft, ArrowUpLeft, Send, MessageCircle } from 'lucide-react';
 import { Link } from '@/navigation';
 import JsonLd from '@/components/JsonLd';
-import { faqJsonLd } from '@/lib/fa/content';
+import { faqJsonLd, faServiceJsonLd, faRoutesJsonLd } from '@/lib/fa/content';
 import { faDate, isoDate } from '@/lib/fa/format';
 import { home, CONTACT } from '@/content/fa/home';
 import { videosById } from '@/content/fa/videos';
@@ -40,7 +40,13 @@ export default function FaHome({ articles }: { articles: Article[] }) {
 
   return (
     <div className="w-full bg-[#F2F0E9] font-vazir">
-      <JsonLd data={[faqJsonLd(h.faqs)]} />
+      <JsonLd
+        data={[
+          faServiceJsonLd(),
+          faRoutesJsonLd(h.paths.cards.filter((c) => c.href !== '/which-path').map((c) => ({ name: c.title, path: c.href, description: c.body }))),
+          faqJsonLd(h.faqs),
+        ]}
+      />
 
       {/* 1. HERO — the authored moment */}
       <section className="border-b border-[#1a1a1a]">
@@ -53,10 +59,10 @@ export default function FaHome({ articles }: { articles: Article[] }) {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-end pt-14 pb-16 md:pb-24">
             <div className="lg:col-span-7">
               <Reveal>
-                <h1 className="font-estedad font-black text-[17vw] md:text-[11vw] lg:text-[8.5rem] leading-[0.95] text-[#1a1a1a]">
+                <h1 className="font-estedad font-black text-[13vw] md:text-[8vw] lg:text-[5.5rem] xl:text-[6.5rem] leading-[1.02] text-[#1a1a1a] [text-wrap:nowrap]">
                   {h.hero.headline_1}
                   <br />
-                  <span className="ms-[0.6em] font-bold text-[#1a1a1a]/55">{h.hero.headline_2}</span>
+                  <span className="font-bold text-[#1a1a1a]/55">{h.hero.headline_2}</span>
                 </h1>
               </Reveal>
               <Reveal delay={0.1}>
@@ -75,12 +81,19 @@ export default function FaHome({ articles }: { articles: Article[] }) {
               </Reveal>
             </div>
 
-            <div className="lg:col-span-5 relative">
-              <HeroImage src="/fa/img/home.webp" alt="" className="aspect-[4/5] md:aspect-[4/3] lg:aspect-[4/5]" />
-              <RoadsScene
-                to={['helsinki', 'copenhagen', 'tallinn', 'fredericton', 'halifax']}
-                className="absolute -bottom-12 -start-6 md:-start-14 w-52 h-52 md:w-80 md:h-80"
-              />
+            <div className="lg:col-span-5">
+              <HeroImage src="/fa/img/home.webp" alt="" className="aspect-[16/10] lg:aspect-[4/3]" />
+              <div className="mt-5 flex items-center gap-5 border border-[#1a1a1a] p-4">
+                <RoadsScene
+                  to={['helsinki', 'copenhagen', 'tallinn', 'fredericton', 'halifax']}
+                  className="relative shrink-0 w-28 h-28 md:w-36 md:h-36"
+                />
+                <p className="text-sm text-[#1a1a1a]/70 leading-[1.85]">
+                  پنج مسیر باز از تهران: هلسینکی، کپنهاگ، تالین، فردریکتون و هلیفکس.
+                  <br />
+                  <span className="text-[#1a1a1a]/50">ویزای استارتاپ کانادا فعلاً بسته است.</span>
+                </p>
+              </div>
             </div>
           </div>
         </div>
@@ -96,7 +109,27 @@ export default function FaHome({ articles }: { articles: Article[] }) {
       </div>
 
       <div className="px-4 md:px-8 max-w-[1400px] mx-auto border-x border-[#1a1a1a]/10">
-        {/* 3. PATHS — the one interactive object */}
+        {/* 3. THE SERVICE — stated plainly, before anything else */}
+        <section className="py-24 grid grid-cols-1 lg:grid-cols-12 gap-12">
+          <Reveal className="lg:col-span-5">
+            <h2 className="font-estedad font-black text-4xl md:text-5xl leading-[1.1] mb-6 [text-wrap:balance]">{h.service.heading}</h2>
+            <p className="text-lg text-[#1a1a1a]/75 leading-[1.9] max-w-[46ch]">{h.service.lead}</p>
+            <Link href={h.service.cta.href} className="group inline-flex items-center gap-3 mt-8 font-bold border-b border-[#1a1a1a] pb-1 hover:text-[#CCFF00] hover:border-[#CCFF00] transition-colors">
+              {h.service.cta.label}
+              <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+            </Link>
+          </Reveal>
+          <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-px bg-[#1a1a1a]/20 border border-[#1a1a1a]">
+            {h.service.items.map((it, i) => (
+              <Reveal key={it.title} delay={i * 0.06} className="bg-[#F2F0E9] p-7 min-h-[11rem] flex flex-col justify-between">
+                <h3 className="font-estedad font-black text-2xl leading-tight">{it.title}</h3>
+                <p className="mt-4 text-[#1a1a1a]/70 leading-[1.85]">{it.body}</p>
+              </Reveal>
+            ))}
+          </div>
+        </section>
+
+        {/* 4. PATHS — the one interactive object */}
         <section className="py-24">
           <Reveal className="flex flex-col md:flex-row justify-between items-end mb-14 gap-6">
             <h2 className="font-estedad font-black text-5xl md:text-7xl leading-[1.05] [text-wrap:balance]">
