@@ -1,13 +1,14 @@
 import type { MetadataRoute } from 'next';
 import prisma from '@/lib/prisma';
 import { SITE_URL, LOCALES } from '@/lib/seo';
+import { FA_PATHS, FA_PAIRED, type FaPath } from '@/lib/fa/paths';
 
 // Rendered per-request so the runtime SITE_URL (Cloud Run env) and freshly
 // published articles are always reflected without a rebuild.
 export const dynamic = 'force-dynamic';
 
-// Locale-agnostic static routes that exist for both en and fa.
-const STATIC_PATHS = [
+// English pages. This list is the English site and nothing else.
+const EN_PATHS = [
   '',
   '/about',
   '/services',
@@ -43,24 +44,40 @@ const STATIC_PATHS = [
   '/terms',
 ];
 
-function alternates(path: string) {
-  return {
-    languages: Object.fromEntries(LOCALES.map((l) => [l, `${SITE_URL}/${l}${path}`])),
-  };
+// en -> fa, derived from the pairing table so the two can never drift.
+const EN_TO_FA = new Map<string, string>(
+  (Object.entries(FA_PAIRED) as [FaPath, string | null][])
+    .filter((e): e is [FaPath, string] => e[1] !== null)
+    .map(([fa, en]) => [en, fa]),
+);
+
+/**
+ * hreflang alternates for one sitemap entry. /fa is not a mirror of /en, so
+ * a language is listed only when that page genuinely exists in it.
+ */
+function pairFor(locale: 'en' | 'fa', path: string) {
+  const fa = locale === 'fa' ? path : EN_TO_FA.get(path);
+  const en = locale === 'fa' ? FA_PAIRED[path as FaPath] : path;
+  const languages: Record<string, string> = {};
+  if (en != null) languages.en = `${SITE_URL}/en${en}`;
+  if (fa != null) languages.fa = `${SITE_URL}/fa${fa}`;
+  return { languages };
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const entries: MetadataRoute.Sitemap = [];
 
-  // Static marketing pages
-  for (const path of STATIC_PATHS) {
-    entries.push({
-      url: `${SITE_URL}/${LOCALES[0]}${path}`,
-      lastModified: new Date(),
-      changeFrequency: path === '' || path === '/blog' ? 'daily' : 'weekly',
-      priority: path === '' ? 1 : 0.7,
-      alternates: alternates(path),
-    });
+  // Static marketing pages, per locale. The two lists are different sites.
+  for (const [locale, paths] of [['en', EN_PATHS], ['fa', [...FA_PATHS]]] as const) {
+    for (const path of paths) {
+      entries.push({
+        url: `${SITE_URL}/${locale}${path}`,
+        lastModified: new Date(),
+        changeFrequency: path === '' || path === '/blog' ? 'daily' : 'weekly',
+        priority: path === '' ? 1 : 0.7,
+        alternates: pairFor(locale, path),
+      });
+    }
   }
 
   // Published blog articles (each in its own locale)
@@ -91,7 +108,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         lastModified: new Date(),
         changeFrequency: 'weekly',
         priority: 0.6,
-        alternates: alternates(`/blog/category/${c.slug}`),
+        alternates: pairFor('en', `/blog/category/${c.slug}`),
       });
     }
   } catch (e) {
