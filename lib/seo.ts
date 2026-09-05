@@ -5,7 +5,7 @@
 // ============================================================================
 
 import type { Metadata } from 'next';
-import { FA_PAIRED, isFaPath, type FaPath } from '@/lib/fa/paths';
+import { FA_PAIRED, EN_TO_FA, isFaPath, type FaPath } from '@/lib/fa/paths';
 
 // Resolution order:
 //  1. SITE_URL              — server runtime env (override dynamic routes on
@@ -56,13 +56,6 @@ function normalizePath(path: string): string {
   p = p.replace(/^\/(en|fa)(?=\/|$)/, '');
   return p === '/' ? '' : p;
 }
-
-/** English path -> Persian path, derived from FA_PAIRED so there is one table. */
-const EN_TO_FA = new Map<string, string>(
-  (Object.entries(FA_PAIRED) as [FaPath, string | null][])
-    .filter((e): e is [FaPath, string] => e[1] !== null)
-    .map(([fa, en]) => [en, fa]),
-);
 
 /**
  * Build canonical + hreflang alternates.

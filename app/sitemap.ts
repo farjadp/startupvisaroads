@@ -1,7 +1,7 @@
 import type { MetadataRoute } from 'next';
 import prisma from '@/lib/prisma';
 import { SITE_URL, LOCALES } from '@/lib/seo';
-import { FA_PATHS, FA_PAIRED, type FaPath } from '@/lib/fa/paths';
+import { FA_PATHS, FA_PAIRED, EN_TO_FA, type FaPath } from '@/lib/fa/paths';
 
 // Rendered per-request so the runtime SITE_URL (Cloud Run env) and freshly
 // published articles are always reflected without a rebuild.
@@ -43,13 +43,6 @@ const EN_PATHS = [
   '/privacy',
   '/terms',
 ];
-
-// en -> fa, derived from the pairing table so the two can never drift.
-const EN_TO_FA = new Map<string, string>(
-  (Object.entries(FA_PAIRED) as [FaPath, string | null][])
-    .filter((e): e is [FaPath, string] => e[1] !== null)
-    .map(([fa, en]) => [en, fa]),
-);
 
 /**
  * hreflang alternates for one sitemap entry. /fa is not a mirror of /en, so

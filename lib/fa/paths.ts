@@ -64,3 +64,26 @@ export const FA_PAIRED: Record<FaPath, string | null> = {
   '/contact': '/contact',
   '/webinar': '/webinar',
 };
+
+/** English path -> Persian path, derived from FA_PAIRED so there is one table. */
+export const EN_TO_FA: ReadonlyMap<string, string> = new Map(
+  (Object.entries(FA_PAIRED) as [FaPath, string | null][])
+    .filter((e): e is [FaPath, string] => e[1] !== null)
+    .map(([fa, en]) => [en, fa]),
+);
+
+/**
+ * Where the language switcher should send the reader.
+ *
+ * The two sites do not mirror each other, so "same path, other locale" is
+ * wrong more often than it is right: it would 301 straight back (the reader
+ * clicks FA and nothing happens) or 404. Paired pages switch to their twin;
+ * everything else lands on the other site's home. Blog articles are
+ * single-locale, so they go to the other site's blog index.
+ */
+export function localeSwitchTarget(path: string, to: 'en' | 'fa'): string {
+  const clean = normalise(path);
+  if (clean.startsWith('/blog/')) return '/blog';
+  if (to === 'fa') return EN_TO_FA.get(clean) ?? (isFaPath(clean) ? clean : '');
+  return FA_PAIRED[clean as FaPath] ?? '';
+}
