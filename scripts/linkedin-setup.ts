@@ -59,15 +59,18 @@ async function main() {
     console.log('VERDICT: this token CANNOT post to a company page.');
     console.log(`         (LinkedIn answered ${acl.status} when asked which pages it administers)`);
     console.log('');
-    console.log('The Community Management API product is not on this app yet.');
-    console.log('Generating another token will not change that — the product has to be');
-    console.log('added first, and each app needs it separately.');
+    console.log('The Community Management API product is not on this app — and on an');
+    console.log('app that already has other products it CANNOT be: LinkedIn requires it');
+    console.log('to be the only product on the application. Requesting it there is not');
+    console.log('a form you have missed; the button is disabled.');
     console.log('');
-    console.log('  1. Open the app → Products tab');
-    console.log('  2. Find "Community Management API" → Request access');
-    console.log('  3. When it shows as added, generate a NEW token');
-    console.log('  4. Check the Permissions line says w_organization_social');
-    console.log('  5. Run this script again with that token');
+    console.log('  1. Create a NEW LinkedIn app, one per page');
+    console.log('  2. Attach the page to it and verify the page');
+    console.log('  3. Products tab → Community Management API → Request access');
+    console.log('     and add NOTHING else, or the same dead end returns');
+    console.log('  4. Generate a token from THAT app');
+    console.log('  5. Check the Permissions line says w_organization_social');
+    console.log('  6. Run this script again with that token');
     console.log('──────────────────────────────────────────────────────────');
   }
 
