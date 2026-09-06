@@ -5,21 +5,28 @@
 // Matched on the guide's own path, so no content module has to declare it —
 // the same way the eligibility calculator finds its rule.
 //
-// Only flags that are exact, simple geometry are here. A flag drawn from
-// memory that is nearly right is worse than no flag: it is a national symbol
-// rendered wrong on a page asking people to trust us with their emigration.
-// That rules out Canada — the maple leaf is an eleven-pointed curve, not
-// something to approximate — so the Canadian guides carry no flag rather
-// than a bad one.
+// No flag here is drawn from memory. A national symbol rendered nearly
+// right, on a page asking people to trust us with their emigration, is worse
+// than no symbol at all. The four European flags are plain geometry at their
+// legislated band ratios; the Canadian maple leaf is not, so its path is the
+// official Pantone artwork from Wikimedia Commons (public domain), inlined so
+// the component stays the single place a flag is defined.
+//
+// The United States has no entry: the fifty-star canton is not worth ten
+// kilobytes inlined for one page, so /fa/usa-eb2-niw keeps the acid rule.
 // ============================================================================
 
-export type FlagCode = 'dk' | 'fi' | 'nl' | 'ee';
+export type FlagCode = 'dk' | 'fi' | 'nl' | 'ee' | 'ca';
 
 const BY_PATH: Record<string, FlagCode> = {
   '/europe/denmark': 'dk',
   '/europe/finland': 'fi',
   '/europe/netherlands': 'nl',
   '/europe/estonia': 'ee',
+  '/pnp': 'ca',
+  '/pnp/new-brunswick': 'ca',
+  '/pnp/nova-scotia': 'ca',
+  '/canada-startup-visa': 'ca',
 };
 
 export function flagFor(path: string): FlagCode | null {
@@ -32,6 +39,7 @@ export const FLAG_NAME: Record<FlagCode, string> = {
   fi: 'فنلاند',
   nl: 'هلند',
   ee: 'استونی',
+  ca: 'کانادا',
 };
 
 /**
@@ -43,4 +51,5 @@ export const FLAG_RATIO: Record<FlagCode, { w: number; h: number }> = {
   fi: { w: 18, h: 11 },
   nl: { w: 3, h: 2 },
   ee: { w: 11, h: 7 },
+  ca: { w: 2, h: 1 },
 };

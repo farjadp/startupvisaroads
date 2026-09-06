@@ -17,6 +17,8 @@ import { ArrowUpDown, ArrowLeft } from 'lucide-react';
 import { Link } from '@/navigation';
 import { RULES } from '@/lib/fa/programmes';
 import { sortRules, toCad, type ColKey } from '@/lib/fa/compare';
+import Flag from './Flag';
+import { flagFor } from '@/lib/fa/flags';
 import { toPersianDigits } from '@/lib/fa/format';
 
 const money = (n: number | null) => (n === null ? '—' : toPersianDigits(n.toLocaleString('en-US')));
@@ -65,7 +67,8 @@ export default function RouteCompare() {
             {rows.map((r) => (
               <tr key={r.key} className="border-t border-[#1a1a1a]/15 hover:bg-[#1a1a1a]/[0.03] transition-colors">
                 <th scope="row" className="text-start p-3.5 font-bold">
-                  <Link href={r.href} className="group inline-flex items-center gap-1.5 hover:text-[#1a1a1a]/70">
+                  <Link href={r.href} className="group inline-flex items-center gap-2 hover:text-[#1a1a1a]/70">
+                    {flagFor(r.href) && <Flag code={flagFor(r.href)!} className="h-3.5 w-auto shrink-0 text-[#1a1a1a]" />}
                     {r.name}
                     <ArrowLeft className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 group-hover:-translate-x-0.5 transition-all" aria-hidden />
                   </Link>

@@ -21,6 +21,7 @@ const C = {
   nlRed: '#AE1C28',
   nlBlue: '#21468B',
   eeBlue: '#0072CE',
+  caRed: '#D52B1E',
   eeBlack: '#000000',
   white: '#FFFFFF',
 };
@@ -62,11 +63,27 @@ function Shapes({ code }: { code: FlagCode }) {
           <rect width={11} height={2.3333} fill={C.eeBlue} />
         </>
       );
+    // Official Pantone artwork (Wikimedia Commons, public domain). The white
+    // path carries the pale field and the leaf as one subpath, so the default
+    // nonzero fill rule punches the leaf out and the red beneath shows
+    // through — which is why the red rect underneath must be full-bleed.
+    case 'ca':
+      return (
+        <>
+          <rect width={9600} height={4800} fill={C.caRed} />
+          <path
+            fill={C.white}
+            d="m2400 0h4800v4800h-4800zm2490 4430-45-863a95 95 0 0 1 111-98l859 151-116-320a65 65 0 0 1 20-73l941-762-212-99a65 65 0 0 1-34-79l186-572-542 115a65 65 0 0 1-73-38l-105-247-423 454a65 65 0 0 1-111-57l204-1052-327 189a65 65 0 0 1-91-27l-332-652-332 652a65 65 0 0 1-91 27l-327-189 204 1052a65 65 0 0 1-111 57l-423-454-105 247a65 65 0 0 1-73 38l-542-115 186 572a65 65 0 0 1-34 79l-212 99 941 762a65 65 0 0 1 20 73l-116 320 859-151a95 95 0 0 1 111 98l-45 863z"
+          />
+        </>
+      );
   }
 }
 
 export default function Flag({ code, className }: { code: FlagCode; className?: string }) {
-  const { w, h } = FLAG_RATIO[code];
+  // Canada's official artwork is authored at 9600x4800; the others are drawn
+  // directly in their ratio units.
+  const { w, h } = code === 'ca' ? { w: 9600, h: 4800 } : FLAG_RATIO[code];
   const name = FLAG_NAME[code];
   return (
     <svg

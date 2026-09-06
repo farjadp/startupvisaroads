@@ -11,6 +11,8 @@ import { Link, usePathname, useRouter } from '@/navigation'; // Use internationa
 import { Menu, X, ArrowRight, ChevronDown, User, Globe } from 'lucide-react';
 import { useTranslations, useLocale } from 'next-intl';
 import { localeSwitchTarget } from '@/lib/fa/paths';
+import { flagFor } from '@/lib/fa/flags';
+import Flag from '@/components/fa/Flag';
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -262,8 +264,12 @@ export default function Header() {
                             <Link
                               key={sub.href}
                               href={sub.href!}
-                              className={`${isFa ? 'font-vazir text-base' : 'font-serif text-lg'} text-[#F2F0E9] hover:text-[#CCFF00] hover:translate-x-2 rtl:hover:-translate-x-2 transition-all block whitespace-nowrap opacity-80 hover:opacity-100`}
+                              className={`${isFa ? 'font-vazir text-base' : 'font-serif text-lg'} text-[#F2F0E9] hover:text-[#CCFF00] hover:translate-x-2 rtl:hover:-translate-x-2 transition-all flex items-center gap-2.5 whitespace-nowrap opacity-80 hover:opacity-100`}
                             >
+                              {/* The menu is the densest list of routes on the
+                                  site, so the flag does the work the label
+                                  needs three words for. */}
+                              {isFa && flagFor(sub.href!) && <Flag code={flagFor(sub.href!)!} className="h-3 w-auto shrink-0 text-[#F2F0E9]" />}
                               {sub.label}
                             </Link>
                           )
@@ -385,8 +391,9 @@ export default function Header() {
                             <Link
                               key={sub.href}
                               href={sub.href!}
-                              className={`${isFa ? 'font-vazir text-base' : 'font-serif text-lg'} text-[#F2F0E9] hover:text-[#CCFF00] transition-colors`}
+                              className={`${isFa ? 'font-vazir text-base' : 'font-serif text-lg'} text-[#F2F0E9] hover:text-[#CCFF00] transition-colors flex items-center gap-2.5`}
                             >
+                              {isFa && flagFor(sub.href!) && <Flag code={flagFor(sub.href!)!} className="h-3 w-auto shrink-0 text-[#F2F0E9]" />}
                               {sub.label}
                             </Link>
                           )

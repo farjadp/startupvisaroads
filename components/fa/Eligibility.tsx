@@ -20,6 +20,8 @@ import { Check, Minus, ArrowLeft } from 'lucide-react';
 import { Link } from '@/navigation';
 import { assess, assessAll, RULES, type Applicant, type Assessment } from '@/lib/fa/programmes';
 import { toPersianDigits } from '@/lib/fa/format';
+import Flag from './Flag';
+import { flagFor } from '@/lib/fa/flags';
 
 const DEFAULTS: Applicant = { netWorthCad: 0, investableCad: 0, founders: 1, age: 32, clb: 5, venture: 'idea' };
 
@@ -47,7 +49,10 @@ function Result({ a }: { a: Assessment }) {
   return (
     <div className="border border-[#1a1a1a] bg-[#F2F0E9]">
       <div className="flex flex-wrap items-center justify-between gap-3 p-5 border-b border-[#1a1a1a]/20">
-        <h3 className="font-estedad font-bold text-lg">{a.rule.name}</h3>
+        <h3 className="font-estedad font-bold text-lg flex items-center gap-2">
+          {flagFor(a.rule.href) && <Flag code={flagFor(a.rule.href)!} className="h-4 w-auto shrink-0 text-[#1a1a1a]" />}
+          {a.rule.name}
+        </h3>
         <span className={`text-xs font-bold px-3 py-1.5 ${v.cls}`}>{v.label}</span>
       </div>
       <ul className="p-5 space-y-2.5">

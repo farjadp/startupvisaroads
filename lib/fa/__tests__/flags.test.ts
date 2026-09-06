@@ -10,12 +10,25 @@ describe('flagFor', () => {
     expect(flagFor('/europe/estonia')).toBe('ee');
   });
 
-  // A flag drawn from memory that is nearly right is worse than none, so the
-  // Canadian guides carry no flag rather than an approximated maple leaf.
-  it('gives the Canadian guides no flag rather than a wrong one', () => {
-    expect(flagFor('/pnp/new-brunswick')).toBeNull();
-    expect(flagFor('/pnp/nova-scotia')).toBeNull();
-    expect(flagFor('/pnp')).toBeNull();
+  // The maple leaf is not geometry anyone should draw from memory, so it is
+  // the official Pantone artwork rather than an approximation — and rather
+  // than an omission that would leave the comparison table half-flagged.
+  it('flags every Canadian route from the official artwork', () => {
+    expect(flagFor('/pnp')).toBe('ca');
+    expect(flagFor('/pnp/new-brunswick')).toBe('ca');
+    expect(flagFor('/pnp/nova-scotia')).toBe('ca');
+    expect(flagFor('/canada-startup-visa')).toBe('ca');
+  });
+
+  // Not an oversight: the fifty-star canton is not worth inlining for one
+  // page, so that hero keeps the acid rule.
+  it('leaves the US guide unflagged', () => {
+    expect(flagFor('/usa-eb2-niw')).toBeNull();
+  });
+
+  it('says nothing for a path that is not a country guide', () => {
+    expect(flagFor('/mentorship')).toBeNull();
+    expect(flagFor('/faq')).toBeNull();
   });
 
   it('only claims paths that are real guides', () => {
@@ -23,6 +36,12 @@ describe('flagFor', () => {
     for (const p of ['/europe/denmark', '/europe/finland', '/europe/netherlands', '/europe/estonia']) {
       expect(hrefs.has(p), p).toBe(true);
     }
+  });
+
+  // The comparison table shows one row per rule. A row without a flag next to
+  // rows with one reads as a mistake, so every rule must resolve to a flag.
+  it('leaves no row of the comparison table unflagged', () => {
+    for (const r of RULES) expect(flagFor(r.href), r.key).not.toBeNull();
   });
 });
 
@@ -34,10 +53,11 @@ describe('flag proportions', () => {
     expect(FLAG_RATIO.fi).toEqual({ w: 18, h: 11 });
     expect(FLAG_RATIO.nl).toEqual({ w: 3, h: 2 });
     expect(FLAG_RATIO.ee).toEqual({ w: 11, h: 7 });
+    expect(FLAG_RATIO.ca).toEqual({ w: 2, h: 1 });
   });
 
   it('names every flag in Persian, so none is a decorative rectangle', () => {
-    for (const code of ['dk', 'fi', 'nl', 'ee'] as const) {
+    for (const code of ['dk', 'fi', 'nl', 'ee', 'ca'] as const) {
       expect(FLAG_NAME[code]).toMatch(/[؀-ۿ]/);
     }
   });
