@@ -1,9 +1,14 @@
 // ============================================================================
-// GET /api/cron/social-short[?dry=1]
+// GET /api/cron/social-short[?dry=1&force=1&n=2]
 //
 // The quiet-day post. Runs once a day; if something published today it does
 // nothing, and otherwise it sends one idea from the article that has gone
 // longest without attention.
+//
+// `force=1` skips the quiet-day check, for posting to the channel by hand on
+// a day that already had an article. `n` sends up to three, each from a
+// different article — the reuse window and the unique constraint still apply,
+// so it cannot repeat itself however many times it is called.
 //
 // The selection is pure and tested in lib/social/pick-article.ts; this route
 // only supplies the rows and the clock.
@@ -20,7 +25,10 @@ export const maxDuration = 60;
 
 export async function GET(req: NextRequest) {
   if (!(await authorisedCron(req))) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  const dryRun = req.nextUrl.searchParams.get('dry') === '1';
+  const q = req.nextUrl.searchParams;
+  const dryRun = q.get('dry') === '1';
+  const force = q.get('force') === '1';
+  const count = Math.min(3, Math.max(1, Number(q.get('n') ?? 1) || 1));
   const now = new Date();
 
   const channel = DESTINATIONS.find((d) => d.platform === 'telegram');
@@ -33,7 +41,7 @@ export async function GET(req: NextRequest) {
     take: 200,
   });
 
-  if (!shouldPostShort(articles as never, now)) {
+  if (!force && !shouldPostShort(articles as never, now)) {
     return NextResponse.json({ ok: true, action: 'none', reason: 'an article published today' });
   }
 
@@ -44,14 +52,29 @@ export async function GET(req: NextRequest) {
     take: 500,
   });
 
-  const picked = pickForShortPost(articles as never, priorPosts, now);
-  if (!picked) {
-    return NextResponse.json({ ok: true, action: 'none', reason: explainNoPick(articles as never, priorPosts, now) });
+  // Each send is recorded, so the next pick in this loop already sees the
+  // previous one as used and cannot choose the same article twice.
+  const seen = [...priorPosts];
+  const sent: unknown[] = [];
+
+  for (let i = 0; i < count; i++) {
+    const picked = pickForShortPost(articles as never, seen, now);
+    if (!picked) {
+      if (!sent.length) {
+        return NextResponse.json({ ok: true, action: 'none', reason: explainNoPick(articles as never, seen, now) });
+      }
+      break;
+    }
+
+    const full = articles.find((a) => a.id === picked.id)!;
+    if (dryRun) {
+      sent.push({ dryRun: true, article: full.slug, title: full.title });
+    } else {
+      const result = await sendToChannel({ ...full, locale: full.locale as 'en' | 'fa' }, 'short');
+      sent.push({ article: full.slug, ...result });
+    }
+    seen.push({ articleId: full.id, createdAt: now });
   }
 
-  const full = articles.find((a) => a.id === picked.id)!;
-  if (dryRun) return NextResponse.json({ ok: true, dryRun: true, wouldPost: { id: full.id, title: full.title } });
-
-  const result = await sendToChannel({ ...full, locale: full.locale as 'en' | 'fa' }, 'short');
-  return NextResponse.json({ ok: true, action: 'short', article: full.slug, ...result });
+  return NextResponse.json({ ok: true, action: 'short', requested: count, sent });
 }
