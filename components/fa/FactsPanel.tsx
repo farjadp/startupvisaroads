@@ -9,6 +9,7 @@
 import React from 'react';
 import type { FaFact } from '@/lib/fa/content';
 import Reveal from './motion/Reveal';
+import CountUp from './motion/CountUp';
 
 export default function FactsPanel({ facts, caption }: { facts: FaFact[]; caption?: string }) {
   if (!facts.length) return null;
@@ -20,7 +21,7 @@ export default function FactsPanel({ facts, caption }: { facts: FaFact[]; captio
           <div key={f.label} className="bg-[#F2F0E9] p-6 flex flex-col justify-between min-h-[8.5rem]">
             <dt className="text-xs font-bold text-[#1a1a1a]/55 mb-3">{f.label}</dt>
             <dd>
-              <span className="block font-estedad font-black text-2xl leading-tight [text-wrap:balance]">{f.value}</span>
+              <CountUp text={f.value} className="block font-estedad font-black text-2xl leading-tight [text-wrap:balance]" />
               {f.note && <span className="block mt-2 text-xs text-[#1a1a1a]/55 leading-relaxed">{f.note}</span>}
             </dd>
           </div>

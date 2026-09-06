@@ -22,6 +22,10 @@ import StatusBanner from './StatusBanner';
 import FactsPanel from './FactsPanel';
 import VideoRail from './VideoRail';
 import Reveal from './motion/Reveal';
+import MaskText from './motion/MaskText';
+import Rule from './motion/Rule';
+import Parallax from './motion/Parallax';
+import SectionNav from './motion/SectionNav';
 import HeroImage from './motion/HeroImage';
 import ScrollProgress from './motion/ScrollProgress';
 import Stepper, { type Step } from './motion/Stepper';
@@ -74,9 +78,9 @@ function stepsOf(s: FaSection): Step[] | null {
 function Section({ s, i }: { s: FaSection; i: number }) {
   const steps = stepsOf(s);
   return (
-    <Reveal as="section" className="scroll-mt-28">
-      <div id={`s${i + 1}`} />
-      <h2 className="font-estedad font-black text-3xl md:text-4xl leading-tight mb-6 max-w-3xl [text-wrap:balance]">{s.heading}</h2>
+    <Reveal as="section" id={`s${i + 1}`} className="scroll-mt-28">
+      <Rule className="mb-5" />
+      <MaskText as="h2" text={s.heading} className="font-estedad font-black text-3xl md:text-4xl leading-tight mb-6 max-w-3xl [text-wrap:balance]" />
       <div className="space-y-5 text-lg leading-[1.9] text-[#1a1a1a]/80 max-w-[70ch]">
         {s.body.map((p, j) => <p key={j}>{p}</p>)}
         {steps ? (
@@ -153,7 +157,7 @@ export default function FaPageLayout({ page, trail }: { page: FaPage; trail: { n
                 <span className="h-px w-8 bg-[#CCFF00]" aria-hidden />
                 {page.hero.eyebrow}
               </p>
-              <h1 className="mt-5 font-estedad font-black text-[2.5rem] md:text-6xl lg:text-[4.5rem] leading-[1.13] max-w-[19ch] [text-wrap:balance]">{page.hero.headline}</h1>
+              <MaskText text={page.hero.headline} className="mt-5 font-estedad font-black text-[2.5rem] md:text-6xl lg:text-[4.5rem] leading-[1.13] max-w-[19ch] [text-wrap:balance]" />
             </Reveal>
             <Reveal delay={0.1}>
               <p className="mt-7 text-lg md:text-xl leading-[1.9] text-[#F2F0E9]/75 max-w-[56ch]">{page.hero.sub}</p>
@@ -184,14 +188,12 @@ export default function FaPageLayout({ page, trail }: { page: FaPage; trail: { n
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 py-16 md:py-24">
           <aside className="lg:col-span-3 hidden lg:block">
             <div className="sticky top-28">
-              <ol className="space-y-3 text-sm">
-                {page.sections.map((s, i) => (
-                  <li key={i}>
-                    <a href={`#s${i + 1}`} className="block text-[#1a1a1a]/65 hover:text-[#1a1a1a] leading-snug">{s.heading}</a>
-                  </li>
-                ))}
-                {page.faqs.length > 0 && <li><a href="#faq" className="block text-[#1a1a1a]/65 hover:text-[#1a1a1a]">سؤالات متداول</a></li>}
-              </ol>
+              <SectionNav
+                items={[
+                  ...page.sections.map((s, i) => ({ id: `s${i + 1}`, label: s.heading })),
+                  ...(page.faqs.length > 0 ? [{ id: 'faq', label: 'سؤالات متداول' }] : []),
+                ]}
+              />
               <div className="mt-10 pt-6 border-t border-[#1a1a1a]/15 space-y-3 text-xs">
                 <a href={TELEGRAM_URL} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 font-bold hover:text-[#CCFF00]">
                   <Send className="w-3.5 h-3.5" /> سؤال دارید؟ در تلگرام بپرسید
@@ -209,9 +211,11 @@ export default function FaPageLayout({ page, trail }: { page: FaPage; trail: { n
             {/* mid-page breather: a different photograph, with the positioning line */}
             {gallery[0] && after.length > 0 && (
               <Reveal as="figure" className="relative -mx-4 md:mx-0 overflow-hidden">
-                <div className="relative aspect-[21/9] bg-[#1a1a1a]">
-                  <Image src={`/fa/img/${gallery[0].src}.webp`} alt={gallery[0].alt} fill sizes="(min-width: 1024px) 70vw, 100vw" className="object-cover opacity-80" />
-                </div>
+                <Parallax className="aspect-[21/9] bg-[#1a1a1a]">
+                  <div className="relative w-full h-full">
+                    <Image src={`/fa/img/${gallery[0].src}.webp`} alt={gallery[0].alt} fill sizes="(min-width: 1024px) 70vw, 100vw" className="object-cover opacity-80" />
+                  </div>
+                </Parallax>
                 <figcaption className="absolute inset-x-0 bottom-0 p-6 md:p-10 bg-gradient-to-t from-[#1a1a1a] to-transparent">
                   <p className="font-estedad font-bold text-[#F2F0E9] text-xl md:text-3xl max-w-[28ch] leading-snug [text-wrap:balance]">ما وکیل مهاجرتی نیستیم — شما را برای پذیرش آماده می‌کنیم.</p>
                 </figcaption>
