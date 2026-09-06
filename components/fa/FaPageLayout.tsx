@@ -28,6 +28,8 @@ import Parallax from './motion/Parallax';
 import SectionNav from './motion/SectionNav';
 import Eligibility from './Eligibility';
 import QuizEcho from './QuizEcho';
+import Flag from './Flag';
+import { flagFor } from '@/lib/fa/flags';
 import { RULES } from '@/lib/fa/programmes';
 import HeroImage from './motion/HeroImage';
 import ScrollProgress from './motion/ScrollProgress';
@@ -117,6 +119,7 @@ export default function FaPageLayout({ page, trail }: { page: FaPage; trail: { n
   // A guide that describes a programme we hold thresholds for gets the
   // calculator, matched on path so no content module has to opt in.
   const rule = RULES.find((r) => r.href === page.path);
+  const flag = flagFor(page.path);
   const mid = Math.min(3, Math.max(1, Math.floor(page.sections.length / 2)));
   const before = page.sections.slice(0, mid);
   const after = page.sections.slice(mid);
@@ -160,7 +163,13 @@ export default function FaPageLayout({ page, trail }: { page: FaPage; trail: { n
               {/* The eyebrow was a chip floating on the photograph; it
                   belongs above the headline it introduces. */}
               <p className="flex items-center gap-3 text-[13px] text-[#CCFF00]">
-                <span className="h-px w-8 bg-[#CCFF00]" aria-hidden />
+                {/* The country's own flag where we can draw it exactly;
+                    otherwise the acid rule, never an approximated flag. */}
+                {flag ? (
+                  <Flag code={flag} className="h-4 w-auto shrink-0 text-[#F2F0E9]" />
+                ) : (
+                  <span className="h-px w-8 bg-[#CCFF00]" aria-hidden />
+                )}
                 {page.hero.eyebrow}
               </p>
               <MaskText text={page.hero.headline} className="mt-5 font-estedad font-black text-[2.5rem] md:text-6xl lg:text-[4.5rem] leading-[1.13] max-w-[19ch] [text-wrap:balance]" />
