@@ -45,7 +45,50 @@ none.
 15:00  svr-social-insights-2   1 insight tweet per account
 17:00  svr-social-short        Telegram, only on a day nothing published
 18:00  svr-autopilot-digest    the daily report
+
+08:00  svr-social-knowledge-08 1 English knowledge tweet  ⟍
+12:00  svr-social-knowledge-12 1 English knowledge tweet   ⟩ @ashavidgroup
+16:00  svr-social-knowledge-16 1 English knowledge tweet   ⟩ four separate jobs:
+20:00  svr-social-knowledge-20 1 English knowledge tweet  ⟋ four in one minute is a bot
 ```
+
+### The tweets themselves (6 Sep, evening)
+
+The insight post is **written**, not extracted. It used to be the sentence
+around a `<strong>` mark picked at random, which read exactly like what it was
+— a line torn out of a page. `lib/social/write-insight.ts` writes it from the
+article under the article pipeline's fact rules. A draft carrying a link, a
+hashtag, an emoji, Latin digits in Persian prose, an English word inside
+Persian text, or over its budget is rewritten once and then **dropped, never
+trimmed**: a post cut mid-thought is the failure this replaced.
+
+`lib/social/knowledge.ts` is the English account's own voice — routes,
+countries, cities, business culture — on a nine-angle rotation, with no source
+page behind it, so its fact rules are *stricter*: nothing that can change
+(fees, thresholds, processing times, what a programme is accepting) and no
+superlatives, which is where an unsourced post turns into a false claim.
+
+Every post carries a Pexels photo with alt text. The photo is decoration and
+never a reason a post does not happen. **A Turkish passport went out on a post
+about Canada's PGWP** because the search term was "passport on a desk"; three
+guards now stand in the way, in `lib/social/photo.ts`.
+
+Hashtags are chosen per post, in the post's language.
+
+### Two selection bugs, both found by looking at what actually published
+
+- **A failed tweet burned the article.** Every attempt writes a `SocialPost`
+  row including the failures, and selection counted every row as use. Two 403s
+  put both English articles out of reach for 45 days, and the lane then
+  reported "every article was used within 45 days" having published nothing at
+  all. Only `posted` rows count now.
+- **The legacy G-P articles were eligible.** `prefer: 'newest'` did not keep
+  them out because the newest English articles are also theirs. Selection takes
+  only articles with `aiModel` set.
+
+**Only two English articles are the autopilot's own**, and both are about study
+permits and PGWP. On an AI-venture account that is an odd fit, and it is
+Farjad's call whether @ashavidgroup carries article tweets at all.
 
 `svr-autopilot-source-fa` is deliberately **not** created: Persian starts at
 one article a day so its quality can be read before the volume goes up.
