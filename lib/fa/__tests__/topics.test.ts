@@ -80,13 +80,58 @@ describe('pickTopics', () => {
     expect(picked).toHaveLength(2);
   });
 
-  it('never returns more than asked for, or more than it has', () => {
+  it('never returns more than asked for', () => {
     expect(pickTopics(2, [])).toHaveLength(2);
-    expect(pickTopics(99, []).length).toBe(FA_TOPICS.length);
+  });
+
+  // The one-deep-per-run rule and "return everything" pull against each other
+  // once there is more than one deep topic in the backlog, and the rule wins.
+  // Stating the arithmetic here keeps that a decision rather than a surprise
+  // the next time a deep guide is added.
+  it('holds back the extra deep guides when asked for everything', () => {
+    const deepCount = FA_TOPICS.filter((t) => t.depth === 'deep').length;
+    const expected = FA_TOPICS.length - Math.max(0, deepCount - 1);
+    expect(pickTopics(99, [])).toHaveLength(expected);
   });
 
   it('allows at most one deep guide in a single run, like the planner', () => {
     const deep = pickTopics(99, []).filter((t) => t.depth === 'deep');
     expect(deep.length).toBeLessThanOrEqual(1);
+  });
+});
+
+// The keywords Farjad named as the ones that matter, 6 Sep 2026. A backlog
+// that quietly stops covering one of them is the failure this locks down:
+// the list is easy to satisfy once and easy to lose on the next edit.
+const PRIORITY_KEYWORDS = [
+  'استارتاپ ویزا',
+  'کارآفرینی',
+  'منتور استارتاپ ویزا',
+  'ویزای استارتاپ',
+  'مهاجرت به کانادا',
+  'مهاجرت به فنلاند',
+  'مهاجرت به دانمارک',
+  'مهاجرت به آمریکا',
+  'استارتاپ ویزای کانادا',
+  'استارتاپ ویزای دانمارک',
+  'استارتاپ ویزای فنلاند',
+  'استارتاپ ویزای استونی',
+  'استارتاپ ویزای هلند',
+];
+
+describe('priority keyword coverage', () => {
+  const haystack = FA_TOPICS.map((t) => [t.primaryKeyword, ...t.secondaryKeywords].join(' ')).join(' ');
+
+  it.each(PRIORITY_KEYWORDS)('covers «%s»', (kw) => {
+    expect(haystack).toContain(kw);
+  });
+
+  // Coverage in a secondary keyword is not the same as a page written for the
+  // query. Every one of these deserves a topic that targets it head-on.
+  it('gives the country and programme queries a topic of their own', () => {
+    const primaries = FA_TOPICS.map((t) => t.primaryKeyword);
+    for (const kw of ['مهاجرت به کانادا', 'مهاجرت به فنلاند', 'مهاجرت به دانمارک', 'مهاجرت به آمریکا', 'استارتاپ ویزای کانادا', 'استارتاپ ویزای استونی', 'استارتاپ ویزای هلند', 'ویزای استارتاپ']) {
+      expect(primaries.some((p) => p.includes(kw)), `no topic is primarily about «${kw}»`).toBe(true);
+    }
   });
 });

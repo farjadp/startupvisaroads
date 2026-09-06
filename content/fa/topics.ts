@@ -123,6 +123,174 @@ export const FA_TOPICS: FaTopic[] = [
     depth: 'standard',
     audience: 'A founder who has narrowed it to two European routes and needs the axes that actually separate them.',
   },
+  // ── Second batch, 6 Sep 2026 ────────────────────────────────────────────
+  // Written against the keyword set Farjad named as the ones that matter, and
+  // their combinations. Each targets one query rather than several, because a
+  // page that chases «استارتاپ ویزا» and «مهاجرت به کانادا» at once ranks for
+  // neither.
+  {
+    slug: 'what-is-startup-visa',
+    category: 'European Visas',
+    workingTitle: 'ویزای استارتاپ چیست و کدام کشورها هنوز آن را می‌دهند؟',
+    angle:
+      'The pillar for the bare query. Define what a startup visa is and what separates it from an investment or skilled-worker route: a body evaluates the business, not the applicant\'s savings alone. Then the five routes that are actually open — Denmark, the Netherlands, Finland, Estonia, and entrepreneur streams in Atlantic Canada — with one line each on who evaluates and what they want. Say plainly that the Canadian Start-up Visa is closed to new applications, because a reader arriving on this query in Persian usually believes it is open. Every programme claim cites its authority.',
+    whyNow: 'It is the broadest Persian query on the subject and the site has no page written for it.',
+    primaryKeyword: 'ویزای استارتاپ',
+    secondaryKeywords: ['استارتاپ ویزا', 'ویزای استارتاپ چیست', 'کشورهای دارای ویزای استارتاپ', 'شرایط ویزای استارتاپ'],
+    searchQueryEn: 'what is a startup visa which countries offer it',
+    mustLink: ['/europe/finland', '/europe/denmark', '/which-path'],
+    imageScenes: [
+      'A row of five plain wooden doors along a bare corridor, even daylight, none of them marked',
+      'An empty departures board frame in a quiet hall, the panels blank, cool light',
+    ],
+    depth: 'deep',
+    audience: 'Someone at the very start, who has heard the term and does not yet know it is several different programmes.',
+  },
+  {
+    slug: 'canada-startup-visa-status',
+    category: 'Canada Startup Visa',
+    workingTitle: 'استارتاپ ویزای کانادا در ۲۰۲۶: چه چیزی بسته شد و چه ماند؟',
+    angle:
+      'The highest-intent Persian query on this site, and the one where being wrong costs the reader the most: most people searching it believe the programme is open. State the closure and its dates, describe the announced high-impact pilot without implying a date nobody has published, and route the reader to what is actually open. Do not soften it — a reader who leaves this page still planning around the old programme has been failed.',
+    whyNow: 'People are still searching it monthly and still being sold preparation for a programme that stopped taking applications.',
+    primaryKeyword: 'استارتاپ ویزای کانادا',
+    secondaryKeywords: ['ویزای استارتاپ کانادا', 'مهاجرت به کانادا', 'استارتاپ ویزا کانادا ۲۰۲۶', 'برنامه پایلوت کانادا'],
+    searchQueryEn: 'Canada start-up visa 2026 closed status pilot',
+    mustLink: ['/canada-startup-visa', '/pnp/new-brunswick', '/which-path'],
+    imageScenes: [
+      'A closed corrugated steel shutter on a concrete threshold, flat grey light',
+      'A single empty chair facing a bare counter in a plain office, no signage',
+    ],
+    depth: 'standard',
+    audience: 'A founder who has been preparing for the Canadian route and does not know it closed.',
+  },
+  {
+    slug: 'canada-entrepreneur-after-suv',
+    category: 'Canada PNP',
+    workingTitle: 'مهاجرت کارآفرینی به کانادا وقتی استارتاپ ویزا بسته است',
+    angle:
+      'The route that survives: provincial entrepreneur streams, New Brunswick and Nova Scotia specifically. Set out what they ask that the startup visa did not — net worth, an investment, a language band, an age range, living in the province — and be honest that this is a different kind of programme aimed at a different kind of applicant, not a substitute. Cite each province for its own figures.',
+    whyNow: 'It is the first question every reader of the closure article asks next.',
+    primaryKeyword: 'مهاجرت به کانادا از راه کارآفرینی',
+    secondaryKeywords: ['کارآفرینی', 'مهاجرت به کانادا', 'برنامه استانی کانادا', 'نیوبرانزویک کارآفرینی'],
+    searchQueryEn: 'Canada entrepreneur immigration provincial streams New Brunswick Nova Scotia',
+    mustLink: ['/pnp', '/pnp/new-brunswick', '/pnp/nova-scotia'],
+    imageScenes: [
+      'A red-brick harbour warehouse doorway in morning fog, a dark coat on a hook inside',
+      'A wide empty small-town main street under overcast sky, shopfronts closed',
+    ],
+    depth: 'standard',
+    audience: 'A founder with capital who has just learned the startup visa is closed to them.',
+  },
+  {
+    slug: 'netherlands-facilitator',
+    category: 'European Visas',
+    workingTitle: 'استارتاپ ویزای هلند: فسیلیتیتور چه کسی است و چرا تعیین‌کننده است؟',
+    angle:
+      'The Dutch route turns on one decision the other routes do not have: a signed agreement with an RVO-approved facilitator, who then stands behind the business for a year. Explain what a facilitator does, what RVO checks, what the permit converts into after twelve months, and how to judge one before signing — because choosing badly is the single most expensive mistake available on this route. Cite RVO and IND for anything about the programme itself.',
+    whyNow: 'The Netherlands is one of the four routes the site leads with and has no Persian article of its own.',
+    primaryKeyword: 'استارتاپ ویزای هلند',
+    secondaryKeywords: ['ویزای استارتاپ هلند', 'فسیلیتیتور هلند', 'RVO', 'مهاجرت به هلند'],
+    searchQueryEn: 'Netherlands startup visa facilitator RVO requirements',
+    mustLink: ['/europe/netherlands', '/mentorship', '/which-path'],
+    imageScenes: [
+      'A narrow brick warehouse doorway with a matte black steel door beside still canal water',
+      'Two chairs at a bare table by a tall window, a closed folder between them',
+    ],
+    depth: 'standard',
+    audience: 'A founder comparing European routes who keeps seeing the word "facilitator" and does not know what it commits them to.',
+  },
+  {
+    slug: 'estonia-mvp',
+    category: 'European Visas',
+    workingTitle: 'استارتاپ ویزای استونی: چرا بدون MVP پرونده رد می‌شود؟',
+    angle:
+      'Estonia is the fastest decision in Europe and the strictest about one thing: there has to be a product. Explain what the Startup Committee looks at, why an idea on paper does not pass, what the D-visa and the residence permit each give, and the monthly funds. Be clear that speed is not looseness — the committee refuses quickly too. Cite Startup Estonia.',
+    whyNow: 'Estonia is the cheapest and quickest route the site covers, and the one most often misunderstood as the easiest.',
+    primaryKeyword: 'استارتاپ ویزای استونی',
+    secondaryKeywords: ['ویزای استارتاپ استونی', 'مهاجرت به استونی', 'Startup Committee', 'MVP برای ویزای استارتاپ'],
+    searchQueryEn: 'Estonia startup visa MVP requirement startup committee',
+    mustLink: ['/europe/estonia', '/which-path', '/mentorship'],
+    imageScenes: [
+      'A limestone city wall corner meeting a plate-glass facade, cool flat light',
+      'A plain workbench with a partly assembled device under an angled lamp, nothing legible',
+    ],
+    depth: 'standard',
+    audience: 'A solo founder with a working prototype looking for the fastest route into Europe.',
+  },
+  {
+    slug: 'move-to-finland',
+    category: 'European Visas',
+    workingTitle: 'مهاجرت به فنلاند از راه استارتاپ: از ایده تا اقامت دائم',
+    angle:
+      'Written for the broader query rather than the permit alone: what the whole path looks like, from the Business Finland eligibility statement through the residence permit to permanent residence and eventually citizenship, with the honest gaps — the two-founder requirement that stops solo applicants, the monthly funds per founder, the language question that arrives later. Cite Migri and Business Finland separately, because they decide different things.',
+    whyNow: 'Finland leads the site and the Persian search is for the country, not for the permit\'s name.',
+    primaryKeyword: 'مهاجرت به فنلاند',
+    secondaryKeywords: ['استارتاپ ویزای فنلاند', 'ویزای استارتاپ فنلاند', 'اقامت دائم فنلاند', 'Business Finland'],
+    searchQueryEn: 'move to Finland startup permit path to permanent residence',
+    mustLink: ['/europe/finland', '/which-path', '/mentorship'],
+    imageScenes: [
+      'A weathered timber dock reaching into still grey water, birch at the frame edge',
+      'An empty tram shelter in soft snow light, steel and glass, nothing legible',
+    ],
+    depth: 'standard',
+    audience: 'Someone who has decided on the country before the programme and needs the whole arc.',
+  },
+  {
+    slug: 'move-to-denmark',
+    category: 'European Visas',
+    workingTitle: 'مهاجرت به دانمارک با استارتاپ ویزا: مسیر و هزینه‌ی واقعی',
+    angle:
+      'The country-level query for Denmark. The expert panel and what it reads, the one-founder allowance that separates Denmark from Finland, the first-year funds, the permit length and renewal, and what living costs actually look like against them. Cite nyidanmark and the Danish Business Authority for the programme; mark anything about cost of living as an estimate rather than a rule.',
+    whyNow: 'Denmark accepts a single founder, which makes it the realistic European route for a solo applicant, and the Persian search is for the country.',
+    primaryKeyword: 'مهاجرت به دانمارک',
+    secondaryKeywords: ['استارتاپ ویزای دانمارک', 'ویزای استارتاپ دانمارک', 'Start-up Denmark', 'هزینه زندگی دانمارک'],
+    searchQueryEn: 'move to Denmark startup visa expert panel cost',
+    mustLink: ['/europe/denmark', '/which-path', '/mentorship'],
+    imageScenes: [
+      'A dark timber harbour building wall with one small mooring cleat, overcast',
+      'A bicycle leaning against a pale brick wall on wet cobblestones',
+    ],
+    depth: 'standard',
+    audience: 'A solo founder who cannot meet Finland\'s two-founder rule and is looking at Denmark instead.',
+  },
+  {
+    slug: 'move-to-usa-niw',
+    category: 'USA Business & Talent',
+    workingTitle: 'مهاجرت به آمریکا برای بنیان‌گذاران: EB-2 NIW چه می‌خواهد؟',
+    angle:
+      'The US query, answered without pretending the obstacles are not there. What a national interest waiver actually asks for in evidence, why it suits researchers and technical founders more than early-stage product ideas, and — stated plainly, not buried — the entry restrictions that apply to Iranian nationals and the three scenarios by where the applicant currently lives. Cite USCIS for the programme. This paragraph in particular must be re-checked against current policy at every review.',
+    whyNow: 'It is one of the most searched Persian immigration queries and the one where a stale claim does the most damage.',
+    primaryKeyword: 'مهاجرت به آمریکا',
+    secondaryKeywords: ['EB-2 NIW', 'ویزای آمریکا برای بنیان‌گذار', 'مهاجرت کاری آمریکا', 'اقامت آمریکا از راه استعداد'],
+    searchQueryEn: 'EB-2 NIW national interest waiver founders evidence requirements',
+    mustLink: ['/usa-eb2-niw', '/which-path', '/mentorship'],
+    imageScenes: [
+      'A laboratory glass door slightly ajar, matte aluminium frame, cool even light',
+      'A university corridor with tall windows and a polished concrete floor, empty',
+    ],
+    depth: 'standard',
+    audience: 'A researcher or technical founder weighing the US against Europe.',
+  },
+  {
+    slug: 'what-a-startup-visa-mentor-does',
+    category: 'Mentorship & Business Planning',
+    workingTitle: 'منتور استارتاپ ویزا دقیقاً چه کاری برای شما انجام می‌دهد؟',
+    angle:
+      'Not a comparison against agencies — that piece exists — but a plain account of the work. What an evaluating body actually reads: the business plan, the financial model, the pitch deck, the interview. What each of those has to contain to survive a panel, in what order they get built, and how long it honestly takes. Bound every claim about the programme to its authority, and every claim about our own work to BRAND_FACTS. Say what a mentor cannot do: file the application, guarantee an outcome, or move money.',
+    whyNow:
+      'The phrase is searched by people who have already decided they need help and are trying to work out what they are buying.',
+    primaryKeyword: 'منتور استارتاپ ویزا',
+    secondaryKeywords: ['مشاور استارتاپ ویزا', 'بیزینس پلن برای ویزای استارتاپ', 'آمادگی مصاحبه استارتاپ ویزا', 'پیچ دک مهاجرت'],
+    searchQueryEn: 'startup visa mentor what they do business plan pitch deck',
+    mustLink: ['/mentorship', '/europe/denmark', '/which-path'],
+    imageScenes: [
+      'A whiteboard wiped clean with faint ghost marks and a single marker on the tray',
+      'A bare oak desk with a closed laptop and one printed document squared beside it',
+    ],
+    depth: 'standard',
+    audience: 'A founder who has decided to get help and wants to know what the work actually is before paying for it.',
+  },
 ];
 
 /** Strip the backlog-only fields so the writer receives a plain Brief. */
