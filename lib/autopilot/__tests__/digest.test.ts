@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { summarise, type RunRow } from '../digest';
+import { summarise, buildDigest, type RunRow } from '../digest';
 
 const NOW = new Date('2026-09-06T18:00:00Z');
 const hoursAgo = (h: number) => new Date(NOW.getTime() - h * 3_600_000);
@@ -75,7 +75,48 @@ describe('summarise', () => {
     expect(lane(out, 'fa').created).toBe(1);
   });
 
+  it('says "1 hour", not "1 hours"', () => {
+    const out = summarise([], NOW, { windowHours: 1 });
+    expect(out[0].reasons.join(' ')).toContain('last 1 hour.');
+  });
+
   it('reports every expected locale even when the table is empty', () => {
     expect(summarise([], NOW).map((l) => l.locale).sort()).toEqual(['en', 'fa']);
+  });
+});
+
+describe('buildDigest', () => {
+  it('names the locale that is silent, not just "the pipeline"', () => {
+    const msg = buildDigest(summarise([run({ locale: 'en', created: 2 })], NOW), NOW);
+    expect(msg).toContain('fa');
+    expect(msg.toLowerCase()).toContain('silent');
+  });
+
+  it('stays short when everything is healthy, because a daily wall goes unread', () => {
+    const runs = [run({ locale: 'en', created: 2 }), run({ locale: 'fa', created: 1 })];
+    const msg = buildDigest(summarise(runs, NOW), NOW);
+    expect(msg.split('\n').length).toBeLessThanOrEqual(6);
+    expect(msg).toContain('3');
+  });
+
+  it('spells out the reasons when a lane is degraded', () => {
+    const runs = [run({ created: 0, notes: 'no allowlisted official citation survived' })];
+    const msg = buildDigest(summarise(runs, NOW), NOW);
+    expect(msg).toContain('official citation');
+  });
+
+  // Reasons carry model and feed output. The sender uses no parse_mode, so
+  // markup cannot execute, but a single run must never be able to push the
+  // message past Telegram's limit and lose every other lane.
+  it('stays inside the Telegram message limit however long the reasons are', () => {
+    const long = 'x'.repeat(9000);
+    const msg = buildDigest(summarise([run({ created: 0, notes: long })], NOW), NOW);
+    expect(msg.length).toBeLessThanOrEqual(4096);
+  });
+
+  it('uses Latin digits — this is an ops alert, not Persian prose', () => {
+    const msg = buildDigest(summarise([run({ locale: 'fa', created: 12 })], NOW), NOW);
+    expect(msg).toContain('12');
+    expect(msg).not.toMatch(/[۰-۹]/);
   });
 });

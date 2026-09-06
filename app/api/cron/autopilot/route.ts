@@ -12,23 +12,15 @@
 // ============================================================================
 import { NextRequest, NextResponse } from 'next/server';
 import { runPlanned } from '@/lib/autopilot/writer';
-import { getSessionFromRequest, safeCompare } from '@/lib/auth';
+import { authorisedCron } from '@/lib/cron-auth';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 300;
 
 const MAX_PER_RUN = 5;
 
-async function authorised(req: NextRequest): Promise<boolean> {
-  const secret = process.env.CRON_SECRET;
-  const header = req.headers.get('authorization') ?? '';
-  if (secret && header.startsWith('Bearer ') && safeCompare(header.slice(7), secret)) return true;
-  const session = await getSessionFromRequest(req).catch(() => null);
-  return !!session?.username;
-}
-
 export async function GET(req: NextRequest) {
-  if (!(await authorised(req))) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  if (!(await authorisedCron(req))) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   const q = req.nextUrl.searchParams;
   const n = Math.min(MAX_PER_RUN, Math.max(1, Number(q.get('n') ?? 1) || 1));

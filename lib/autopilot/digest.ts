@@ -113,9 +113,49 @@ export function summarise(runs: RunRow[], now: Date, opts: SummariseOptions = {}
     else if (created === 0) state = 'degraded';
     else state = 'healthy';
 
-    if (state === 'silent') push(`No autopilot run in the last ${windowHours} hours.`);
+    if (state === 'silent') push(`No autopilot run in the last ${windowHours} hour${windowHours === 1 ? '' : 's'}.`);
     if (state === 'stuck') push('A run started and never finished.');
 
     return { locale, state, runs: mine.length, created, reasons };
   });
+}
+
+// ── Message ────────────────────────────────────────────────────────────────
+// Written in English with Latin digits on purpose. The Persian copy rules —
+// written register, نیم‌فاصله, Persian digits — govern prose a reader reads on
+// the site. This is an ops alert that sits beside the Cloud Run logs and
+// DEPLOY.md, and a number you have to convert before you can act on it is
+// worse, not more consistent.
+
+/** Telegram rejects anything longer; losing the tail loses other lanes. */
+const TELEGRAM_LIMIT = 4096;
+const REASON_CHARS = 160;
+
+const ICON: Record<LaneState, string> = {
+  healthy: '✅',
+  degraded: '⚠️',
+  silent: '🔇',
+  stuck: '⏳',
+};
+
+const clip = (s: string, n: number) => (s.length > n ? `${s.slice(0, n - 1)}…` : s);
+
+/**
+ * One line per lane, and reasons only where something is wrong. A healthy day
+ * is three lines, so the day it is not stands out instead of arriving as the
+ * same wall of text as every other day.
+ */
+export function buildDigest(lanes: LaneSummary[], now: Date): string {
+  const created = lanes.reduce((n, l) => n + l.created, 0);
+  const worst = lanes.some((l) => l.state !== 'healthy');
+
+  const head = `${worst ? '⚠️' : '✅'} Autopilot · ${now.toISOString().slice(0, 16).replace('T', ' ')} UTC · ${created} published`;
+
+  const lines = lanes.map((l) => `${ICON[l.state]} ${l.locale}: ${l.state} — ${l.runs} run(s), ${l.created} published`);
+
+  const detail = lanes
+    .filter((l) => l.state !== 'healthy' && l.reasons.length)
+    .flatMap((l) => [`\n${l.locale}:`, ...l.reasons.slice(0, 4).map((r) => `· ${clip(r, REASON_CHARS)}`)]);
+
+  return clip([head, ...lines, ...detail].join('\n'), TELEGRAM_LIMIT);
 }
