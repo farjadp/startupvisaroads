@@ -17,7 +17,6 @@ export const page: FaPage = {
   updated: '2026-09-05',
 
   image: 'about',
-  roads: ['toronto'],
   hero: {
     eyebrow: 'Startup Visa Roads · محصولی از Ashavid · تورنتو',
     headline: 'ساخته شده توسط کسانی که آن سوی میز نشسته‌اند',

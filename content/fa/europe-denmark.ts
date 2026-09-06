@@ -21,7 +21,6 @@ export const page: FaPage = {
     { src: 'denmark-2', alt: 'نمای چوب تیره ساختمان بندری با یک قلاب مهار کوچک', caption: 'کپنهاگ بندری است و اقتصادش بین‌المللی — پنل کارشناسان دانمارک دقیقاً دنبال کسب‌وکاری است که از مرز آن کشور فراتر برود.' },
     { src: 'denmark-3', alt: 'میز جلسه چوب بلوط کنار پنجره بلند با دو صندلی خالی', caption: 'جلسه‌ی ارزیابی پنل: بیزینس‌پلن شما را می‌خوانند، نه فرم شما را.' },
   ],
-  roads: ['copenhagen'],
   entity: { name: 'Start-up Denmark', provider: 'Danish Business Authority expert panel', country: 'Denmark' },
   facts: [
     { label: 'حداقل بنیان‌گذاران', value: '۱ نفر', note: 'تیم تا ۳ نفر با یک بیزینس‌پلن مشترک' },

@@ -20,7 +20,6 @@ export const page: FaPage = {
     { src: 'estonia-2', alt: 'گوشه‌ی دیوار سنگی قدیمی تالین در کنار نمای شیشه‌ای مدرن', caption: 'استونی: شهر قدیمی، دولت تمام‌دیجیتال — و سریع‌ترین ارزیابی استارتاپ در اروپا.' },
     { src: 'estonia-3', alt: 'درِ فولادی اتاق سرور در راهرویی ساده با نور یکنواخت', caption: 'کمیته‌ی استونی محصول فناوری‌محور با MVP می‌خواهد؛ ایده‌ی روی کاغذ کافی نیست.' },
   ],
-  roads: ['tallinn'],
   entity: { name: 'ویزای استارتاپ استونی', provider: 'Estonian Startup Committee', country: 'Estonia' },
   facts: [
     { label: 'حداقل بنیان‌گذاران', value: '۱ نفر' },

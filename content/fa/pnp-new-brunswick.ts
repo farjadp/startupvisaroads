@@ -21,7 +21,6 @@ export const page: FaPage = {
     { src: 'new-brunswick-2', alt: 'ساحل رودخانه‌ی یخ‌زده با درختان توس و اسکله‌ی چوبی تیره', caption: 'نیوبرانزویک استانی کوچک و ارزان در شرق کاناداست که به کسب‌وکار جدید نیاز واقعی دارد.' },
     { src: 'new-brunswick-3', alt: 'ویترین مغازه‌ای در خیابان اصلی شهری کوچک با درِ سبز بسته', caption: 'خرید یا ساختن یک کسب‌وکار محلی — و ایجاد دست‌کم یک شغل تمام‌وقت — قلب تعهد NBBIS است.' },
   ],
-  roads: ['fredericton'],
   entity: { name: 'New Brunswick Business Immigration Stream (NBBIS)', provider: 'Government of New Brunswick', country: 'Canada' },
   facts: [
     { label: 'حداقل دارایی خالص', value: '۵۰۰٬۰۰۰ دلار کانادا', note: '۳۰۰٬۰۰۰ برای کشاورزی' },

@@ -97,7 +97,6 @@ export const page: FaPage = {
   updated: '2026-09-06',
 
   image: 'which-path',
-  roads: ['helsinki', 'copenhagen', 'tallinn', 'fredericton', 'halifax'],
   hero: {
     eyebrow: `${groups.reduce((n, g) => n + g.faqs.length, 0)} پرسش · پاسخ کوتاه و مستقیم`.replace(/[0-9]/g, (d) => '۰۱۲۳۴۵۶۷۸۹'[+d]),
     headline: 'سؤالات متداول مهاجرت استارتاپی',

@@ -3,8 +3,7 @@
 // Renders one Persian content page from its FaPage module.
 //
 // MOTION THESIS — focal moment: the hero, where the brand photograph wipes in
-// from the reading edge while the roads globe draws the route to this page's
-// destination. Everything after is quiet: short decelerating reveals, an
+// from the reading edge behind the headline. Everything after is quiet: short decelerating reveals, an
 // interactive stepper where the content is a sequence, an FAQ that opens
 // with real height. Reduced motion removes the spatial moves and keeps the
 // state changes. Copy never lives here — it lives in content/fa/<page>.ts.
@@ -22,13 +21,11 @@ import { videosById } from '@/content/fa/videos';
 import StatusBanner from './StatusBanner';
 import FactsPanel from './FactsPanel';
 import VideoRail from './VideoRail';
-import RoadsScene from './three/RoadsScene';
 import Reveal from './motion/Reveal';
 import HeroImage from './motion/HeroImage';
 import ScrollProgress from './motion/ScrollProgress';
 import Stepper, { type Step } from './motion/Stepper';
 import Faq from './motion/Faq';
-import type { DESTINATIONS } from '@/lib/fa/geo';
 
 // Absolute URLs and explicit /en/ paths render as plain anchors; everything
 // else goes through the locale-aware Link.
@@ -110,7 +107,6 @@ export default function FaPageLayout({ page, trail }: { page: FaPage; trail: { n
   // Spread the gallery evenly through the sections so the page breathes
   // instead of front-loading every picture.
   const slotFor = (i: number) => Math.floor(((i + 1) * page.sections.length) / (gallery.length + 1));
-  const roads = (page.roads ?? []) as (keyof typeof DESTINATIONS)[];
   const mid = Math.min(3, Math.max(1, Math.floor(page.sections.length / 2)));
   const before = page.sections.slice(0, mid);
   const after = page.sections.slice(mid);
@@ -123,11 +119,9 @@ export default function FaPageLayout({ page, trail }: { page: FaPage; trail: { n
       {/* HERO — the authored moment.
           One dark field: the photograph is the ground and the headline sits
           on it. The previous hero put a portrait strip beside the text on the
-          same paper as the body, so the page opened with no anchor and the
-          globe hung off the image corner with no role. A two-stop scrim
-          guarantees contrast at the reading edge whatever the photograph
-          does, and the globe becomes part of the composition instead of
-          decoration beside it. */}
+          same paper as the body, so the page opened with no anchor. A two-stop
+          scrim guarantees contrast at the reading edge whatever the
+          photograph does. */}
       <header className="relative isolate overflow-hidden bg-[#1a1a1a] text-[#F2F0E9]">
         {img && (
           <div className="absolute inset-0">
@@ -151,33 +145,22 @@ export default function FaPageLayout({ page, trail }: { page: FaPage; trail: { n
             ))}
           </nav>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-            <div className="lg:col-span-8 pt-10 pb-12 md:pt-14 md:pb-24">
-              <Reveal>
-                {/* The eyebrow was a chip floating on the photograph; it
-                    belongs above the headline it introduces. */}
-                <p className="flex items-center gap-3 text-[13px] text-[#CCFF00]">
-                  <span className="h-px w-8 bg-[#CCFF00]" aria-hidden />
-                  {page.hero.eyebrow}
-                </p>
-                <h1 className="mt-5 font-estedad font-black text-[2.5rem] md:text-6xl lg:text-[4.5rem] leading-[1.13] max-w-[19ch] [text-wrap:balance]">{page.hero.headline}</h1>
-              </Reveal>
-              <Reveal delay={0.1}>
-                <p className="mt-7 text-lg md:text-xl leading-[1.9] text-[#F2F0E9]/75 max-w-[56ch]">{page.hero.sub}</p>
-              </Reveal>
-              <Reveal delay={0.18} className="mt-10">
-                <Cta cta={page.hero.cta} acid />
-              </Reveal>
-              {roads.length > 0 && (
-                <RoadsScene to={roads} className="lg:hidden relative mt-12 w-44 h-44" />
-              )}
-            </div>
-
-            {roads.length > 0 && (
-              <div className="hidden lg:block lg:col-span-4 relative">
-                <RoadsScene to={roads} className="absolute bottom-12 end-0 w-72 h-72 xl:w-[22rem] xl:h-[22rem]" />
-              </div>
-            )}
+          <div className="max-w-[62ch] pt-10 pb-12 md:pt-14 md:pb-24">
+            <Reveal>
+              {/* The eyebrow was a chip floating on the photograph; it
+                  belongs above the headline it introduces. */}
+              <p className="flex items-center gap-3 text-[13px] text-[#CCFF00]">
+                <span className="h-px w-8 bg-[#CCFF00]" aria-hidden />
+                {page.hero.eyebrow}
+              </p>
+              <h1 className="mt-5 font-estedad font-black text-[2.5rem] md:text-6xl lg:text-[4.5rem] leading-[1.13] max-w-[19ch] [text-wrap:balance]">{page.hero.headline}</h1>
+            </Reveal>
+            <Reveal delay={0.1}>
+              <p className="mt-7 text-lg md:text-xl leading-[1.9] text-[#F2F0E9]/75 max-w-[56ch]">{page.hero.sub}</p>
+            </Reveal>
+            <Reveal delay={0.18} className="mt-10">
+              <Cta cta={page.hero.cta} acid />
+            </Reveal>
           </div>
 
           {/* The review date was sitting next to the primary action, competing
@@ -282,11 +265,6 @@ export default function FaPageLayout({ page, trail }: { page: FaPage; trail: { n
               {page.closing.map((c, i) => <Cta key={c.href} cta={c} primary={i === 0} dark={i !== 0} />)}
             </div>
           </div>
-          {roads.length > 0 && (
-            <div className="lg:col-span-4 relative aspect-square max-w-[320px] justify-self-end hidden lg:block">
-              <RoadsScene to={roads} className="absolute inset-0" />
-            </div>
-          )}
         </div>
       </section>
     </article>
