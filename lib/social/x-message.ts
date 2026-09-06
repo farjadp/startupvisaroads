@@ -29,6 +29,12 @@ export type XArticle = {
    * the two post shapes read as duplicates — so callers should supply it.
    */
   insight?: string | null;
+  /**
+   * Hashtags chosen for this post rather than for the account. The fixed pair
+   * put #StartupVisa under a post about study permits, which is the kind of
+   * detail that tells a reader nobody is home.
+   */
+  hashtags?: string[] | null;
 };
 
 /** X counts every link as this many characters however long it is. */
@@ -74,7 +80,8 @@ function clip(s: string, max: number): string {
  */
 export function xMessage(a: XArticle, d: Destination, kind: XKind): string {
   const locale = a.locale;
-  const tags = HASHTAGS[locale].slice(0, kind === 'insight' ? 2 : 3).join(' ');
+  const chosen = (a.hashtags ?? []).filter(Boolean);
+  const tags = (chosen.length ? chosen : HASHTAGS[locale].slice(0, kind === 'insight' ? 2 : 3)).join(' ');
   const link = url(a);
 
   const title = digits(plain(a.title), locale);

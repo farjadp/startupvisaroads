@@ -167,3 +167,24 @@ describe('the insight post', () => {
     expect(m).not.toContain('http');
   });
 });
+
+describe('hashtags', () => {
+  const article = {
+    title: 'PGWP and DLI in 2026',
+    locale: 'en' as const,
+    slug: 'pgwp-dli-2026',
+    keyTakeaway: 'Check the list before you enrol.',
+    insight: 'Not every Designated Learning Institution leaves you eligible for a Post-Graduation Work Permit.',
+  };
+  const ashavid = DESTINATIONS.find((d) => d.id === 'x-ashavid')!;
+
+  it('uses the hashtags chosen for this post', () => {
+    const text = xMessage({ ...article, hashtags: ['#PGWP', '#StudyInCanada'] }, ashavid, 'insight');
+    expect(text).toContain('#PGWP #StudyInCanada');
+    expect(text).not.toContain('#StartupVisa');
+  });
+
+  it('falls back to the account’s own when the writer supplied none', () => {
+    expect(xMessage(article, ashavid, 'insight')).toContain('#StartupVisa');
+  });
+});

@@ -93,6 +93,7 @@ export async function GET(req: NextRequest) {
         ...picked,
         locale,
         insight: written?.text ?? (points.length ? points[Math.floor(Math.random() * points.length)] : null),
+        hashtags: written?.hashtags ?? null,
       };
       // The picture is fetched once and handed to every destination for this
       // article: two accounts, two tweets, one download.

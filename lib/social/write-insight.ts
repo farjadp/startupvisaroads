@@ -59,9 +59,11 @@ const RULES = `Rules, all of them:
 - Do not open with the article's title.
 - Never first-person singular. Never salesy. No call to action, no "DM me", no "learn more".
 
-Also choose a photo search term for a stock library: two to four English words for something real and photographable — a city, a landscape, a passport on a desk, a team in a small office. Never an abstract noun, never a logo or a flag, never text in the image.
+Also choose:
+- 2 or 3 hashtags in the same language as the post, relevant to what this post actually says rather than to the account in general. No spaces inside a hashtag.
+- a photo search term for a stock library: two to four English words for something real and photographable. If the post is about a particular country or city, NAME IT in the term ("Toronto university campus", "Copenhagen harbour"). If it names no place, choose a plain everyday scene with nothing national in it — a desk with papers, a café table, a meeting room. Never a passport, flag, visa, banknote or ID card unless the country is named in the term: a stock library will return some other country's, and a Turkish passport on a post about Canada is what this rule exists to stop. Never an abstract noun, never a logo, never text in the image.
 
-Reply as JSON: {"post": "...", "photo": "..."}`;
+Reply as JSON: {"post": "...", "hashtags": ["#...", "#..."], "photo": "..."}`;
 
 const VOICE = {
   en: `Voice: warm and friendly, like someone who has done this a hundred times telling a founder what they wish they had known — an equal, not a lecturer. Contractions are welcome, plain words, Canadian spelling, at most one exclamation mark and usually none. Friendly does not mean vague: the post still carries something specific. Banned outright: "In today's fast-paced world", "It's important to note", "delve", "navigate the complexities", "unlock", "seamless", "robust", "leverage", "game-changer", "landscape", "journey".`,
@@ -131,7 +133,10 @@ export function rejectReason(text: string, locale: 'en' | 'fa', max: number): st
  * an account that says nothing today is better than one that says something
  * empty. Nothing here throws — the publish path must survive a model outage.
  */
-export type Insight = { text: string; photoQuery: string };
+export type Insight = { text: string; hashtags: string[]; photoQuery: string };
+
+/** Letters of either script, digits and underscores. No spaces, no punctuation. */
+const HASHTAG = /^#[\p{L}0-9_]{2,30}$/u;
 
 export async function writeInsight(a: InsightSource, opts: { maxChars?: number } = {}): Promise<Insight | null> {
   const max = opts.maxChars ?? BUDGET[a.locale];
@@ -145,10 +150,11 @@ export async function writeInsight(a: InsightSource, opts: { maxChars?: number }
   for (const [i, temperature] of [0.75, 0.3].entries()) {
     try {
       const ask = i === 0 ? prompt(a, max) : `${prompt(a, max)}\n\nA previous attempt was rejected: ${last}. Fix that and write it again.`;
-      const reply = await chatJson<{ post?: string; photo?: string }>(ask, temperature);
+      const reply = await chatJson<{ post?: string; hashtags?: string[]; photo?: string }>(ask, temperature);
       const draft = tidy(reply.post ?? '', a.locale);
+      const tags = (reply.hashtags ?? []).filter((t) => typeof t === 'string' && HASHTAG.test(t)).slice(0, 3);
       const bad = rejectReason(draft, a.locale, max);
-      if (!bad) return { text: draft, photoQuery: (reply.photo ?? '').trim().slice(0, 60) };
+      if (!bad) return { text: draft, hashtags: tags, photoQuery: (reply.photo ?? '').trim().slice(0, 60) };
       last = bad;
       console.warn(`social/insight: draft rejected — ${bad}`);
     } catch (e) {

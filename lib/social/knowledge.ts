@@ -54,7 +54,7 @@ const RULES = `Rules, all of them:
 
 Also choose:
 - 2 or 3 hashtags, English, no spaces, relevant and not generic filler.
-- a photo search term for a stock library: two to four English words for something real and photographable (a city street, a harbour, a market, a laptop on a café table). Never an abstract noun, never a flag or a logo, never text in the image.`;
+- a photo search term for a stock library: two to four English words for something real and photographable. If the post is about a particular country or city, NAME IT in the term ("Tallinn old town", "Vienna coffee house"). If it names no place, choose a plain everyday scene with nothing national in it — a desk with papers, a café table, a meeting room. Never a passport, flag, visa, banknote or ID card unless the country is named in the term: a stock library will return some other country's, and a Turkish passport on a post about Canada is what this rule exists to stop. Never an abstract noun, never a metaphor for a piece of jargon ("cap table" returns a man in a cap), never text in the image.`;
 
 export type KnowledgePost = { text: string; hashtags: string[]; photoQuery: string; topic: string };
 
