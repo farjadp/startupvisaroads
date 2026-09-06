@@ -1,58 +1,147 @@
-# Handoff — state of play
+# Handoff — 6 Sep 2026
 
-**Last updated:** 2026-09-06 · Update this file at the end of a session, do not append to it.
+Read this before touching anything. It carries the state, the things that
+will surprise you, and the decisions worth knowing before you change them.
 
-## Where things stand
+## The single most important thing
 
-`main` is **live on visaroads.com** and carries PR #3, #4, #5. **PR #6 is open and unmerged** (three photographs per Persian guide).
+**Nothing in this project was broken by code. It was broken by things that
+were never switched on, and nothing reported it.** Three separate systems
+were found today built, wired, tested and silently inert:
 
-> Pushing `main` deploys to production — `trigger.yaml`, Cloud Build → Cloud Run `europe-west1`, ~10 minutes. Merging a PR **is** deploying. Confirm before doing it.
-
-Farjad also runs **Devin** on this repo (PR #4 was Devin's). Expect commits and branches that did not come from your session. `git fetch origin --prune` and check which branch you are actually on before any reset or merge.
-
-## What the site is
-
-Mentoring a portfolio of **startup teams** through **startup visa and entrepreneur-immigration routes**. Four routes: **Denmark, the Netherlands, Finland, Canada.** Estonia is a secondary fast/low-cost option, never a headline. Not immigration advice, not "Canada startup visa" — Farjad corrected that twice.
-
-`/fa` is a standalone Persian site with its own IA, not a translation of `/en`.
-
-## The load-bearing files
-
-| Concern | File |
+| System | What was wrong |
 |---|---|
-| Which `/fa` paths exist + hreflang pairing | `lib/fa/paths.ts` — **add here first**, or the path 301s away |
-| Persian page copy | `content/fa/<page>.ts`, rendered by `components/fa/FaPageLayout.tsx` |
-| AEO/GEO layer | `FaPage.facts` + `.entity` → visible panel *and* `WebPage.about` PropertyValue; `faMeta()` for per-page OG |
-| Imagery | `FaPage.image` / `imageAlt` / `gallery[]`; generate with `scripts/gen-fa-assets.ts` |
-| SUV closure status | `content/fa/suv-status.ts` — one source for all four SUV pages |
-| 3D globe | `components/fa/three/RoadsScene.tsx` + `lib/fa/land.ts` (needs coastlines or it is a black disc) |
-| Autopilot trust gate | `lib/autopilot/text.ts:decidePlannedPublication`, wired into **both** writers |
+| The autopilot | **Zero Cloud Scheduler jobs existed, in all 30 regions.** Articles only ever appeared when someone triggered the endpoint by hand |
+| Telegram lead forms | The bot token was revoked. `getMe` returned 401. Every contact, webinar and quiz submission had been failing |
+| `lib/socials.ts` | 468 lines of working LinkedIn/X/Facebook code, called on every publish, with not one credential configured |
 
-Checks: `npm test` (171) · `npx tsc --noEmit` · `npm run build`.
+If something looks broken, check whether it is configured before you read the
+code. That instinct would have saved most of a day.
 
-## Open items
+## Where production actually is
 
-**Farjad owes:**
-1. Copy review of the programme figures on the five destination pages — provincial thresholds, European means-of-support, and above all the **US entry-restriction paragraph** on `/fa/usa-eb2-niw`, the most time-sensitive claim on the site
-2. `WEBINAR_DATE` in `content/fa/webinar.ts` is `null`; the **English** webinar countdown is hardcoded to 1 July 2026 and has been expired for two months
-3. Decide whether `/fa/privacy` and `/fa/terms` get Persian versions — they 301 to English from the Persian footer
-4. Submit each of the three Telegram-backed forms once on production to confirm delivery (which-path, contact, webinar)
-5. Whether to merge PR #6
+**europe-west1**, service `startupvisaroads`,
+`https://startupvisaroads-iyedgs6r2q-ew.a.run.app`.
 
-**Owed on production, after any deploy:**
-- `npx tsx scripts/fix-fa-article-links.ts --write` against the **production** database. It has never run on real rows — the dev DB has no Persian articles. Persian articles written before the IA existed still link to paths that now 301 out of Persian.
-- Resubmit the sitemap in Search Console
-- Lighthouse with the 3D scene present
+There is a **stale duplicate service in us-central1**, 35 revisions behind,
+serving no traffic, which answers on its own run.app URL and returns 404 for
+anything added in the last year. It looked like a routing bug for ten
+minutes. DEPLOY.md said us-central1 throughout and has been corrected.
+Deleting the duplicate is Farjad's call and has not been done.
 
-## Decisions worth knowing before you change them
+Pushing `main` deploys. Build takes 6–8 minutes.
 
-- **Personal phone numbers are deliberately not rendered.** Three were Iranian `+98`, on `index,follow` pages listed in the sitemap, on a site about leaving Iran. Data kept in `content/team.ts` behind a header note; Telegram and WhatsApp still carry every member's routing. Restore per person with consent, not as a block.
-- **Unverifiable track-record claims were removed** from the English home ($10M+ raised, 98% approval rate, 150+ founders relocated, 12-month average). An approval-rate claim contradicts our own copy telling readers that guarantee claims are a scam signal. If any are substantiated, restore them **with a source**.
-- **Both autopilot writers are gated** on an allowlisted government citation. Two of the three harvest feeds are not government sources — `cicnews.com` is an immigration law firm's marketing property. Do not loosen this to raise volume; a short week means add a feed.
-- **`/en/europe/finland` permanently redirects** to `/en/country/finland` (176-word stub vs 1,020-word page, both were indexable and competing). Persian Finland keeps its own URL and pairs with `/en/country/finland`.
+## What runs on a schedule
 
-## Known gaps nobody has taken
+All in europe-west1, all UTC, all created 6 Sep 2026 — before that there were
+none.
 
-- Nine unused IRANSansX font weights ship in `public/fonts` and are declared in `globals.css`, referenced nowhere
-- English display fonts still load on Persian pages
-- `/country/*` vs `/europe/*` remains two namespaces for the same countries; only the Finland collision was resolved
+```
+06:00  svr-autopilot-en        1 English article
+07:00  svr-autopilot-fa        1 Persian article, from the topic backlog
+09:00  svr-social-insights-1   1 insight tweet per account
+11:00  svr-autopilot-source-1  English, from the news feeds
+14:00  svr-autopilot-source-2  English, from the news feeds
+15:00  svr-social-insights-2   1 insight tweet per account
+17:00  svr-social-short        Telegram, only on a day nothing published
+18:00  svr-autopilot-digest    the daily report
+```
+
+`svr-autopilot-source-fa` is deliberately **not** created: Persian starts at
+one article a day so its quality can be read before the volume goes up.
+
+## The digest is the thing that keeps this honest
+
+`/api/cron/autopilot-digest` reports per **lane**, not per pipeline — asking
+"is the autopilot working" answers yes while one locale is dead, which is
+exactly how six weeks passed. It also reports social delivery, and names only
+what is unhealthy so a good day stays three lines.
+
+Two corrections already came out of it: it counted **dry runs as
+publications** (reporting `fa: healthy — 1 published` against a database with
+zero Persian articles), and the quiet-day route claimed "every article was
+used within 45 days" when there were no articles at all. Both fixed. Expect
+more of this: a diagnostic that names the wrong cause is worse than none.
+
+## Social distribution
+
+Destinations are **data**, in `lib/social/destinations.ts`. Each declares its
+platform, the locales it accepts, its own credential keys, and `autoPost`.
+Adding a destination is an entry, not a code path.
+
+| Destination | State | Notes |
+|---|---|---|
+| Telegram `@visaroads` | **live** | Persian only. Posted by `@herosjourney_bot`, deliberately not the support bot — when that token died it took every lead form with it |
+| X `@FarjadTalks` | **live** | Persian only, Premium so long-form, every post signed as sent by his digital assistant |
+| X `@ashavidgroup` | **live** | English only, standard 280 limit |
+| LinkedIn ×2 pages | **blocked** | see below |
+
+Every attempt writes a `SocialPost` row **including skips**, because a skip
+that leaves no trace is indistinguishable from a system nobody asked to run.
+Nothing in the social path throws: an article must publish even when a
+channel is misconfigured.
+
+### The X traps, both of which cost time
+
+- **Premium is not API access.** It is the consumer product.
+- **Changing an app's permission does not upgrade a token that already
+  exists.** Set Read and Write, save, *then* regenerate the token. A
+  read-only token passes `verify_credentials` and fails at post time with a
+  403 that reads like a code fault. `scripts/x-setup.ts` now reports
+  `x-access-level` at mint time so this is knowable immediately.
+
+### LinkedIn is blocked, and not on anything we can do
+
+Community Management API **must be the only product on an application**. On
+an app that already carries Share on LinkedIn the Request access button is
+permanently disabled, and the explanation appears only in a tooltip — it
+reads as "pending" rather than "impossible here". Farjad created a
+single-product app; the access form then needs an **active** registered
+company name, and Phase 1 already recorded that `Visa Roads Inc.` is closed.
+That question is still open and blocks submission.
+
+## The Persian site
+
+`/fa` is its own site, not a translation. 21 paths, Persian keyword-first
+copy, positioned as **mentorship for startup teams** through Denmark, the
+Netherlands, Finland and Canada.
+
+`content/fa/topics.ts` holds 14 human-picked article topics, one per priority
+keyword Farjad named. The planner draws from it for `fa` and falls back to
+the model when it runs dry, so the lane never stops for want of a topic. A
+test locks the keyword coverage — it caught two real gaps the moment it was
+written.
+
+## Things that will bite you
+
+- **Two Prisma schemas.** SQLite for dev, Postgres for production, and
+  `migrate deploy` runs the production one on container start. A model added
+  to one file only breaks the other environment silently.
+- **The dev database is `prisma/dev.db`**, not `./dev.db`. The root one is a
+  stale empty schema.
+- **Tailwind scans `app`, `components`, `pages` and `lib`.** A class that
+  appears only in an unscanned file emits no CSS and the element silently
+  renders with whatever it inherited.
+- **`@tailwindcss/typography` is not installed.** The `.prose` rules are
+  hand-written in `globals.css`, so any `prose-*:` variant generates nothing
+  at all — the one that was already in the code had never worked.
+- **The preview browser in this environment keeps pages `hidden`**, which
+  pauses `requestAnimationFrame`. Every screenshot is a frozen mid-animation
+  frame. Check geometry and computed styles in the DOM instead.
+
+## Owed, in rough priority
+
+1. **Revoke the credentials that came through chat**: two LinkedIn client
+   secrets, one LinkedIn access token, the X consumer keys and the AshaVid
+   token set.
+2. **Which active legal entity owns the VisaRoads page** — blocks the
+   LinkedIn form and also settles what the site footer's disclaimer should
+   say, which has been open since Phase 1.
+3. Copy review of the programme figures, above all the **US entry-restriction
+   paragraph** on `/fa/usa-eb2-niw`.
+4. `WEBINAR_DATE` is null; the English countdown is hardcoded to 1 Jul 2026.
+5. `/fa/privacy` and `/fa/terms` still 301 to English from the Persian footer.
+6. The legacy G-P articles on `/en/blog` are another company's marketing under
+   this byline. Excluded from tweet selection, still published.
+7. On production: `npx tsx scripts/fix-fa-article-links.ts --write`, then
+   resubmit the sitemap.
