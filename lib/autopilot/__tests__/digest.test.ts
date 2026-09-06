@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { summarise, buildDigest, type RunRow } from '../digest';
+import { summarise, buildDigest, summariseSocial, type RunRow, type SocialRow } from '../digest';
 
 const NOW = new Date('2026-09-06T18:00:00Z');
 const hoursAgo = (h: number) => new Date(NOW.getTime() - h * 3_600_000);
@@ -118,5 +118,57 @@ describe('buildDigest', () => {
     const msg = buildDigest(summarise([run({ locale: 'fa', created: 12 })], NOW), NOW);
     expect(msg).toContain('12');
     expect(msg).not.toMatch(/[۰-۹]/);
+  });
+});
+
+const post = (over: Partial<SocialRow> = {}): SocialRow => ({
+  destination: 'telegram-channel',
+  status: 'posted',
+  createdAt: hoursAgo(2),
+  error: null,
+  ...over,
+});
+
+describe('summariseSocial', () => {
+  it('says nothing about a destination that posted cleanly', () => {
+    const out = summariseSocial([post(), post()], NOW);
+    expect(out.filter((d) => d.state !== 'healthy')).toHaveLength(0);
+  });
+
+  it('flags a destination whose every attempt failed, and carries the error', () => {
+    const out = summariseSocial([post({ status: 'failed', error: 'telegram 401' })], NOW);
+    const d = out.find((x) => x.destination === 'telegram-channel')!;
+    expect(d.state).toBe('failing');
+    expect(d.reasons.join(' ')).toContain('401');
+  });
+
+  // A destination nobody configured is not broken, and calling it broken every
+  // day is how a digest teaches you to ignore it.
+  it('separates never-configured from failing', () => {
+    const out = summariseSocial([post({ status: 'skipped', error: 'not configured' })], NOW);
+    expect(out.find((x) => x.destination === 'telegram-channel')!.state).toBe('unconfigured');
+  });
+
+  it('ignores attempts from outside the window', () => {
+    expect(summariseSocial([post({ status: 'failed', createdAt: hoursAgo(400) })], NOW)).toHaveLength(0);
+  });
+});
+
+describe('buildDigest with social', () => {
+  it('keeps a fully healthy day short even with social attached', () => {
+    const lanes = summarise([run({ locale: 'en', created: 2 }), run({ locale: 'fa', created: 1 })], NOW);
+    const msg = buildDigest(lanes, NOW, summariseSocial([post()], NOW));
+    expect(msg.split('\n').length).toBeLessThanOrEqual(7);
+  });
+
+  it('names a failing destination in the message', () => {
+    const lanes = summarise([run({ locale: 'en', created: 1 }), run({ locale: 'fa', created: 1 })], NOW);
+    const msg = buildDigest(lanes, NOW, summariseSocial([post({ status: 'failed', error: 'telegram 401' })], NOW));
+    expect(msg).toContain('telegram-channel');
+    expect(msg).toContain('401');
+  });
+
+  it('still works when no social rows are passed at all', () => {
+    expect(() => buildDigest(summarise([], NOW), NOW)).not.toThrow();
   });
 });

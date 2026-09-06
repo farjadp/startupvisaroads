@@ -3,6 +3,7 @@ import { TwitterApi } from 'twitter-api-v2';
 import * as cheerio from 'cheerio';
 import OpenAI from 'openai';
 import { SITE_URL } from '@/lib/seo';
+import { sendToChannel } from '@/lib/social/telegram';
 
 // Initialize OpenAI client
 const openai = new OpenAI({
@@ -396,6 +397,24 @@ export async function shareToSocials(articleId: string) {
       console.log(`[Social Share] Article "${article.title}" is in ${article.status} status. Social share skipped.`);
       return;
     }
+
+    // The Telegram channel is independent of the three platforms below: it has
+    // its own credentials, its own locale filter and its own record per
+    // attempt, and it must run even when none of the others is configured —
+    // which, today, is all of them. sendToChannel never throws, so a channel
+    // problem can never stop an article from being published.
+    await sendToChannel(
+      {
+        id: article.id,
+        title: article.title,
+        slug: article.slug,
+        locale: article.locale === 'fa' ? 'fa' : 'en',
+        keyTakeaway: (article as { keyTakeaway?: string | null }).keyTakeaway ?? null,
+        excerpt: article.excerpt,
+        coverImage: article.coverImage,
+      },
+      'article',
+    );
 
     const linkedinToken = await getCredential('LINKEDIN_ACCESS_TOKEN');
     const linkedinAuthor = await getCredential('LINKEDIN_AUTHOR_URN');

@@ -39,9 +39,16 @@ export const DESTINATIONS: Destination[] = [
   {
     id: 'telegram-channel',
     platform: 'telegram',
-    label: 'Telegram channel',
-    // Set to ['fa'] if the channel turns out to be Persian-only — spec §8.
-    locales: ['fa', 'en'],
+    label: 'Telegram @visaroads',
+    // Persian only. The channel is «مهاجرت از طریق استارتاپ ویزا» — Persian
+    // name, Persian description, Persian audience — so an English article
+    // would arrive as noise. Widen this array if that changes; nothing else
+    // has to move.
+    locales: ['fa'],
+    // @herosjourney_bot ("Farjad's Digital Twins"), already an administrator
+    // of the channel. Deliberately not the support bot: when that token died
+    // today it took every lead form with it, and publishing must not be able
+    // to break lead capture.
     credentials: ['TELEGRAM_CHANNEL_BOT_TOKEN', 'TELEGRAM_CHANNEL_ID'],
     autoPost: true,
   },
