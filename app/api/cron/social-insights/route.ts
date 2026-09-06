@@ -46,39 +46,44 @@ export async function GET(req: NextRequest) {
     take: 500,
   });
 
+  // Pick per locale, not once for everything. Choosing globally and then
+  // fanning out to whichever destinations match let two English picks starve
+  // the Persian account entirely — which is exactly what the first dry run
+  // did.
+  const locales = [...new Set(DESTINATIONS.filter((d) => d.platform === 'x').flatMap((d) => d.locales))];
   const seen = [...prior];
   const sent: unknown[] = [];
 
-  for (let i = 0; i < count; i++) {
-    const picked = pickForShortPost(articles as never, seen, now);
-    if (!picked) {
-      if (!sent.length) {
-        return NextResponse.json({ ok: true, action: 'none', reason: explainNoPick(articles as never, seen, now) });
-      }
-      break;
-    }
+  for (const locale of locales) {
+    for (let i = 0; i < count; i++) {
+      const picked = pickForShortPost(articles as never, seen, now, { locale, prefer: 'newest' });
+      if (!picked) break;
 
-    // The point comes from the article body, chosen from the phrases the
-    // writer marked decisive. Without this the insight repeats the takeaway
-    // the article post already carried, and the account reads as a bot.
-    const source = articles.find((x) => x.id === picked.id)!;
-    const points = extractInsights(source.content ?? '', source.locale === 'fa' ? 'fa' : 'en');
-    const a = {
-      ...picked,
-      locale: picked.locale as 'en' | 'fa',
-      insight: points[Math.floor(Math.random() * points.length)] ?? null,
-    };
-    if (dryRun) {
-      // Show what each destination would actually send, not just which
-      // article was chosen — the message differs per account.
-      const previews = DESTINATIONS.filter((d) => d.platform === 'x' && d.locales.includes(a.locale))
-        .map((d) => ({ destination: d.id, text: xMessage(a, d, 'insight') }));
-      sent.push({ article: a.slug, previews });
-    } else {
-      sent.push({ article: a.slug, results: await shareToX(a, 'insight') });
+      const source = articles.find((x) => x.id === picked.id)!;
+      // The point comes from the article body, chosen from the phrases the
+      // writer marked decisive. Without this the insight repeats the takeaway
+      // the article post already carried, and the account reads as a bot.
+      const points = extractInsights(source.content ?? '', locale);
+      const a = {
+        ...picked,
+        locale,
+        insight: points.length ? points[Math.floor(Math.random() * points.length)] : null,
+      };
+
+      if (dryRun) {
+        const previews = DESTINATIONS.filter((d) => d.platform === 'x' && d.locales.includes(locale))
+          .map((d) => ({ destination: d.id, text: xMessage(a, d, 'insight') }));
+        sent.push({ locale, article: a.slug, points: points.length, previews });
+      } else {
+        sent.push({ locale, article: a.slug, results: await shareToX(a, 'insight') });
+      }
+      // Recorded before the next pick, so the loop cannot choose it twice.
+      seen.push({ articleId: a.id, createdAt: now });
     }
-    // Recorded before the next pick, so the loop cannot choose it twice.
-    seen.push({ articleId: a.id, createdAt: now });
+  }
+
+  if (!sent.length) {
+    return NextResponse.json({ ok: true, action: 'none', reason: explainNoPick(articles as never, seen, now) });
   }
 
   return NextResponse.json({ ok: true, action: 'insight', requested: count, sent });

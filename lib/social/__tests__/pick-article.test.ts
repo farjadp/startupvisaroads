@@ -4,11 +4,11 @@ import { shouldPostShort, pickForShortPost, explainNoPick, REUSE_DAYS, type Cand
 const NOW = new Date('2026-09-20T18:00:00Z');
 const daysAgo = (n: number) => new Date(NOW.getTime() - n * 86_400_000);
 
-const art = (id: string, publishedDaysAgo: number): Candidate => ({
+const art = (id: string, publishedDaysAgo: number, locale: 'en' | 'fa' = 'fa'): Candidate => ({
   id,
   slug: id,
   title: `عنوان ${id}`,
-  locale: 'fa',
+  locale,
   keyTakeaway: `نکته‌ی ${id}`,
   excerpt: null,
   createdAt: daysAgo(publishedDaysAgo),
@@ -87,5 +87,33 @@ describe('explainNoPick', () => {
 
   it('only blames the reuse window when that is genuinely the cause', () => {
     expect(explainNoPick([art('a', 30)], [prior('a', 1)], NOW)).toMatch(/45 days|reuse/i);
+  });
+});
+
+describe('choosing for a daily tweet rather than a quiet day', () => {
+  // Oldest-first is right when resurfacing something a reader has not seen.
+  // It is wrong for a daily tweet: on this database it surfaced legacy
+  // articles about another company's product, which is the worst thing to
+  // lead an account with.
+  it('can prefer the newest article instead of the oldest', () => {
+    const arts = [art('old', 200), art('new', 2)];
+    expect(pickForShortPost(arts, [], NOW, { prefer: 'oldest' })?.id).toBe('old');
+    expect(pickForShortPost(arts, [], NOW, { prefer: 'newest' })?.id).toBe('new');
+  });
+
+  // Picking globally and then fanning out to whichever destinations match let
+  // two English picks starve the Persian account entirely.
+  it('can restrict the choice to one locale', () => {
+    const arts = [art('en1', 2, 'en'), art('fa1', 30, 'fa')];
+    expect(pickForShortPost(arts, [], NOW, { locale: 'fa' })?.id).toBe('fa1');
+    expect(pickForShortPost(arts, [], NOW, { locale: 'en' })?.id).toBe('en1');
+  });
+
+  it('returns nothing when that locale has nothing eligible', () => {
+    expect(pickForShortPost([art('fa1', 5, 'fa')], [], NOW, { locale: 'en' })).toBeNull();
+  });
+
+  it('still accepts a plain reuse-days number, as the channel route passes', () => {
+    expect(pickForShortPost([art('a', 60)], [prior('a', REUSE_DAYS + 1)], NOW, REUSE_DAYS)?.id).toBe('a');
   });
 });
