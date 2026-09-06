@@ -9,6 +9,7 @@ import { Link } from '@/navigation';
 import JsonLd from '@/components/JsonLd';
 import { sanitizeHtml } from '@/lib/sanitize';
 import { SITE_URL, articleJsonLd, breadcrumbJsonLd, buildMetadata, faqJsonLd, isDataImageUrl, selfLocalizedAlternates, stripHtml } from '@/lib/seo';
+import { blogType } from '@/lib/fa/blog-type';
 import { buildRelatedArticleBox, computeReadingTime, getArticleBySlug, getRecommendedService, getRelatedArticle, getSafeQuickFacts } from '@/lib/blog';
 import { 
   Clock, 
@@ -215,6 +216,9 @@ export default async function BlogPostPage({ params }: { params: Promise<{ local
 
   // 7. Build structured data (Article + Breadcrumb + FAQ) for SEO/AEO/GEO
   const articleLocale = article.locale === 'fa' ? 'fa' : 'en';
+  // Follows the ARTICLE's locale, not the URL's: a Persian article must read
+  // in Persian faces wherever it is rendered.
+  const T = blogType(articleLocale === 'fa');
   const articleUrl = `${SITE_URL}/${articleLocale}/blog/${article.slug}`;
   let structuredFaq: { question: string; answer: string }[] = [];
   const rawFaq = (article as { faq?: string | null }).faq;
@@ -255,7 +259,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ local
 
       {/* Breadcrumbs & Navigation */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-[#1a1a1a]/10 pb-8 mb-12">
-        <nav className="text-xs font-sans text-[#1a1a1a]/50 flex items-center gap-2 flex-wrap" aria-label="Breadcrumb">
+        <nav className={`text-xs ${T.body} text-[#1a1a1a]/50 flex items-center gap-2 flex-wrap`} aria-label="Breadcrumb">
           <Link href="/" className="hover:text-[#1a1a1a] transition-colors">{t.home}</Link>
           <span className="text-[10px] text-[#1a1a1a]/30">&rarr;</span>
           <Link href="/blog" className="hover:text-[#1a1a1a] transition-colors">{t.blog}</Link>
@@ -287,10 +291,10 @@ export default async function BlogPostPage({ params }: { params: Promise<{ local
             </span>
           </Link>
         )}
-        <h1 className="font-serif text-4xl md:text-6xl mb-6 text-[#1a1a1a] leading-tight font-bold">
+        <h1 className={`${T.display} text-4xl md:text-6xl mb-6 text-[#1a1a1a] leading-tight font-bold`}>
           {article.title}
         </h1>
-        <div className="font-sans text-[#1a1a1a]/60 text-sm flex flex-wrap items-center justify-center md:justify-start gap-x-3 gap-y-1">
+        <div className={`${T.body} text-[#1a1a1a]/60 text-sm flex flex-wrap items-center justify-center md:justify-start gap-x-3 gap-y-1`}>
           <span>{t.byline} <strong className="text-[#1a1a1a]">{t.author}</strong></span>
           <span aria-hidden="true">·</span>
           <span>
@@ -330,15 +334,15 @@ export default async function BlogPostPage({ params }: { params: Promise<{ local
 
       {/* Key takeaway — the passage an answer engine quotes */}
       {keyTakeaway && (
-        <div className="my-10 p-6 md:p-7 bg-[#1a1a1a] text-[#F2F0E9] rounded-2xl font-sans shadow-[4px_4px_0px_0px_#CCFF00]">
+        <div className={`my-10 p-6 md:p-7 bg-[#1a1a1a] text-[#F2F0E9] rounded-2xl ${T.body} shadow-[4px_4px_0px_0px_#CCFF00]`}>
           <span className="text-[10px] font-bold uppercase tracking-widest text-[#CCFF00] block mb-3">{t.takeaway}</span>
-          <p className="font-serif text-lg md:text-xl leading-relaxed">{keyTakeaway}</p>
+          <p className={`${T.display} text-lg md:text-xl leading-relaxed`}>{keyTakeaway}</p>
         </div>
       )}
 
       {/* Premium Brutalist Quick Facts Card */}
       <div 
-        className="relative my-12 p-6 md:p-8 bg-[#1a1a1a]/[0.02] border-2 border-[#1a1a1a] rounded-2xl shadow-[4px_4px_0px_0px_#1a1a1a] hover:shadow-[6px_6px_0px_0px_#CCFF00] transition-all duration-300 font-sans"
+        className={`relative my-12 p-6 md:p-8 bg-[#1a1a1a]/[0.02] border-2 border-[#1a1a1a] rounded-2xl shadow-[4px_4px_0px_0px_#1a1a1a] hover:shadow-[6px_6px_0px_0px_#CCFF00] transition-all duration-300 ${T.body}`}
       >
         <span className="text-[10px] font-bold uppercase tracking-widest text-[#F2F0E9] bg-[#1a1a1a] px-4 py-1.5 rounded-full absolute -top-3 start-6 border border-[#1a1a1a]">
           {t.cardTitle}
@@ -365,14 +369,14 @@ export default async function BlogPostPage({ params }: { params: Promise<{ local
 
       {/* Render HTML content safely */}
       <article
-        className="prose prose-lg md:prose-xl prose-headings:font-serif prose-headings:font-bold prose-a:text-[#1a1a1a] prose-a:underline max-w-none text-[#1a1a1a]/80"
+        className={`prose prose-lg md:prose-xl ${T.body} prose-headings:font-bold prose-a:text-[#1a1a1a] prose-a:underline max-w-none text-[#1a1a1a]/80`}
         dangerouslySetInnerHTML={{ __html: safeContent }}
       />
 
       {/* Structured FAQ (autopilot articles) */}
       {faqs.length > 0 && (
-        <section className="my-12 font-sans" aria-labelledby="faq-heading">
-          <h2 id="faq-heading" className="font-serif text-3xl font-bold text-[#1a1a1a] mb-6">{t.faq}</h2>
+        <section className={`my-12 ${T.body}`} aria-labelledby="faq-heading">
+          <h2 id="faq-heading" className={`${T.display} text-3xl font-bold text-[#1a1a1a] mb-6`}>{t.faq}</h2>
           <div className="divide-y divide-[#1a1a1a]/10 border-y border-[#1a1a1a]/10">
             {faqs.map((f, i) => (
               <details key={i} className="group py-4">
@@ -389,14 +393,14 @@ export default async function BlogPostPage({ params }: { params: Promise<{ local
 
       {/* Context-Aware Recommended Service Card */}
       <div 
-        className="relative my-12 p-6 md:p-8 bg-[#1a1a1a]/[0.02] border-2 border-[#1a1a1a] rounded-2xl shadow-[4px_4px_0px_0px_#1a1a1a] hover:shadow-[6px_6px_0px_0px_#CCFF00] transition-all duration-300 font-sans"
+        className={`relative my-12 p-6 md:p-8 bg-[#1a1a1a]/[0.02] border-2 border-[#1a1a1a] rounded-2xl shadow-[4px_4px_0px_0px_#1a1a1a] hover:shadow-[6px_6px_0px_0px_#CCFF00] transition-all duration-300 ${T.body}`}
       >
         <span className="text-[10px] font-bold uppercase tracking-widest text-[#1a1a1a]/50 bg-[#F2F0E9] border border-[#1a1a1a]/20 px-3 py-1 rounded-full absolute -top-3 start-6">
           {t.relatedServiceBadge}
         </span>
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pt-2">
           <div className="flex-1">
-            <h3 className="font-serif text-2xl font-bold text-[#1a1a1a] mb-2">
+            <h3 className={`${T.display} text-2xl font-bold text-[#1a1a1a] mb-2`}>
               {recommendedService.title}
             </h3>
             <p className="text-sm text-[#1a1a1a]/70 leading-relaxed max-w-xl">
@@ -415,12 +419,12 @@ export default async function BlogPostPage({ params }: { params: Promise<{ local
 
       {/* Contact Call-To-Action Card */}
       <div 
-        className="relative my-12 p-8 bg-[#1a1a1a] text-[#F2F0E9] rounded-3xl shadow-[6px_6px_0px_0px_#CCFF00] font-sans overflow-hidden"
+        className={`relative my-12 p-8 bg-[#1a1a1a] text-[#F2F0E9] rounded-3xl shadow-[6px_6px_0px_0px_#CCFF00] ${T.body} overflow-hidden`}
       >
         <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-[#CCFF00]/5 rounded-full blur-[80px] pointer-events-none"></div>
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 relative z-10">
           <div className="flex-1">
-            <h3 className="font-serif text-3xl md:text-4xl font-bold leading-tight mb-3">
+            <h3 className={`${T.display} text-3xl md:text-4xl font-bold leading-tight mb-3`}>
               {t.ctaTitle}
             </h3>
             <p className="text-sm text-[#F2F0E9]/70 leading-relaxed max-w-xl">
@@ -442,10 +446,10 @@ export default async function BlogPostPage({ params }: { params: Promise<{ local
         <div>
           {article.tags.length > 0 && (
             <>
-              <h4 className="font-sans text-xs font-bold uppercase tracking-widest text-[#1a1a1a]/40 mb-3">Tags</h4>
+              <h4 className={`${T.label} text-xs font-bold text-[#1a1a1a]/40 mb-3`}>Tags</h4>
               <div className="flex flex-wrap gap-2">
                 {article.tags.map(tag => (
-                  <span key={tag.id} className="bg-[#1a1a1a]/5 px-3.5 py-1.5 rounded-full font-sans text-xs text-[#1a1a1a]/70">
+                  <span key={tag.id} className={`bg-[#1a1a1a]/5 px-3.5 py-1.5 rounded-full ${T.body} text-xs text-[#1a1a1a]/70`}>
                     #{tag.name}
                   </span>
                 ))}

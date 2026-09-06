@@ -7,6 +7,7 @@
 // ============================================================================
 import type { Locale } from '@/lib/seo';
 import { BRAND_FACTS, linkBlock, type Inventory } from './inventory';
+import { pickTopics, topicToBrief } from '@/content/fa/topics';
 import { chatJson, WRITER_MODEL } from './pipeline';
 
 export type Brief = {
@@ -66,6 +67,28 @@ function coerce(raw: RawBrief, inv: Inventory): Brief | null {
 
 /** Plan `n` briefs for today. Categories least recently covered come first. */
 export async function planBriefs(n: number, inv: Inventory): Promise<Brief[]> {
+  // Persian draws from the human-picked backlog first. Left to itself the
+  // planner writes about whatever the site already covers — in practice,
+  // Canada — while the questions that justify a Persian magazine at all are
+  // the ones no English article here will ever answer. When the backlog is
+  // exhausted the model plans the remainder as before, so the lane never
+  // stops for want of a topic.
+  if (inv.locale === 'fa') {
+    const picked = pickTopics(n, inv.recentTitles).map(topicToBrief);
+    if (picked.length >= n) {
+      console.log(`autopilot/planner: ${picked.length}/${n} briefs from the Persian backlog`);
+      return picked.slice(0, n);
+    }
+    if (picked.length) {
+      console.log(`autopilot/planner: ${picked.length} from the Persian backlog, ${n - picked.length} to plan`);
+      const rest = await planBriefsWithModel(n - picked.length, inv);
+      return [...picked, ...rest].slice(0, n);
+    }
+  }
+  return planBriefsWithModel(n, inv);
+}
+
+async function planBriefsWithModel(n: number, inv: Inventory): Promise<Brief[]> {
   const counts = new Map<string, number>();
   for (const c of inv.categories) counts.set(c.name, 0);
   for (const c of inv.recentCategories) if (counts.has(c)) counts.set(c, (counts.get(c) ?? 0) + 1);

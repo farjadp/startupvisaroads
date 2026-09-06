@@ -5,6 +5,13 @@ const config: Config = {
     "./pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
+    // lib/ holds the locale typography tokens. Without this glob Tailwind
+    // never sees a class that only appears there, silently emits no rule for
+    // it, and the component renders with whatever it inherited — which is how
+    // `prose-headings:font-estedad` left Persian article headings in DM Serif
+    // Display while every other token appeared to work, because those happen
+    // to be written literally somewhere under components/ as well.
+    "./lib/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
     extend: {
