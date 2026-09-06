@@ -11,7 +11,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { authorisedCron } from '@/lib/cron-auth';
-import { shouldPostShort, pickForShortPost, REUSE_DAYS } from '@/lib/social/pick-article';
+import { shouldPostShort, pickForShortPost, explainNoPick } from '@/lib/social/pick-article';
 import { sendToChannel } from '@/lib/social/telegram';
 import { DESTINATIONS } from '@/lib/social/destinations';
 
@@ -46,7 +46,7 @@ export async function GET(req: NextRequest) {
 
   const picked = pickForShortPost(articles as never, priorPosts, now);
   if (!picked) {
-    return NextResponse.json({ ok: true, action: 'none', reason: `every article was used within ${REUSE_DAYS} days` });
+    return NextResponse.json({ ok: true, action: 'none', reason: explainNoPick(articles as never, priorPosts, now) });
   }
 
   const full = articles.find((a) => a.id === picked.id)!;

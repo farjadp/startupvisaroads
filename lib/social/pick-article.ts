@@ -66,3 +66,29 @@ export function pickForShortPost(
 
   return eligible[0] ?? null;
 }
+
+/**
+ * Why `pickForShortPost` came back empty, in words.
+ *
+ * Production reported "every article was used within 45 days" against a
+ * database that had no prior posts and no Persian articles at all. A
+ * diagnostic naming the wrong cause is worse than no diagnostic: it sends the
+ * next person looking in the wrong place, which is a whole afternoon.
+ */
+export function explainNoPick(
+  articles: Candidate[],
+  priorPosts: PriorPost[],
+  now: Date,
+  reuseDays: number = REUSE_DAYS,
+): string {
+  if (!articles.length) return 'no published article in this locale yet';
+
+  const quotable = articles.filter((a) => Boolean((a.keyTakeaway ?? a.excerpt ?? '').trim()));
+  if (!quotable.length) return 'no article has a quotable takeaway or excerpt';
+
+  const cutoff = new Date(now.getTime() - reuseDays * 86_400_000);
+  const used = new Set(priorPosts.filter((p) => p.createdAt >= cutoff).map((p) => p.articleId));
+  if (quotable.every((a) => used.has(a.id))) return `every article was used within ${reuseDays} days`;
+
+  return 'nothing eligible, for a reason this function does not know about';
+}

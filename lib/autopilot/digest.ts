@@ -93,7 +93,14 @@ export function summarise(runs: RunRow[], now: Date, opts: SummariseOptions = {}
 
   return locales.map((locale) => {
     const mine = runs.filter((r) => r.locale === locale && r.startedAt >= since);
-    const created = mine.reduce((n, r) => n + (r.created ?? 0), 0);
+
+    // A dry run records a created count and inserts nothing. Counting it is
+    // how this digest reported "fa: healthy — 1 published" against a database
+    // that held zero Persian articles, which is precisely the false
+    // confidence it exists to prevent.
+    const isDry = (r: RunRow) => /dry[- ]?run/i.test(r.notes ?? '');
+    const real = mine.filter((r) => !isDry(r));
+    const created = real.reduce((n, r) => n + (r.created ?? 0), 0);
 
     const reasons: string[] = [];
     const push = (s: string) => {
@@ -108,15 +115,21 @@ export function summarise(runs: RunRow[], now: Date, opts: SummariseOptions = {}
     const stuck = mine.some((r) => r.finishedAt === null && r.startedAt < stuckBefore);
 
     let state: LaneState;
-    if (!mine.length) state = 'silent';
+    if (!real.length) state = 'silent';
     else if (stuck) state = 'stuck';
     else if (created === 0) state = 'degraded';
     else state = 'healthy';
 
-    if (state === 'silent') push(`No autopilot run in the last ${windowHours} hour${windowHours === 1 ? '' : 's'}.`);
+    if (state === 'silent') {
+      push(
+        mine.length
+          ? `Only dry runs in the last ${windowHours} hour${windowHours === 1 ? '' : 's'} — nothing was published.`
+          : `No autopilot run in the last ${windowHours} hour${windowHours === 1 ? '' : 's'}.`,
+      );
+    }
     if (state === 'stuck') push('A run started and never finished.');
 
-    return { locale, state, runs: mine.length, created, reasons };
+    return { locale, state, runs: real.length, created, reasons };
   });
 }
 

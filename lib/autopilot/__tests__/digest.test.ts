@@ -129,6 +129,31 @@ const post = (over: Partial<SocialRow> = {}): SocialRow => ({
   ...over,
 });
 
+describe('dry runs', () => {
+  // A dry run writes an AutopilotRun row with a created count and inserts
+  // nothing. Counting it as a publication is how the digest came to report
+  // "fa: healthy — 1 published" on a production database that held zero
+  // Persian articles — the exact false confidence this digest exists to
+  // prevent.
+  it('does not count a dry run as a publication', () => {
+    const out = summarise([run({ locale: 'fa', created: 1, notes: 'dry-run' })], NOW);
+    const fa = lane(out, 'fa');
+    expect(fa.created).toBe(0);
+    expect(fa.state).not.toBe('healthy');
+  });
+
+  it('still counts a real run alongside a dry one', () => {
+    const out = summarise([run({ locale: 'en', created: 1, notes: 'dry-run' }), run({ locale: 'en', created: 2 })], NOW);
+    expect(lane(out, 'en').created).toBe(2);
+    expect(lane(out, 'en').state).toBe('healthy');
+  });
+
+  it('says why a lane looks quiet when every run was a dry run', () => {
+    const out = summarise([run({ locale: 'fa', created: 3, notes: 'dry-run' })], NOW);
+    expect(lane(out, 'fa').reasons.join(' ')).toMatch(/dry/i);
+  });
+});
+
 describe('summariseSocial', () => {
   it('says nothing about a destination that posted cleanly', () => {
     const out = summariseSocial([post(), post()], NOW);

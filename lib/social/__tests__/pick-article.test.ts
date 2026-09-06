@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { shouldPostShort, pickForShortPost, REUSE_DAYS, type Candidate, type PriorPost } from '../pick-article';
+import { shouldPostShort, pickForShortPost, explainNoPick, REUSE_DAYS, type Candidate, type PriorPost } from '../pick-article';
 
 const NOW = new Date('2026-09-20T18:00:00Z');
 const daysAgo = (n: number) => new Date(NOW.getTime() - n * 86_400_000);
@@ -68,5 +68,24 @@ describe('pickForShortPost', () => {
 
   it('returns nothing when there are no candidates', () => {
     expect(pickForShortPost([], [], NOW)).toBeNull();
+  });
+});
+
+// Production said "every article was used within 45 days" on a database with
+// no prior posts at all and no Persian articles. A diagnostic that names the
+// wrong cause is worse than none: it sends the next person looking in the
+// wrong place.
+describe('explainNoPick', () => {
+  it('says there are no articles when there are none', () => {
+    expect(explainNoPick([], [], NOW)).toMatch(/no published article/i);
+  });
+
+  it('says none is quotable when the articles have nothing to quote', () => {
+    const bare = { ...art('a', 10), keyTakeaway: null, excerpt: null };
+    expect(explainNoPick([bare], [], NOW)).toMatch(/quotable/i);
+  });
+
+  it('only blames the reuse window when that is genuinely the cause', () => {
+    expect(explainNoPick([art('a', 30)], [prior('a', 1)], NOW)).toMatch(/45 days|reuse/i);
   });
 });
