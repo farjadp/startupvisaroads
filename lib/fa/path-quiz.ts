@@ -28,7 +28,7 @@ export type QuizAnswers = {
   horizon: 'urgent' | 'medium' | 'long';
 };
 
-export type PathId = 'finland' | 'denmark' | 'estonia' | 'atlantic' | 'eb2niw' | 'too-early';
+export type PathId = 'finland' | 'denmark' | 'netherlands' | 'estonia' | 'atlantic' | 'eb2niw' | 'too-early';
 
 export type Recommendation = {
   path: PathId;
@@ -40,6 +40,7 @@ export type Recommendation = {
 const RESULT: Record<PathId, { title: string; href: string }> = {
   finland: { title: 'ویزای استارتاپ فنلاند', href: '/europe/finland' },
   denmark: { title: 'ویزای استارتاپ دانمارک', href: '/europe/denmark' },
+  netherlands: { title: 'ویزای استارتاپ هلند', href: '/europe/netherlands' },
   estonia: { title: 'ویزای استارتاپ استونی', href: '/europe/estonia' },
   atlantic: { title: 'مسیر کارآفرینی نیوبرانزویک یا نوااسکوشیا', href: '/pnp/new-brunswick' },
   eb2niw: { title: 'EB-2 NIW آمریکا', href: '/usa-eb2-niw' },
@@ -93,6 +94,12 @@ export function recommendPath(a: QuizAnswers): Recommendation {
       return result(
         'finland',
         'کسب‌وکار در حال اجرا و تیم دو نفره، شما را دقیقاً در محدوده‌ی مجوز استارتاپ فنلاند قرار می‌دهد — همان منطق SUV کانادا، بدون سرمایه‌گذاری الزامی، با ارزیابی رایگان Business Finland. سؤال بعدی این است که آیا کسب‌وکارتان از نظر آن‌ها مقیاس‌پذیر بین‌المللی است.',
+      );
+    }
+    if (a.goal === 'growth') {
+      return result(
+        'netherlands',
+        'بنیان‌گذار تنها با محصولی که رشد بازار برایش اولویت است: هلند شما را به یک فسیلیتیتور مورد تأیید RVO می‌سپارد که یک سال روی توسعه‌ی کسب‌وکار و دسترسی به بازار اروپای غربی کنارتان می‌ماند. شرط تعداد بنیان‌گذار ندارد، اما محصول باید برای بازار هلند تازه باشد.',
       );
     }
     if (a.horizon === 'urgent' || a.capital === 'under50') {

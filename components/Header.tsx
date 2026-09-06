@@ -87,8 +87,9 @@ export default function Header() {
       key: 'jurisdictions',
       subLinks: [
         { header: 'اروپا' },
-        { href: '/europe/finland', label: 'فنلاند' },
         { href: '/europe/denmark', label: 'دانمارک' },
+        { href: '/europe/netherlands', label: 'هلند' },
+        { href: '/europe/finland', label: 'فنلاند' },
         { href: '/europe/estonia', label: 'استونی' },
 
         { header: 'کانادا' },

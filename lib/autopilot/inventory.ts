@@ -81,6 +81,7 @@ export const FA_SITE_PAGES: FaPage[] = [
   { path: '/pnp/nova-scotia', label: 'مسیر کارآفرینی نوااسکوشیا', kind: 'program' },
   { path: '/europe/finland', label: 'ویزای استارتاپ فنلاند', kind: 'program' },
   { path: '/europe/denmark', label: 'ویزای استارتاپ دانمارک (Start-up Denmark)', kind: 'program' },
+  { path: '/europe/netherlands', label: 'ویزای استارتاپ هلند', kind: 'program' },
   { path: '/europe/estonia', label: 'ویزای استارتاپ استونی', kind: 'program' },
   { path: '/usa-eb2-niw', label: 'ویزای EB-2 NIW آمریکا برای متخصصان ایرانی', kind: 'program' },
   { path: '/which-path', label: 'کدام مسیر مهاجرت برای شما مناسب است؟ (ارزیابی رایگان)', kind: 'tool' },

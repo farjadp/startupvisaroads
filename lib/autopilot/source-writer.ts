@@ -26,7 +26,7 @@ import { originality, tooClose } from './originality';
 import { AIO_RULES, FACT_RULES, WRITER_MODEL, chatJson, chatText, expand, houseStyle, humanise, type GenerateResult } from './pipeline';
 import { generateBrandImage, imagesBlocked } from './images';
 import { harvest, markLedger, type SourceArticle } from './sources';
-import { enforceLinks, wordCountHtml } from './text';
+import { decidePlannedPublication, enforceLinks, wordCountHtml } from './text';
 import { draftMeta, placeVisuals, wordTarget } from './writer';
 import type { Brief } from './planner';
 
@@ -287,7 +287,10 @@ export async function runFromSources(n: number, locale: Locale, opts: RunOpts = 
           topicSeed: `${article.sourceName}: ${article.title} — ${brief.angle}`,
           internalLinks: linked.links,
         },
-        { locale: inv.locale, status: opts.publish ? 'PUBLISHED' : 'DRAFT' },
+        // Same gate as the planned writer: a piece whose only sourcing is a
+        // secondary outlet (cicnews.com is an immigration firm's own marketing
+        // property) must not auto-publish as though it were authoritative.
+        { locale: inv.locale, status: decidePlannedPublication(!!opts.publish, linked.officialCitationCount).status },
       );
       await markLedger(article.ledgerId, 'used', brief.angle, created.id);
       result.created.push({ id: created.id, slug: created.slug, title: created.title });
