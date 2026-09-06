@@ -7,7 +7,7 @@
 // ============================================================================
 
 export type VideoTag =
-  | 'suv' | 'pnp' | 'new-brunswick' | 'ontario' | 'bc' | 'netherlands' | 'europe'
+  | 'suv' | 'pnp' | 'new-brunswick' | 'ontario' | 'bc' | 'netherlands' | 'denmark' | 'finland' | 'europe'
   | 'startup' | 'pitch' | 'market' | 'decision' | 'webinar' | 'mentorship';
 
 export type Video = {
@@ -22,6 +22,11 @@ export const VIDEOS: Video[] = [
   { id: 'cXAWOW-Wdco', title: 'وبینار ۲۳ استارتاپ ویزا | آخرین تغییرات، اولویت‌ها و کشورهای دارای ویزای استارتاپ', tags: ['webinar', 'suv', 'europe'] },
   { id: 'oJ-00ZIYLEY', title: 'بیست و دومین دورهمی استارتاپ ویزا کانادا: بعد از اتفاقات ۱۹ دسامبر', tags: ['webinar', 'suv'] },
   { id: 'WG9QFxaw0tI', title: 'صفر تا صد ویزای استارتاپ هلند (۲۰۲۶): شرایط، هزینه‌ها و چالش‌های ماه اول', tags: ['netherlands', 'europe'] },
+  { id: '7nyGJrUgxtw', title: 'ویزای استارتاپ دانمارک 🇩🇰 اقامت دائم در ۴ سال! (آپدیت ۲۰۲۶)', tags: ['denmark', 'europe'] },
+  { id: '-n4lCG2MAK4', title: '🇩🇰 زندگی در دانمارک از زبان یک بنیان‌گذار استارتاپ | تجربه واقعی', tags: ['denmark', 'europe'] },
+  { id: 'RSo7Ilu8tWE', title: 'استارتاپ ویزای دانمارک ۲۰۲۵', tags: ['denmark', 'europe'] },
+  { id: 'UyEsOpfswjk', title: 'ویزای استارتاپ فنلاند ۲۰۲۶ | همه چیز از تأیید ایده تا اقامت دائم و پاسپورت 🇫🇮', tags: ['finland', 'europe'] },
+  { id: '7wbBkrLgRiM', title: '🇫🇮 زندگی در فنلاند از زبان یک ساکن | فرهنگ، هزینه‌ها، کار و واقعیت‌ها', tags: ['finland', 'europe'] },
   { id: 'Fl1Q7gUU06A', title: 'سریع‌ترین راه اقامت کانادا در ۶ ماه؛ کارآفرینی استان نیوبرانزویک PNP', tags: ['new-brunswick', 'pnp'] },
   { id: 'I3tts3-vkos', title: 'PNP Canada Explained | واقعیت مهاجرت استانی کانادا', tags: ['pnp'] },
   { id: 'JZOl-te4JBM', title: 'نقشه واقعی برنامه کارآفرینی انتاریو ۲۰۲۶ | از صفر تا اقامت دائم کانادا', tags: ['ontario', 'pnp'] },

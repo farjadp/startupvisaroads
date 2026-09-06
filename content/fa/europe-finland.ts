@@ -112,7 +112,7 @@ export const page: FaPage = {
     { q: 'مجوز استارتاپ به اقامت دائم می‌رسد؟', a: 'بله، از مسیر عادی: پس از چند سال اقامت مستمر با مجوز معتبر می‌توانید برای اقامت دائم و بعدتر تابعیت درخواست دهید. شرط اصلی ادامه‌ی فعالیت واقعی استارتاپ در فنلاند است.' },
   ],
 
-  videos: ['cXAWOW-Wdco', 'WG9QFxaw0tI'],
+  videos: ['UyEsOpfswjk', '7wbBkrLgRiM', 'cXAWOW-Wdco'],
   closing: [
     { label: 'ارزیابی رایگان مسیر', href: '/which-path' },
     { label: 'مقایسه با دانمارک', href: '/europe/denmark' },
