@@ -55,9 +55,20 @@ async function main() {
     if (!pages.length) console.log('\n! this token administers no pages');
     for (const p of pages) console.log(`✓ page URN     ${p.urn}`);
   } else {
-    console.log(`\n! cannot list pages (${acl.status}) — this token has no w_organization_social,`);
-    console.log('  so it can post to the profile but not to a company page. Add the');
-    console.log('  "Community Management API" product to the app and generate a new token.');
+    console.log('\n──────────────────────────────────────────────────────────');
+    console.log('VERDICT: this token CANNOT post to a company page.');
+    console.log(`         (LinkedIn answered ${acl.status} when asked which pages it administers)`);
+    console.log('');
+    console.log('The Community Management API product is not on this app yet.');
+    console.log('Generating another token will not change that — the product has to be');
+    console.log('added first, and each app needs it separately.');
+    console.log('');
+    console.log('  1. Open the app → Products tab');
+    console.log('  2. Find "Community Management API" → Request access');
+    console.log('  3. When it shows as added, generate a NEW token');
+    console.log('  4. Check the Permissions line says w_organization_social');
+    console.log('  5. Run this script again with that token');
+    console.log('──────────────────────────────────────────────────────────');
   }
 
   // 3. What to run.
