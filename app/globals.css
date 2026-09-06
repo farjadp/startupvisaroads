@@ -232,3 +232,24 @@ html[dir="rtl"] details > summary::-webkit-details-marker { display: none; }
 @media (prefers-reduced-motion: reduce) {
   html[dir="rtl"] .animate-marquee { animation: none; }
 }
+
+/* ---------------------------------------------------------------------------
+   Persian article bodies.
+
+   The .prose rules above hardcode var(--font-serif) on every heading — DM Serif
+   Display, which carries no Arabic-script glyphs. Every heading inside every
+   Persian article has therefore been falling back to whatever the reader's OS
+   offered since the Persian site shipped, which is why the magazine never
+   matched the guides beside it.
+
+   Scoped by direction rather than by a class, because the article HTML is
+   rendered from the database with dangerouslySetInnerHTML: there is no
+   component to hang a class on, and the Tailwind Typography plugin is not
+   installed, so a `prose-headings:` variant would generate no CSS at all.
+--------------------------------------------------------------------------- */
+[dir='rtl'] .prose h1,
+[dir='rtl'] .prose h2,
+[dir='rtl'] .prose h3,
+[dir='rtl'] .prose h4 {
+  font-family: var(--font-estedad), var(--font-vazir), sans-serif;
+}

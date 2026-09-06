@@ -369,7 +369,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ local
 
       {/* Render HTML content safely */}
       <article
-        className={`prose prose-lg md:prose-xl ${T.body} ${T.proseHeadings} prose-headings:font-bold prose-a:text-[#1a1a1a] prose-a:underline max-w-none text-[#1a1a1a]/80`}
+        className={`prose prose-lg md:prose-xl ${T.body} prose-headings:font-bold prose-a:text-[#1a1a1a] prose-a:underline max-w-none text-[#1a1a1a]/80`}
         dangerouslySetInnerHTML={{ __html: safeContent }}
       />
 
