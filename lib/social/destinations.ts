@@ -33,6 +33,21 @@ export type Destination = {
    * be moved to review without a redesign.
    */
   autoPost: boolean;
+  /**
+   * Hard character limit, when the platform imposes one on this account.
+   * Absent means long-form is available — an X Premium account, or Telegram.
+   * This is per destination and not per platform because the two X accounts
+   * differ: one is Premium and one is not.
+   */
+  charLimit?: number;
+  /**
+   * Appended to every message. Farjad asked that his personal account state
+   * that the content was sent by his digital assistant — a disclosure, so it
+   * is part of the message rather than an option.
+   */
+  signature?: string;
+  /** Links to carry alongside the article's own, in order. */
+  links?: string[];
 };
 
 export const DESTINATIONS: Destination[] = [
@@ -108,20 +123,30 @@ export const DESTINATIONS: Destination[] = [
   {
     id: 'x-farjad',
     platform: 'x',
-    label: 'X — Farjad',
-    locales: ['fa', 'en'],
+    label: 'X — Farjad (Persian)',
+    // Persian only. This is the personal account and it carries the Persian
+    // lane; the English lane is AshaVid's. They are two audiences, not one
+    // audience in two languages.
+    locales: ['fa'],
     credentials: ['X_CONSUMER_KEY', 'X_CONSUMER_SECRET', 'X_TOKEN_FARJAD', 'X_SECRET_FARJAD'],
     autoPost: true,
+    // No charLimit: the account has Premium, so long-form is available and the
+    // 240-character truncation in the legacy poster must not reach it.
+    signature: 'ارسال‌شده توسط دستیار دیجیتال فرجاد',
+    links: ['https://t.me/visaroads', 'https://farjadp.info', 'https://www.visaroads.com'],
   },
   {
     id: 'x-ashavid',
     platform: 'x',
-    label: 'X — AshaVid',
+    label: 'X — AshaVid (English)',
     // English only, for the same reason as the AshaVid LinkedIn page: it is
     // the AI venture, not the immigration brand.
     locales: ['en'],
     credentials: ['X_CONSUMER_KEY', 'X_CONSUMER_SECRET', 'X_TOKEN_ASHAVID', 'X_SECRET_ASHAVID'],
     autoPost: true,
+    // Not a Premium account — the profile still shows the "get verified"
+    // prompt — so this lane lives inside the standard limit.
+    charLimit: 280,
   },
 ];
 
