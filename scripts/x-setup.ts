@@ -26,12 +26,12 @@ if (!appKey || !appSecret) {
 }
 
 async function main() {
-  const client = new TwitterApi({ appKey: appKey!, appSecret: appSecret! });
+  const requestClient = new TwitterApi({ appKey: appKey!, appSecret: appSecret! });
 
   let link;
   try {
     // 'oob' asks X for the PIN flow instead of a callback redirect.
-    link = await client.generateAuthLink('oob', { linkMode: 'authorize' });
+    link = await requestClient.generateAuthLink('oob', { linkMode: 'authorize' });
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e);
     console.error(`✗ could not start the flow: ${msg}\n`);
@@ -50,7 +50,17 @@ async function main() {
   rl.close();
 
   try {
-    const { accessToken, accessSecret, screenName } = await client.login(pin);
+    // login() must run on a client carrying the REQUEST token from the step
+    // above, not on the bare app client. Calling it on the app client returns
+    // 401 no matter how valid the PIN is, which reads as "expired PIN" and
+    // sends you round the loop again — which is exactly what it did.
+    const pinClient = new TwitterApi({
+      appKey: appKey!,
+      appSecret: appSecret!,
+      accessToken: link.oauth_token,
+      accessSecret: link.oauth_token_secret,
+    });
+    const { accessToken, accessSecret, screenName } = await pinClient.login(pin);
     console.log(`\n✓ authorised as @${screenName}\n`);
 
     const suffix = screenName.toLowerCase().includes('asha') ? 'ASHAVID' : 'FARJAD';
@@ -65,7 +75,8 @@ async function main() {
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e);
     console.error(`\n✗ the PIN was rejected: ${msg}`);
-    console.error('PINs expire quickly — start again and paste it promptly.');
+    console.error('If the authorise page said access was granted, the PIN is fine and the');
+    console.error('problem is upstream — check the app has Read and Write permission.');
     process.exit(1);
   }
 }
