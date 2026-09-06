@@ -58,11 +58,19 @@ export async function GET(req: NextRequest) {
   const locales = [...new Set(DESTINATIONS.filter((d) => d.platform === 'x').flatMap((d) => d.locales))];
   const seen = [...prior];
   const sent: unknown[] = [];
+  // A locale that produces nothing has to say so per locale. Reporting one
+  // reason for the whole run is how "the autopilot is healthy" was true while
+  // an entire lane was dead.
+  const quiet: { locale: string; candidates: number; reason: string }[] = [];
 
   for (const locale of locales) {
     for (let i = 0; i < count; i++) {
       const picked = pickForShortPost(articles as never, seen, now, { locale, prefer: 'newest' });
-      if (!picked) break;
+      if (!picked) {
+        const mine = articles.filter((a) => a.locale === locale);
+        if (i === 0) quiet.push({ locale, candidates: mine.length, reason: explainNoPick(mine as never, seen, now) });
+        break;
+      }
 
       const source = articles.find((x) => x.id === picked.id)!;
       // The post is written from the article, not lifted out of it. Picking a
@@ -95,5 +103,5 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ ok: true, action: 'none', reason: explainNoPick(articles as never, seen, now) });
   }
 
-  return NextResponse.json({ ok: true, action: 'insight', requested: count, sent });
+  return NextResponse.json({ ok: true, action: 'insight', requested: count, sent, quiet });
 }
