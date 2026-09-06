@@ -15,6 +15,11 @@
 export type Photo = {
   data: Buffer;
   mimeType: string;
+  /**
+   * The image URL itself. X wants the bytes uploaded; Telegram would rather
+   * fetch the picture, so both are carried and neither downloads twice.
+   */
+  src: string;
   /** Alt text for the tweet, so the post is readable with images off. */
   alt: string;
   photographer: string;
@@ -154,6 +159,7 @@ export async function findPhoto(query: string): Promise<Photo | null> {
     return {
       data,
       mimeType,
+      src,
       // Pexels' own alt text describes the picture; the query is the fallback
       // and is at least the subject.
       alt: (chosen.alt || query).slice(0, 900),

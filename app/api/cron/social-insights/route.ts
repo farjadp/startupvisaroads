@@ -14,7 +14,9 @@ import prisma from '@/lib/prisma';
 import { authorisedCron } from '@/lib/cron-auth';
 import { pickForShortPost, explainNoPick } from '@/lib/social/pick-article';
 import { shareToX } from '@/lib/social/x';
+import { sendToChannel } from '@/lib/social/telegram';
 import { xMessage } from '@/lib/social/x-message';
+import { insightMessage } from '@/lib/social/telegram-message';
 import { DESTINATIONS } from '@/lib/social/destinations';
 import { extractInsights } from '@/lib/social/insights';
 import { writeInsight } from '@/lib/social/write-insight';
@@ -102,6 +104,10 @@ export async function GET(req: NextRequest) {
       if (dryRun) {
         const previews = DESTINATIONS.filter((d) => d.platform === 'x' && d.locales.includes(locale))
           .map((d) => ({ destination: d.id, text: xMessage(a, d, 'insight') }));
+        const channel = DESTINATIONS.find((d) => d.platform === 'telegram');
+        if (channel?.locales.includes(locale) && a.insight) {
+          previews.push({ destination: channel.id, text: insightMessage(a.insight, locale) });
+        }
         sent.push({
           locale,
           article: a.slug,
@@ -110,7 +116,12 @@ export async function GET(req: NextRequest) {
           previews,
         });
       } else {
-        sent.push({ locale, article: a.slug, results: await shareToX(a, 'insight', photo) });
+        const results = await shareToX(a, 'insight', photo);
+        // The same Persian thought goes to the channel. `sendToChannel` decides
+        // whether the channel carries this language, so nothing here has to
+        // know that it is Persian-only.
+        const channel = await sendToChannel({ ...a, insight: a.insight }, 'insight', photo?.src);
+        sent.push({ locale, article: a.slug, results, channel });
       }
       // Recorded before the next pick, so the loop cannot choose it twice.
       seen.push({ articleId: a.id, createdAt: now });

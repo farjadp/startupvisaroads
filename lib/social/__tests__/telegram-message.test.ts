@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { articleMessage, shortMessage, CAPTION_LIMIT } from '../telegram-message';
+import { articleMessage, shortMessage, CAPTION_LIMIT, insightMessage } from '../telegram-message';
 
 const fa = {
   title: 'اثبات تمکن مالی ویزای استارتاپ با حساب ایرانی',
@@ -90,5 +90,22 @@ describe('shortMessage', () => {
   it('falls back to the excerpt when there is no key takeaway', () => {
     const m = shortMessage({ ...fa, keyTakeaway: null });
     expect(m).toContain(fa.excerpt.slice(0, 20));
+  });
+});
+
+describe('insightMessage', () => {
+  it('carries the thought and no link — the article post already gave one', () => {
+    const text = insightMessage('اگر تنها بنیان‌گذار هستید، مسیر فنلاند بسته است؛ Start-up Denmark یک نفر را هم می‌پذیرد.', 'fa');
+    expect(text).toContain('Start-up Denmark');
+    expect(text).not.toMatch(/https?:\/\//);
+  });
+
+  it('puts Persian digits in Persian prose and leaves programme codes alone', () => {
+    expect(insightMessage('حداقل 2 بنیان‌گذار، و مسیر EB-2 NIW جداست.', 'fa')).toContain('حداقل ۲ بنیان‌گذار');
+    expect(insightMessage('حداقل 2 بنیان‌گذار، و مسیر EB-2 NIW جداست.', 'fa')).toContain('EB-2 NIW');
+  });
+
+  it('fits inside a photo caption', () => {
+    expect(insightMessage('ب'.repeat(2000), 'fa').length).toBeLessThanOrEqual(1024);
   });
 });

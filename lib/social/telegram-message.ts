@@ -90,6 +90,19 @@ export function articleMessage(a: PostableArticle): string {
  */
 const SHORT_LIMIT = 700;
 
+/**
+ * The insight post, on the channel.
+ *
+ * The same thought that goes to X, and like it, no link: the channel already
+ * carried this article with its link when it published, and a second post
+ * pointing at the same page reads as a repeat rather than as something worth
+ * stopping for. The caption limit is Telegram's, because these arrive with a
+ * picture.
+ */
+export function insightMessage(insight: string, locale: 'en' | 'fa'): string {
+  return clip(localiseDigits(plain(insight), locale), CAPTION_LIMIT);
+}
+
 export function shortMessage(a: PostableArticle): string {
   const url = articleUrl(a);
   const idea = localiseDigits(plain(a.keyTakeaway || a.excerpt || a.title), a.locale);

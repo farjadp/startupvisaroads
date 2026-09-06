@@ -13,9 +13,9 @@
 // ============================================================================
 import prisma from '@/lib/prisma';
 import { DESTINATIONS, configured, type Destination } from './destinations';
-import { articleMessage, shortMessage, type PostableArticle } from './telegram-message';
+import { articleMessage, shortMessage, insightMessage, type PostableArticle } from './telegram-message';
 
-export type SendKind = 'article' | 'short';
+export type SendKind = 'article' | 'short' | 'insight';
 export type SendResult = { status: 'posted' | 'failed' | 'skipped'; error?: string; remoteUrl?: string };
 
 const TELEGRAM = 'https://api.telegram.org';
@@ -64,8 +64,9 @@ async function post(token: string, chatId: string, text: string, photo?: string 
  * checks first only so the common case does not rely on catching an error.
  */
 export async function sendToChannel(
-  article: PostableArticle & { id: string; coverImage?: string | null },
+  article: PostableArticle & { id: string; coverImage?: string | null; insight?: string | null },
   kind: SendKind,
+  photoUrl?: string | null,
 ): Promise<SendResult> {
   const d = DESTINATIONS.find((x) => x.platform === 'telegram');
   if (!d) return { status: 'skipped', error: 'no telegram destination' };
@@ -105,12 +106,19 @@ export async function sendToChannel(
     return record({ status: 'skipped', error: 'not configured' });
   }
 
-  const text = kind === 'article' ? articleMessage(article) : shortMessage(article);
+  const text =
+    kind === 'article'
+      ? articleMessage(article)
+      : kind === 'insight'
+        ? insightMessage(article.insight ?? '', article.locale)
+        : shortMessage(article);
+  if (!text.trim()) return record({ status: 'skipped', error: 'nothing to say' });
+
   const result = await post(
     creds.TELEGRAM_CHANNEL_BOT_TOKEN!,
     creds.TELEGRAM_CHANNEL_ID!,
     text,
-    kind === 'article' ? article.coverImage : null,
+    kind === 'article' ? article.coverImage : (photoUrl ?? null),
   );
   if (result.status === 'failed') console.error(`social/telegram: ${d.id} ${kind} failed — ${result.error}`);
   return record(result);
