@@ -5,6 +5,7 @@ import { Link } from '@/navigation';
 import { Clock } from 'lucide-react';
 import JsonLd from '@/components/JsonLd';
 import { blogJsonLd, buildMetadata, collectionPageJsonLd, isDataImageUrl, selfLocalizedAlternates, SITE_URL } from '@/lib/seo';
+import { blogType } from '@/lib/fa/blog-type';
 import { buildBlogPageHref, computeReadingTime, getBlogIndexData } from '@/lib/blog';
 import BlogSearchInput from '@/components/blog/BlogSearchInput';
 import { faCategoryLabel } from '@/lib/fa/categories';
@@ -18,6 +19,7 @@ export async function generateMetadata({ params, searchParams }: {
   const { locale } = await params;
   const query = await searchParams;
   const isRtl = locale === 'fa';
+  const T = blogType(isRtl);
   const isQueryVariant = Boolean(query.category || query.q || (query.page && query.page !== '1'));
   const canonicalPath = query.category ? `/blog/category/${query.category}` : '/blog';
   const metadata = buildMetadata({
@@ -50,6 +52,9 @@ export default async function BlogPage({
   const pageSize = 6;
 
   const isRtl = locale === 'fa';
+  // The magazine was built before the Persian site existed and hardcoded the
+  // two English faces; neither has Arabic-script glyphs.
+  const T = blogType(isRtl);
 
   // Localized text translations
   const t = isRtl ? {
@@ -110,10 +115,10 @@ export default async function BlogPage({
       ]} />
       {/* Editorial Header */}
       <div className="border-b-4 border-[#1a1a1a] pb-12 mb-12">
-        <h1 className="font-serif text-5xl md:text-8xl mb-6 text-[#1a1a1a] tracking-tight uppercase">
+        <h1 className={`${T.display} text-5xl md:text-8xl mb-6 text-[#1a1a1a] tracking-tight uppercase`}>
           {t.title}
         </h1>
-        <p className="max-w-2xl text-lg md:text-xl text-[#1a1a1a]/70 leading-relaxed font-sans">
+        <p className={`max-w-2xl text-lg md:text-xl text-[#1a1a1a]/70 leading-relaxed ${T.body}`}>
           {t.subtitle}
         </p>
       </div>
@@ -123,7 +128,7 @@ export default async function BlogPage({
         <div className="flex flex-wrap gap-3">
           <Link 
             href="/blog"
-            className={`px-4 py-2 font-sans text-xs font-bold uppercase tracking-wider rounded-full border-2 border-[#1a1a1a] transition-all duration-200 ${
+            className={`px-4 py-2 ${T.label} text-xs font-bold rounded-full border-2 border-[#1a1a1a] transition-all duration-200 ${
               !activeCategorySlug 
                 ? 'bg-[#1a1a1a] text-[#CCFF00] shadow-[2px_2px_0px_0px_#1a1a1a]' 
                 : 'bg-transparent text-[#1a1a1a] hover:bg-[#1a1a1a] hover:text-[#CCFF00]'
@@ -135,7 +140,7 @@ export default async function BlogPage({
             <Link
               key={category.id}
               href={`/blog/category/${category.slug}`}
-              className={`px-4 py-2 font-sans text-xs font-bold uppercase tracking-wider rounded-full border-2 border-[#1a1a1a] transition-all duration-200 ${
+              className={`px-4 py-2 ${T.label} text-xs font-bold rounded-full border-2 border-[#1a1a1a] transition-all duration-200 ${
                 activeCategorySlug === category.slug 
                   ? 'bg-[#1a1a1a] text-[#CCFF00] shadow-[2px_2px_0px_0px_#1a1a1a]' 
                   : 'bg-transparent text-[#1a1a1a] hover:bg-[#1a1a1a] hover:text-[#CCFF00]'
@@ -153,7 +158,7 @@ export default async function BlogPage({
       {/* Empty State */}
       {totalCount === 0 && (
         <div className="text-center py-20 border-2 border-[#1a1a1a] border-dashed rounded-2xl bg-[#1a1a1a]/[0.02]">
-          <p className="font-sans text-[#1a1a1a]/60 text-lg">{t.emptyState}</p>
+          <p className={`${T.body} text-[#1a1a1a]/60 text-lg`}>{t.emptyState}</p>
         </div>
       )}
 
@@ -177,7 +182,7 @@ export default async function BlogPage({
                   className="object-cover group-hover:scale-105 transition-transform duration-700"
                 />
               ) : (
-                <div className="w-full h-full flex items-center justify-center font-serif text-[#1a1a1a]/10 text-7xl">SVR.</div>
+                <div className={`w-full h-full flex items-center justify-center ${T.display} text-[#1a1a1a]/10 text-7xl`}>SVR.</div>
               )}
             </div>
             <div className="md:col-span-5 flex flex-col justify-center">
@@ -187,18 +192,18 @@ export default async function BlogPage({
                     {isRtl ? faCategoryLabel(featuredArticle.category.slug, featuredArticle.category.name) : featuredArticle.category.name}
                   </span>
                 )}
-                <span className="text-xs text-[#1a1a1a]/50 font-sans flex items-center gap-1.5">
+                <span className={`text-xs text-[#1a1a1a]/50 ${T.body} flex items-center gap-1.5`}>
                   <Clock className="w-3.5 h-3.5" />
                   {computeReadingTime(featuredArticle.content, locale)}
                 </span>
               </div>
-              <h2 className="font-serif text-3xl md:text-5xl mb-4 text-[#1a1a1a] leading-tight group-hover:text-[#CCFF00] group-hover:bg-[#1a1a1a] group-hover:px-2 transition-all duration-200 rounded inline-block">
+              <h2 className={`${T.display} text-3xl md:text-5xl mb-4 text-[#1a1a1a] leading-tight group-hover:text-[#CCFF00] group-hover:bg-[#1a1a1a] group-hover:px-2 transition-all duration-200 rounded inline-block`}>
                 {featuredArticle.title}
               </h2>
-              <p className="font-sans text-[#1a1a1a]/70 text-base md:text-lg mb-6 leading-relaxed line-clamp-3">
+              <p className={`${T.body} text-[#1a1a1a]/70 text-base md:text-lg mb-6 leading-relaxed line-clamp-3`}>
                 {featuredArticle.excerpt}
               </p>
-              <div className="font-sans text-xs font-bold uppercase tracking-widest text-[#1a1a1a] underline group-hover:text-[#CCFF00] group-hover:bg-[#1a1a1a] group-hover:no-underline px-2 py-1 inline-block w-fit rounded transition-all duration-200">
+              <div className={`${T.label} text-xs font-bold text-[#1a1a1a] underline group-hover:text-[#CCFF00] group-hover:bg-[#1a1a1a] group-hover:no-underline px-2 py-1 inline-block w-fit rounded transition-all duration-200`}>
                 {t.readArticle} &rarr;
               </div>
             </div>
@@ -228,7 +233,7 @@ export default async function BlogPage({
                       className="object-cover group-hover:scale-105 transition-transform duration-700"
                     />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center font-serif text-[#1a1a1a]/10 text-4xl">SVR.</div>
+                    <div className={`w-full h-full flex items-center justify-center ${T.display} text-[#1a1a1a]/10 text-4xl`}>SVR.</div>
                   )}
                 </div>
                 <div className="flex items-center gap-3 mb-3 flex-wrap">
@@ -237,18 +242,18 @@ export default async function BlogPage({
                       {isRtl ? faCategoryLabel(article.category.slug, article.category.name) : article.category.name}
                     </span>
                   )}
-                  <span className="text-xs text-[#1a1a1a]/50 font-sans flex items-center gap-1">
+                  <span className={`text-xs text-[#1a1a1a]/50 ${T.body} flex items-center gap-1`}>
                     <Clock className="w-3 h-3" />
                     {computeReadingTime(article.content, locale)}
                   </span>
                 </div>
-                <h4 className="font-serif text-2xl md:text-3xl mb-3 text-[#1a1a1a] leading-snug group-hover:text-[#CCFF00] group-hover:bg-[#1a1a1a] group-hover:px-1.5 transition-all duration-200 rounded inline-block">
+                <h4 className={`${T.display} text-2xl md:text-3xl mb-3 text-[#1a1a1a] leading-snug group-hover:text-[#CCFF00] group-hover:bg-[#1a1a1a] group-hover:px-1.5 transition-all duration-200 rounded inline-block`}>
                   {article.title}
                 </h4>
-                <p className="font-sans text-[#1a1a1a]/60 text-sm leading-relaxed line-clamp-3 mb-4">
+                <p className={`${T.body} text-[#1a1a1a]/60 text-sm leading-relaxed line-clamp-3 mb-4`}>
                   {article.excerpt}
                 </p>
-                <div className="font-sans text-xs font-bold uppercase tracking-widest text-[#1a1a1a]/80 group-hover:text-[#CCFF00] transition-colors flex items-center gap-1">
+                <div className={`${T.label} text-xs font-bold text-[#1a1a1a]/80 group-hover:text-[#CCFF00] transition-colors flex items-center gap-1`}>
                   {t.readArticle} &rarr;
                 </div>
               </Link>
@@ -260,14 +265,14 @@ export default async function BlogPage({
       {/* Pagination Controls */}
       {totalPages > 1 && (
         <div className="flex flex-col sm:flex-row justify-between items-center gap-6 mt-24 pt-8 border-t border-[#1a1a1a]/10">
-          <div className="font-sans text-sm text-[#1a1a1a]/60">
+          <div className={`${T.body} text-sm text-[#1a1a1a]/60`}>
             {t.pageOf.replace('{current}', String(page)).replace('{total}', String(totalPages))}
           </div>
           
           <div className="flex items-center gap-4">
             <Link
               href={page > 1 ? buildBlogPageHref(page - 1, paginationFilters) : '#'}
-              className={`px-6 py-3 font-sans text-xs font-bold uppercase tracking-wider rounded-xl border-2 border-[#1a1a1a] transition-all duration-200 ${
+              className={`px-6 py-3 ${T.label} text-xs font-bold rounded-xl border-2 border-[#1a1a1a] transition-all duration-200 ${
                 page > 1
                   ? 'bg-transparent text-[#1a1a1a] hover:bg-[#1a1a1a] hover:text-[#CCFF00] active:translate-y-0.5'
                   : 'opacity-40 cursor-not-allowed pointer-events-none'
@@ -281,7 +286,7 @@ export default async function BlogPage({
                 <Link
                   key={p}
                   href={buildBlogPageHref(p, paginationFilters)}
-                  className={`w-10 h-10 flex items-center justify-center font-sans text-xs font-bold rounded-xl border-2 border-[#1a1a1a] transition-all duration-200 ${
+                  className={`w-10 h-10 flex items-center justify-center ${T.body} text-xs font-bold rounded-xl border-2 border-[#1a1a1a] transition-all duration-200 ${
                     page === p
                       ? 'bg-[#1a1a1a] text-[#CCFF00] shadow-[2px_2px_0px_0px_#1a1a1a]'
                       : 'bg-transparent text-[#1a1a1a] hover:bg-[#1a1a1a] hover:text-[#CCFF00]'
@@ -294,7 +299,7 @@ export default async function BlogPage({
 
             <Link
               href={page < totalPages ? buildBlogPageHref(page + 1, paginationFilters) : '#'}
-              className={`px-6 py-3 font-sans text-xs font-bold uppercase tracking-wider rounded-xl border-2 border-[#1a1a1a] transition-all duration-200 ${
+              className={`px-6 py-3 ${T.label} text-xs font-bold rounded-xl border-2 border-[#1a1a1a] transition-all duration-200 ${
                 page < totalPages 
                   ? 'bg-transparent text-[#1a1a1a] hover:bg-[#1a1a1a] hover:text-[#CCFF00] active:translate-y-0.5' 
                   : 'opacity-40 cursor-not-allowed pointer-events-none'
