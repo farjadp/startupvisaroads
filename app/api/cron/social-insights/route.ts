@@ -99,7 +99,10 @@ export async function GET(req: NextRequest) {
       };
       // The picture is fetched once and handed to every destination for this
       // article: two accounts, two tweets, one download.
-      const photo = written?.photoQuery ? await findPhoto(written.photoQuery) : null;
+      const found = written?.photoQuery
+        ? await findPhoto(written.photoQuery)
+        : { photo: null, query: '', reason: 'the writer chose no search term' };
+      const photo = found.photo;
 
       if (dryRun) {
         const previews = DESTINATIONS.filter((d) => d.platform === 'x' && d.locales.includes(locale))
@@ -112,7 +115,9 @@ export async function GET(req: NextRequest) {
           locale,
           article: a.slug,
           written: Boolean(written),
-          photo: photo ? { query: written?.photoQuery, alt: photo.alt, by: photo.photographer, source: photo.sourceUrl } : null,
+          photo: photo
+            ? { query: found.query, alt: photo.alt, by: photo.photographer, source: photo.sourceUrl }
+            : { query: found.query, none: found.reason },
           previews,
         });
       } else {

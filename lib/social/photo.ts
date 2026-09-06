@@ -107,19 +107,23 @@ export function claimsAnotherPlace(p: { alt?: string | null; url?: string }, que
  * query twice a week returning the same picture is what makes an account look
  * automated, which is the thing the picture was added to avoid.
  */
-export async function findPhoto(query: string): Promise<Photo | null> {
+export type PhotoLookup = { photo: Photo | null; query: string; reason?: string };
+
+/** Nothing found, and why. A picture that quietly stops appearing is a bug nobody reports. */
+const none = (query: string, reason: string): PhotoLookup => {
+  console.warn(`social/photo: ${reason} — "${query}"`);
+  return { photo: null, query, reason };
+};
+
+export async function findPhoto(query: string): Promise<PhotoLookup> {
   const key = process.env.PEXELS_API_KEY?.trim();
-  if (!key) {
-    console.warn('social/photo: PEXELS_API_KEY is not set — posting without a picture');
-    return null;
-  }
-  if (!query.trim()) return null;
+  if (!key) return none(query, 'PEXELS_API_KEY is not set');
+  if (!query.trim()) return none(query, 'no search term');
 
   // A national document with no country named is the one search guaranteed to
   // produce the wrong country. No picture is the right answer here.
   if (NATIONAL.test(query) && !properNouns(query).length) {
-    console.warn(`social/photo: "${query}" asks for a national document without naming a country — posting without a picture`);
-    return null;
+    return none(query, 'asks for a national document without naming a country');
   }
 
   try {
@@ -127,47 +131,42 @@ export async function findPhoto(query: string): Promise<Photo | null> {
       `https://api.pexels.com/v1/search?query=${encodeURIComponent(query)}&per_page=12&orientation=landscape&size=medium`,
       { headers: { Authorization: key } },
     );
-    if (!res.ok) {
-      console.warn(`social/photo: Pexels search failed (${res.status}) for "${query}"`);
-      return null;
-    }
+    if (!res.ok) return none(query, `Pexels search failed (${res.status})`);
 
     const body = (await res.json()) as { photos?: PexelsPhoto[] };
     const usable = (body.photos ?? []).filter((p) => p.src?.large || p.src?.large2x || p.src?.medium);
     const names = properNouns(query);
     const photos = usable.filter((p) => describes(p, names) && !claimsAnotherPlace(p, query));
     if (!photos.length) {
-      console.warn(
-        usable.length
-          ? `social/photo: nothing Pexels returned for "${query}" actually shows ${names.join(', ')} — posting without a picture`
-          : `social/photo: Pexels had nothing for "${query}"`,
-      );
-      return null;
+      return none(query, usable.length ? 'every result showed the wrong place' : 'Pexels had no results');
     }
 
     const chosen = photos[Math.floor(Math.random() * Math.min(photos.length, 8))];
     const src = chosen.src!.large ?? chosen.src!.large2x ?? chosen.src!.medium!;
 
     const file = await fetch(src);
-    if (!file.ok) return null;
+    if (!file.ok) return none(query, `download failed (${file.status})`);
     const mimeType = file.headers.get('content-type') ?? '';
-    if (!mimeType.startsWith('image/')) return null;
+    if (!mimeType.startsWith('image/')) return none(query, `not an image (${mimeType || 'no content-type'})`);
 
     const data = Buffer.from(await file.arrayBuffer());
-    if (!data.length || data.length > MAX_BYTES) return null;
+    if (!data.length) return none(query, 'empty file');
+    if (data.length > MAX_BYTES) return none(query, `too large (${Math.round(data.length / 1024)}KB)`);
 
     return {
-      data,
-      mimeType,
-      src,
+      photo: {
+        data,
+        mimeType,
+        src,
       // Pexels' own alt text describes the picture; the query is the fallback
       // and is at least the subject.
-      alt: (chosen.alt || query).slice(0, 900),
-      photographer: chosen.photographer ?? 'unknown',
-      sourceUrl: chosen.url ?? src,
+        alt: (chosen.alt || query).slice(0, 900),
+        photographer: chosen.photographer ?? 'unknown',
+        sourceUrl: chosen.url ?? src,
+      },
+      query,
     };
   } catch (e) {
-    console.warn(`social/photo: ${e instanceof Error ? e.message : String(e)}`);
-    return null;
+    return none(query, e instanceof Error ? e.message : String(e));
   }
 }

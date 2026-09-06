@@ -56,13 +56,16 @@ export async function GET(req: NextRequest) {
     avoid.unshift(post.topic);
 
     const text = knowledgeMessage(post);
-    const photo = await knowledgePhoto(post);
+    const found = await knowledgePhoto(post);
+    const photo = found.photo;
 
     if (dryRun) {
       sent.push({
         topic: post.topic,
         text,
-        photo: photo ? { query: post.photoQuery, alt: photo.alt, by: photo.photographer, source: photo.sourceUrl } : null,
+        photo: photo
+          ? { query: found.query, alt: photo.alt, by: photo.photographer, source: photo.sourceUrl }
+          : { query: found.query, none: found.reason },
         destinations: targets.map((d) => d.id),
       });
       continue;

@@ -18,7 +18,7 @@
 // business custom, the shape of a route.
 // ============================================================================
 import { chatJson } from '@/lib/autopilot/pipeline';
-import { findPhoto, type Photo } from './photo';
+import { findPhoto, type PhotoLookup } from './photo';
 
 /** Everything but the body is fixed, and 280 has to hold the hashtags too. */
 const MAX_BODY = 200;
@@ -151,7 +151,7 @@ function dayOfYear(d: Date): number {
   return Math.floor((Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()) - Date.UTC(d.getUTCFullYear(), 0, 0)) / 86_400_000);
 }
 
-/** The photo for a post, or null. Never a reason not to post. */
-export async function knowledgePhoto(p: KnowledgePost): Promise<Photo | null> {
-  return p.photoQuery ? findPhoto(p.photoQuery) : null;
+/** The photo for a post, and why there is none when there is none. */
+export async function knowledgePhoto(p: KnowledgePost): Promise<PhotoLookup> {
+  return p.photoQuery ? findPhoto(p.photoQuery) : { photo: null, query: '', reason: 'the writer chose no search term' };
 }
