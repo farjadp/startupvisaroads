@@ -27,7 +27,6 @@ export const page: FaPage = {
     { src: 'canada-startup-visa-2', alt: 'دروازه‌ی توری زنجیرشده در برابر بارانداز بتنی', caption: 'از ۳۱ دسامبر ۲۰۲۵ پرونده‌ی جدید پذیرفته نمی‌شود؛ این در فعلاً بسته است.' },
     { src: 'canada-startup-visa-3', alt: 'لابی شیشه‌ای خالی یک ساختمان اداری در نور غروب', caption: 'پایلوت ۲۰۲۶ اعلام شده اما تاریخ باز شدنش هنوز رسمی نیست.' },
   ],
-  roads: ['toronto'],
   entity: { name: 'Canada Start-up Visa (SUV)', provider: 'IRCC', country: 'Canada' },
   facts: [
     { label: 'وضعیت فعلی', value: 'بسته به پرونده‌های جدید' },

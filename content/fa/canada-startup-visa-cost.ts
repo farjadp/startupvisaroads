@@ -20,7 +20,6 @@ export const page: FaPage = {
   status: suvSubpageStatus,
 
   image: 'canada-startup-visa',
-  roads: ['toronto'],
   hero: {
     eyebrow: 'کانادا · SUV · هزینه‌ها',
     headline: 'ویزای استارتاپ کانادا واقعاً چقدر هزینه دارد؟',

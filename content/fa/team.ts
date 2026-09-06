@@ -15,7 +15,6 @@ export const page: FaPage = {
   updated: '2026-09-06',
 
   image: 'about',
-  roads: ['toronto'],
   hero: {
     eyebrow: 'تیم · استارتاپ ویزا رودز',
     headline: 'کسانی که آن سوی میز نشسته‌اند',

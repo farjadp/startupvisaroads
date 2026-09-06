@@ -6,9 +6,10 @@
 // lib/fa/path-quiz, result with reasoning, optional lead capture. Copy lives
 // in content/fa/which-path.ts; this file only sequences it.
 // ============================================================================
-import React, { useState, useTransition } from 'react';
+import React, { useState, useTransition, useEffect } from 'react';
 import { ArrowLeft, ArrowRight, Send, RotateCcw } from 'lucide-react';
 import { Link } from '@/navigation';
+import { remember } from '@/lib/fa/quiz-memory';
 import { recommendPath, type QuizAnswers, type Recommendation } from '@/lib/fa/path-quiz';
 import { toPersianDigits } from '@/lib/fa/format';
 import { questions, ui, intro } from '@/content/fa/which-path';
@@ -23,6 +24,14 @@ export default function PathQuiz() {
   const [result, setResult] = useState<Recommendation | null>(null);
   const [leadState, setLeadState] = useState<'idle' | 'done' | 'error'>('idle');
   const [pending, startTransition] = useTransition();
+
+  // Remember the outcome so every guide can tell this reader whether it is
+  // the route they were pointed at. Declared with the other hooks, above
+  // every early return, and a no-op until a result exists. Storage failures
+  // are swallowed inside remember().
+  useEffect(() => {
+    if (result) remember({ href: result.href, title: result.title, at: new Date().toISOString() });
+  }, [result]);
 
   const q = questions[step];
   const total = questions.length;

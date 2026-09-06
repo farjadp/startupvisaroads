@@ -19,7 +19,6 @@ export const page: FaPage = {
   status: suvSubpageStatus,
 
   image: 'canada-startup-visa',
-  roads: ['toronto'],
   hero: {
     eyebrow: 'کانادا · SUV · شرایط و مدارک',
     headline: 'شرایط و مدارک ویزای استارتاپ کانادا',

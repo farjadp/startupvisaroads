@@ -10,6 +10,8 @@ import { faImageUrl, faServiceJsonLd } from '@/lib/fa/content';
 import JsonLd from '@/components/JsonLd';
 import { SITE_URL } from '@/lib/seo';
 import PathQuiz from '@/components/fa/PathQuiz';
+import RouteCompare from '@/components/fa/RouteCompare';
+import Eligibility from '@/components/fa/Eligibility';
 import { meta } from '@/content/fa/which-path';
 
 type Props = { params: Promise<{ locale: string }> };
@@ -47,6 +49,13 @@ export default async function WhichPathFa({ params }: Props) {
       />
       <div className="min-h-[70vh] py-16 md:py-24">
         <PathQuiz />
+      </div>
+      {/* The quiz answers "which route"; these two answer "and can I clear
+          it". Kept below the quiz so the lead magnet stays the first thing
+          on the page. */}
+      <div className="pb-20 md:pb-28">
+        <RouteCompare />
+        <Eligibility />
       </div>
     </div>
   );

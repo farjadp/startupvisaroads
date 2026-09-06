@@ -28,7 +28,6 @@ export const page: FaPage = {
   gallery: [
     { src: 'mentorship-2', alt: 'وایت‌برد پاک‌شده با رد کم‌رنگ نوشته‌ها و یک ماژیک مشکی', caption: 'هشت هفته کار روی کسب‌وکار شما — نه پر کردن فرم.' },
   ],
-  roads: ['helsinki', 'copenhagen', 'tallinn', 'fredericton', 'halifax'],
   entity: { name: 'برنامه‌ی منتورشیپ استارتاپ ویزا — Startup Visa Roads', type: 'Service' },
   facts: [
     { label: 'مدت برنامه', value: '۸ هفته' },

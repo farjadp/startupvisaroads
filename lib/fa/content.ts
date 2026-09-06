@@ -92,8 +92,6 @@ export type FaPage = {
   facts?: FaFact[];
   /** The programme this page is about, for schema.org `about`. */
   entity?: FaEntity;
-  /** Destination keys (lib/fa/geo DESTINATIONS) the roads globe draws to. */
-  roads?: string[];
 };
 
 /** Breadcrumb structured data for a Persian page under the site root. */
