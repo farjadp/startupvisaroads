@@ -45,7 +45,12 @@ export async function GET(req: NextRequest) {
   });
 
   const prior = await prisma.socialPost.findMany({
-    where: { kind: 'insight' },
+    // Only what actually went out. Every attempt writes a row including the
+    // failures, which is right for the digest and wrong here: counting a
+    // failed attempt as use meant the two English articles were burned by two
+    // 403s and the lane reported "every article was used within 45 days" with
+    // nothing ever published.
+    where: { kind: 'insight', status: 'posted' },
     select: { articleId: true, createdAt: true },
     orderBy: { createdAt: 'desc' },
     take: 500,
