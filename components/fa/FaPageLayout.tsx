@@ -26,6 +26,9 @@ import MaskText from './motion/MaskText';
 import Rule from './motion/Rule';
 import Parallax from './motion/Parallax';
 import SectionNav from './motion/SectionNav';
+import Eligibility from './Eligibility';
+import QuizEcho from './QuizEcho';
+import { RULES } from '@/lib/fa/programmes';
 import HeroImage from './motion/HeroImage';
 import ScrollProgress from './motion/ScrollProgress';
 import Stepper, { type Step } from './motion/Stepper';
@@ -111,6 +114,9 @@ export default function FaPageLayout({ page, trail }: { page: FaPage; trail: { n
   // Spread the gallery evenly through the sections so the page breathes
   // instead of front-loading every picture.
   const slotFor = (i: number) => Math.floor(((i + 1) * page.sections.length) / (gallery.length + 1));
+  // A guide that describes a programme we hold thresholds for gets the
+  // calculator, matched on path so no content module has to opt in.
+  const rule = RULES.find((r) => r.href === page.path);
   const mid = Math.min(3, Math.max(1, Math.floor(page.sections.length / 2)));
   const before = page.sections.slice(0, mid);
   const after = page.sections.slice(mid);
@@ -166,6 +172,8 @@ export default function FaPageLayout({ page, trail }: { page: FaPage; trail: { n
               <Cta cta={page.hero.cta} acid />
             </Reveal>
           </div>
+
+          <QuizEcho pagePath={page.path} />
 
           {/* The review date was sitting next to the primary action, competing
               with it. It is provenance, so it reads as provenance. */}
@@ -239,6 +247,8 @@ export default function FaPageLayout({ page, trail }: { page: FaPage; trail: { n
                 </React.Fragment>
               );
             })}
+
+            {rule && <Eligibility only={rule.key} />}
 
             {page.faqs.length > 0 && (
               <Reveal as="section" className="scroll-mt-28">
