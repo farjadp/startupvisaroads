@@ -61,8 +61,28 @@ async function main() {
       accessToken: link.oauth_token,
       accessSecret: link.oauth_token_secret,
     });
-    const { accessToken, accessSecret, screenName } = await pinClient.login(pin);
-    console.log(`\n✓ authorised as @${screenName}\n`);
+    const { accessToken, accessSecret, screenName, client: user } = await pinClient.login(pin);
+    console.log(`\n✓ authorised as @${screenName}`);
+
+    // X reports the token's permission in a response header, so this is
+    // knowable before anything is posted. Without the check the first sign of
+    // a read-only token is a 403 at publish time, which reads as a code fault
+    // rather than a setting — it cost four failed posts to learn that once.
+    let level = '(unknown)';
+    try {
+      const res = await user.v1.get('account/verify_credentials.json', {}, { fullResponse: true });
+      level = (res.headers?.['x-access-level'] as string) ?? '(not reported)';
+    } catch {
+      /* the token works for the login itself; a failed probe is not fatal */
+    }
+    if (level.startsWith('read-write')) {
+      console.log(`  access level: ${level} — this token can post\n`);
+    } else {
+      console.log(`\n✗ access level: ${level} — THIS TOKEN CANNOT POST.\n`);
+      console.log('  Changing the app permission does not upgrade a token that already');
+      console.log('  exists. Set App permissions to "Read and write" on THIS app, save,');
+      console.log('  then regenerate the Access Token and Secret, then run this again.\n');
+    }
 
     // Each destination has its own app, so the consumer key goes out under the
     // same suffix as the user tokens rather than as one shared pair.
