@@ -93,6 +93,36 @@ export const DESTINATIONS: Destination[] = [
     credentials: ['LINKEDIN_TOKEN_ASHAVID', 'LINKEDIN_ORG_URN_ASHAVID'],
     autoPost: true,
   },
+
+  // X. One developer app, two accounts. The app's consumer key and secret are
+  // shared — they identify the app — while each account contributes its own
+  // OAuth 1.0a access token and secret, which is what makes the post appear
+  // as that account.
+  //
+  // An X Premium subscription grants none of this: Premium is the consumer
+  // product. Posting programmatically needs a developer account, an app with
+  // its permission set to Read and Write (the default is Read only, and a
+  // token minted before that change stays read-only), and user tokens per
+  // account. scripts/x-setup.ts runs the flow that produces the second
+  // account's tokens.
+  {
+    id: 'x-farjad',
+    platform: 'x',
+    label: 'X — Farjad',
+    locales: ['fa', 'en'],
+    credentials: ['X_CONSUMER_KEY', 'X_CONSUMER_SECRET', 'X_TOKEN_FARJAD', 'X_SECRET_FARJAD'],
+    autoPost: true,
+  },
+  {
+    id: 'x-ashavid',
+    platform: 'x',
+    label: 'X — AshaVid',
+    // English only, for the same reason as the AshaVid LinkedIn page: it is
+    // the AI venture, not the immigration brand.
+    locales: ['en'],
+    credentials: ['X_CONSUMER_KEY', 'X_CONSUMER_SECRET', 'X_TOKEN_ASHAVID', 'X_SECRET_ASHAVID'],
+    autoPost: true,
+  },
 ];
 
 export function destinationsFor(locale: Locale): Destination[] {
