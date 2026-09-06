@@ -78,8 +78,16 @@ export type FaPage = {
   closing: FaCta[];
   /** YouTube ids from content/fa/videos.ts to show as a rail after the FAQ. */
   videos?: string[];
-  /** Key of public/fa/img/<key>.webp used in the hero, the mid-page band and OG. */
+  /** Key of public/fa/img/<key>.webp used in the hero and as the OG image. */
   image?: string;
+  /** Alt text for the hero image. Empty alt carries no SEO value and no meaning. */
+  imageAlt?: string;
+  /**
+   * Further photographs, interleaved between sections so a long guide is not
+   * a wall of text and never repeats the same picture. Alt text is real
+   * description, not decoration — these are indexable.
+   */
+  gallery?: { src: string; alt: string; caption?: string }[];
   /** Quotable programme facts — shown as a panel, emitted as PropertyValue. */
   facts?: FaFact[];
   /** The programme this page is about, for schema.org `about`. */
@@ -238,6 +246,14 @@ export function faWebPageJsonLd(page: FaPage) {
     dateModified: page.updated,
     isPartOf: { '@id': WEBSITE_ID },
     ...(img ? { primaryImageOfPage: { '@type': 'ImageObject', url: img } } : {}),
+    ...(img || page.gallery?.length
+      ? {
+          image: [
+            ...(img ? [img] : []),
+            ...(page.gallery ?? []).map((g) => `${SITE_URL}/fa/img/${g.src}.webp`),
+          ],
+        }
+      : {}),
     ...(about ? { about } : {}),
     provider: { '@type': 'ProfessionalService', '@id': `${SITE_URL}/fa#service` },
   };

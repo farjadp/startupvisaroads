@@ -15,6 +15,11 @@ export const page: FaPage = {
   updated: '2026-09-06',
 
   image: 'nova-scotia',
+  imageAlt: 'تیرک چوبی اسکله با طناب خاکستری در برابر آب سرد اقیانوس اطلس در نوااسکوشیا',
+  gallery: [
+    { src: 'nova-scotia-2', alt: 'تله‌های خرچنگ چوبی روی اسکله‌ی بتنی خیس با دریای خاکستری', caption: 'اقتصاد نوااسکوشیا دریایی و منطقه‌ای است؛ آستانه‌ی دارایی خارج از هلیفکس پایین‌تر است.' },
+    { src: 'nova-scotia-3', alt: 'نرده‌ی فلزی فانوس دریایی در مه بدون افق', caption: 'دوازده ماه اداره‌ی واقعی کسب‌وکار پیش از نامزدی — این مسیر میان‌بر ندارد.' },
+  ],
   roads: ['halifax'],
   entity: { name: 'Nova Scotia Nominee Program — Entrepreneur stream', provider: 'Government of Nova Scotia', country: 'Canada' },
   facts: [

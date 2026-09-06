@@ -24,6 +24,10 @@ export const page: FaPage = {
   updated: '2026-09-05',
 
   image: 'mentorship',
+  imageAlt: 'دو صندلی ساده روبه‌روی هم کنار میز بلوط و پنجره، نماد جلسه‌ی منتورشیپ',
+  gallery: [
+    { src: 'mentorship-2', alt: 'وایت‌برد پاک‌شده با رد کم‌رنگ نوشته‌ها و یک ماژیک مشکی', caption: 'هشت هفته کار روی کسب‌وکار شما — نه پر کردن فرم.' },
+  ],
   roads: ['helsinki', 'copenhagen', 'tallinn', 'fredericton', 'halifax'],
   entity: { name: 'برنامه‌ی منتورشیپ استارتاپ ویزا — Startup Visa Roads', type: 'Service' },
   facts: [

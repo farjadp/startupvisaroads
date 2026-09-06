@@ -16,6 +16,11 @@ export const page: FaPage = {
   updated: '2026-09-06',
 
   image: 'pnp',
+  imageAlt: 'ردیف صندلی‌های چوبی خالی کنار پنجره‌ی بلند در سالنی ساده، نماد برنامه‌های استانی کانادا',
+  gallery: [
+    { src: 'pnp-2', alt: 'سیلوی غله در دشت زیر آسمان ابری پهناور', caption: 'هر استان نیاز اقتصادی خودش را دارد — و همان نیاز، مسیر شما را تعیین می‌کند.' },
+    { src: 'pnp-3', alt: 'حفاظ بزرگراه استانی که در مه فرو می‌رود، آسفالت خیس', caption: 'نامزدی استان اقامت نیست؛ پرونده‌ی فدرال همچنان بررسی می‌شود.' },
+  ],
   roads: ['fredericton', 'halifax', 'toronto'],
   entity: { name: 'Provincial Nominee Program (PNP)', provider: 'Provinces of Canada', country: 'Canada' },
   facts: [

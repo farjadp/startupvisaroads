@@ -18,6 +18,11 @@ export const page: FaPage = {
   updated: '2026-09-05',
 
   image: 'usa-eb2-niw',
+  imageAlt: 'درِ نیمه‌باز آزمایشگاه با قاب آلومینیومی در نور یکنواخت سرد، نماد پرونده‌ی EB-2 NIW',
+  gallery: [
+    { src: 'usa-eb2-niw-2', alt: 'چشمی میکروسکوپ و صفحه‌ی فلزی مات روی میز آزمایشگاه تمیز', caption: 'معیار دوم Dhanasar: آیا شما در موقعیت مناسبی برای پیشبرد آن کار هستید؟' },
+    { src: 'usa-eb2-niw-3', alt: 'راهروی دانشگاهی با پنجره‌های بلند و کف بتنی صیقلی، خالی', caption: 'پروفایل پژوهشی ایرانی دقیقاً همان چیزی است که NIW برایش ساخته شده — مانع در مرحله‌ی صدور ویزاست، نه تأیید پرونده.' },
+  ],
   roads: ['washington'],
   entity: { name: 'EB-2 National Interest Waiver', provider: 'USCIS', country: 'United States' },
   facts: [
