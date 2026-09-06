@@ -23,6 +23,12 @@ export type XArticle = {
   slug: string;
   keyTakeaway?: string | null;
   excerpt?: string | null;
+  /**
+   * One point taken from the article body, for an insight post. When absent
+   * the insight falls back to the takeaway, which is the behaviour that made
+   * the two post shapes read as duplicates — so callers should supply it.
+   */
+  insight?: string | null;
 };
 
 /** X counts every link as this many characters however long it is. */
@@ -71,11 +77,16 @@ export function xMessage(a: XArticle, d: Destination, kind: XKind): string {
   const tags = HASHTAGS[locale].slice(0, kind === 'insight' ? 2 : 3).join(' ');
   const link = url(a);
 
-  const idea = digits(plain(a.keyTakeaway || a.excerpt || a.title), locale);
   const title = digits(plain(a.title), locale);
+  const summary = digits(plain(a.keyTakeaway || a.excerpt || a.title), locale);
+  const point = digits(plain(a.insight || ''), locale);
 
-  // The article post announces a piece; the insight post is an idea from one.
-  const opening = kind === 'article' ? `${title}\n\n${idea}` : idea;
+  // The article post announces a piece. The insight post is one point from
+  // inside it, and carries no link at all — Farjad's instruction, and the
+  // right one: a standalone thought that does not ask for a click is a
+  // different kind of post, and repeating the same link three times a day is
+  // what makes an account read as promotion.
+  const opening = kind === 'article' ? `${title}\n\n${summary}` : point || summary;
 
   // Labelled and grouped, not stacked. Four bare URLs each on their own line
   // with a blank line between them is a link dump eight lines tall; the same
@@ -84,7 +95,7 @@ export function xMessage(a: XArticle, d: Destination, kind: XKind): string {
     ? { article: 'مقاله', channel: 'کانال', site: 'وب‌سایت' }
     : { article: 'Article', channel: 'Channel', site: 'Web' };
 
-  const block: string[] = [`${label.article}: ${link}`];
+  const block: string[] = kind === 'article' ? [`${label.article}: ${link}`] : [];
   if (kind === 'article' && d.links?.length) {
     const extra = d.links.filter((l) => l !== link);
     const channel = extra.find((l) => l.includes('t.me'));
@@ -93,7 +104,7 @@ export function xMessage(a: XArticle, d: Destination, kind: XKind): string {
     if (sites.length) block.push(`${label.site}: ${sites.join(' · ')}`);
   }
 
-  const tail: string[] = [block.join('\n'), tags];
+  const tail: string[] = block.length ? [block.join('\n'), tags] : [tags];
   if (d.signature) tail.push(`— ${d.signature}`);
 
   const fixed = tail.join('\n\n');

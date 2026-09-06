@@ -131,3 +131,39 @@ describe('both lanes', () => {
     expect(m).toContain('/en/blog/denmark-vs-finland');
   });
 });
+
+describe('the insight post', () => {
+  const withPoint = { ...faArticle, insight: 'فنلاند دست‌کم دو بنیان‌گذار می‌خواهد و دانمارک به یک نفر هم اجازه اقدام می‌دهد.' };
+
+  // Farjad's instruction. A standalone thought that does not ask for a click
+  // is a different kind of post, and the same link three times a day is what
+  // makes an account read as promotion.
+  it('carries no link at all', () => {
+    const m = xMessage(withPoint, farjad, 'insight');
+    expect(m).not.toContain('http');
+    expect(m).not.toContain('مقاله: ');
+  });
+
+  it('uses the point from the body, not the takeaway the article post used', () => {
+    const m = xMessage(withPoint, farjad, 'insight');
+    expect(m).toContain('دو بنیان‌گذار');
+    expect(m).not.toContain(faArticle.keyTakeaway.slice(0, 40));
+  });
+
+  it('still signs the personal account and still carries hashtags', () => {
+    const m = xMessage(withPoint, farjad, 'insight');
+    expect(m).toContain('دستیار دیجیتال فرجاد');
+    expect(m).toMatch(/#[^\s#]+/);
+  });
+
+  it('falls back to the takeaway when no point was extracted', () => {
+    const m = xMessage(faArticle, farjad, 'insight');
+    expect(m).toContain(faArticle.keyTakeaway.slice(0, 30));
+  });
+
+  it('keeps the English lane inside the limit without a link to spend on', () => {
+    const m = xMessage({ ...enArticle, insight: 'Finland requires two founders where Denmark accepts one, and that decides the route.' }, ashavid, 'insight');
+    expect(xLength(m)).toBeLessThanOrEqual(280);
+    expect(m).not.toContain('http');
+  });
+});

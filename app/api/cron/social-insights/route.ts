@@ -16,6 +16,7 @@ import { pickForShortPost, explainNoPick } from '@/lib/social/pick-article';
 import { shareToX } from '@/lib/social/x';
 import { xMessage } from '@/lib/social/x-message';
 import { DESTINATIONS } from '@/lib/social/destinations';
+import { extractInsights } from '@/lib/social/insights';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 120;
@@ -33,7 +34,7 @@ export async function GET(req: NextRequest) {
 
   const articles = await prisma.article.findMany({
     where: { status: 'PUBLISHED', locale: { in: X_LOCALES } },
-    select: { id: true, slug: true, title: true, locale: true, keyTakeaway: true, excerpt: true, createdAt: true },
+    select: { id: true, slug: true, title: true, locale: true, keyTakeaway: true, excerpt: true, createdAt: true, content: true },
     orderBy: { createdAt: 'desc' },
     take: 200,
   });
@@ -57,7 +58,16 @@ export async function GET(req: NextRequest) {
       break;
     }
 
-    const a = { ...picked, locale: picked.locale as 'en' | 'fa' };
+    // The point comes from the article body, chosen from the phrases the
+    // writer marked decisive. Without this the insight repeats the takeaway
+    // the article post already carried, and the account reads as a bot.
+    const source = articles.find((x) => x.id === picked.id)!;
+    const points = extractInsights(source.content ?? '', source.locale === 'fa' ? 'fa' : 'en');
+    const a = {
+      ...picked,
+      locale: picked.locale as 'en' | 'fa',
+      insight: points[Math.floor(Math.random() * points.length)] ?? null,
+    };
     if (dryRun) {
       // Show what each destination would actually send, not just which
       // article was chosen — the message differs per account.
