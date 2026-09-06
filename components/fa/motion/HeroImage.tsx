@@ -10,7 +10,7 @@ import React from 'react';
 import Image from 'next/image';
 import { motion, useReducedMotion } from 'motion/react';
 
-export default function HeroImage({ src, alt, priority = true, className }: { src: string; alt: string; priority?: boolean; className?: string }) {
+export default function HeroImage({ src, alt, priority = true, className, sizes = '(min-width: 1024px) 60vw, 100vw' }: { src: string; alt: string; priority?: boolean; className?: string; sizes?: string }) {
   const reduced = useReducedMotion();
   return (
     <motion.div
@@ -25,7 +25,7 @@ export default function HeroImage({ src, alt, priority = true, className }: { sr
         animate={{ scale: 1 }}
         transition={{ duration: 1.6, ease: [0.16, 1, 0.3, 1] }}
       >
-        <Image src={src} alt={alt} fill priority={priority} sizes="(min-width: 1024px) 60vw, 100vw" className="object-cover" />
+        <Image src={src} alt={alt} fill priority={priority} sizes={sizes} className="object-cover" />
       </motion.div>
     </motion.div>
   );

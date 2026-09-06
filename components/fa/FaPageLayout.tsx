@@ -35,8 +35,13 @@ import type { DESTINATIONS } from '@/lib/fa/geo';
 const isExternal = (href: string) => /^https?:\/\//.test(href) || href.startsWith('/en/');
 const NUMBERED = /^([۰-۹0-9]{1,2})[.۰-۹]?\s*[.\-–—:]?\s*/;
 
-function Cta({ cta, primary, dark }: { cta: FaCta; primary?: boolean; dark?: boolean }) {
-  const cls = primary
+function Cta({ cta, primary, dark, acid }: { cta: FaCta; primary?: boolean; dark?: boolean; acid?: boolean }) {
+  const cls = acid
+    // The hero is now a dark field, where the ink-on-paper primary button
+    // would disappear. Acid on ink is the one pairing that survives an
+    // arbitrary photograph behind it.
+    ? 'group inline-flex items-center gap-4 bg-[#CCFF00] text-[#1a1a1a] px-8 py-5 hover:bg-[#F2F0E9] transition-colors duration-300'
+    : primary
     ? 'group inline-flex items-center gap-4 bg-[#1a1a1a] text-[#F2F0E9] px-8 py-5 hover:bg-[#CCFF00] hover:text-black transition-colors duration-300'
     : dark
       ? 'group inline-flex items-center gap-3 border border-[#F2F0E9]/40 text-[#F2F0E9] px-6 py-4 hover:bg-[#CCFF00] hover:text-black hover:border-[#CCFF00] transition-colors duration-300'
@@ -115,41 +120,70 @@ export default function FaPageLayout({ page, trail }: { page: FaPage; trail: { n
       <ScrollProgress />
       <JsonLd data={[faWebPageJsonLd(page), faqJsonLd(page.faqs), breadcrumbJsonLd(SITE_URL, [{ name: 'خانه', path: '' }, ...trail])]} />
 
-      {/* HERO — the authored moment */}
-      <header className="border-b border-[#1a1a1a]">
-        <div className="px-4 md:px-8 max-w-[1400px] mx-auto border-x border-[#1a1a1a]/10">
-          <nav aria-label="breadcrumb" className="flex flex-wrap items-center gap-2 text-xs text-[#1a1a1a]/50 pt-8">
-            <Link href="/" className="hover:text-[#1a1a1a]">خانه</Link>
+      {/* HERO — the authored moment.
+          One dark field: the photograph is the ground and the headline sits
+          on it. The previous hero put a portrait strip beside the text on the
+          same paper as the body, so the page opened with no anchor and the
+          globe hung off the image corner with no role. A two-stop scrim
+          guarantees contrast at the reading edge whatever the photograph
+          does, and the globe becomes part of the composition instead of
+          decoration beside it. */}
+      <header className="relative isolate overflow-hidden bg-[#1a1a1a] text-[#F2F0E9]">
+        {img && (
+          <div className="absolute inset-0">
+            <HeroImage src={img} alt={page.imageAlt ?? ''} sizes="100vw" className="h-full w-full" />
+            {/* Solid at the reading edge, opening up towards the far edge, so
+                the photograph is still visible without ever competing with
+                Persian text for contrast. */}
+            <div className="absolute inset-0 bg-gradient-to-l from-[#1a1a1a] via-[#1a1a1a]/65 to-[#1a1a1a]/15" />
+            <div className="absolute inset-0 bg-[#1a1a1a]/10" />
+          </div>
+        )}
+
+        <div className="relative px-4 md:px-8 max-w-[1400px] mx-auto">
+          <nav aria-label="breadcrumb" className="flex flex-wrap items-center gap-2 text-xs text-[#F2F0E9]/55 pt-10 md:pt-12">
+            <Link href="/" className="hover:text-[#CCFF00]">خانه</Link>
             {trail.map((t) => (
               <React.Fragment key={t.path}>
-                <span>/</span>
-                {t.path === page.path ? <span className="text-[#1a1a1a]">{t.name}</span> : <Link href={t.path} className="hover:text-[#1a1a1a]">{t.name}</Link>}
+                <span className="text-[#F2F0E9]/25">/</span>
+                {t.path === page.path ? <span className="text-[#F2F0E9]">{t.name}</span> : <Link href={t.path} className="hover:text-[#CCFF00]">{t.name}</Link>}
               </React.Fragment>
             ))}
           </nav>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-end pt-10 pb-14 md:pb-20">
-            <div className="lg:col-span-7">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            <div className="lg:col-span-8 pt-10 pb-12 md:pt-14 md:pb-24">
               <Reveal>
-                <h1 className="font-estedad font-black text-4xl md:text-6xl lg:text-[4.25rem] leading-[1.15] max-w-[18ch] [text-wrap:balance]">{page.hero.headline}</h1>
+                {/* The eyebrow was a chip floating on the photograph; it
+                    belongs above the headline it introduces. */}
+                <p className="flex items-center gap-3 text-[13px] text-[#CCFF00]">
+                  <span className="h-px w-8 bg-[#CCFF00]" aria-hidden />
+                  {page.hero.eyebrow}
+                </p>
+                <h1 className="mt-5 font-estedad font-black text-[2.5rem] md:text-6xl lg:text-[4.5rem] leading-[1.13] max-w-[19ch] [text-wrap:balance]">{page.hero.headline}</h1>
               </Reveal>
               <Reveal delay={0.1}>
-                <p className="mt-8 text-lg md:text-xl leading-[1.9] text-[#1a1a1a]/70 max-w-[60ch]">{page.hero.sub}</p>
+                <p className="mt-7 text-lg md:text-xl leading-[1.9] text-[#F2F0E9]/75 max-w-[56ch]">{page.hero.sub}</p>
               </Reveal>
-              <Reveal delay={0.18} className="mt-10 flex flex-wrap items-center gap-6">
-                <Cta cta={page.hero.cta} primary />
-                <span className="text-xs text-[#1a1a1a]/50">
-                  آخرین بازبینی: <time dateTime={isoDate(page.updated)}>{faDate(page.updated)}</time>
-                </span>
+              <Reveal delay={0.18} className="mt-10">
+                <Cta cta={page.hero.cta} acid />
               </Reveal>
-            </div>
-            <div className="lg:col-span-5 relative">
-              {img && <HeroImage src={img} alt={page.imageAlt ?? ''} className="aspect-[4/5] md:aspect-[4/3] lg:aspect-[4/5]" />}
               {roads.length > 0 && (
-                <RoadsScene to={roads} className="absolute -bottom-10 -start-6 md:-start-12 w-44 h-44 md:w-64 md:h-64" />
+                <RoadsScene to={roads} className="lg:hidden relative mt-12 w-44 h-44" />
               )}
-              <span className="absolute top-4 end-4 bg-[#F2F0E9] text-[#1a1a1a] text-[11px] font-bold px-2 py-1">{page.hero.eyebrow}</span>
             </div>
+
+            {roads.length > 0 && (
+              <div className="hidden lg:block lg:col-span-4 relative">
+                <RoadsScene to={roads} className="absolute bottom-12 end-0 w-72 h-72 xl:w-[22rem] xl:h-[22rem]" />
+              </div>
+            )}
+          </div>
+
+          {/* The review date was sitting next to the primary action, competing
+              with it. It is provenance, so it reads as provenance. */}
+          <div className="border-t border-[#F2F0E9]/15 py-4 text-xs text-[#F2F0E9]/55">
+            آخرین بازبینی: <time dateTime={isoDate(page.updated)}>{faDate(page.updated)}</time>
           </div>
         </div>
       </header>

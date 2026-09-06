@@ -78,6 +78,23 @@ export default function Header() {
   // ==========================================
   const isFa = locale === 'fa';
 
+  // Persian must not borrow the Latin display faces. DM Serif Display and
+  // Space Grotesk carry no Arabic-script glyphs, so every Persian menu label
+  // fell back to whatever the OS offered — which is why the menu never
+  // matched the rest of the Persian site. Uppercase and wide tracking are
+  // the English nav's voice; in Persian `uppercase` is a no-op and the
+  // tracking pulls apart letters that are meant to join.
+  const navDisplay = isFa ? 'font-estedad font-bold' : 'font-serif';
+  const navLabel = isFa
+    ? 'font-vazir text-[13px] font-bold tracking-normal'
+    : 'font-sans text-xs font-bold uppercase tracking-[0.15em]';
+  const navMicro = isFa
+    ? 'font-vazir text-[11px] tracking-normal'
+    : 'font-sans text-[10px] uppercase tracking-widest';
+  const navAction = isFa
+    ? 'font-vazir text-[13px] font-bold tracking-normal'
+    : 'font-sans text-xs font-bold uppercase tracking-widest';
+
   // The Persian nav is a different menu, not a translated one: /fa has its
   // own IA and most English targets 301 out of it.
   const faNavLinks = [
@@ -212,7 +229,7 @@ export default function Header() {
               <div key={link.label} className="relative group">
                 {link.subLinks ? (
                   // Dropdown Trigger
-                  <button className={`flex items-center gap-1 font-sans text-xs font-bold uppercase tracking-[0.15em] transition-colors duration-300 cursor-pointer ${getTextColor()} hover:text-[#CCFF00]`}>
+                  <button className={`flex items-center gap-1 ${navLabel} transition-colors duration-300 cursor-pointer ${getTextColor()} hover:text-[#CCFF00]`}>
                     {link.label}
                     <ChevronDown className="w-3 h-3 opacity-50 group-hover:rotate-180 transition-transform" />
                   </button>
@@ -220,7 +237,7 @@ export default function Header() {
                   // Normal Link
                   <Link
                     href={link.href!}
-                    className={`relative font-sans text-xs font-bold uppercase tracking-[0.15em] transition-colors duration-300 ${getTextColor()} hover:text-[#CCFF00]`}
+                    className={`relative ${navLabel} transition-colors duration-300 ${getTextColor()} hover:text-[#CCFF00]`}
                   >
                     {link.label}
                     {isActive(link.href!) && (
@@ -237,7 +254,7 @@ export default function Header() {
                         {link.subLinks.map((sub, i) => (
                           sub.header ? (
                             <div key={i} className="mt-4 first:mt-0 pb-1 mb-1 border-b border-[#F2F0E9]/10">
-                              <span className="font-sans text-[10px] text-[#CCFF00] uppercase tracking-widest block select-none">
+                              <span className={`${navMicro} text-[#CCFF00] block select-none`}>
                                 {sub.header}
                               </span>
                             </div>
@@ -245,7 +262,7 @@ export default function Header() {
                             <Link
                               key={sub.href}
                               href={sub.href!}
-                              className="font-serif text-lg text-[#F2F0E9] hover:text-[#CCFF00] hover:translate-x-2 rtl:hover:-translate-x-2 transition-all block whitespace-nowrap opacity-80 hover:opacity-100"
+                              className={`${isFa ? 'font-vazir text-base' : 'font-serif text-lg'} text-[#F2F0E9] hover:text-[#CCFF00] hover:translate-x-2 rtl:hover:-translate-x-2 transition-all block whitespace-nowrap opacity-80 hover:opacity-100`}
                             >
                               {sub.label}
                             </Link>
@@ -276,13 +293,13 @@ export default function Header() {
                 <div className="flex flex-col gap-2">
                   <button
                     onClick={() => switchLocale('en')}
-                    className={`text-start font-sans text-xs font-bold uppercase tracking-widest py-2 px-2 transition-colors ${locale === 'en' ? 'text-[#CCFF00]' : 'text-[#F2F0E9] hover:text-[#CCFF00]/70'}`}
+                    className={`text-start ${navAction} py-2 px-2 transition-colors ${locale === 'en' ? 'text-[#CCFF00]' : 'text-[#F2F0E9] hover:text-[#CCFF00]/70'}`}
                   >
                     English
                   </button>
                   <button
                     onClick={() => switchLocale('fa')}
-                    className={`text-start font-sans text-xs font-bold uppercase tracking-widest py-2 px-2 transition-colors ${locale === 'fa' ? 'text-[#CCFF00]' : 'text-[#F2F0E9] hover:text-[#CCFF00]/70'}`}
+                    className={`text-start ${navAction} py-2 px-2 transition-colors ${locale === 'fa' ? 'text-[#CCFF00]' : 'text-[#F2F0E9] hover:text-[#CCFF00]/70'}`}
                   >
                     Farsi (فارسی)
                   </button>
@@ -298,7 +315,7 @@ export default function Header() {
             {/* Desktop CTA */}
             <Link
               href={bookHref as any}
-              className={`hidden lg:flex items-center gap-3 font-sans text-xs font-bold uppercase tracking-widest px-6 py-3 border transition-all duration-300 group
+              className={`hidden lg:flex items-center gap-3 ${navAction} px-6 py-3 border transition-all duration-300 group
                     ${scrolled
                   ? 'border-[#CCFF00] text-[#1a1a1a] bg-[#CCFF00] hover:bg-white hover:border-white'
                   : 'border-[#1a1a1a] text-[#1a1a1a] hover:bg-[#1a1a1a] hover:text-[#CCFF00]'
@@ -348,8 +365,8 @@ export default function Header() {
                       className="w-full flex items-baseline justify-between gap-4 group text-start"
                     >
                       <span className="flex items-baseline gap-4">
-                        <span className="font-sans text-xs font-bold text-[#CCFF00]">0{idx + 1}</span>
-                        <span className={`font-serif text-4xl md:text-5xl transition-colors ${expandedMobileMenu === link.key ? 'text-[#CCFF00]' : 'text-[#F2F0E9]'}`}>
+                        <span className={`${navMicro} font-bold text-[#CCFF00]`}>0{idx + 1}</span>
+                        <span className={`${navDisplay} text-4xl md:text-5xl transition-colors ${expandedMobileMenu === link.key ? 'text-[#CCFF00]' : 'text-[#F2F0E9]'}`}>
                           {link.label}
                         </span>
                       </span>
@@ -361,14 +378,14 @@ export default function Header() {
                       <div className="pl-12 flex flex-col gap-3 border-l border-[#F2F0E9]/10 ml-2 border-s border-e-0 rtl:mr-2 rtl:ml-0 rtl:border-r rtl:border-l-0 rtl:pr-12 rtl:pl-0">
                         {link.subLinks.map((sub, i) => (
                           sub.header ? (
-                            <span key={i} className="font-sans text-[10px] text-[#CCFF00]/70 uppercase tracking-widest mt-4 first:mt-0">
+                            <span key={i} className={`${navMicro} text-[#CCFF00]/70 mt-4 first:mt-0`}>
                               {sub.header}
                             </span>
                           ) : (
                             <Link
                               key={sub.href}
                               href={sub.href!}
-                              className="font-serif text-lg text-[#F2F0E9] hover:text-[#CCFF00] transition-colors"
+                              className={`${isFa ? 'font-vazir text-base' : 'font-serif text-lg'} text-[#F2F0E9] hover:text-[#CCFF00] transition-colors`}
                             >
                               {sub.label}
                             </Link>
@@ -383,8 +400,8 @@ export default function Header() {
                     href={link.href!}
                     className="group flex items-baseline gap-4"
                   >
-                    <span className="font-sans text-xs font-bold text-[#CCFF00]">0{idx + 1}</span>
-                    <span className="font-serif text-4xl md:text-5xl text-[#F2F0E9] group-hover:text-[#CCFF00] group-hover:italic transition-all duration-300">
+                    <span className={`${navMicro} font-bold text-[#CCFF00]`}>0{idx + 1}</span>
+                    <span className={`${navDisplay} text-4xl md:text-5xl text-[#F2F0E9] group-hover:text-[#CCFF00] ${isFa ? '' : 'group-hover:italic'} transition-all duration-300`}>
                       {link.label}
                     </span>
                   </Link>
@@ -396,7 +413,7 @@ export default function Header() {
           {/* Bottom Info */}
           <div className="flex flex-col md:flex-row justify-between items-end gap-8 mt-12">
             <div className="flex gap-4 items-center">
-              <Link href={loginHref as any} className="text-[#F2F0E9] font-sans text-xs uppercase tracking-widest border border-[#F2F0E9]/30 px-6 py-3 hover:bg-[#F2F0E9] hover:text-[#1a1a1a] transition-colors">
+              <Link href={loginHref as any} className={`text-[#F2F0E9] ${navAction} font-normal border border-[#F2F0E9]/30 px-6 py-3 hover:bg-[#F2F0E9] hover:text-[#1a1a1a] transition-colors`}>
                 {t('client_login')}
               </Link>
             </div>
@@ -409,7 +426,7 @@ export default function Header() {
 
             <Link
               href={bookHref as any}
-              className="w-full md:w-auto bg-[#CCFF00] text-[#1a1a1a] font-sans text-sm font-bold uppercase tracking-widest px-8 py-4 hover:bg-white transition-colors text-center"
+              className={`w-full md:w-auto bg-[#CCFF00] text-[#1a1a1a] ${navAction} px-8 py-4 hover:bg-white transition-colors text-center`}
             >
               {t('book_consultation')}
             </Link>
