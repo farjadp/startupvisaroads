@@ -109,10 +109,13 @@ export const DESTINATIONS: Destination[] = [
     autoPost: true,
   },
 
-  // X. One developer app, two accounts. The app's consumer key and secret are
-  // shared — they identify the app — while each account contributes its own
-  // OAuth 1.0a access token and secret, which is what makes the post appear
-  // as that account.
+  // X. Each destination carries its OWN consumer key as well as its own user
+  // tokens. One app can serve both accounts — the PIN flow lets any account
+  // authorise it — but the two X accounts here sit under two separate
+  // developer accounts, each with its own project and app, so there is no
+  // shared consumer key to point at. Per-destination keys work either way,
+  // and a destination borrowing another app's key fails with an
+  // authentication error that looks nothing like the real cause.
   //
   // An X Premium subscription grants none of this: Premium is the consumer
   // product. Posting programmatically needs a developer account, an app with
@@ -128,7 +131,7 @@ export const DESTINATIONS: Destination[] = [
     // lane; the English lane is AshaVid's. They are two audiences, not one
     // audience in two languages.
     locales: ['fa'],
-    credentials: ['X_CONSUMER_KEY', 'X_CONSUMER_SECRET', 'X_TOKEN_FARJAD', 'X_SECRET_FARJAD'],
+    credentials: ['X_KEY_FARJAD', 'X_KEYSECRET_FARJAD', 'X_TOKEN_FARJAD', 'X_SECRET_FARJAD'],
     autoPost: true,
     // No charLimit: the account has Premium, so long-form is available and the
     // 240-character truncation in the legacy poster must not reach it.
@@ -142,7 +145,7 @@ export const DESTINATIONS: Destination[] = [
     // English only, for the same reason as the AshaVid LinkedIn page: it is
     // the AI venture, not the immigration brand.
     locales: ['en'],
-    credentials: ['X_CONSUMER_KEY', 'X_CONSUMER_SECRET', 'X_TOKEN_ASHAVID', 'X_SECRET_ASHAVID'],
+    credentials: ['X_KEY_ASHAVID', 'X_KEYSECRET_ASHAVID', 'X_TOKEN_ASHAVID', 'X_SECRET_ASHAVID'],
     autoPost: true,
     // Not a Premium account — the profile still shows the "get verified"
     // prompt — so this lane lives inside the standard limit.

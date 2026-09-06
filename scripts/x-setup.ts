@@ -15,13 +15,14 @@
 import { createInterface } from 'node:readline/promises';
 import { TwitterApi } from 'twitter-api-v2';
 
-const appKey = process.env.X_CONSUMER_KEY?.trim();
-const appSecret = process.env.X_CONSUMER_SECRET?.trim();
+const appKey = (process.env.X_CONSUMER_KEY ?? process.env.X_KEY)?.trim();
+const appSecret = (process.env.X_CONSUMER_SECRET ?? process.env.X_KEYSECRET)?.trim();
 
 if (!appKey || !appSecret) {
   console.error('X_CONSUMER_KEY and X_CONSUMER_SECRET are required.\n');
   console.error('  X_CONSUMER_KEY=... X_CONSUMER_SECRET=... npx tsx scripts/x-setup.ts\n');
   console.error('Both come from the app\'s "Keys and tokens" tab on developer.x.com.');
+  console.error('Use the keys of the app that belongs to the account you are authorising.');
   process.exit(1);
 }
 
@@ -63,11 +64,13 @@ async function main() {
     const { accessToken, accessSecret, screenName } = await pinClient.login(pin);
     console.log(`\n✓ authorised as @${screenName}\n`);
 
+    // Each destination has its own app, so the consumer key goes out under the
+    // same suffix as the user tokens rather than as one shared pair.
     const suffix = screenName.toLowerCase().includes('asha') ? 'ASHAVID' : 'FARJAD';
     console.log('────────────────────────────────────────────────');
     console.log('Run this. It contains secrets — run it, do not paste it into chat:\n');
     console.log(`gcloud run services update startupvisaroads --region europe-west1 \\
-  --update-env-vars "X_CONSUMER_KEY=${appKey},X_CONSUMER_SECRET=${appSecret},X_TOKEN_${suffix}=${accessToken},X_SECRET_${suffix}=${accessSecret}"`);
+  --update-env-vars "X_KEY_${suffix}=${appKey},X_KEYSECRET_${suffix}=${appSecret},X_TOKEN_${suffix}=${accessToken},X_SECRET_${suffix}=${accessSecret}"`);
     console.log('────────────────────────────────────────────────');
     console.log(`\nThe suffix was guessed from @${screenName}. If that is the wrong`);
     console.log('destination, change X_TOKEN_* and X_SECRET_* before running it.');
