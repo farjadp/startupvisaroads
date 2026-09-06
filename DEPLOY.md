@@ -8,7 +8,11 @@ Set these once:
 
 ```bash
 export PROJECT_ID=your-project
-export REGION=us-central1
+# NOTE (6 Sep 2026): production actually runs in europe-west1, not us-central1.
+# There is also a stale duplicate service in us-central1, 35 revisions behind
+# and serving no traffic — do not deploy to it, and check which service the
+# domain points at before believing a curl against a run.app URL.
+export REGION=europe-west1
 export SERVICE=startupvisaroads
 export SITE_URL=https://yourdomain.com   # your real public domain
 gcloud config set project $PROJECT_ID
@@ -142,7 +146,15 @@ request timeout must cover a run; raise it once:
 gcloud run services update $SERVICE --region $REGION --timeout=900
 ```
 
-Schedule (UTC; 5 articles a day — 3 EN + 2 FA — as decided 5 Sep 2026):
+Schedule (UTC). **Created 6 Sep 2026 in `europe-west1`** — before that date the
+project had zero Cloud Scheduler jobs in every region, which is why the blog
+only ever updated when someone triggered a run by hand, and why `/fa/blog`
+was empty from the day it shipped: nothing had ever called the Persian lane.
+
+Four writing jobs, not five. `svr-autopilot-source-fa` is deliberately **not
+created yet**: the Persian lane starts at one planned article a day so its
+output can be read before the volume goes up.
+
 
 ```bash
 export RUN_URL=$(gcloud run services describe $SERVICE --region $REGION --format='value(status.url)')
