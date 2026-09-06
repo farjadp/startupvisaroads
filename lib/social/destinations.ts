@@ -70,14 +70,11 @@ export const DESTINATIONS: Destination[] = [
   // 5 Nov 2026. The digest is what turns that from a silent death into a line
   // in a message: a destination whose attempts all fail is named the next
   // morning.
-  {
-    id: 'linkedin-farjad',
-    platform: 'linkedin',
-    label: 'LinkedIn — Farjad',
-    locales: ['fa', 'en'],
-    credentials: ['LINKEDIN_TOKEN_FARJAD', 'LINKEDIN_AUTHOR_URN'],
-    autoPost: true,
-  },
+  // Farjad's personal profile is deliberately NOT a destination. He asked for
+  // the company pages only: a personal feed is a person talking, and filling
+  // it automatically with brand posts costs the thing that makes it worth
+  // following. Re-add it as an entry if that ever changes — nothing else has
+  // to move, which is the point of keeping destinations as data.
   {
     id: 'linkedin-visaroads',
     platform: 'linkedin',

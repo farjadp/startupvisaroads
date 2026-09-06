@@ -4,8 +4,15 @@ import { DESTINATIONS } from '../destinations';
 const linkedin = DESTINATIONS.filter((d) => d.platform === 'linkedin');
 
 describe('the LinkedIn destinations', () => {
-  it('covers Farjad\'s profile and both company pages', () => {
-    expect(linkedin.map((d) => d.id).sort()).toEqual(['linkedin-ashavid', 'linkedin-farjad', 'linkedin-visaroads']);
+  it('covers both company pages', () => {
+    expect(linkedin.map((d) => d.id).sort()).toEqual(['linkedin-ashavid', 'linkedin-visaroads']);
+  });
+
+  // Farjad asked for the pages only. A personal feed is a person talking, and
+  // filling it automatically with brand posts costs the thing that makes it
+  // worth following. Asserted so it reads as a decision, not an omission.
+  it('does not post to the personal profile', () => {
+    expect(linkedin.some((d) => d.id === 'linkedin-farjad')).toBe(false);
   });
 
   // Two LinkedIn apps exist, not one: VisaRoads owns its page and
@@ -28,10 +35,8 @@ describe('the LinkedIn destinations', () => {
     expect(ashavid.locales).not.toContain('fa');
   });
 
-  it('sends Persian articles to Farjad and the VisaRoads page', () => {
-    for (const id of ['linkedin-farjad', 'linkedin-visaroads']) {
-      expect(linkedin.find((d) => d.id === id)!.locales, id).toContain('fa');
-    }
+  it('sends Persian articles to the VisaRoads page', () => {
+    expect(linkedin.find((d) => d.id === 'linkedin-visaroads')!.locales).toContain('fa');
   });
 
   it('gives every LinkedIn destination the autoPost escape hatch', () => {

@@ -43,7 +43,7 @@ async function main() {
     process.exit(1);
   }
   const personUrn = `urn:li:person:${me.json?.sub}`;
-  console.log(`✓ person URN   ${personUrn}`);
+  console.log(`  (person URN  ${personUrn} — not used, pages only)`);
   console.log(`  name         ${me.json?.name ?? '(not shared)'}`);
 
   // 2. Which pages can it act for?
@@ -63,9 +63,16 @@ async function main() {
   // 3. What to run.
   console.log('\n────────────────────────────────────────────────');
   console.log('Run this. It contains the token, so run it — do not paste it into chat:\n');
-  const vars = [`LINKEDIN_AUTHOR_URN=${personUrn}`, `LINKEDIN_TOKEN_FARJAD=$LINKEDIN_TOKEN`];
+  // Company pages only — the personal profile is not a destination.
+  const vars: string[] = [];
   if (pages[0]) vars.push(`LINKEDIN_ORG_URN_VISAROADS=${pages[0].urn}`, 'LINKEDIN_TOKEN_VISAROADS=$LINKEDIN_TOKEN');
   if (pages[1]) vars.push(`LINKEDIN_ORG_URN_ASHAVID=${pages[1].urn}`, 'LINKEDIN_TOKEN_ASHAVID=$LINKEDIN_TOKEN');
+  if (!vars.length) {
+    console.log('Nothing to set: this token administers no pages, and the personal');
+    console.log('profile is not a destination. Add the Community Management API');
+    console.log('product to the app, generate a new token, and run this again.');
+    return;
+  }
   console.log(`gcloud run services update startupvisaroads --region europe-west1 \\
   --update-env-vars "${vars.join(',')}"`);
   if (pages.length > 1) {
