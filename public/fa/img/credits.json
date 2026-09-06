@@ -1,0 +1,110 @@
+{
+  "denmark": {
+    "source": "Pexels",
+    "id": 20375778,
+    "page": "https://www.pexels.com/photo/nyhavn-harbor-in-copenhagen-20375778/",
+    "photographer": "Ejov Igor",
+    "photographerUrl": "https://www.pexels.com/@igorejov",
+    "description": "Vibrant Nyhavn harbor in Copenhagen showcasing colorful historic buildings by the water.",
+    "fetched": "2026-09-06"
+  },
+  "denmark-2": {
+    "source": "Pexels",
+    "id": 15687441,
+    "page": "https://www.pexels.com/photo/view-of-the-inderhavnsbroen-and-waterfront-buildings-in-copenhagen-denmark-15687441/",
+    "photographer": "Ezequiel Filiberto",
+    "photographerUrl": "https://www.pexels.com/@ezequielfiliberto",
+    "description": "Scenic view of Inderhavnsbroen bridge and waterfront buildings in Copenhagen at dusk.",
+    "fetched": "2026-09-06"
+  },
+  "denmark-3": {
+    "source": "Pexels",
+    "id": 38217227,
+    "page": "https://www.pexels.com/photo/bicycles-lined-up-on-copenhagen-street-38217227/",
+    "photographer": "Christina & Peter",
+    "photographerUrl": "https://www.pexels.com/@christina99999",
+    "description": "Row of parked bicycles along a street in Copenhagen, Denmark, showcasing urban cycling culture.",
+    "fetched": "2026-09-06"
+  },
+  "finland": {
+    "source": "Pexels",
+    "id": 17408748,
+    "page": "https://www.pexels.com/photo/helsinki-cathedral-in-helsinki-finland-17408748/",
+    "photographer": "Sylwia Bartyzel",
+    "photographerUrl": "https://www.pexels.com/@sylwiabartyzel",
+    "description": "Front view of the Helsinki Cathedral under a clear blue sky, showcasing neoclassical architecture.",
+    "fetched": "2026-09-06"
+  },
+  "finland-2": {
+    "source": "Pexels",
+    "id": 37117280,
+    "page": "https://www.pexels.com/photo/street-scene-with-tram-and-stockmann-sign-in-helsinki-37117280/",
+    "photographer": "Mingyang LIU",
+    "photographerUrl": "https://www.pexels.com/@mingyang-liu-301813241",
+    "description": "Helsinki street view with tram, Stockmann sign, and city architecture.",
+    "fetched": "2026-09-06"
+  },
+  "finland-3": {
+    "source": "Pexels",
+    "id": 33307061,
+    "page": "https://www.pexels.com/photo/serene-helsinki-harbor-at-sunrise-33307061/",
+    "photographer": "M Tetri",
+    "photographerUrl": "https://www.pexels.com/@m-tetri-2150217981",
+    "description": "Tranquil view of Helsinki harbor with boats at sunrise, capturing the calm morning light.",
+    "fetched": "2026-09-06"
+  },
+  "netherlands": {
+    "source": "Pexels",
+    "id": 4237160,
+    "page": "https://www.pexels.com/photo/old-amsterdam-city-houses-on-canal-4237160/",
+    "photographer": "Adrien Olichon",
+    "photographerUrl": "https://www.pexels.com/@adrien-olichon-1257089",
+    "description": "Exterior of narrow multicolored apartment houses without balconies overseeing canal with modern boats moored near entrances",
+    "fetched": "2026-09-06"
+  },
+  "netherlands-2": {
+    "source": "Pexels",
+    "id": 32876398,
+    "page": "https://www.pexels.com/photo/bicycles-on-amsterdam-canal-bridge-with-trees-32876398/",
+    "photographer": "Hans",
+    "photographerUrl": "https://www.pexels.com/@hans-1741882",
+    "description": "Scenic view of bicycles on a bridge overlooking a canal in Amsterdam, lined with trees and historic buildings.",
+    "fetched": "2026-09-06"
+  },
+  "netherlands-3": {
+    "source": "Pexels",
+    "id": 17017618,
+    "page": "https://www.pexels.com/photo/cube-houses-in-rotterdam-17017618/",
+    "photographer": "Igor Passchier",
+    "photographerUrl": "https://www.pexels.com/@igor-passchier-111147847",
+    "description": "Capture of the iconic Cube Houses in Rotterdam with blue sky backdrop, showcasing unique modern architecture.",
+    "fetched": "2026-09-06"
+  },
+  "estonia": {
+    "source": "Pexels",
+    "id": 39117789,
+    "page": "https://www.pexels.com/photo/charming-medieval-street-in-tallinn-old-town-39117789/",
+    "photographer": "Argo Allvee",
+    "photographerUrl": "https://www.pexels.com/@argoallvee",
+    "description": "A picturesque view of a medieval street in Tallinn's Old Town, Estonia, showcasing cobblestones and historic buildings.",
+    "fetched": "2026-09-06"
+  },
+  "estonia-2": {
+    "source": "Pexels",
+    "id": 29315435,
+    "page": "https://www.pexels.com/photo/charming-street-in-tallinn-s-historic-old-town-29315435/",
+    "photographer": "Lexa Shep",
+    "photographerUrl": "https://www.pexels.com/@lexa-shep-1842481100",
+    "description": "A bustling street scene in Tallinn's Old Town, featuring historic architecture and pedestrians in autumn.",
+    "fetched": "2026-09-06"
+  },
+  "estonia-3": {
+    "source": "Pexels",
+    "id": 37554778,
+    "page": "https://www.pexels.com/photo/tallinn-skyline-from-elevated-viewpoint-37554778/",
+    "photographer": "Nils Rotura",
+    "photographerUrl": "https://www.pexels.com/@nils-rotura-2157795908",
+    "description": "A stunning aerial view of Tallinn's historic and modern skyline with red rooftops and skyscrapers.",
+    "fetched": "2026-09-06"
+  }
+}

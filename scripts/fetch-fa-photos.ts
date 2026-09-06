@@ -51,7 +51,11 @@ const SLOTS: Record<string, string> = {
 
   finland: 'Helsinki cathedral city',
   'finland-2': 'Helsinki street winter',
-  'finland-3': 'Finland lake forest',
+  // Was 'Finland lake forest'. Nothing that search returned could be shown to
+  // be in Finland — the titles say only "a lake and forests" — and calling a
+  // generic lake Finnish in the alt text would be a claim we cannot support,
+  // on a site that tells readers unevidenced claims are a warning sign.
+  'finland-3': 'Helsinki harbour Finland',
 
   netherlands: 'Amsterdam canal houses',
   'netherlands-2': 'Amsterdam bicycles bridge canal',
