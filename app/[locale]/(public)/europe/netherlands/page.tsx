@@ -19,13 +19,27 @@ import {
 import type { Metadata } from 'next';
 
 import { metaFor } from '@/lib/pageMeta';
+import { buildMetadata } from '@/lib/seo';
+import { setRequestLocale } from 'next-intl/server';
+import FaPageLayout from '@/components/fa/FaPageLayout';
+import { page as faPage } from '@/content/fa/europe-netherlands';
+import { faMeta } from '@/lib/fa/content';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
+  if (locale === 'fa') return buildMetadata(faMeta(faPage, locale));
   return metaFor('/europe/netherlands', locale);
 }
 
-export default function NetherlandsPage() {
+export default async function NetherlandsPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+
+  // /fa/europe/netherlands is Persian-first copy, not a translation.
+  if (locale === 'fa') {
+    return <FaPageLayout page={faPage} trail={[{ name: 'هلند', path: faPage.path }]} />;
+  }
+
   return (
     <div className="w-full bg-[#F2F0E9] text-[#1a1a1a]">
 

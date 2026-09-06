@@ -43,11 +43,11 @@ const EN_LINKS = {
 
 const FA_LINKS = {
   access: [
-    { href: '/europe/finland', label: 'فنلاند' },
     { href: '/europe/denmark', label: 'دانمارک' },
+    { href: '/europe/netherlands', label: 'هلند' },
+    { href: '/europe/finland', label: 'فنلاند' },
+    { href: '/pnp', label: 'کارآفرینی استانی کانادا' },
     { href: '/europe/estonia', label: 'استونی' },
-    { href: '/pnp/new-brunswick', label: 'نیوبرانزویک' },
-    { href: '/pnp/nova-scotia', label: 'نوااسکوشیا' },
     { href: '/usa-eb2-niw', label: 'EB-2 NIW آمریکا' },
   ],
   strategy: [

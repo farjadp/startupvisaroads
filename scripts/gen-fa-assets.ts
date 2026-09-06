@@ -30,6 +30,7 @@ const SCENES: Record<string, string> = {
   finland: 'A weathered timber dock reaching into still grey lake water, birch trunks at the edge of frame, flat cool light',
   denmark: 'An old bicycle with a matte black frame leaning on a pale brick wall, cobblestones, one yellow-green strap on the rack',
   estonia: 'A narrow medieval stone staircase with a matte steel handrail, cool daylight from a high window',
+  netherlands: 'A narrow steel canal bridge railing over flat grey water, a dark bicycle leaning against it, low overcast light',
   'new-brunswick': 'A red-brick harbour warehouse doorway, a dark wool coat on a hook inside, morning fog outside',
   'nova-scotia': 'A weathered wooden pier post with a coiled grey rope, calm cold Atlantic water behind, overcast',
   'canada-startup-visa': 'A closed corrugated steel shutter on a concrete threshold, one thin painted yellow-green line on the floor in front',

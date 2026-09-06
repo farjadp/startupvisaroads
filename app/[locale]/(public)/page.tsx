@@ -29,11 +29,11 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   return buildMetadata({
     locale,
     path: '/',
-    title: isRtl ? faHome.meta.title : 'Startup Visa & Global Mobility Mentorship',
+    title: isRtl ? faHome.meta.title : 'Startup Visa Mentorship for Founding Teams',
     image: isRtl ? faImageUrl('home') : undefined,
     description: isRtl
       ? faHome.meta.description
-      : 'Your curated path to global residency: Canada Startup Visa, Provincial Nominee Programs, US EB-1/EB-2 NIW/EB-5, and European & Australian entrepreneur pathways.',
+      : 'We mentor startup teams through startup visa and entrepreneur immigration routes in Denmark, the Netherlands, Finland and Canada: business plan, financial model, pitch deck and interview practice. Not immigration lawyers — we build the business case the evaluating body reads.',
   });
 }
 
@@ -126,18 +126,19 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
          <section className="py-24">
             <div className="flex flex-col md:flex-row justify-between items-end mb-16">
                <h2 className="font-serif text-5xl md:text-7xl">
-                  Global <br/> <span className="italic text-[#1a1a1a]/40">Horizons.</span>
+                  Startup visa <br/> <span className="italic text-[#1a1a1a]/40">routes.</span>
                </h2>
                <p className="font-sans text-[#1a1a1a]/60 max-w-sm text-right mb-4 hidden md:block">
-                  Curated jurisdictions for strategic expansion and residency.
+                  The four routes we prepare startup teams for. Each one is judged by its own body — and each judges a different thing.
                </p>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                {[
-                  { name: "Denmark", program: "Startup Visa", img: "https://images.unsplash.com/photo-1513622470522-26c3c8a854bc?q=80&w=2070&auto=format&fit=crop", href: "/country/denmark" },
-                  { name: "Finland", program: "Startup Visa", img: "https://images.unsplash.com/photo-1538332576228-eb5b4c4de6f5?q=80&w=2070&auto=format&fit=crop", href: "/country/finland" },
-                  { name: "Canada PNP", program: "Provincial Nominee", img: "https://images.unsplash.com/photo-1559511260-66a654ae982a?q=80&w=2118&auto=format&fit=crop", href: "/pnp" }
+                  { name: "Denmark", program: "Start-up Denmark", img: "https://images.unsplash.com/photo-1513622470522-26c3c8a854bc?q=80&w=2070&auto=format&fit=crop", href: "/country/denmark" },
+                  { name: "Netherlands", program: "Startup Visa", img: "https://images.unsplash.com/photo-1512470876302-972faa2aa9a4?q=80&w=2070&auto=format&fit=crop", href: "/europe/netherlands" },
+                  { name: "Finland", program: "Startup Permit", img: "https://images.unsplash.com/photo-1538332576228-eb5b4c4de6f5?q=80&w=2070&auto=format&fit=crop", href: "/country/finland" },
+                  { name: "Canada", program: "Entrepreneur PNP", img: "https://images.unsplash.com/photo-1559511260-66a654ae982a?q=80&w=2118&auto=format&fit=crop", href: "/pnp" }
                ].map((dst, i) => (
                   <Link href={dst.href as any} key={i} className="group relative h-[500px] overflow-hidden bg-[#1a1a1a] cursor-pointer block border border-[#1a1a1a]/10 hover:shadow-2xl transition-shadow">
                      <Image 
@@ -221,15 +222,15 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
 
 
          {/* =========================================
-          4. KEY METRICS (Track Record)
+          4. THE PROGRAMME (What eight weeks produces)
       ========================================= */}
          <section className="py-24 bg-[#1a1a1a] text-[#F2F0E9] -mx-4 md:-mx-8 px-4 md:px-8">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 max-w-[1400px] mx-auto">
                {[
-                  { value: "$10M+", label: "Capital Raised", desc: "For early-stage startups securing North American investment." },
-                  { value: "98%", label: "Approval Rate", desc: "Our methodology is engineered to eliminate refusal risks." },
-                  { value: "150+", label: "Founders Relocated", desc: "Entrepreneurs successfully launched in global markets." },
-                  { value: "12 Mo", label: "Average Processing", desc: "Accelerated pathways from incorporation to residency." }
+                  { value: "01", label: "Choose the route", desc: "Your team, product and resources against what each authority actually rewards." },
+                  { value: "02", label: "Document the business", desc: "Business plan and financial model to the standard the evaluating body reads." },
+                  { value: "03", label: "Build the pitch", desc: "Ten slides that work in ten minutes, rehearsed until it is second nature." },
+                  { value: "04", label: "Rehearse the interview", desc: "The evaluation panel's real questions, in English, with blunt feedback." }
                ].map((stat, i) => (
                   <div key={i} className="group border-l border-[#CCFF00]/20 pl-6 hover:border-[#CCFF00] transition-colors duration-500">
                      <h3 className="font-serif text-5xl md:text-6xl text-[#CCFF00] mb-4 group-hover:scale-105 origin-left transition-transform duration-500">

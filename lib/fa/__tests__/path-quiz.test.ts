@@ -38,6 +38,12 @@ describe('recommendPath', () => {
     expect(recommendPath({ ...base, business: 'revenue', capital: '50to200', horizon: 'urgent' }).path).toBe('estonia');
   });
 
+  it('sends a growth-focused solo founder to the Netherlands', () => {
+    const r = recommendPath({ ...base, business: 'revenue', capital: '50to200', goal: 'growth' });
+    expect(r.path).toBe('netherlands');
+    expect(r.href).toBe('/europe/netherlands');
+  });
+
   it('sends a solo founder with a running business and budget to Denmark', () => {
     const r = recommendPath({ ...base, business: 'revenue', capital: '50to200' });
     expect(r.path).toBe('denmark');
