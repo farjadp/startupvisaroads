@@ -52,6 +52,42 @@ export const DESTINATIONS: Destination[] = [
     credentials: ['TELEGRAM_CHANNEL_BOT_TOKEN', 'TELEGRAM_CHANNEL_ID'],
     autoPost: true,
   },
+
+  // LinkedIn. One app, one access token, three author URNs — the personal
+  // profile needs w_member_social, each company page needs
+  // w_organization_social plus page-admin rights on that page.
+  //
+  // ⚠️ THE TOKEN EXPIRES IN ABOUT SIXTY DAYS. Farjad chose a calendar reminder
+  // over a refresh flow, which is a legitimate trade for three destinations —
+  // but it means that on roughly 5 Nov 2026 these three go quiet. The digest
+  // is what turns that from a silent death into a line in a message: a
+  // destination whose attempts all fail is reported the next morning.
+  {
+    id: 'linkedin-farjad',
+    platform: 'linkedin',
+    label: 'LinkedIn — Farjad',
+    locales: ['fa', 'en'],
+    credentials: ['LINKEDIN_ACCESS_TOKEN', 'LINKEDIN_AUTHOR_URN'],
+    autoPost: true,
+  },
+  {
+    id: 'linkedin-visaroads',
+    platform: 'linkedin',
+    label: 'LinkedIn — VisaRoads page',
+    locales: ['fa', 'en'],
+    credentials: ['LINKEDIN_ACCESS_TOKEN', 'LINKEDIN_ORG_URN_VISAROADS'],
+    autoPost: true,
+  },
+  {
+    id: 'linkedin-ashavid',
+    platform: 'linkedin',
+    label: 'LinkedIn — AshaVid page',
+    // AshaVid is the AI venture, not the immigration brand. English only:
+    // its audience is not the Persian founder the /fa articles address.
+    locales: ['en'],
+    credentials: ['LINKEDIN_ACCESS_TOKEN', 'LINKEDIN_ORG_URN_ASHAVID'],
+    autoPost: true,
+  },
 ];
 
 export function destinationsFor(locale: Locale): Destination[] {

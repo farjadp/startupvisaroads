@@ -132,14 +132,17 @@ async function generateSocialCaptions(title: string, rawContent: string, locale:
 /**
  * Shares an article to LinkedIn.
  */
-async function shareToLinkedin(
+export async function shareToLinkedin(
   title: string,
   caption: string,
   url: string,
-  imageInfo: { buffer: Buffer; mimeType: string } | null
+  imageInfo: { buffer: Buffer; mimeType: string } | null,
+  /** Credentials are passed in so one article can go to several authors —
+   *  Farjad's profile and two company pages — from the same call site. */
+  creds?: { token?: string; authorUrn?: string },
 ): Promise<boolean> {
-  const token = await getCredential('LINKEDIN_ACCESS_TOKEN');
-  const authorUrn = await getCredential('LINKEDIN_AUTHOR_URN');
+  const token = creds?.token ?? (await getCredential('LINKEDIN_ACCESS_TOKEN'));
+  const authorUrn = creds?.authorUrn ?? (await getCredential('LINKEDIN_AUTHOR_URN'));
 
   if (!token || !authorUrn) {
     console.warn('[Social Share] LinkedIn sharing skipped: LINKEDIN_ACCESS_TOKEN or LINKEDIN_AUTHOR_URN not configured.');
@@ -149,8 +152,12 @@ async function shareToLinkedin(
   try {
     console.log(`[Social Share] Posting to LinkedIn: "${title}"`);
 
-    const ctaText = authorUrn.includes('fa') || url.includes('/fa/') 
-      ? 'برای مطالعه متن کامل به این لینک مراجعه کنید:' 
+    // The article's own URL is the only reliable signal of its language.
+    // The previous test also asked whether the author URN contained "fa",
+    // which matches any person URN that happens to have those two letters in
+    // its opaque id and would put a Persian call to action on an English post.
+    const ctaText = url.includes('/fa/')
+      ? 'برای مطالعه متن کامل به این لینک مراجعه کنید:'
       : 'To read the full article, visit:';
 
     const textContent = `${caption}\n\n${ctaText}\n${url}`;
