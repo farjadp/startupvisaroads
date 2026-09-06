@@ -29,6 +29,12 @@ describe('rejectReason', () => {
     expect(rejectReason(`${FA} مسیر EB-2 NIW نیز هست.`, 'fa', 600)).toBeNull();
   });
 
+  it('rejects an English word that wandered into a Persian sentence', () => {
+    expect(rejectReason(`${FA} ریسک رد شدن بالا می‌رود—even اگر عدد کافی باشد.`, 'fa', 600)).toMatch(/English word/);
+    // The names that are supposed to stay Latin all carry a capital.
+    expect(rejectReason(`${FA} طبق مقررات Migri و مسیر e-Residency.`, 'fa', 600)).toBeNull();
+  });
+
   it('rejects a fragment too short to carry a point', () => {
     expect(rejectReason('Deadline: August 4, 2026', 'en', 240)).toMatch(/too short/);
   });

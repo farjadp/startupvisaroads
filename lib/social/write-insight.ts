@@ -123,6 +123,13 @@ export function rejectReason(text: string, locale: 'en' | 'fa', max: number): st
   if (locale === 'fa' && /[0-9]/.test(text.replace(/[A-Za-z0-9-]*[A-Za-z][A-Za-z0-9-]*/g, ''))) {
     return 'Latin digits in Persian prose';
   }
+  // An English word inside a Persian sentence — "…را بالا می‌برد—even اگر" went
+  // out in a draft. Programme names and acronyms are meant to stay Latin, and
+  // they all carry a capital (IRCC, SUV, EB-2, Migri, e-Residency); a word in
+  // all lower case is the model switching languages mid-sentence.
+  if (locale === 'fa' && /(?:^|[^\p{L}])[a-z][a-z-]{1,}(?=$|[^\p{L}])/u.test(text)) {
+    return 'an English word inside the Persian text';
+  }
   return null;
 }
 
