@@ -18,6 +18,7 @@ import { xMessage } from '@/lib/social/x-message';
 import { DESTINATIONS } from '@/lib/social/destinations';
 import { extractInsights } from '@/lib/social/insights';
 import { writeInsight } from '@/lib/social/write-insight';
+import { findPhoto } from '@/lib/social/photo';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 120;
@@ -50,7 +51,9 @@ export async function GET(req: NextRequest) {
     // failed attempt as use meant the two English articles were burned by two
     // 403s and the lane reported "every article was used within 45 days" with
     // nothing ever published.
-    where: { kind: 'insight', status: 'posted' },
+    // articleId is nullable now (the knowledge tweets have no article); an
+    // insight always has one, and the filter keeps the type honest.
+    where: { kind: 'insight', status: 'posted', articleId: { not: null } },
     select: { articleId: true, createdAt: true },
     orderBy: { createdAt: 'desc' },
     take: 500,
@@ -61,7 +64,7 @@ export async function GET(req: NextRequest) {
   // the Persian account entirely — which is exactly what the first dry run
   // did.
   const locales = [...new Set(DESTINATIONS.filter((d) => d.platform === 'x').flatMap((d) => d.locales))];
-  const seen = [...prior];
+  const seen = prior.map((p) => ({ articleId: p.articleId!, createdAt: p.createdAt }));
   const sent: unknown[] = [];
   // A locale that produces nothing has to say so per locale. Reporting one
   // reason for the whole run is how "the autopilot is healthy" was true while
@@ -89,15 +92,24 @@ export async function GET(req: NextRequest) {
       const a = {
         ...picked,
         locale,
-        insight: written ?? (points.length ? points[Math.floor(Math.random() * points.length)] : null),
+        insight: written?.text ?? (points.length ? points[Math.floor(Math.random() * points.length)] : null),
       };
+      // The picture is fetched once and handed to every destination for this
+      // article: two accounts, two tweets, one download.
+      const photo = written?.photoQuery ? await findPhoto(written.photoQuery) : null;
 
       if (dryRun) {
         const previews = DESTINATIONS.filter((d) => d.platform === 'x' && d.locales.includes(locale))
           .map((d) => ({ destination: d.id, text: xMessage(a, d, 'insight') }));
-        sent.push({ locale, article: a.slug, written: Boolean(written), previews });
+        sent.push({
+          locale,
+          article: a.slug,
+          written: Boolean(written),
+          photo: photo ? { query: written?.photoQuery, alt: photo.alt, by: photo.photographer, source: photo.sourceUrl } : null,
+          previews,
+        });
       } else {
-        sent.push({ locale, article: a.slug, results: await shareToX(a, 'insight') });
+        sent.push({ locale, article: a.slug, results: await shareToX(a, 'insight', photo) });
       }
       // Recorded before the next pick, so the loop cannot choose it twice.
       seen.push({ articleId: a.id, createdAt: now });

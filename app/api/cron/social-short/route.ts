@@ -46,7 +46,10 @@ export async function GET(req: NextRequest) {
   }
 
   const priorPosts = await prisma.socialPost.findMany({
-    where: { kind: 'short', destination: channel?.id },
+    // Only what actually went out, and only rows that have an article: a
+    // failed attempt is not use, and counting it as use put the article out of
+    // reach for 45 days over a bad token.
+    where: { kind: 'short', destination: channel?.id, status: 'posted', articleId: { not: null } },
     select: { articleId: true, createdAt: true },
     orderBy: { createdAt: 'desc' },
     take: 500,
@@ -54,7 +57,7 @@ export async function GET(req: NextRequest) {
 
   // Each send is recorded, so the next pick in this loop already sees the
   // previous one as used and cannot choose the same article twice.
-  const seen = [...priorPosts];
+  const seen = priorPosts.map((p) => ({ articleId: p.articleId!, createdAt: p.createdAt }));
   const sent: unknown[] = [];
 
   for (let i = 0; i < count; i++) {

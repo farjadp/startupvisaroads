@@ -18,7 +18,7 @@
 // under, for the same reason.
 // ============================================================================
 import * as cheerio from 'cheerio';
-import { chatText } from '@/lib/autopilot/pipeline';
+import { chatJson } from '@/lib/autopilot/pipeline';
 import { toPersianDigits } from '@/lib/fa/format';
 
 export type InsightSource = {
@@ -56,13 +56,16 @@ const RULES = `Rules, all of them:
 - Every fact, number, date, programme and authority in it must already appear in the article below. Add nothing. If the article does not give a figure, describe the shape without inventing one.
 - No hashtags, no links, no emoji, no @mentions — those are added afterwards.
 - No title, no label, no quotation marks around the post, no "Thread", no "1/".
-- Do not open with a question, and do not open with the article's title.
+- Do not open with the article's title.
 - Never first-person singular. Never salesy. No call to action, no "DM me", no "learn more".
-- Output the post text and nothing else.`;
+
+Also choose a photo search term for a stock library: two to four English words for something real and photographable — a city, a landscape, a passport on a desk, a team in a small office. Never an abstract noun, never a logo or a flag, never text in the image.
+
+Reply as JSON: {"post": "...", "photo": "..."}`;
 
 const VOICE = {
-  en: `Voice: a senior immigration strategist telling a founder something useful, directly. Short paragraphs, plain words, Canadian spelling, no exclamation marks. Banned outright: "In today's fast-paced world", "It's important to note", "delve", "navigate the complexities", "unlock", "seamless", "robust", "leverage", "game-changer", "landscape", "journey".`,
-  fa: `لحن: یک مشاور ارشد که مستقیم با یک بنیان‌گذار حرف می‌زند. فارسیِ نوشتاری، نه گفتاری (می‌رسد نه می‌رسه، است نه ـه، را نه رو). نیم‌فاصله رعایت شود. اعداد داخل متن فارسی، فارسی. نام برنامه‌ها، نهادها و سرواژه‌ها لاتین بماند (IRCC, SUV, EB-2 NIW, USCIS). این عبارت‌ها ممنوع‌اند: «در دنیای امروز»، «قابل توجه است که»، «به طور کلی»، «در نهایت»، «بدون شک»، «شایان ذکر است»، «نقش مهمی ایفا می‌کند».`,
+  en: `Voice: warm and friendly, like someone who has done this a hundred times telling a founder what they wish they had known — an equal, not a lecturer. Contractions are welcome, plain words, Canadian spelling, at most one exclamation mark and usually none. Friendly does not mean vague: the post still carries something specific. Banned outright: "In today's fast-paced world", "It's important to note", "delve", "navigate the complexities", "unlock", "seamless", "robust", "leverage", "game-changer", "landscape", "journey".`,
+  fa: `لحن: صمیمی و دوستانه، مثل کسی که این مسیر را رفته و دارد با یک بنیان‌گذار درد دل می‌کند — هم‌قد و کنارش، نه از بالا. گرم باش ولی مبهم نه: پست باید همچنان یک نکته‌ی مشخص داشته باشد. فارسیِ نوشتاری، نه گفتاری (می‌رسد نه می‌رسه، است نه ـه، را نه رو). نیم‌فاصله رعایت شود. اعداد داخل متن فارسی، فارسی. نام برنامه‌ها، نهادها و سرواژه‌ها لاتین بماند (IRCC, SUV, EB-2 NIW, USCIS). این عبارت‌ها ممنوع‌اند: «در دنیای امروز»، «قابل توجه است که»، «به طور کلی»، «در نهایت»، «بدون شک»، «شایان ذکر است»، «نقش مهمی ایفا می‌کند».`,
 } as const;
 
 function prompt(a: InsightSource, max: number): string {
@@ -128,7 +131,9 @@ export function rejectReason(text: string, locale: 'en' | 'fa', max: number): st
  * an account that says nothing today is better than one that says something
  * empty. Nothing here throws — the publish path must survive a model outage.
  */
-export async function writeInsight(a: InsightSource, opts: { maxChars?: number } = {}): Promise<string | null> {
+export type Insight = { text: string; photoQuery: string };
+
+export async function writeInsight(a: InsightSource, opts: { maxChars?: number } = {}): Promise<Insight | null> {
   const max = opts.maxChars ?? BUDGET[a.locale];
   const body = (a.content ?? '').trim() || (a.keyTakeaway ?? '').trim();
   if (!body) return null;
@@ -140,9 +145,10 @@ export async function writeInsight(a: InsightSource, opts: { maxChars?: number }
   for (const [i, temperature] of [0.75, 0.3].entries()) {
     try {
       const ask = i === 0 ? prompt(a, max) : `${prompt(a, max)}\n\nA previous attempt was rejected: ${last}. Fix that and write it again.`;
-      const draft = tidy(await chatText(ask, temperature), a.locale);
+      const reply = await chatJson<{ post?: string; photo?: string }>(ask, temperature);
+      const draft = tidy(reply.post ?? '', a.locale);
       const bad = rejectReason(draft, a.locale, max);
-      if (!bad) return draft;
+      if (!bad) return { text: draft, photoQuery: (reply.photo ?? '').trim().slice(0, 60) };
       last = bad;
       console.warn(`social/insight: draft rejected — ${bad}`);
     } catch (e) {

@@ -187,15 +187,19 @@ model CampaignLog {
 /// a second send impossible rather than merely unlikely.
 model SocialPost {
   id          String   @id @default(cuid())
-  articleId   String
-  article     Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  /// Null for a post with no article behind it — the standalone knowledge
+  /// tweets, which are written from a theme rather than from a page.
+  articleId   String?
+  article     Article? @relation(fields: [articleId], references: [id], onDelete: Cascade)
   /// Destination id from lib/social/destinations.ts, e.g. "telegram-channel".
   destination String
   /// posted | failed | skipped. `skipped` means the destination was not
   /// configured, which is a different thing from a send that failed.
   status      String
-  /// Which shape was sent: "article" or "short".
+  /// Which shape was sent: "article", "insight" or "knowledge".
   kind        String   @default("article")
+  /// What a knowledge post was about, so the next one can avoid repeating it.
+  topic       String?
   postedAt    DateTime?
   remoteUrl   String?
   error       String?
