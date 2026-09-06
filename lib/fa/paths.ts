@@ -64,7 +64,7 @@ export const FA_PAIRED: Record<FaPath, string | null> = {
   '/pnp': '/pnp',
   '/pnp/new-brunswick': '/pnp/new-brunswick',
   '/pnp/nova-scotia': '/pnp/nova-scotia',
-  '/europe/finland': '/europe/finland',
+  '/europe/finland': '/country/finland',
   '/europe/denmark': '/country/denmark',
   '/europe/netherlands': '/europe/netherlands',
   '/europe/estonia': null,

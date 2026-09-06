@@ -67,16 +67,6 @@ export default function FaTeam() {
                   </div>
                 )}
 
-                {member.phoneNumbers && member.phoneNumbers.length > 0 && (
-                  <div className="space-y-1.5 mb-6">
-                    {member.phoneNumbers.map((phone) => (
-                      <div key={phone} className="flex items-center gap-2 text-sm text-[#1a1a1a]/70" dir="ltr">
-                        <Phone className="w-3.5 h-3.5 shrink-0 text-[#1a1a1a]/40" />
-                        <span>{phone}</span>
-                      </div>
-                    ))}
-                  </div>
-                )}
               </div>
 
               <div className="flex flex-wrap gap-4 pt-4 border-t border-[#1a1a1a]/10">

@@ -116,7 +116,7 @@ export default async function RootLayout({
         <JsonLd data={[organizationJsonLd(), websiteJsonLd()]} />
         <NextIntlClientProvider messages={messages}>
           {/* Fixed Grain Overlay */}
-          <div className="fixed inset-0 pointer-events-none opacity-[0.03] z-50 mix-blend-multiply bg-[url('https://grainy-gradients.vercel.app/noise.svg')]"></div>
+          <div className="fixed inset-0 pointer-events-none opacity-[0.03] z-50 mix-blend-multiply bg-[url('/noise.svg')]"></div>
 
           {children}
         </NextIntlClientProvider>

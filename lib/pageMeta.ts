@@ -37,7 +37,6 @@ export const EN_INDEXABLE_PATHS = [
   '/usa/eb2-niw',
   '/usa/eb5',
   '/europe/netherlands',
-  '/europe/finland',
   '/australia/entrepreneur-stream',
   '/uae/golden-visa',
   '/country',

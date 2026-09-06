@@ -3,6 +3,13 @@
 // Bilingual team member data. One source of truth for the team page and the
 // contact page's team section. Contact details are factual, provided by the
 // founder. No invented credentials, no invented bios.
+//
+// `phoneNumbers` is intentionally NOT rendered anywhere. Several are personal
+// Iranian (+98) mobiles, and the team and contact pages are public and
+// indexable; publishing them would put those individuals in a search index
+// permanently, on a site about leaving Iran. Telegram and WhatsApp carry the
+// routing instead. Keep the data here for internal use; if you decide to
+// publish a number, do it per person with their consent.
 // ============================================================================
 
 export type TeamMember = {
