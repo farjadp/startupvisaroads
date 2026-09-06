@@ -4,6 +4,7 @@ import * as cheerio from 'cheerio';
 import OpenAI from 'openai';
 import { SITE_URL } from '@/lib/seo';
 import { sendToChannel } from '@/lib/social/telegram';
+import { shareToX } from '@/lib/social/x';
 
 // Initialize OpenAI client
 const openai = new OpenAI({
@@ -419,6 +420,21 @@ export async function shareToSocials(articleId: string) {
         keyTakeaway: (article as { keyTakeaway?: string | null }).keyTakeaway ?? null,
         excerpt: article.excerpt,
         coverImage: article.coverImage,
+      },
+      'article',
+    );
+
+    // X runs on the same footing as the channel: its own credentials, its own
+    // locale filter, its own record per attempt, and independent of whether
+    // the three legacy platforms below are configured.
+    await shareToX(
+      {
+        id: article.id,
+        title: article.title,
+        slug: article.slug,
+        locale: article.locale === 'fa' ? 'fa' : 'en',
+        keyTakeaway: (article as { keyTakeaway?: string | null }).keyTakeaway ?? null,
+        excerpt: article.excerpt,
       },
       'article',
     );
