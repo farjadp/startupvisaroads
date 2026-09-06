@@ -38,6 +38,16 @@ function urnKey(d: Destination): string {
   return d.credentials.find((k) => k.includes('URN')) ?? 'LINKEDIN_AUTHOR_URN';
 }
 
+/**
+ * The access token this destination posts with. There are two LinkedIn apps —
+ * one owning the VisaRoads page, one owning Ashavid — so there is no single
+ * shared token, and a destination that borrowed another's would fail with a
+ * permission error that looks nothing like the real cause.
+ */
+function tokenKey(d: Destination): string {
+  return d.credentials.find((k) => k.includes('TOKEN')) ?? 'LINKEDIN_ACCESS_TOKEN';
+}
+
 async function record(articleId: string, destination: string, status: DestinationResult['status'], error?: string) {
   try {
     await prisma.socialPost.create({
@@ -95,7 +105,7 @@ export async function shareToLinkedinDestinations(
     let error: string | undefined;
     try {
       ok = await shareToLinkedin(article.title, caption, url, imageInfo, {
-        token: values.LINKEDIN_ACCESS_TOKEN,
+        token: values[tokenKey(d)],
         authorUrn: values[urnKey(d)],
       });
     } catch (e) {

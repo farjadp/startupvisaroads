@@ -53,21 +53,29 @@ export const DESTINATIONS: Destination[] = [
     autoPost: true,
   },
 
-  // LinkedIn. One app, one access token, three author URNs — the personal
-  // profile needs w_member_social, each company page needs
-  // w_organization_social plus page-admin rights on that page.
+  // LinkedIn. TWO apps, not one, so two access tokens:
+  //   VisaRoads       (client 863609ky517yrf) → the VisaRoads page
+  //   PersonalWebsite (client 785zxi5h7u7e6v) → the Ashavid page
+  // The personal profile is authorised through whichever app the member
+  // consents to; it is given its own key so the three never share a fate.
   //
-  // ⚠️ THE TOKEN EXPIRES IN ABOUT SIXTY DAYS. Farjad chose a calendar reminder
-  // over a refresh flow, which is a legitimate trade for three destinations —
-  // but it means that on roughly 5 Nov 2026 these three go quiet. The digest
-  // is what turns that from a silent death into a line in a message: a
-  // destination whose attempts all fail is reported the next morning.
+  // A client secret is NOT one of these values. It identifies the app; posting
+  // needs an access token from the OAuth authorisation-code flow, carrying
+  // w_member_social for the profile and w_organization_social for a page,
+  // where the member is also an admin of that page.
+  //
+  // ⚠️ EACH TOKEN LIVES TWO MONTHS — LinkedIn shows 5184000 seconds in the app
+  // settings. Farjad chose a calendar reminder over a refresh flow, which is a
+  // fair trade for three destinations, but it means they go quiet around
+  // 5 Nov 2026. The digest is what turns that from a silent death into a line
+  // in a message: a destination whose attempts all fail is named the next
+  // morning.
   {
     id: 'linkedin-farjad',
     platform: 'linkedin',
     label: 'LinkedIn — Farjad',
     locales: ['fa', 'en'],
-    credentials: ['LINKEDIN_ACCESS_TOKEN', 'LINKEDIN_AUTHOR_URN'],
+    credentials: ['LINKEDIN_TOKEN_FARJAD', 'LINKEDIN_AUTHOR_URN'],
     autoPost: true,
   },
   {
@@ -75,7 +83,7 @@ export const DESTINATIONS: Destination[] = [
     platform: 'linkedin',
     label: 'LinkedIn — VisaRoads page',
     locales: ['fa', 'en'],
-    credentials: ['LINKEDIN_ACCESS_TOKEN', 'LINKEDIN_ORG_URN_VISAROADS'],
+    credentials: ['LINKEDIN_TOKEN_VISAROADS', 'LINKEDIN_ORG_URN_VISAROADS'],
     autoPost: true,
   },
   {
@@ -85,7 +93,7 @@ export const DESTINATIONS: Destination[] = [
     // AshaVid is the AI venture, not the immigration brand. English only:
     // its audience is not the Persian founder the /fa articles address.
     locales: ['en'],
-    credentials: ['LINKEDIN_ACCESS_TOKEN', 'LINKEDIN_ORG_URN_ASHAVID'],
+    credentials: ['LINKEDIN_TOKEN_ASHAVID', 'LINKEDIN_ORG_URN_ASHAVID'],
     autoPost: true,
   },
 ];

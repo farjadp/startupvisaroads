@@ -8,12 +8,16 @@ describe('the LinkedIn destinations', () => {
     expect(linkedin.map((d) => d.id).sort()).toEqual(['linkedin-ashavid', 'linkedin-farjad', 'linkedin-visaroads']);
   });
 
-  // One app, one token, three URNs. If they ever diverge, each destination
-  // still declares what it needs, so `configured` stays honest per destination.
-  it('shares the access token but gives each destination its own URN', () => {
-    for (const d of linkedin) expect(d.credentials).toContain('LINKEDIN_ACCESS_TOKEN');
+  // Two LinkedIn apps exist, not one: VisaRoads owns its page and
+  // PersonalWebsite owns Ashavid. A destination borrowing another's token
+  // fails with a permission error that looks nothing like the real cause, so
+  // every destination carries its own token key as well as its own URN.
+  it('gives each destination its own token and its own URN', () => {
+    const tokens = linkedin.map((d) => d.credentials.find((k) => k.includes('TOKEN')));
     const urns = linkedin.map((d) => d.credentials.find((k) => k.includes('URN')));
+    expect(new Set(tokens).size).toBe(linkedin.length);
     expect(new Set(urns).size).toBe(linkedin.length);
+    for (const k of [...tokens, ...urns]) expect(k).toBeTruthy();
   });
 
   // AshaVid is the AI venture, not the immigration brand. A Persian article
