@@ -17,6 +17,11 @@ export const page: FaPage = {
   updated: '2026-09-06',
 
   image: 'netherlands',
+  imageAlt: 'نمای کانال آمستردام با دوچرخه‌ای تکیه‌داده به نرده، نماد ویزای استارتاپ هلند',
+  gallery: [
+    { src: 'netherlands-2', alt: 'پل فلزی متحرک بر آب خاکستری در هوای ابری هلند', caption: 'هلند دروازه‌ی بازار اروپای غربی است — همان چیزی که فسیلیتیتور از شما می‌خواهد برایش برنامه داشته باشید.' },
+    { src: 'netherlands-3', alt: 'ورودی انبار آجری با درِ فلزی تیره و بازتاب کانال', caption: 'فسیلیتیتور یک سال کنار شماست؛ انتخابش مهم‌ترین تصمیم این مسیر است.' },
+  ],
   roads: ['amsterdam'],
   entity: { name: 'ویزای استارتاپ هلند (Residence permit for foreign startups)', provider: 'RVO / IND', country: 'Netherlands' },
   facts: [

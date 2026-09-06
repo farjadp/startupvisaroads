@@ -101,6 +101,10 @@ function Section({ s, i }: { s: FaSection; i: number }) {
 
 export default function FaPageLayout({ page, trail }: { page: FaPage; trail: { name: string; path: string }[] }) {
   const img = page.image ? `/fa/img/${page.image}.webp` : null;
+  const gallery = page.gallery ?? [];
+  // Spread the gallery evenly through the sections so the page breathes
+  // instead of front-loading every picture.
+  const slotFor = (i: number) => Math.floor(((i + 1) * page.sections.length) / (gallery.length + 1));
   const roads = (page.roads ?? []) as (keyof typeof DESTINATIONS)[];
   const mid = Math.min(3, Math.max(1, Math.floor(page.sections.length / 2)));
   const before = page.sections.slice(0, mid);
@@ -140,7 +144,7 @@ export default function FaPageLayout({ page, trail }: { page: FaPage; trail: { n
               </Reveal>
             </div>
             <div className="lg:col-span-5 relative">
-              {img && <HeroImage src={img} alt="" className="aspect-[4/5] md:aspect-[4/3] lg:aspect-[4/5]" />}
+              {img && <HeroImage src={img} alt={page.imageAlt ?? ''} className="aspect-[4/5] md:aspect-[4/3] lg:aspect-[4/5]" />}
               {roads.length > 0 && (
                 <RoadsScene to={roads} className="absolute -bottom-10 -start-6 md:-start-12 w-44 h-44 md:w-64 md:h-64" />
               )}
@@ -185,11 +189,11 @@ export default function FaPageLayout({ page, trail }: { page: FaPage; trail: { n
           <div className="lg:col-span-9 space-y-16 md:space-y-24">
             {before.map((s, i) => <Section key={i} s={s} i={i} />)}
 
-            {/* mid-page breather: the photograph again, at reading width, with the page's positioning line */}
-            {img && after.length > 0 && (
+            {/* mid-page breather: a different photograph, with the positioning line */}
+            {gallery[0] && after.length > 0 && (
               <Reveal as="figure" className="relative -mx-4 md:mx-0 overflow-hidden">
                 <div className="relative aspect-[21/9] bg-[#1a1a1a]">
-                  <Image src={img} alt="" fill sizes="(min-width: 1024px) 70vw, 100vw" className="object-cover opacity-80" />
+                  <Image src={`/fa/img/${gallery[0].src}.webp`} alt={gallery[0].alt} fill sizes="(min-width: 1024px) 70vw, 100vw" className="object-cover opacity-80" />
                 </div>
                 <figcaption className="absolute inset-x-0 bottom-0 p-6 md:p-10 bg-gradient-to-t from-[#1a1a1a] to-transparent">
                   <p className="font-estedad font-bold text-[#F2F0E9] text-xl md:text-3xl max-w-[28ch] leading-snug [text-wrap:balance]">ما وکیل مهاجرتی نیستیم — شما را برای پذیرش آماده می‌کنیم.</p>
@@ -197,7 +201,23 @@ export default function FaPageLayout({ page, trail }: { page: FaPage; trail: { n
               </Reveal>
             )}
 
-            {after.map((s, i) => <Section key={mid + i} s={s} i={mid + i} />)}
+            {after.map((s, i) => {
+              const idx = mid + i;
+              const shot = gallery.slice(1).find((_, k) => slotFor(k + 1) === idx + 1);
+              return (
+                <React.Fragment key={idx}>
+                  <Section s={s} i={idx} />
+                  {shot && (
+                    <Reveal as="figure" className="-mx-4 md:mx-0">
+                      <div className="relative aspect-[16/9] bg-[#1a1a1a] overflow-hidden">
+                        <Image src={`/fa/img/${shot.src}.webp`} alt={shot.alt} fill sizes="(min-width: 1024px) 70vw, 100vw" className="object-cover" />
+                      </div>
+                      {shot.caption && <figcaption className="mt-3 text-xs text-[#1a1a1a]/55">{shot.caption}</figcaption>}
+                    </Reveal>
+                  )}
+                </React.Fragment>
+              );
+            })}
 
             {page.faqs.length > 0 && (
               <Reveal as="section" className="scroll-mt-28">

@@ -40,6 +40,28 @@ const SCENES: Record<string, string> = {
   about: 'A linen jacket over the back of a chair in an otherwise empty room, pale wall, soft daylight',
   'which-path': 'A fork in a gravel path between low dry-stone walls under an overcast sky, no signage',
   contact: 'A dark closed laptop on a wide windowsill, a single yellow-green cable, grey city light outside',
+  // Second and third scenes for the destination guides, so a long page never
+  // shows the same photograph twice. Same art direction, different subject.
+  'finland-2': 'A pale birch plywood desk edge against a white wall, a matte grey ceramic cup, flat Nordic daylight',
+  'finland-3': 'An empty tram stop shelter in soft snow light, steel and glass, no signage legible',
+  'denmark-2': 'A row of dark timber cladding on a harbour building, one small yellow-green mooring cleat, overcast',
+  'denmark-3': 'A plain oak meeting table by a tall window, two empty chairs, grey daylight',
+  'netherlands-2': 'A steel drawbridge counterweight over flat grey water, low cloud, no people',
+  'netherlands-3': 'A narrow brick warehouse doorway with a matte black steel door, canal reflection on the ground',
+  'estonia-2': 'A limestone city wall corner meeting new matte glass, cool flat light',
+  'estonia-3': 'A dark server-room door with a steel handle in a plain corridor, even lighting, nothing legible',
+  'new-brunswick-2': 'A frozen river bank with bare birch, a dark timber jetty, flat winter light',
+  'new-brunswick-3': 'An empty small-town main street shopfront with a closed matte green door, overcast',
+  'nova-scotia-2': 'A stack of weathered lobster traps on a wet concrete pier, grey Atlantic behind',
+  'nova-scotia-3': 'A lighthouse handrail in fog, painted steel, no horizon visible',
+  'canada-startup-visa-2': 'A padlocked chain-link gate in front of a concrete loading bay, flat grey light',
+  'canada-startup-visa-3': 'An empty glass office lobby seen from outside at dusk, no signage, cool tones',
+  'pnp-2': 'A prairie grain elevator silhouette under a wide flat overcast sky',
+  'pnp-3': 'A provincial highway guardrail curving into low fog, wet asphalt',
+  'usa-eb2-niw-2': 'A microscope eyepiece and matte metal stage on a clean bench, cool even light',
+  'usa-eb2-niw-3': 'A university corridor with tall windows and a polished concrete floor, empty, flat daylight',
+  'mentorship-2': 'A whiteboard wiped clean with faint ghost marks, a single black marker on the tray',
+
 };
 
 async function generate(scene: string): Promise<Uint8Array> {
