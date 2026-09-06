@@ -145,7 +145,7 @@ const clip = (s: string, n: number) => (s.length > n ? `${s.slice(0, n - 1)}…`
  * is three lines, so the day it is not stands out instead of arriving as the
  * same wall of text as every other day.
  */
-export function buildDigest(lanes: LaneSummary[], now: Date): string {
+export function buildDigest(lanes: LaneSummary[], now: Date, social: SocialSummary[] = []): string {
   const created = lanes.reduce((n, l) => n + l.created, 0);
   const worst = lanes.some((l) => l.state !== 'healthy');
 
@@ -157,5 +157,65 @@ export function buildDigest(lanes: LaneSummary[], now: Date): string {
     .filter((l) => l.state !== 'healthy' && l.reasons.length)
     .flatMap((l) => [`\n${l.locale}:`, ...l.reasons.slice(0, 4).map((r) => `· ${clip(r, REASON_CHARS)}`)]);
 
-  return clip([head, ...lines, ...detail].join('\n'), TELEGRAM_LIMIT);
+  // Only unhealthy destinations get a line. A healthy day must stay short.
+  const socialLines = social
+    .filter((d) => d.state !== 'healthy')
+    .map((d) => `${d.state === 'failing' ? '⚠️' : '🔌'} ${d.destination}: ${d.state}${d.reasons.length ? ` — ${clip(d.reasons[0], REASON_CHARS)}` : ''}`);
+
+  return clip([head, ...lines, ...socialLines, ...detail].join('\n'), TELEGRAM_LIMIT);
+}
+
+// ── Social delivery ────────────────────────────────────────────────────────
+// Social posting is the easiest thing in this system to lose without noticing,
+// because when it stops, nothing on the site changes. It gets reported beside
+// the writing lanes for the same reason the lanes are reported per locale:
+// an aggregate "social is fine" hides the one destination that is not.
+
+export type SocialRow = {
+  destination: string;
+  /** posted | failed | skipped */
+  status: string;
+  createdAt: Date;
+  error: string | null;
+};
+
+export type SocialState = 'healthy' | 'failing' | 'unconfigured';
+
+export type SocialSummary = {
+  destination: string;
+  state: SocialState;
+  posted: number;
+  failed: number;
+  reasons: string[];
+};
+
+export function summariseSocial(rows: SocialRow[], now: Date, windowHours = DEFAULT_WINDOW_HOURS): SocialSummary[] {
+  const since = new Date(now.getTime() - windowHours * 3_600_000);
+  const byDest = new Map<string, SocialRow[]>();
+  for (const r of rows) {
+    if (r.createdAt < since) continue;
+    byDest.set(r.destination, [...(byDest.get(r.destination) ?? []), r]);
+  }
+
+  return [...byDest.entries()].map(([destination, rs]) => {
+    const posted = rs.filter((r) => r.status === 'posted').length;
+    const failed = rs.filter((r) => r.status === 'failed').length;
+    const skipped = rs.filter((r) => r.status === 'skipped').length;
+
+    const reasons: string[] = [];
+    for (const r of rs) {
+      const e = r.error?.trim();
+      if (e && !reasons.includes(e)) reasons.push(e);
+    }
+
+    // A destination nobody has configured is not broken. Calling it broken
+    // every day is how a digest teaches its reader to stop opening it.
+    let state: SocialState;
+    if (posted > 0) state = 'healthy';
+    else if (failed > 0) state = 'failing';
+    else if (skipped > 0) state = 'unconfigured';
+    else state = 'healthy';
+
+    return { destination, state, posted, failed, reasons };
+  });
 }

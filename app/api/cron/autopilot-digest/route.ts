@@ -17,7 +17,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { authorisedCron } from '@/lib/cron-auth';
-import { summarise, buildDigest, DEFAULT_WINDOW_HOURS } from '@/lib/autopilot/digest';
+import { summarise, buildDigest, summariseSocial, DEFAULT_WINDOW_HOURS } from '@/lib/autopilot/digest';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 60;
@@ -56,17 +56,24 @@ export async function GET(req: NextRequest) {
     take: 200,
   });
 
+  const socialRows = await prisma.socialPost.findMany({
+    where: { createdAt: { gte: new Date(now.getTime() - hours * 3_600_000) } },
+    select: { destination: true, status: true, createdAt: true, error: true },
+    take: 500,
+  });
+
   const lanes = summarise(runs, now, { windowHours: hours });
-  const message = buildDigest(lanes, now);
+  const social = summariseSocial(socialRows, now, hours);
+  const message = buildDigest(lanes, now, social);
 
   // Log it too. If Telegram is down or misconfigured, the digest must still
   // exist somewhere — this endpoint's whole purpose is defeated by a silent
   // failure of its own.
   console.log(`autopilot/digest:\n${message}`);
 
-  if (dryRun) return NextResponse.json({ ok: true, dryRun: true, hours, lanes, message });
+  if (dryRun) return NextResponse.json({ ok: true, dryRun: true, hours, lanes, social, message });
 
   const delivery = await sendTelegram(message);
   if (!delivery.sent) console.error(`autopilot/digest: not delivered — ${delivery.error}`);
-  return NextResponse.json({ ok: true, hours, lanes, delivered: delivery.sent, error: delivery.error });
+  return NextResponse.json({ ok: true, hours, lanes, social, delivered: delivery.sent, error: delivery.error });
 }

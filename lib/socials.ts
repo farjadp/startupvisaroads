@@ -3,6 +3,7 @@ import { TwitterApi } from 'twitter-api-v2';
 import * as cheerio from 'cheerio';
 import OpenAI from 'openai';
 import { SITE_URL } from '@/lib/seo';
+import { sendToChannel } from '@/lib/social/telegram';
 
 // Initialize OpenAI client
 const openai = new OpenAI({
@@ -131,14 +132,17 @@ async function generateSocialCaptions(title: string, rawContent: string, locale:
 /**
  * Shares an article to LinkedIn.
  */
-async function shareToLinkedin(
+export async function shareToLinkedin(
   title: string,
   caption: string,
   url: string,
-  imageInfo: { buffer: Buffer; mimeType: string } | null
+  imageInfo: { buffer: Buffer; mimeType: string } | null,
+  /** Credentials are passed in so one article can go to several authors —
+   *  Farjad's profile and two company pages — from the same call site. */
+  creds?: { token?: string; authorUrn?: string },
 ): Promise<boolean> {
-  const token = await getCredential('LINKEDIN_ACCESS_TOKEN');
-  const authorUrn = await getCredential('LINKEDIN_AUTHOR_URN');
+  const token = creds?.token ?? (await getCredential('LINKEDIN_ACCESS_TOKEN'));
+  const authorUrn = creds?.authorUrn ?? (await getCredential('LINKEDIN_AUTHOR_URN'));
 
   if (!token || !authorUrn) {
     console.warn('[Social Share] LinkedIn sharing skipped: LINKEDIN_ACCESS_TOKEN or LINKEDIN_AUTHOR_URN not configured.');
@@ -148,8 +152,12 @@ async function shareToLinkedin(
   try {
     console.log(`[Social Share] Posting to LinkedIn: "${title}"`);
 
-    const ctaText = authorUrn.includes('fa') || url.includes('/fa/') 
-      ? 'برای مطالعه متن کامل به این لینک مراجعه کنید:' 
+    // The article's own URL is the only reliable signal of its language.
+    // The previous test also asked whether the author URN contained "fa",
+    // which matches any person URN that happens to have those two letters in
+    // its opaque id and would put a Persian call to action on an English post.
+    const ctaText = url.includes('/fa/')
+      ? 'برای مطالعه متن کامل به این لینک مراجعه کنید:'
       : 'To read the full article, visit:';
 
     const textContent = `${caption}\n\n${ctaText}\n${url}`;
@@ -396,6 +404,24 @@ export async function shareToSocials(articleId: string) {
       console.log(`[Social Share] Article "${article.title}" is in ${article.status} status. Social share skipped.`);
       return;
     }
+
+    // The Telegram channel is independent of the three platforms below: it has
+    // its own credentials, its own locale filter and its own record per
+    // attempt, and it must run even when none of the others is configured —
+    // which, today, is all of them. sendToChannel never throws, so a channel
+    // problem can never stop an article from being published.
+    await sendToChannel(
+      {
+        id: article.id,
+        title: article.title,
+        slug: article.slug,
+        locale: article.locale === 'fa' ? 'fa' : 'en',
+        keyTakeaway: (article as { keyTakeaway?: string | null }).keyTakeaway ?? null,
+        excerpt: article.excerpt,
+        coverImage: article.coverImage,
+      },
+      'article',
+    );
 
     const linkedinToken = await getCredential('LINKEDIN_ACCESS_TOKEN');
     const linkedinAuthor = await getCredential('LINKEDIN_AUTHOR_URN');

@@ -38,6 +38,8 @@ model Article {
   topicSeed     String?   // why this topic was chosen (planner angle + why_now)
   internalLinks String    @default("[]") // JSON array of site paths linked from the body
 
+  socialPosts   SocialPost[]
+
   sharedToLinkedin Boolean @default(false)
   sharedToTwitter  Boolean @default(false)
   sharedToFacebook Boolean @default(false)
@@ -176,3 +178,29 @@ model CampaignLog {
   @@index([campaignId, status])
 }
 
+/// One attempt to publish one article to one social destination.
+///
+/// Three booleans on Article could not express six destinations, could not
+/// express "failed, try again tomorrow", and could not answer the question the
+/// quiet-day job has to ask: which article have we not posted about lately.
+/// This row is also the duplicate guard — the unique constraint is what makes
+/// a second send impossible rather than merely unlikely.
+model SocialPost {
+  id          String   @id @default(cuid())
+  articleId   String
+  article     Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  /// Destination id from lib/social/destinations.ts, e.g. "telegram-channel".
+  destination String
+  /// posted | failed | skipped. `skipped` means the destination was not
+  /// configured, which is a different thing from a send that failed.
+  status      String
+  /// Which shape was sent: "article" or "short".
+  kind        String   @default("article")
+  postedAt    DateTime?
+  remoteUrl   String?
+  error       String?
+  createdAt   DateTime @default(now())
+
+  @@unique([articleId, destination, kind])
+  @@index([destination, createdAt])
+}

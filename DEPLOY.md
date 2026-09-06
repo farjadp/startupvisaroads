@@ -133,6 +133,7 @@ Two writers and a watchdog, all behind `Authorization: Bearer $CRON_SECRET`:
 | `/api/cron/autopilot?n=&locale=&publish=1` | Plans briefs from the site's own pages and the immigration calendar, writes, publishes. Always delivers `n`. |
 | `/api/cron/autopilot-source?n=&locale=&publish=1` | Harvests IRCC / CIC News / Moving2Canada, reads each item into a fact sheet, writes an original, runs the originality gate. Refuses roughly half of what it reads, so it may deliver fewer than `n`. |
 | `/api/cron/autopilot-digest[?hours=26&dry=1]` | Reads the day's `AutopilotRun` rows, decides per locale whether the lane is healthy / degraded / silent / stuck, and sends one Telegram message. `dry=1` returns the message instead of sending it. Requires `TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHAT_ID`. |
+| `/api/cron/social-short[?dry=1]` | On a day nothing was published, posts one idea from the article that has gone longest without attention to the Telegram channel. Does nothing on a day an article published. Requires `TELEGRAM_CHANNEL_BOT_TOKEN` and `TELEGRAM_CHANNEL_ID`. |
 
 Add `&dry=1` to any of them for a run that spends nothing on images and saves nothing.
 The query string **is** the schedule — there are no `AUTOPILOT_*_PER_DAY` env vars
@@ -171,6 +172,10 @@ gcloud scheduler jobs create http svr-autopilot-source-fa --location $REGION --s
 # dead lane visible: without it the pipeline reports its own failures only
 # into an HTTP response body that Cloud Scheduler throws away.
 gcloud scheduler jobs create http svr-autopilot-digest    --location $REGION --schedule "0 18 * * *" --uri "$RUN_URL/api/cron/autopilot-digest"                          --http-method GET --headers "$AUTH" --attempt-deadline 120s
+
+# The quiet-day channel post. Runs after the last writing job and before the
+# digest, so a day that produced nothing still puts something in the channel.
+gcloud scheduler jobs create http svr-social-short        --location $REGION --schedule "0 17 * * *" --uri "$RUN_URL/api/cron/social-short"                              --http-method GET --headers "$AUTH" --attempt-deadline 120s
 ```
 
 One article per job rather than one job with `n=5`: each article is three
