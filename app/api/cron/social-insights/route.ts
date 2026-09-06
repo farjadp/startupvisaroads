@@ -17,6 +17,7 @@ import { shareToX } from '@/lib/social/x';
 import { xMessage } from '@/lib/social/x-message';
 import { DESTINATIONS } from '@/lib/social/destinations';
 import { extractInsights } from '@/lib/social/insights';
+import { writeInsight } from '@/lib/social/write-insight';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 120;
@@ -33,7 +34,11 @@ export async function GET(req: NextRequest) {
   const now = new Date();
 
   const articles = await prisma.article.findMany({
-    where: { status: 'PUBLISHED', locale: { in: X_LOCALES } },
+    // Only articles this system wrote. `aiModel` is set by the autopilot and
+    // by nothing else, so it is the one honest marker separating our writing
+    // from the legacy G-P pieces sitting under this byline — one of which the
+    // English lane duly turned into a post about a bank branch licence.
+    where: { status: 'PUBLISHED', locale: { in: X_LOCALES }, aiModel: { not: null } },
     select: { id: true, slug: true, title: true, locale: true, keyTakeaway: true, excerpt: true, createdAt: true, content: true },
     orderBy: { createdAt: 'desc' },
     take: 200,
@@ -60,20 +65,24 @@ export async function GET(req: NextRequest) {
       if (!picked) break;
 
       const source = articles.find((x) => x.id === picked.id)!;
-      // The point comes from the article body, chosen from the phrases the
-      // writer marked decisive. Without this the insight repeats the takeaway
-      // the article post already carried, and the account reads as a bot.
-      const points = extractInsights(source.content ?? '', locale);
+      // The post is written from the article, not lifted out of it. Picking a
+      // marked sentence at random was deterministic and free and read exactly
+      // like what it was — a line torn from the middle of a page, with the
+      // context that made it mean something left behind. The marked sentences
+      // remain the fallback for when the model is unreachable, because a
+      // rough post beats a silent account.
+      const written = await writeInsight({ title: picked.title, locale, content: source.content });
+      const points = written ? [] : extractInsights(source.content ?? '', locale);
       const a = {
         ...picked,
         locale,
-        insight: points.length ? points[Math.floor(Math.random() * points.length)] : null,
+        insight: written ?? (points.length ? points[Math.floor(Math.random() * points.length)] : null),
       };
 
       if (dryRun) {
         const previews = DESTINATIONS.filter((d) => d.platform === 'x' && d.locales.includes(locale))
           .map((d) => ({ destination: d.id, text: xMessage(a, d, 'insight') }));
-        sent.push({ locale, article: a.slug, points: points.length, previews });
+        sent.push({ locale, article: a.slug, written: Boolean(written), previews });
       } else {
         sent.push({ locale, article: a.slug, results: await shareToX(a, 'insight') });
       }
