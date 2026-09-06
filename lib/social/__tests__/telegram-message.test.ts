@@ -71,6 +71,22 @@ describe('shortMessage', () => {
     expect(m.startsWith(fa.title)).toBe(false);
   });
 
+  // A keyTakeaway is 40-60 words that answer the article's question outright.
+  // The earlier 280-character limit came from tweet habit and cut every real
+  // one mid-sentence, destroying the only thing the post was carrying.
+  it('carries a real key takeaway whole, without an ellipsis', () => {
+    const real = 'برای پرونده ویزای استارتاپ، باید شناسنامه، کارت ملی، مدارک تحصیلی، آگهی تأسیس و تغییرات شرکت را از مراجع ایرانی دریافت و نزد دارالترجمه رسمی با مهر دادگستری و وزارت خارجه ترجمه کنید. اگر تأییدیه تحصیلی لازم باشد، ابتدا باید آن را بگیرید. ترتیب تهیه مدارک مهم است تا از منقضی شدن آن‌ها جلوگیری شود.';
+    const m = shortMessage({ ...fa, keyTakeaway: real });
+    expect(m).not.toContain('…');
+    expect(m).toContain('جلوگیری شود');
+  });
+
+  it('still refuses a runaway takeaway', () => {
+    const m = shortMessage({ ...fa, keyTakeaway: 'ب'.repeat(5000) });
+    expect(m.length).toBeLessThanOrEqual(CAPTION_LIMIT * 4);
+    expect(m).toContain(`/fa/blog/${fa.slug}`);
+  });
+
   it('falls back to the excerpt when there is no key takeaway', () => {
     const m = shortMessage({ ...fa, keyTakeaway: null });
     expect(m).toContain(fa.excerpt.slice(0, 20));

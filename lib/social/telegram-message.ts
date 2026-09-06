@@ -81,9 +81,17 @@ export function articleMessage(a: PostableArticle): string {
  * The quiet-day post: one idea, then the link. Deliberately does not lead with
  * the headline — a channel where every post opens with a title reads as a feed
  * rather than as someone talking.
+ *
+ * The limit is Telegram's, not a tweet's. An earlier 280 came from habit and
+ * cut every real keyTakeaway mid-sentence: those are written as 40–60 words
+ * that answer the article's question outright, so truncating one destroys the
+ * only thing the post was carrying. 700 fits any of them whole and still
+ * refuses a runaway.
  */
+const SHORT_LIMIT = 700;
+
 export function shortMessage(a: PostableArticle): string {
   const url = articleUrl(a);
   const idea = localiseDigits(plain(a.keyTakeaway || a.excerpt || a.title), a.locale);
-  return `${clip(idea, 280)}\n\n${url}`;
+  return `${clip(idea, SHORT_LIMIT)}\n\n${url}`;
 }
