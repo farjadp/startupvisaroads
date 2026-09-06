@@ -258,6 +258,14 @@ export async function runFromSources(n: number, locale: Locale, opts: RunOpts = 
       body = await placeVisuals(body, d.inTextVisuals, !!opts.dryRun);
       const linked = enforceLinks(body, inv);
       body = linked.html;
+      const publication = decidePlannedPublication(!!opts.publish, linked.officialCitationCount);
+      if (publication.warning) {
+        // This writer's feeds are mostly secondary outlets, so it downgrades
+        // more often than the planned one — which makes an unreported
+        // downgrade here even easier to miss. Say it where the logs are.
+        result.warnings.push({ title: d.title, warning: publication.warning });
+        console.warn(`autopilot/source-writer: DRAFT (no official citation survived) — "${d.title}"`);
+      }
       if (Object.keys(d.quickFacts).length) {
         body = `<script type="application/json" id="quick-facts-data">${JSON.stringify(d.quickFacts)}</script>\n${body}`;
       }
@@ -290,7 +298,7 @@ export async function runFromSources(n: number, locale: Locale, opts: RunOpts = 
         // Same gate as the planned writer: a piece whose only sourcing is a
         // secondary outlet (cicnews.com is an immigration firm's own marketing
         // property) must not auto-publish as though it were authoritative.
-        { locale: inv.locale, status: decidePlannedPublication(!!opts.publish, linked.officialCitationCount).status },
+        { locale: inv.locale, status: publication.status },
       );
       await markLedger(article.ledgerId, 'used', brief.angle, created.id);
       result.created.push({ id: created.id, slug: created.slug, title: created.title });

@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { OFFICIAL_SOURCES, officialSourcePromptForBrief, officialSourcesForBrief } from '../official-sources';
+import { OFFICIAL_SOURCES, officialSourcePromptForBrief, officialSourcesForBrief, officialCitationUrl } from '../official-sources';
 import { decidePlannedPublication } from '../text';
 
 const root = process.cwd();
@@ -88,5 +88,45 @@ describe('prompt and legacy cron safety', () => {
     const writer = readFileSync(`${root}/lib/autopilot/source-writer.ts`, 'utf8');
     expect(writer).toContain('rel="noopener noreferrer"');
     expect(writer).not.toContain('rel="nofollow noopener"');
+  });
+});
+
+describe('official citation hosts', () => {
+  // The registry mixes the two forms — `migri.fi` beside
+  // `www.businessfinland.fi` — so an exact hostname match let a coin toss in
+  // the writer's output decide whether an article published at all.
+  it('treats www and the bare domain as the same authority, in both directions', () => {
+    expect(officialCitationUrl('https://www.migri.fi/en/startup-permit')).not.toBeNull();
+    expect(officialCitationUrl('https://migri.fi/en/startup-permit')).not.toBeNull();
+    expect(officialCitationUrl('https://canada.ca/en/immigration.html')).not.toBeNull();
+    expect(officialCitationUrl('https://www.canada.ca/en/immigration.html')).not.toBeNull();
+  });
+
+  it('accepts a subdomain of an authority, which is still that authority', () => {
+    expect(officialCitationUrl('https://ircc.canada.ca/english/index.asp')).not.toBeNull();
+  });
+
+  it('accepts the New Brunswick domain a writer would actually cite', () => {
+    // The registry lists www2.gnb.ca; nobody writing prose links to www2.
+    expect(officialCitationUrl('https://www.gnb.ca/immigration')).not.toBeNull();
+  });
+
+  it('does not let a lookalike domain through the suffix check', () => {
+    expect(officialCitationUrl('https://notcanada.ca/en')).toBeNull();
+    expect(officialCitationUrl('https://canada.ca.example.com/en')).toBeNull();
+    expect(officialCitationUrl('https://evil.com/?x=canada.ca')).toBeNull();
+  });
+
+  it('still refuses anything that is not a plain https authority URL', () => {
+    expect(officialCitationUrl('http://www.canada.ca/en')).toBeNull();
+    expect(officialCitationUrl('https://www.canada.ca:8443/en')).toBeNull();
+    expect(officialCitationUrl('https://user:pass@www.canada.ca/en')).toBeNull();
+    expect(officialCitationUrl('not a url')).toBeNull();
+  });
+
+  it('accepts at least one citation host for every authority in the registry', () => {
+    for (const source of OFFICIAL_SOURCES) {
+      expect(officialCitationUrl(source.url), source.id).not.toBeNull();
+    }
   });
 });

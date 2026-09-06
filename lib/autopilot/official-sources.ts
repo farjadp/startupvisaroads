@@ -25,6 +25,12 @@ export type OfficialSource = {
   url: `https://${string}`;
   programmePaths: readonly string[];
   keywords: readonly string[];
+  /**
+   * Extra hosts that are the same authority, for cases where the canonical
+   * URL above is not the host a writer would naturally cite. Only ever the
+   * authority's own domains.
+   */
+  citationHosts?: readonly string[];
 };
 
 export const OFFICIAL_SOURCES: readonly OfficialSource[] = [
@@ -34,7 +40,7 @@ export const OFFICIAL_SOURCES: readonly OfficialSource[] = [
   { id: 'canada-alberta', authority: 'Government of Alberta', url: 'https://www.alberta.ca/', programmePaths: ['/pnp/alberta'], keywords: ['alberta', 'aaip'] },
   { id: 'canada-saskatchewan', authority: 'Government of Saskatchewan', url: 'https://www.saskatchewan.ca/', programmePaths: ['/pnp/saskatchewan'], keywords: ['saskatchewan', 'sinp'] },
   { id: 'canada-manitoba', authority: 'Manitoba Immigration', url: 'https://immigratemanitoba.com/', programmePaths: ['/pnp/manitoba'], keywords: ['manitoba', 'mpnp'] },
-  { id: 'canada-new-brunswick', authority: 'Government of New Brunswick', url: 'https://www2.gnb.ca/', programmePaths: ['/pnp/new-brunswick'], keywords: ['new brunswick', 'nbpnp', 'nbbis'] },
+  { id: 'canada-new-brunswick', authority: 'Government of New Brunswick', url: 'https://www2.gnb.ca/', programmePaths: ['/pnp/new-brunswick'], keywords: ['new brunswick', 'nbpnp', 'nbbis'], citationHosts: ['gnb.ca'] },
   { id: 'canada-newfoundland-labrador', authority: 'Government of Newfoundland and Labrador', url: 'https://www.gov.nl.ca/', programmePaths: ['/pnp/newfoundland'], keywords: ['newfoundland', 'labrador', 'nlpnp'] },
   { id: 'canada-nova-scotia', authority: 'Government of Nova Scotia', url: 'https://novascotia.ca/', programmePaths: ['/pnp/nova-scotia'], keywords: ['nova scotia', 'nsnp'] },
   { id: 'canada-prince-edward-island', authority: 'Government of Prince Edward Island', url: 'https://www.princeedwardisland.ca/', programmePaths: ['/pnp/pei'], keywords: ['prince edward island', 'pei pnp'] },
@@ -78,12 +84,42 @@ export function officialSourcePromptForBrief(brief: OfficialSourceBrief): string
   return `OFFICIAL SOURCES FOR THIS BRIEF:\n${list}\nUse only these official sources for external links. Every mutable programme claim must have an inline citation to the relevant official source. If the supplied source does not support a mutable claim, omit the claim and direct the reader to verify it with the authority.`;
 }
 
-const OFFICIAL_HOSTS = new Set(OFFICIAL_SOURCES.map((source) => new URL(source.url).hostname.toLowerCase()));
+/**
+ * `www.` carries no meaning here: canada.ca and www.canada.ca are one
+ * authority, and which of the two a writer produces is chance. Matching the
+ * raw hostname made that chance decide whether an article published, because
+ * a rejected citation leaves officialCitationCount at zero and
+ * decidePlannedPublication silently downgrades the piece to DRAFT. The
+ * registry itself mixes the two forms — `migri.fi` beside
+ * `www.businessfinland.fi` — so the exact match was rejecting citations to
+ * authorities we had deliberately allowlisted.
+ */
+const stripWww = (host: string) => host.toLowerCase().replace(/^www\./, '');
+
+const OFFICIAL_HOSTS = new Set(
+  OFFICIAL_SOURCES.flatMap((source) => [
+    stripWww(new URL(source.url).hostname),
+    ...(source.citationHosts ?? []).map(stripWww),
+  ]),
+);
+
+/**
+ * A subdomain of an allowlisted host is the same authority — ircc.canada.ca
+ * is IRCC. It can never be a third party: the suffix check requires a dot
+ * boundary, so `notcanada.ca` and `canada.ca.example.com` do not match.
+ */
+function isOfficialHost(hostname: string): boolean {
+  const host = stripWww(hostname);
+  if (OFFICIAL_HOSTS.has(host)) return true;
+  for (const allowed of OFFICIAL_HOSTS) if (host.endsWith(`.${allowed}`)) return true;
+  return false;
+}
 
 export function officialCitationUrl(href: string): string | null {
   try {
     const url = new URL(href);
-    if (url.protocol !== 'https:' || url.port || url.username || url.password || !OFFICIAL_HOSTS.has(url.hostname.toLowerCase())) return null;
+    if (url.protocol !== 'https:' || url.port || url.username || url.password) return null;
+    if (!isOfficialHost(url.hostname)) return null;
     return url.toString();
   } catch {
     return null;

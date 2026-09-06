@@ -170,7 +170,14 @@ async function writeOne(brief: Brief, inv: Inventory, opts: RunOpts, result: Gen
     const linked = enforceLinks(body, inv);
     body = linked.html;
     const publication = decidePlannedPublication(!!opts.publish, linked.officialCitationCount);
-    if (publication.warning) result.warnings.push({ title: d.title, warning: publication.warning });
+    if (publication.warning) {
+      result.warnings.push({ title: d.title, warning: publication.warning });
+      // Cloud Scheduler throws the response body away, so a warning that only
+      // travels in the JSON is a warning nobody ever reads. This is the line
+      // that turns "the blog quietly stopped updating" into something
+      // greppable in the Cloud Run logs.
+      console.warn(`autopilot/writer: DRAFT (no official citation survived) — "${d.title}"`);
+    }
 
     if (Object.keys(d.quickFacts).length) {
       body = `<script type="application/json" id="quick-facts-data">${JSON.stringify(d.quickFacts)}</script>\n${body}`;
