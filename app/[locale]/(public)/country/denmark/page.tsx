@@ -61,22 +61,22 @@ const steps = [
     num: '03',
     title: 'Expert Panel Evaluation',
     icon: Users,
-    body: 'Submit on Virk.dk. After an initial screen, at least 3 independent Danish Business Hub consultants score your plan on 4 criteria. You need an average of 3.5/5. Typical review: 2–6 weeks. Closed in July.',
-    note: 'No interview. The panel judges solely on your submitted documents.',
+    body: 'Submit on Virk.dk. The Secretariat screens first — incomplete files and ineligible business types are cut here and never reach the panel. Survivors go to three members of an independent expert panel, who each score the four criteria 1–5. You need at least a 3.5 average across all four.',
+    note: 'Usually up to 6 weeks — the official guide warns it runs longer over holidays and in busy periods. No interview: the panel sees only what you submitted.',
   },
   {
     num: '04',
     title: 'SIRI Residence Permit',
     icon: Globe,
-    body: "Upon panel approval, apply to SIRI (Danish Agency for International Recruitment and Integration). Generate a Case Order ID, pay DKK 3,060, upload documents, and submit biometrics within 14 days. Processing: ~1 month.",
-    note: 'Government fee: DKK 3,060 (~€410).',
+    body: 'Panel approval is not a visa — it is permission to apply for one. Generate a Case Order ID with SIRI (Danish Agency for International Recruitment and Integration), pay, upload documents, and give biometrics within 14 days of submitting. SIRI states 2 months, and up to 4 months if it needs more information.',
+    note: 'Fees: DKK 3,060 (~€410) for you, DKK 3,080 (~€413) for each accompanying family member — 2026 level, raised on 1 January.',
   },
   {
     num: '05',
     title: 'Arrive & Launch',
     icon: Home,
     body: 'Enter Denmark, register your CPR number, activate MitID (digital ID), and get your CVR company registration. Your initial permit is valid for up to 2 years.',
-    note: 'Stay outside Denmark 6+ consecutive months and your permit is void.',
+    note: 'Give up your Danish address, or stay abroad more than 6 successive months, and the permit lapses. Dispensation exists, but it is an exception, not a plan.',
   },
 ];
 
@@ -107,11 +107,16 @@ const scoringCriteria = [
   },
 ];
 
+// Self-support, not investment: proof you can carry your own living costs,
+// because the permit bars you from Active Social Policy Act benefits.
+// nyidanmark still publishes these at 2025 level as of September 2026, and
+// revises them each January. Euro figures at ~7.46 DKK/EUR — the ~€17,000
+// conversion this page used to carry was simply wrong.
 const financials = [
-  { label: 'Single applicant', dkk: '153,240 DKK', eur: '~€17,000' },
-  { label: 'Applicant + spouse', dkk: '306,480 DKK', eur: '~€34,000' },
-  { label: 'With spouse + child(ren)', dkk: '356,904 DKK', eur: '~€43,000' },
-  { label: 'With child(ren), no spouse', dkk: '203,664 DKK', eur: '~€22,500' },
+  { label: 'Single applicant', dkk: '153,240 DKK', eur: '~€20,500' },
+  { label: 'Applicant + spouse', dkk: '306,480 DKK', eur: '~€41,100' },
+  { label: 'With spouse + child(ren)', dkk: '356,904 DKK', eur: '~€47,800' },
+  { label: 'With child(ren), no spouse', dkk: '203,664 DKK', eur: '~€27,300' },
 ];
 
 const rights = [
@@ -121,6 +126,8 @@ const rights = [
   { title: 'Welfare Benefits', content: 'NOT eligible for Danish public welfare. Receiving any can void your permit.', positive: false },
   { title: 'Free Danish Classes', content: 'After CPR registration (18+), free Danish language courses are your right.', positive: true },
   { title: 'Voluntary Work', content: 'Unpaid volunteer activities are fully permitted.', positive: true },
+  { title: 'Renewal', content: 'Not automatic. The expert panel must assess your business again before you may apply to extend.', positive: false },
+  { title: 'Absence', content: 'More than 6 successive months abroad, or giving up your Danish address, ends the permit.', positive: false },
 ];
 
 const sectors = [
@@ -147,11 +154,23 @@ const faqs = [
   },
   {
     q: 'Does the DKK financial requirement need to be frozen?',
-    a: 'No. Funds do not need to be locked or earmarked. They simply need to appear on a recent bank statement. Many applicants present the funds briefly to obtain the statement.',
+    a: 'The funds are not locked, escrowed, or paid to anyone — they stay in your account. But treat "show it, then move it out" as a risk rather than a technique. What the rule asks for is that you can support yourself and your family for the stay; SIRI can ask for further documentation, and self-support is assessed again at extension. We do not sell that shortcut as a guarantee.',
   },
   {
-    q: "What is the path to Permanent Residence?",
-    a: "After 5 lawful years in Denmark (initial 2-year permit + 3-year extension), you may apply for permanent residence, provided you pass the Danish integration tests. After several more years with PR status, you can apply for Danish citizenship — one of the world's strongest passports with full EU access.",
+    q: 'Is renewal a formality?',
+    a: 'No — this is the most commonly mis-sold part of the programme. Before you can apply to extend, the Danish Business Authority\'s expert panel must assess your business again, and that assessment goes in with the application. The same four criteria, this time against a real company with real numbers. You must also still run the business yourself and still support your family. Extensions run up to 3 years, cost DKK 3,060, take about 4 months (up to 5), and cannot be filed earlier than 3 months before expiry — but file on time and you may stay and work while SIRI decides.',
+  },
+  {
+    q: 'What is the real path to Permanent Residence?',
+    a: 'Eight years of lawful residence, not five — "5 years to PR" is a marketing figure, not a Danish rule. On top of the time you need: no disqualifying convictions, no overdue public debt, no Active Social Policy or Integration Act benefits for 4 years, Prøve i Dansk 2 or higher, at least 3 years and 6 months of regular full-time work (30+ hrs/week) or self-employment in the last 4 years, employment of at least 15 hrs/week when the decision is made — and at least 2 of the 4 supplementary conditions. Meet all 4 and the residence requirement drops to 4 years.',
+  },
+  {
+    q: 'Can a founder realistically reach the 4-year fast route?',
+    a: 'Rarely, and the reason is money rather than language. The four supplementary conditions are Prøve i Dansk 3; 4 years of employment within the last 4.5; active citizenship (the exam, or a year of documented civic participation); and taxable income of at least DKK 346,155.57 (2026 level) in each of the last two years. Self-employment counts as employment if it is your main occupation and supports you — so the hours are achievable. The income figure is not: it means your company pays you a real salary, two years running. A startup that has not reached profitability does not do that. Plan for eight years, and start Danish in year one.',
+  },
+  {
+    q: 'And Danish citizenship?',
+    a: 'The general residence requirement is 9 years of continuous residence, but time alone is not the gate. You must hold permanent residence and have held it for at least 2 years when you are included in the naturalisation bill, pass Prøve i Dansk 3 and the citizenship test (indfødsretsprøven), have been self-supporting for 4 of the last 5 years, and sign the declaration of loyalty. So PR is the real bottleneck: get PR in year eight and the citizenship file is not complete before year ten. Denmark has allowed dual citizenship since 2015 — you do not have to renounce another nationality, which matters if renouncing is not practically possible.',
   },
   {
     q: "Why does Denmark reject some successful startups?",
@@ -248,7 +267,7 @@ export default function DenmarkPage() {
               { stat: '75', label: 'Visas Per Year', sub: 'per person, not per team' },
               { stat: '2 Yrs', label: 'Initial Permit', sub: 'fully renewable' },
               { stat: '3.5/5', label: 'Panel Pass Mark', sub: 'average across 4 criteria' },
-              { stat: '5 Yrs', label: 'To Permanent Residence', sub: 'then citizenship eligible' },
+              { stat: '8 Yrs', label: 'To Permanent Residence', sub: '4 only with all four extras' },
             ].map((s, i) => (
               <div key={i} className="py-10 px-8 hover:bg-white/5 transition-colors text-center">
                 <p className="font-serif text-5xl text-[#C8102E] mb-2">{s.stat}</p>
@@ -324,7 +343,7 @@ export default function DenmarkPage() {
               <div className="mt-8 flex items-start gap-3 bg-amber-900/30 border border-amber-700/40 p-5">
                 <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
                 <p className="font-sans text-xs text-amber-300/80 leading-relaxed">
-                  <strong className="text-amber-300">July Closure:</strong> No evaluations in July. Submit after June 14th and your application moves to August. The 75-person cap resets January 1 and fills fast — apply in Q1.
+                  <strong className="text-amber-300">Timing:</strong> The panel's own guide says evaluation takes longer over holidays and in periods of high caseload — the panel is not sitting through the Danish summer. The 75-person cap resets 1 January and is counted per person, so apply in Q1 if your material is ready.
                 </p>
               </div>
             </div>
@@ -579,7 +598,8 @@ export default function DenmarkPage() {
               {[
                 { icon: Users, title: 'Who qualifies', body: 'Spouse/registered partner + children under 18 living with you.' },
                 { icon: Briefcase, title: 'Open Work Permit for spouse', body: 'Full-time, any sector, no restrictions — unlike the entrepreneur\'s closed permit.' },
-                { icon: Award, title: 'Healthcare & education', body: 'Access to Denmark\'s free public healthcare and education system from day one.' },
+                { icon: Award, title: 'Healthcare & education', body: 'Tax-funded healthcare and public schooling once you register your CPR address.' },
+                { icon: AlertTriangle, title: 'Child benefit is phased in', body: 'The full børne- og ungeydelse normally needs 6 of the last 10 years lived or worked in Denmark or the EEA. A family that has just arrived does not get the full rate.' },
               ].map((item, i) => {
                 const Icon = item.icon;
                 return (
@@ -630,7 +650,7 @@ export default function DenmarkPage() {
               <div className="space-y-4">
                 {[
                   { icon: Calendar, text: 'Apply as early as possible — ideally Q1 of the calendar year.' },
-                  { icon: AlertTriangle, text: 'Avoid submitting after June 14 — July is a full evaluation closure month.' },
+                  { icon: AlertTriangle, text: 'Build the summer into your timeline — the official guide says evaluation runs longer over holiday periods.' },
                   { icon: Lightbulb, text: 'Past fundraising success elsewhere does not guarantee approval. Fit with Denmark matters most.' },
                   { icon: MapPin, text: 'Answer "Why Denmark specifically?" clearly in every part of your submission.' },
                 ].map((tip, i) => {
@@ -657,7 +677,7 @@ export default function DenmarkPage() {
                   <div className="w-full h-1.5 bg-white/20 rounded-full overflow-hidden">
                     <div className="h-full w-[89%] bg-white rounded-full" />
                   </div>
-                  <p className="font-sans text-[10px] text-white/50 text-center mt-2">Typical cap utilization — fills before year end</p>
+                  <p className="font-sans text-[10px] text-white/50 text-center mt-2">Counted per person — a 3-founder team takes 3 slots</p>
                 </div>
               </div>
             </div>
@@ -728,9 +748,9 @@ export default function DenmarkPage() {
 
             {[
               { phase: 'Year 1–2', title: 'Initial Permit', color: '#AEC6CF', desc: 'Launch your startup. Get your CPR, MitID, CVR. Attend free Danish classes.', dot: '#AEC6CF' },
-              { phase: 'Year 3–5', title: '3-Year Extension', color: '#003D73', desc: 'Extend your permit. Scale your business, hire locally, prove impact.', dot: '#003D73' },
-              { phase: 'Year 5+', title: 'Permanent Residency', color: '#0d1017', desc: 'Apply after 5 lawful years. Pass Danish integration tests.', dot: '#0d1017' },
-              { phase: 'Year 9+', title: 'Danish Passport', color: '#C8102E', desc: 'Full EU citizenship. Visa-free access to 190+ countries.', dot: '#C8102E' },
+              { phase: 'Year 3–5', title: '3-Year Extension', color: '#003D73', desc: 'The panel assesses the business again, then SIRI extends. Scale, hire, and start Danish classes — you will need the exam later.', dot: '#003D73' },
+              { phase: 'Year 8', title: 'Permanent Residency', color: '#0d1017', desc: 'Eight lawful years, Prøve i Dansk 2, 3.5 years of full-time work or self-employment, and at least 2 of the 4 supplementary conditions. Four years only if you meet all 4.', dot: '#0d1017' },
+              { phase: 'Year 10+', title: 'Danish Passport', color: '#C8102E', desc: 'Nine years of continuous residence, but you must also have held PR for 2 years, passed Prøve i Dansk 3 and the citizenship test. Dual citizenship is allowed.', dot: '#C8102E' },
             ].map((p, i) => (
               <div key={i} className="text-center px-4 mb-12 md:mb-0">
                 <div
