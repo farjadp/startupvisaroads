@@ -106,5 +106,32 @@
     "photographerUrl": "https://www.pexels.com/@nils-rotura-2157795908",
     "description": "A stunning aerial view of Tallinn's historic and modern skyline with red rooftops and skyscrapers.",
     "fetched": "2026-09-06"
+  },
+  "turkey": {
+    "source": "Pexels",
+    "id": 39367019,
+    "page": "https://www.pexels.com/photo/skyline-of-istanbul-with-modern-and-historic-architecture-39367019/",
+    "photographer": "Zülfü Demir📸",
+    "photographerUrl": "https://www.pexels.com/@zlfdmr23",
+    "description": "Istanbul skyline showcasing a blend of modern skyscrapers and historic architecture along the Bosphorus.",
+    "fetched": "2026-09-08"
+  },
+  "turkey-2": {
+    "source": "Pexels",
+    "id": 17082209,
+    "page": "https://www.pexels.com/photo/buildings-and-skyscrapers-in-istanbul-17082209/",
+    "photographer": "Ahmet Polat",
+    "photographerUrl": "https://www.pexels.com/@ibnulharezmi",
+    "description": "A stunning view of Istanbul's skyline featuring modern skyscrapers and urban architecture.",
+    "fetched": "2026-09-08"
+  },
+  "turkey-3": {
+    "source": "Pexels",
+    "id": 28772220,
+    "page": "https://www.pexels.com/photo/crowd-boarding-ferry-at-istanbul-dock-28772220/",
+    "photographer": "Leyla M",
+    "photographerUrl": "https://www.pexels.com/@leyla21m",
+    "description": "Crowd gathering on a dock, boarding a ferry in Istanbul, Turkey.",
+    "fetched": "2026-09-08"
   }
 }

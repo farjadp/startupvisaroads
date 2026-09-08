@@ -64,6 +64,13 @@ const SLOTS: Record<string, string> = {
   estonia: 'Tallinn old town Estonia',
   'estonia-2': 'Tallinn Estonia street',
   'estonia-3': 'Tallinn rooftops Estonia',
+
+  // Türkiye. The page is about technoparks and a three-year work permit, not
+  // tourism, so the second and third slots lean to the working city rather
+  // than to minarets at sunset.
+  turkey: 'Istanbul Bosphorus city Turkey',
+  'turkey-2': 'Istanbul Levent business district skyscrapers',
+  'turkey-3': 'Istanbul Turkey ferry Bosphorus commuters',
 };
 
 type Photo = {
