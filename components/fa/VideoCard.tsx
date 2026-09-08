@@ -8,10 +8,11 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import { Play } from 'lucide-react';
-import { thumb, type Video } from '@/content/fa/videos';
+import { thumb, viewsLabel, type Video } from '@/content/fa/videos';
 
 export default function VideoCard({ video, priority = false }: { video: Video; priority?: boolean }) {
   const [playing, setPlaying] = useState(false);
+  const views = viewsLabel(video);
 
   return (
     <figure className="group">
@@ -47,7 +48,10 @@ export default function VideoCard({ video, priority = false }: { video: Video; p
           </button>
         )}
       </div>
-      <figcaption className="mt-3 font-estedad font-bold text-lg leading-snug">{video.title}</figcaption>
+      <figcaption className="mt-3">
+        <span className="font-estedad font-bold text-lg leading-snug block">{video.title}</span>
+        {views && <span className="mt-1 block text-sm text-[#1a1a1a]/50">{views}</span>}
+      </figcaption>
     </figure>
   );
 }
