@@ -7,7 +7,9 @@
 // requirement, processing fees, permanent residence permit, period of
 // residence), valtioneuvosto.fi (the 2026 permit reform) and the Ministry of
 // Economic Affairs and Employment working-group report TEM 2025:36 — the
-// source of the approval-rate and post-issuance-supervision numbers.
+// source of the approval-rate and post-issuance-supervision numbers. Note the
+// two supervision denominators: a cancellation review opens on 22% of permits
+// issued; 71% is the share of decided reviews that end in cancellation.
 // Income thresholds and Migri fees are revised every January; re-check both.
 // ============================================================================
 
@@ -147,7 +149,7 @@ const rights = [
   { title: 'Schengen travel', content: 'Visa-free travel across the Schengen area for up to 90 days in any 180-day period.', positive: true },
   { title: 'Healthcare', content: 'Access to Finland\'s public health system once your residence is registered — low, capped client fees rather than free.', positive: true },
   { title: 'Education', content: 'Free, world-leading public education for your children, including Finnish-language support at school.', positive: true },
-  { title: 'You must actually move', content: 'Around 22% of first-permit holders had their permit cancelled in post-issuance supervision for never entering Finland or never starting the business.', positive: false },
+  { title: 'You must actually move', content: 'A cancellation review is opened on 22% of startup permits issued — against 4–8% for other permit types — and 71% of decided reviews end in cancellation, for not living in Finland or never starting the business.', positive: false },
   { title: 'Social benefits', content: 'Kela benefits depend on residence-based eligibility, not on arrival. Claiming them straight after arrival contradicts your means-of-support evidence at extension.', positive: false },
 ];
 
@@ -234,7 +236,7 @@ const faqs = [
   },
   {
     q: 'Do I have to live in Finland, or can I travel freely?',
-    a: 'You can travel and visit home whenever you like — but the permit is granted on the basis that you actually relocate and run the startup from Finland. In post-issuance supervision, about 22% of first-permit holders had their permit cancelled for never entering the country or never starting the business. Long absences also affect how your residence period is counted for permanent residence and citizenship.',
+    a: 'You can travel and visit home whenever you like — but the permit is granted on the basis that you actually relocate and run the startup from Finland. Between April 2024 and September 2025 a cancellation review was opened on 22% of startup permits issued — against 4–8% for other Finnish permit types — and of the 246 reviews decided, 71% ended in the permit being cancelled, 93% of them first permits. The two reasons: the holder was not genuinely living in Finland, and the business was never actually started. Long absences also affect how your residence period is counted for permanent residence and citizenship.',
   },
   {
     q: 'What is changing in 2026?',
@@ -286,7 +288,7 @@ const deepDiveFaqs = [
   },
   {
     q: 'What are the real extension statistics?',
-    a: 'Far better than for the first permit. In 2024 there were 113 positive decisions against 28 negative; to the end of September 2025, 62 positive against 33 negative — an approval rate of roughly 80–90% in recent years. Cancellations of extended permits are rare: twelve in total across 2024 and 2025. One caveat hides inside those numbers: far fewer people reach the extension stage than hold a first permit, because around 22% have their permit cancelled before then in post-issuance supervision.',
+    a: 'Far better than for the first permit. In 2024 there were 113 positive decisions against 28 negative; to the end of September 2025, 62 positive against 33 negative — an approval rate of roughly 80–90% in recent years. Cancellations of extended permits are rare: twelve in total across 2024 and 2025. One caveat hides inside those numbers: far fewer people reach the extension stage than hold a first permit, because a cancellation review opens on 22% of permits issued and 71% of decided reviews end in cancellation — 93% of those at the first-permit stage.',
   },
   {
     q: 'Why should I not claim social benefits after arriving?',
@@ -532,7 +534,7 @@ export default function FinlandPage() {
               { stat: '107 → 1,068', label: 'Applications per year', sub: 'Business Finland evaluations, 2018 to 2024 — roughly tenfold growth.' },
               { stat: '~92%', label: 'Refused in 2024–2025', sub: 'Around one in twelve files gets a positive statement.' },
               { stat: '42%', label: 'Are repeat applications', sub: 'At least one team member had already been rejected. One person applied twelve times.' },
-              { stat: '~22%', label: 'Permits later cancelled', sub: 'First-permit holders who never entered Finland or never started the business.' },
+              { stat: '22% → 71%', label: 'Reviewed, then cancelled', sub: 'A cancellation review opens on 22% of permits issued (4–8% for other types); 71% of the 246 decided reviews ended in cancellation.' },
             ].map((s, i) => (
               <div key={i} className="p-7 border border-white/10 hover:border-[#00BFA5] hover:bg-white/5 transition-all duration-300">
                 <p className="font-serif text-4xl text-[#00BFA5] mb-3">{s.stat}</p>
