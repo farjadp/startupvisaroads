@@ -48,6 +48,7 @@ const FA_LINKS = {
     { href: '/europe/finland', label: 'فنلاند' },
     { href: '/pnp', label: 'کارآفرینی استانی کانادا' },
     { href: '/europe/estonia', label: 'استونی' },
+    { href: '/turkey-tech-visa', label: 'تک‌ویزای ترکیه' },
     { href: '/usa-eb2-niw', label: 'EB-2 NIW آمریکا' },
   ],
   strategy: [

@@ -111,6 +111,9 @@ export default function Header() {
         { href: '/europe/finland', label: 'فنلاند' },
         { href: '/europe/estonia', label: 'استونی' },
 
+        { header: 'ترکیه' },
+        { href: '/turkey-tech-visa', label: 'تک‌ویزای ترکیه' },
+
         { header: 'کانادا' },
         { href: '/pnp/new-brunswick', label: 'نیوبرانزویک (کارآفرینی)' },
         { href: '/pnp/nova-scotia', label: 'نوااسکوشیا (کارآفرینی)' },
