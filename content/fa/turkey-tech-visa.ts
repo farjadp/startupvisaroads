@@ -302,6 +302,7 @@ export const page: FaPage = {
     { heading: 'ارزیابی تکنوپارک، سهام و استخدام محلی — با جزئیات', faqs: DEEP_DIVE_FAQS },
   ],
 
+  videos: ['yKUnvR4dTbE', 'aDAvrHfP3LI'],
   closing: [
     { label: 'ارزیابی رایگان مسیر', href: '/which-path' },
     { label: 'مقایسه با دانمارک', href: '/europe/denmark' },

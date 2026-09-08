@@ -7,7 +7,7 @@
 // ============================================================================
 
 export type VideoTag =
-  | 'suv' | 'pnp' | 'new-brunswick' | 'ontario' | 'bc' | 'netherlands' | 'denmark' | 'finland' | 'europe'
+  | 'suv' | 'pnp' | 'new-brunswick' | 'ontario' | 'bc' | 'netherlands' | 'denmark' | 'finland' | 'turkey' | 'europe'
   | 'startup' | 'pitch' | 'market' | 'decision' | 'webinar' | 'mentorship';
 
 export type Video = {
@@ -25,6 +25,12 @@ export const VIDEOS: Video[] = [
   { id: '7nyGJrUgxtw', title: 'ویزای استارتاپ دانمارک 🇩🇰 اقامت دائم در ۴ سال! (آپدیت ۲۰۲۶)', tags: ['denmark', 'europe'] },
   { id: '-n4lCG2MAK4', title: '🇩🇰 زندگی در دانمارک از زبان یک بنیان‌گذار استارتاپ | تجربه واقعی', tags: ['denmark', 'europe'] },
   { id: 'RSo7Ilu8tWE', title: 'استارتاپ ویزای دانمارک ۲۰۲۵', tags: ['denmark', 'europe'] },
+  // Türkiye. Titles read from YouTube's oEmbed endpoint, not typed off the
+  // thumbnails. Not tagged 'europe': the guide is filed outside /europe on
+  // purpose, and a Türkiye video surfacing on the Denmark or Finland rail
+  // would undercut the one thing those pages say it cannot offer.
+  { id: 'yKUnvR4dTbE', title: 'همه چیز درباره تک ویزای ترکیه | از ایده تا اقامت ۳ ساله', tags: ['turkey'] },
+  { id: 'aDAvrHfP3LI', title: '🇹🇷 واقعیت زندگی و ساخت استارتاپ در ترکیه | تجربه یک بنیان‌گذار ایرانی', tags: ['turkey'] },
   { id: 'UyEsOpfswjk', title: 'ویزای استارتاپ فنلاند ۲۰۲۶ | همه چیز از تأیید ایده تا اقامت دائم و پاسپورت 🇫🇮', tags: ['finland', 'europe'] },
   { id: '7wbBkrLgRiM', title: '🇫🇮 زندگی در فنلاند از زبان یک ساکن | فرهنگ، هزینه‌ها، کار و واقعیت‌ها', tags: ['finland', 'europe'] },
   { id: 'Fl1Q7gUU06A', title: 'سریع‌ترین راه اقامت کانادا در ۶ ماه؛ کارآفرینی استان نیوبرانزویک PNP', tags: ['new-brunswick', 'pnp'] },
