@@ -242,6 +242,74 @@ const faqs = [
   },
 ];
 
+// How the evaluation actually works, from the Ministry of Economic Affairs and
+// Employment working-group report TEM 2025:36 — the only public document that
+// explains how Business Finland decides and why so many files fail. Anything
+// the report proposes but has not legislated is labelled a proposal in the
+// answer, so a reader cannot mistake a recommendation for a current rule.
+const deepDiveFaqs = [
+  {
+    q: 'Who actually decides on my startup?',
+    a: 'Two bodies, two separate jobs. Migri does not independently assess your business model at all — it has delegated that judgement entirely to Business Finland and limits itself to the general immigration conditions and your means of support. Inside Business Finland, the decision sits exclusively with the Financing Centre (Rahoituskeskus); the corporate side only prepares files, answers questions and analyses data, and has no final say. A positive statement is an absolute precondition and must be obtained before you file the permit application.',
+  },
+  {
+    q: 'What exactly does Business Finland measure?',
+    a: 'Broadly the criteria it uses for its own Tempo startup grant. Unlike traditional entrepreneurship, the focus is rapid international growth potential and tolerance of higher risk, not near-term profit. Four axes: innovation and genuine novelty with a clear competitive advantage internationally; international demand potential, assessed against the target market\'s situation and forecast; a suitable founder team — at least two founders holding 60% or more between them, working full-time with no side activity, with complementary skills and the management capability to grow a company; and access to enough funding for launch and year one.',
+  },
+  {
+    q: 'What has to be in the Business Finland package?',
+    a: 'A working checklist: a clear description of the idea with a precise definition of the customer need and target market; a go-to-market strategy including customer segments and how you reach the first paying customer; the revenue model and initial pricing; a long-term growth plan; your unique competitive advantage against named competitors and existing alternatives; documented current progress — demos, prototypes, first customer conversations, pilots or letters of intent; your IP position; and a first-year work and financial plan with itemised costs and where the money comes from. Plus founder CVs and passport copies.',
+  },
+  {
+    q: 'Will Business Finland interview me?',
+    a: 'Not by default today — the assessment is made on the written file, and follow-up questions are also put in writing. That is precisely what is changing. The government working group proposed three methods: a hearing at the embassy during identification, a remote video interview run by Business Finland, and a Denmark-style video pitch judged by an expert panel. Importantly, none of these requires a change in the law — they can be implemented under the current framework, so they may arrive before the reform is legislated. Migri has decided to pilot a written hearing at the identification stage.',
+  },
+  {
+    q: 'How much cash does the company actually need?',
+    a: 'Finnish law sets no fixed figure. The working group\'s own international comparison notes Austria (€30,000), France (€30,000) and Italy (€50,000) all impose statutory minimums; Finland does not. Instead Business Finland tests whether the startup has access to sufficient funding for its earliest stage, and requires you to estimate the first year\'s financial need, itemise the costs and explain how they will be covered. Your personal means of support is an entirely separate test run by Migri, and it can come from savings or other lawful assets rather than startup revenue.',
+  },
+  {
+    q: 'Why are 92% really refused?',
+    a: 'The report lists the reasons, and none of them is arbitrary strictness. Volume grew from 107 applications in 2018 to 1,068 in 2024 while average quality fell. Because the evaluation is free and unlimited, "trial applications" have become a phenomenon: 42% are repeats and one person applied twelve times. Assessors face business plans written entirely by AI and agency-built packages with fabricated websites and fake LinkedIn profiles. The Finnish Border Guard has recorded permit holders at the border who could not describe their own startup. In 2024 this volume of weak files cost Business Finland roughly €500,000 — which is exactly why the evaluation is being made chargeable.',
+  },
+  {
+    q: 'I have heard about forged Business Finland statements. What is that?',
+    a: 'It is a systemic gap, not a rumour. Business Finland processes evaluations in a system called UMA-lite that has no technical connection to Migri\'s main UMA system — the two do not even share a case reference. So the statement is handed to the applicant, who then attaches it to their own Migri application. That indirect loop has produced repeated cases of forged Business Finland statements, and cases where an applicant gave contradictory information to the two agencies. The proposed fix is a restricted view inside UMA for Business Finland assessors so the statement is filed directly there, estimated at around €200,000 to build. For a genuine applicant this is good news: the loophole closes and clean files move faster.',
+  },
+  {
+    q: 'Do I need Business Finland again for the extension?',
+    a: 'It is not mandatory. But Migri can request an expert opinion from Business Finland when the profitability or continuity of the business under its original model is unclear — in practice, whenever the company is not yet profitable, which is nearly always, since a startup is very rarely profitable at its first extension two years in.',
+  },
+  {
+    q: 'What does section 80b really require at extension?',
+    a: 'The current law sets two conditions: the new permit must be for the same business activity or an equivalent one, and the business must either be profitable or still meet Business Finland\'s criteria for an innovative, fast-growing startup. In practice Migri looks at formal company registration, a positive growth outlook and personal means of support. The working group has proposed writing seven criteria explicitly into the law: an active Finnish business ID (Y-tunnus); continuing startup character; a team with the skills and resources to continue; demonstrable active development of the product during the previous permit period with a concrete commercialisation plan; realistic evidence of future profitability; the founder\'s full-time focus on this startup; and genuine residence in Finland. Those are still proposals — but they are already assessed in practice, so plan for them from day one.',
+  },
+  {
+    q: 'What are the real extension statistics?',
+    a: 'Far better than for the first permit. In 2024 there were 113 positive decisions against 28 negative; to the end of September 2025, 62 positive against 33 negative — an approval rate of roughly 80–90% in recent years. Cancellations of extended permits are rare: twelve in total across 2024 and 2025. One caveat hides inside those numbers: far fewer people reach the extension stage than hold a first permit, because around 22% have their permit cancelled before then in post-issuance supervision.',
+  },
+  {
+    q: 'Why should I not claim social benefits after arriving?',
+    a: 'It is one of the most damaging mistakes flagged in supervision. Applicants who file for housing allowance, unemployment benefit or the startup grant (Starttiraha) immediately after arrival directly contradict what they told the immigration process — that they had savings and sufficient personal means. That contradiction is treated as grounds to doubt the original information and, ultimately, to refuse the extension. If your means-of-support evidence was real, your first year should not run on social benefits.',
+  },
+  {
+    q: 'Where do Iranian applicants appear in these statistics?',
+    a: 'In every significant table. Russia, Iran, Turkey and Pakistan are the largest source countries for Business Finland statement applications. For startup permits actually granted since 2018 the order is Russia, Turkey, India and Iran. Among permits cancelled in post-issuance supervision, most concern Russian nationals, followed by Turkish, Iranian and Chinese. The report also states plainly that the largest applicant countries are those under international sanctions — Iran and Russia — and stresses the need for closer monitoring of possible sanctions circumvention and dual-use technology.',
+  },
+  {
+    q: 'What does that mean for my own file?',
+    a: 'That an Iranian file is read more closely, and you should have documented answers ready for three things before you apply: a clear, traceable origin for the funds you present as means of support; your supply chain and customers, if the business depends on an Iranian counterparty; and the nature of your technology, if it could be considered dual-use. For a genuine team this is not bad news — it just means the file has to be visibly your own work rather than a package someone assembled for you.',
+  },
+  {
+    q: 'What type of permit is it, and how long is the D visa valid?',
+    a: 'The startup permit is always issued as a continuous, or A, permit. That means you are entitled to a registered municipality of residence (kotikunta) and the years count towards permanent residence. The first permit is two years by default. In recent years more than 80% of applicants have used the fast track; in that case a long-stay D visa valid for 100 days is placed in your passport at the same time as the positive decision, letting you and your family fly to Finland immediately without waiting for the physical residence card.',
+  },
+  {
+    q: 'Which of these changes are settled, and which are only proposals?',
+    a: 'Settled: the government has formally announced that the start-up entrepreneur permit will be reformed, and legislative drafting began in early 2026. Still only proposals: the integrated two-stage model where you file and pay at Migri first and Migri then requests the Business Finland assessment; Migri pre-screening before a file is referred; the shared UMA system; adding interviews; and writing the seven extension criteria into section 80b. Until those are enacted, the current rules apply and the Business Finland statement is still obtained separately and free of charge. We track the commencement dates and keep this page current.',
+  },
+];
+
 // ─── Component ───────────────────────────────────────────────────────────────
 
 export default function FinlandPage() {
@@ -973,19 +1041,34 @@ export default function FinlandPage() {
             <h2 className="font-serif text-5xl" style={{ letterSpacing: '-0.02em' }}>FAQ</h2>
           </div>
 
-          <div className="border-t border-[#1a1a1a]/10">
-            {faqs.map((faq, i) => (
-              <details key={i} className="group border-b border-[#1a1a1a]/10">
-                <summary className="flex justify-between items-center py-6 cursor-pointer list-none hover:text-[#00BFA5] transition-colors group-open:text-[#00BFA5]">
-                  <span className="font-serif text-xl pr-8 leading-snug">{faq.q}</span>
-                  <ChevronRight className="w-5 h-5 shrink-0 group-open:rotate-90 transition-transform text-current" />
-                </summary>
-                <div className="pb-6 pt-1">
-                  <p className="font-sans text-sm text-[#1a1a1a]/60 leading-relaxed">{faq.a}</p>
-                </div>
-              </details>
-            ))}
-          </div>
+          {[
+            { heading: 'The permit', blurb: '', items: faqs },
+            {
+              heading: 'Inside the evaluation',
+              blurb: 'How Business Finland actually decides, drawn from the Ministry of Economic Affairs and Employment working-group report TEM 2025:36 — the only public document that explains the mechanics. Proposals that are not yet law are labelled as such.',
+              items: deepDiveFaqs,
+            },
+          ].map((group, g) => (
+            <div key={g} className={g > 0 ? 'mt-20' : ''}>
+              <h3 className="font-sans text-xs font-bold uppercase tracking-[0.2em] text-[#002F6C] mb-3">{group.heading}</h3>
+              {group.blurb && (
+                <p className="font-sans text-sm text-[#1a1a1a]/50 leading-relaxed mb-6 max-w-2xl">{group.blurb}</p>
+              )}
+              <div className="border-t border-[#1a1a1a]/10">
+                {group.items.map((faq, i) => (
+                  <details key={i} className="group border-b border-[#1a1a1a]/10">
+                    <summary className="flex justify-between items-center py-6 cursor-pointer list-none hover:text-[#00BFA5] transition-colors group-open:text-[#00BFA5]">
+                      <span className="font-serif text-xl pr-8 leading-snug">{faq.q}</span>
+                      <ChevronRight className="w-5 h-5 shrink-0 group-open:rotate-90 transition-transform text-current" />
+                    </summary>
+                    <div className="pb-6 pt-1">
+                      <p className="font-sans text-sm text-[#1a1a1a]/60 leading-relaxed">{faq.a}</p>
+                    </div>
+                  </details>
+                ))}
+              </div>
+            </div>
+          ))}
         </div>
       </section>
 
