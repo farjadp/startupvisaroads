@@ -35,6 +35,7 @@ import HeroImage from './motion/HeroImage';
 import ScrollProgress from './motion/ScrollProgress';
 import Stepper, { type Step } from './motion/Stepper';
 import Faq from './motion/Faq';
+import Downloads from './motion/Downloads';
 
 // Absolute URLs and explicit /en/ paths render as plain anchors; everything
 // else goes through the locale-aware Link.
@@ -269,6 +270,15 @@ export default function FaPageLayout({ page, trail }: { page: FaPage; trail: { n
                     <Faq items={g.faqs} idPrefix={`faq${gi}`} />
                   </div>
                 ))}
+              </Reveal>
+            )}
+
+            {page.downloads && page.downloads.length > 0 && (
+              <Reveal as="div" className="pt-4">
+                <Downloads
+                  items={page.downloads}
+                  intro="گزارش‌ها و اینفوگرافیک‌هایی که این راهنما از آن‌ها ساخته شده — برای خواندن آفلاین و فرستادن برای هم‌بنیان‌گذارتان."
+                />
               </Reveal>
             )}
           </div>

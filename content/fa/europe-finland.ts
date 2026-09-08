@@ -445,6 +445,25 @@ export const page: FaPage = {
     ...DEEP_DIVE_FAQS,
   ],
 
+  // Files live in public/fa/downloads/. Page counts and sizes are from the
+  // files themselves — update both if a file is replaced.
+  downloads: [
+    {
+      title: 'بلوپرینت استارتاپ ویزای فنلاند ۲۰۲۶',
+      description: 'گزارش تصویری کامل مسیر مجوز استارتاپی فنلاند: نقش Business Finland و Migri، معیارهای ارزیابی، تمکن مالی و هزینه‌ها، و مسیر اقامت دائم. همان چیزی که این صفحه از آن ساخته شده، در قالبی که می‌شود آفلاین خواند.',
+      file: 'finland-startup-blueprint-2026.pdf',
+      kind: 'pdf',
+      meta: ['PDF', '۱۵۲ صفحه', '۱۵ مگابایت', 'فارسی'],
+    },
+    {
+      title: 'بازطراحی مجوزهای اقامت کارآفرینی فنلاند',
+      description: 'تحلیل گزارش کارگروه وزارت اقتصاد و اشتغال فنلاند (TEM ۲۰۲۵:۳۶): چرا سیستم فعلی کار نمی‌کند، چه اصلاحاتی پیشنهاد شده، و این تغییرات برای متقاضی امروز چه معنایی دارند.',
+      file: 'finland-residency-redesign-report.pdf',
+      kind: 'pdf',
+      meta: ['PDF', '۱۰۲ صفحه', '۱۰ مگابایت', 'فارسی'],
+    },
+  ],
+
   videos: ['UyEsOpfswjk', '7wbBkrLgRiM', 'cXAWOW-Wdco'],
   closing: [
     { label: 'ارزیابی رایگان مسیر', href: '/which-path' },

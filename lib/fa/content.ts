@@ -47,6 +47,23 @@ export type FaStatus = {
   cta?: FaCta;
 };
 
+/**
+ * A file the reader can take away — a report, a blueprint, an infographic.
+ * `file` is a basename under public/fa/downloads/, so the content module
+ * never hard-codes the directory and a moved folder is a one-line change.
+ */
+export type FaDownload = {
+  title: string;
+  /** What the reader gets and why it is worth their time. Plain text. */
+  description: string;
+  /** Basename inside public/fa/downloads/, extension included. */
+  file: string;
+  /** Drives the icon and the label; nothing else branches on it. */
+  kind: 'pdf' | 'image';
+  /** Pages, size, language — short chips, in Persian digits. */
+  meta: string[];
+};
+
 export type FaCta = {
   label: string;
   /** Locale-agnostic internal path (must be in FA_PATHS) or an absolute URL. */
@@ -78,6 +95,8 @@ export type FaPage = {
   closing: FaCta[];
   /** YouTube ids from content/fa/videos.ts to show as a rail after the FAQ. */
   videos?: string[];
+  /** Take-away files, rendered as a download rail after the FAQ. */
+  downloads?: FaDownload[];
   /** Key of public/fa/img/<key>.webp used in the hero and as the OG image. */
   image?: string;
   /** Alt text for the hero image. Empty alt carries no SEO value and no meaning. */
