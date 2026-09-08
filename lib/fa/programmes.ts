@@ -15,18 +15,24 @@
 // today; it does not tell them they will be accepted.
 // ============================================================================
 
-export type Currency = 'CAD' | 'DKK' | 'EUR';
+export type Currency = 'CAD' | 'DKK' | 'EUR' | 'TRY';
 
 /**
  * Indicative rates, only for showing a reader roughly where they stand
- * against a threshold quoted in another currency. Reviewed 2026-09-06.
+ * against a threshold quoted in another currency. Reviewed 2026-09-08.
  * Never used for anything that has to be exact, and always shown as
  * approximate in the UI.
+ *
+ * The lira is the one to distrust: Turkish inflation moves it fast enough
+ * that this number is stale between reviews, so the Türkiye guide publishes
+ * no lira amounts in prose and this rate exists only to place a reader
+ * roughly against the 500,000 TRY capital condition.
  */
 export const RATES_TO_CAD: Record<Currency, number> = {
   CAD: 1,
   DKK: 0.2,
   EUR: 1.5,
+  TRY: 0.033,
 };
 
 export type Rule = {
@@ -59,10 +65,10 @@ export const RULES: Rule[] = [
     name: 'ویزای استارتاپ دانمارک',
     href: '/europe/denmark',
     founders: { max: 3 },
-    yearlyFunds: { amount: 153700, currency: 'DKK', perFounder: true, note: 'برای یک نفر؛ با خانواده بیشتر' },
-    unscored: ['تأیید پنل کارشناسان Start-up Denmark'],
-    updated: '2026-09-06',
-    source: 'https://www.nyidanmark.dk/en-GB/Applying/Work/Start-up%20Denmark',
+    yearlyFunds: { amount: 153240, currency: 'DKK', perFounder: true, note: 'مجرد؛ ۳۰۶٬۴۸۰ با همسر و ۳۵۶٬۹۰۴ با همسر و فرزند' },
+    unscored: ['تأیید پنل کارشناسان Start-up Denmark', 'سهمیه‌ی سالانه ۷۵ نفر، بر اساس نفر نه تیم'],
+    updated: '2026-09-08',
+    source: 'https://www.nyidanmark.dk/en-GB/You-want-to-apply/Work/Start-up-Denmark',
   },
   {
     key: 'finland',
@@ -79,11 +85,11 @@ export const RULES: Rule[] = [
     name: 'ویزای استارتاپ استونی',
     href: '/europe/estonia',
     founders: { min: 1 },
-    yearlyFunds: { amount: 9600, currency: 'EUR', perFounder: true, note: '۸۰۰ یورو در ماه' },
+    yearlyFunds: { amount: 10560, currency: 'EUR', perFounder: true, note: '۸۸۰ یورو در ماه — چهار برابر سطح معیشت ۲۲۰ یورو' },
     venture: 'mvp',
-    unscored: ['تأیید Startup Committee'],
-    updated: '2026-09-06',
-    source: 'https://startupestonia.ee/visa',
+    unscored: ['تأیید کمیته‌ی کارشناسی وزارت کشور، ظرف ۱۰ روز کاری'],
+    updated: '2026-09-08',
+    source: 'https://www.politsei.ee/en/instructions/residence-permit-for-start-up-business',
   },
   {
     key: 'netherlands',
@@ -92,11 +98,33 @@ export const RULES: Rule[] = [
     founders: { min: 1 },
     unscored: [
       'قرارداد امضاشده با فسیلیتیتور مورد تأیید RVO',
-      'تمکن مالی یک سال کامل — رقم آن در این ماشین‌حساب نیست',
+      // Deliberately unscored: the Dutch amount tracks the statutory minimum
+      // wage and changes on 1 January AND 1 July, so a figure in this
+      // quarterly-reviewed table would be wrong half the year.
+      'تمکن مالی یک سال کامل — حدود ۲۱٬۲۰۰ یورو برای یک نفر و ۲۹٬۷۰۰ برای خانواده، اما هر شش ماه تغییر می‌کند',
+      'اقامت اولیه حداکثر یک سال است و تمدید نمی‌شود',
       'محصول باید برای بازار هلند واقعاً جدید باشد',
     ],
-    updated: '2026-09-06',
+    updated: '2026-09-08',
     source: 'https://ind.nl/en/residence-permits/work/start-up',
+  },
+  {
+    key: 'turkey',
+    name: 'تک‌ویزای ترکیه',
+    href: '/turkey-tech-visa',
+    founders: { min: 1 },
+    // Contributed share capital per foreign partner under the general Turkish
+    // work-permit rules, not a programme-specific threshold — which is exactly
+    // why founders meet it late. Waived when the partner's capital share is
+    // USD 100,000 or more.
+    investment: { amount: 500000, currency: 'TRY' },
+    unscored: [
+      'تأیید کمیته‌ی داوران تکنوپارک',
+      'حداقل ۲۰ درصد سهم برای هر شریک خارجی',
+      'قاعده‌ی پنج کارمند ترک به ازای هر خارجی از ماه هفتم — معافیت کامل تأیید نشده است',
+    ],
+    updated: '2026-09-08',
+    source: 'https://turkiyetechvisa.gov.tr/',
   },
   {
     key: 'new-brunswick',

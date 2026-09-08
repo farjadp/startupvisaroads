@@ -6,9 +6,16 @@
 //
 // Since the Canada Start-up Visa closed to new applications (31 Dec 2025)
 // the outcomes are: a European startup visa (Finland for teams, Estonia or
-// Denmark for a solo founder), an Atlantic Canada entrepreneur stream when
-// the money clears the thresholds, EB-2 NIW for research profiles, or
+// Denmark for a solo founder), Türkiye when the founder needs runway more
+// than a European passport, an Atlantic Canada entrepreneur stream when the
+// money clears the thresholds, EB-2 NIW for research profiles, or
 // `too-early` — a real answer, not a failure.
+//
+// Türkiye is deliberately NOT offered to `goal: 'family'`. That option reads
+// «آینده‌ی تحصیلی و زندگی فرزندان» — a parent optimising for their children's
+// future wants the route that ends in a European passport, and Türkiye is the
+// one route here that cannot. It answers `goal: 'growth'` instead, where the
+// permit is a means and residency is explicitly a side effect.
 // ============================================================================
 
 export type QuizAnswers = {
@@ -28,7 +35,7 @@ export type QuizAnswers = {
   horizon: 'urgent' | 'medium' | 'long';
 };
 
-export type PathId = 'finland' | 'denmark' | 'netherlands' | 'estonia' | 'atlantic' | 'eb2niw' | 'too-early';
+export type PathId = 'finland' | 'denmark' | 'netherlands' | 'estonia' | 'turkey' | 'atlantic' | 'eb2niw' | 'too-early';
 
 export type Recommendation = {
   path: PathId;
@@ -42,6 +49,7 @@ const RESULT: Record<PathId, { title: string; href: string }> = {
   denmark: { title: 'ویزای استارتاپ دانمارک', href: '/europe/denmark' },
   netherlands: { title: 'ویزای استارتاپ هلند', href: '/europe/netherlands' },
   estonia: { title: 'ویزای استارتاپ استونی', href: '/europe/estonia' },
+  turkey: { title: 'تک‌ویزای ترکیه', href: '/turkey-tech-visa' },
   atlantic: { title: 'مسیر کارآفرینی نیوبرانزویک یا نوااسکوشیا', href: '/pnp/new-brunswick' },
   eb2niw: { title: 'EB-2 NIW آمریکا', href: '/usa-eb2-niw' },
   'too-early': { title: 'هنوز زود است — و این خبر خوبی است', href: '/mentorship' },
@@ -97,15 +105,26 @@ export function recommendPath(a: QuizAnswers): Recommendation {
       );
     }
     if (a.goal === 'growth') {
+      // Both are solo-friendly and growth-first; budget splits them. The Dutch
+      // permit is twelve months and then a fresh RVO points assessment, on
+      // roughly €21,200 a year of means for one person. Türkiye gives three
+      // years and a far lower burn — the right answer when runway, not market
+      // access, is the binding constraint.
+      if (a.capital === 'under50') {
+        return result(
+          'turkey',
+          'بنیان‌گذار تنها با محصول آماده و بودجه‌ی محدود که رشد برایش اولویت است: ترکیه بلندترین مجوز اول را می‌دهد — تا سه سال، در حالی که هلند دوازده ماه بعد دوباره شما را می‌سنجد — و هزینه‌ی زندگی و استقرارش به‌مراتب کمتر است. در عوض بدانید این مسیر به پاسپورت اروپایی نمی‌رسد؛ اگر آن هدف شماست، دانمارک را ببینید.',
+        );
+      }
       return result(
         'netherlands',
-        'بنیان‌گذار تنها با محصولی که رشد بازار برایش اولویت است: هلند شما را به یک فسیلیتیتور مورد تأیید RVO می‌سپارد که یک سال روی توسعه‌ی کسب‌وکار و دسترسی به بازار اروپای غربی کنارتان می‌ماند. شرط تعداد بنیان‌گذار ندارد، اما محصول باید برای بازار هلند تازه باشد.',
+        'بنیان‌گذار تنها با محصولی که رشد بازار برایش اولویت است: هلند شما را به یک فسیلیتیتور مورد تأیید RVO می‌سپارد که یک سال روی توسعه‌ی کسب‌وکار و دسترسی به بازار اروپای غربی کنارتان می‌ماند. اقامت اولیه فقط دوازده ماه است و تمدید نمی‌شود؛ پس از آن با نظام امتیازی RVO سنجیده می‌شوید.',
       );
     }
     if (a.horizon === 'urgent' || a.capital === 'under50') {
       return result(
         'estonia',
-        'بنیان‌گذار تنها با محصول آماده و بودجه‌ی محدود یا عجله: استونی سریع‌ترین و ارزان‌ترین در است — تصمیم کمیته ظرف حدود ده روز کاری، تمکن ۸۰۰ یورو در ماه. از آن‌جا می‌توان به بازارهای بزرگ‌تر اروپا رشد کرد.',
+        'بنیان‌گذار تنها با محصول آماده و بودجه‌ی محدود یا عجله: استونی سریع‌ترین و ارزان‌ترین در است — تصمیم کمیته ظرف حدود ده روز کاری، تمکن ۸۸۰ یورو در ماه. از آن‌جا می‌توان به بازارهای بزرگ‌تر اروپا رشد کرد.',
       );
     }
     return result(

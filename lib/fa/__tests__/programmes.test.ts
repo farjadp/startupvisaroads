@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { RULES, assess, assessAll, type Applicant } from '../programmes';
+import { isFaPath } from '../paths';
 
 const base: Applicant = {
   netWorthCad: 0,
@@ -22,8 +23,12 @@ describe('rule provenance', () => {
     }
   });
 
+  // Was a /europe/ or /pnp/ prefix check. Türkiye is a top-level guide — it
+  // is the one route here that leads nowhere near an EU passport, so filing
+  // it under /europe would mislead. Asserting membership of FA_PATHS is the
+  // stronger claim anyway: it catches a rule pointing at a page that 404s.
   it('every rule points at a guide that exists in the Persian IA', () => {
-    for (const r of RULES) expect(r.href, r.key).toMatch(/^\/(europe|pnp)\//);
+    for (const r of RULES) expect(isFaPath(r.href), r.key).toBe(true);
   });
 });
 
@@ -54,8 +59,8 @@ describe('assess', () => {
   });
 
   it('scales per-founder settlement funds with the size of the team', () => {
-    const one = assess(rule('estonia'), { ...base, founders: 1, investableCad: 15_000, venture: 'mvp' });
-    const two = assess(rule('estonia'), { ...base, founders: 2, investableCad: 15_000, venture: 'mvp' });
+    const one = assess(rule('estonia'), { ...base, founders: 1, investableCad: 16_000, venture: 'mvp' });
+    const two = assess(rule('estonia'), { ...base, founders: 2, investableCad: 16_000, venture: 'mvp' });
     expect(one.checks.find((c) => c.label === 'تمکن مالی یک سال')?.status).toBe('pass');
     expect(two.checks.find((c) => c.label === 'تمکن مالی یک سال')?.status).toBe('fail');
   });

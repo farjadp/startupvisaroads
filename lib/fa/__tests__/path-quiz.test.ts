@@ -65,6 +65,28 @@ describe('recommendPath', () => {
     expect(['too-early', 'atlantic']).toContain(r.path);
   });
 
+  it('splits the growth-first solo founder by budget', () => {
+    const growth = { ...base, goal: 'growth', team: 'solo', business: 'mvp', language: 'mid' } as const;
+    // Türkiye gives three years of runway on a low burn; the Dutch permit is
+    // twelve months and then a fresh RVO assessment. Budget is the honest
+    // discriminator between them.
+    expect(recommendPath({ ...growth, capital: 'under50' }).path).toBe('turkey');
+    expect(recommendPath({ ...growth, capital: '50to200' }).path).toBe('netherlands');
+  });
+
+  // `goal: 'family'` reads «آینده‌ی تحصیلی و زندگی فرزندان». A parent
+  // optimising for their children's future wants the route that can end in a
+  // European passport, and Türkiye is the one route here that cannot. This is
+  // a deliberate exclusion, so it gets a test rather than a comment.
+  it('never sends the children\'s-future goal to Türkiye', () => {
+    for (const capital of ['under50', '50to200', '200to500', 'over500'] as const)
+      for (const horizon of ['urgent', 'medium', 'long'] as const)
+        for (const team of ['solo', 'team'] as const)
+          expect(
+            recommendPath({ ...base, goal: 'family', business: 'mvp', language: 'mid', capital, horizon, team }).path,
+          ).not.toBe('turkey');
+  });
+
   it('always returns a non-empty reason', () => {
     for (const business of ['none', 'idea', 'mvp', 'revenue'] as const)
       for (const background of ['none', 'professional', 'research'] as const)

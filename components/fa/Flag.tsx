@@ -1,6 +1,6 @@
 // ============================================================================
 // Component: components/fa/Flag.tsx
-// The four European flags, drawn as inline SVG at their legislated
+// The European flags, drawn as inline SVG at their legislated
 // proportions and official colours. No network request, no image file, no
 // licence question, and sharp at any size.
 //
@@ -21,6 +21,7 @@ const C = {
   nlRed: '#AE1C28',
   nlBlue: '#21468B',
   eeBlue: '#0072CE',
+  trRed: '#E30A17',
   caRed: '#D52B1E',
   eeBlack: '#000000',
   white: '#FFFFFF',
@@ -63,6 +64,24 @@ function Shapes({ code }: { code: FlagCode }) {
           <rect width={11} height={2.3333} fill={C.eeBlue} />
         </>
       );
+    // Official artwork (Wikimedia Commons, public domain), authored on a
+    // vertically centred canvas. Translated down by half the height rather
+    // than re-derived, so the legislated crescent and star geometry is the
+    // published one and not something drawn by eye. Star and crescent are a
+    // single subpath pair: the inner arc runs the opposite way, punching the
+    // crescent out under the default nonzero fill rule.
+    case 'tr':
+      return (
+        <>
+          <rect width={90000} height={60000} fill={C.trRed} />
+          <g transform="translate(0 30000)">
+            <path
+              fill={C.white}
+              d="m41750 0 13568-4408-8386 11541V-7133l8386 11541zm925 8021a15000 15000 0 1 1 0-16042 12000 12000 0 1 0 0 16042z"
+            />
+          </g>
+        </>
+      );
     // Official Pantone artwork (Wikimedia Commons, public domain). The white
     // path carries the pale field and the leaf as one subpath, so the default
     // nonzero fill rule punches the leaf out and the red beneath shows
@@ -83,7 +102,8 @@ function Shapes({ code }: { code: FlagCode }) {
 export default function Flag({ code, className }: { code: FlagCode; className?: string }) {
   // Canada's official artwork is authored at 9600x4800; the others are drawn
   // directly in their ratio units.
-  const { w, h } = code === 'ca' ? { w: 9600, h: 4800 } : FLAG_RATIO[code];
+  const { w, h } =
+    code === 'ca' ? { w: 9600, h: 4800 } : code === 'tr' ? { w: 90000, h: 60000 } : FLAG_RATIO[code];
   const name = FLAG_NAME[code];
   return (
     <svg
