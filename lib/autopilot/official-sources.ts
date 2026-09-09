@@ -16,6 +16,8 @@ export type OfficialSourceId =
   | 'denmark-business-authority'
   | 'estonia-startup-estonia'
   | 'netherlands-ind'
+  | 'israel-innovation-authority'
+  | 'israel-piba'
   | 'australia-home-affairs'
   | 'uae-government';
 
@@ -51,6 +53,8 @@ export const OFFICIAL_SOURCES: readonly OfficialSource[] = [
   { id: 'denmark-business-authority', authority: 'Danish Business Authority', url: 'https://danishbusinessauthority.dk/', programmePaths: ['/europe/denmark', '/country/denmark'], keywords: ['denmark', 'danish business authority'] },
   { id: 'estonia-startup-estonia', authority: 'Startup Estonia', url: 'https://startupestonia.ee/', programmePaths: ['/europe/estonia'], keywords: ['estonia', 'startup estonia'] },
   { id: 'netherlands-ind', authority: 'Immigration and Naturalisation Service (IND)', url: 'https://ind.nl/', programmePaths: ['/europe/netherlands'], keywords: ['netherlands', 'dutch', 'ind'] },
+  { id: 'israel-innovation-authority', authority: 'Israel Innovation Authority', url: 'https://innovationisrael.org.il/', programmePaths: ['/country/israel', '/israel'], keywords: ['israel', 'innovation authority', 'innovation visa', 'tnufa'] },
+  { id: 'israel-piba', authority: 'Population and Immigration Authority (PIBA), Israel', url: 'https://www.gov.il/', programmePaths: ['/country/israel', '/israel'], keywords: ['israel', 'piba', 'population and immigration'] },
   { id: 'australia-home-affairs', authority: 'Australian Department of Home Affairs', url: 'https://immi.homeaffairs.gov.au/', programmePaths: ['/australia/', '/country/australia'], keywords: ['australia', 'home affairs'] },
   { id: 'uae-government', authority: 'Official Portal of the UAE Government', url: 'https://u.ae/', programmePaths: ['/uae/', '/country/uae'], keywords: ['uae', 'united arab emirates', 'golden visa'] },
 ];

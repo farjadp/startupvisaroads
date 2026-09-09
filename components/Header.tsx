@@ -114,6 +114,9 @@ export default function Header() {
         { header: 'ترکیه' },
         { href: '/turkey-tech-visa', label: 'تک‌ویزای ترکیه' },
 
+        { header: 'خاورمیانه' },
+        { href: '/israel', label: 'اسرائیل — چرا باز نیست' },
+
         { header: 'کانادا' },
         { href: '/pnp/new-brunswick', label: 'نیوبرانزویک (کارآفرینی)' },
         { href: '/pnp/nova-scotia', label: 'نوااسکوشیا (کارآفرینی)' },
@@ -166,6 +169,7 @@ export default function Header() {
         { header: t('global') },
         { href: '/country/uae', label: t('uae') },
         { href: '/australia/entrepreneur-stream', label: t('australia') },
+        { href: '/country/israel', label: t('israel') },
         { href: '/country', label: t('view_all') },
       ]
     },

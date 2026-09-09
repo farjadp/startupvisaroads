@@ -54,6 +54,7 @@ export const SITE_PAGES: Page[] = [
   { path: '/country/uae', en: 'Relocate to the UAE', kind: 'page' },
   { path: '/country/denmark', en: 'Immigrate to Denmark', kind: 'page' },
   { path: '/country/finland', en: 'Immigrate to Finland', kind: 'page' },
+  { path: '/country/israel', en: 'The Israel Innovation Visa', kind: 'page' },
   { path: '/tools/express-entry', en: 'Free Express Entry pathway diagnostic (CRS calculator)', kind: 'tool' },
   { path: '/tools', en: 'Free immigration tools', kind: 'tool' },
   { path: '/services', en: 'Business plan, financial model and pitch deck services', kind: 'page' },
@@ -84,6 +85,9 @@ export const FA_SITE_PAGES: FaPage[] = [
   { path: '/europe/netherlands', label: 'ویزای استارتاپ هلند', kind: 'program' },
   { path: '/europe/estonia', label: 'ویزای استارتاپ استونی', kind: 'program' },
   { path: '/usa-eb2-niw', label: 'ویزای EB-2 NIW آمریکا برای متخصصان ایرانی', kind: 'program' },
+  // A reference page, not a route we run: kind 'page' on purpose, so the
+  // writer cites it as background rather than recommending it as a path.
+  { path: '/israel', label: 'ویزای نوآوری اسرائیل — و چرا برای متقاضی ایرانی باز نیست', kind: 'page' },
   { path: '/which-path', label: 'کدام مسیر مهاجرت برای شما مناسب است؟ (ارزیابی رایگان)', kind: 'tool' },
   { path: '/mentorship', label: 'برنامه منتورشیپ و آماده‌سازی بنیان‌گذاران', kind: 'page' },
   { path: '/faq', label: 'سؤالات متداول مهاجرت استارتاپی', kind: 'page' },

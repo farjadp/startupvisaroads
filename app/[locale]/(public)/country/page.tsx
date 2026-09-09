@@ -65,6 +65,15 @@ const COUNTRIES = [
     color: 'hover:border-[#002F6C] hover:bg-[#002F6C] hover:text-white',
     iconColor: 'text-[#002F6C]'
   },
+  {
+    id: 'israel',
+    name: 'Israel',
+    slug: 'israel',
+    tag: 'Landing Pads',
+    desc: 'Innovation Visa. Two years to build — gated by an approved incubator, not an officer.',
+    color: 'hover:border-[#0038B8] hover:bg-[#0038B8] hover:text-white',
+    iconColor: 'text-[#0038B8]'
+  },
   { 
     id: 'denmark', 
     name: 'Denmark', 

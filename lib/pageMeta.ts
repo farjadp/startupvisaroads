@@ -46,6 +46,7 @@ export const EN_INDEXABLE_PATHS = [
   '/country/uae',
   '/country/denmark',
   '/country/finland',
+  '/country/israel',
   '/tools',
   '/tools/express-entry',
   '/book-meeting',
@@ -111,6 +112,7 @@ const META: Record<string, Entry> = {
   '/country/uae': { en: { title: 'Immigrate to the UAE', description: 'UAE residency for investors, founders, and skilled talent — including the long-term Golden Visa.' }, fa: { title: 'مهاجرت به امارات', description: 'اقامت امارات برای سرمایه‌گذاران، بنیان‌گذاران و استعدادهای متخصص — از جمله اقامت طلایی بلندمدت.' } },
   '/country/denmark': { en: { title: 'Start-up Denmark: The Founder Visa, Verified', description: '75 permits a year, counted per person. Three expert panellists, four criteria, a 3.5 average to pass. What the permit really costs, why renewal is not a formality, and why permanent residence takes eight years — not five.' }, fa: { title: 'مهاجرت به دانمارک', description: 'سهمیه ۷۵ نفره، پنل سه‌نفره با حد قبولی ۳٫۵، تمکن مالی ۱۵۳٬۲۴۰ کرون، و مسیر هشت‌ساله اقامت دائم — نه پنج‌ساله.' } },
   '/country/finland': { en: { title: 'Finland Startup Visa 2026', description: 'The Finnish Start-up Entrepreneur permit in 2026: Business Finland criteria and the real ~8% approval rate, 2026 proof-of-funds and fees, Fast Track and D visa, family rights, and the five routes to permanent residence.' }, fa: { title: 'مهاجرت به فنلاند', description: 'مسیرهای اقامت فنلاند برای استارتاپ‌های نوآور تکنولوژی از طریق مجوز استارتاپ فنلاند.' } },
+  '/country/israel': { en: { title: 'Israel Innovation Visa: The Landing Pad Is The Gate', description: 'The B/2 Innovation visa explained: two years of residence and no work permit, acceptance by an approved landing pad before the Innovation Authority will look at your file, Tnufa and incubator funding, conversion to B/1 — and who Israeli law bars from the route entirely.' }, fa: { title: 'ویزای نوآوری اسرائیل', description: 'برنامه‌ی ویزای نوآوری اسرائیل، سکوهای فرود، بودجه‌ی تنوفا — و اینکه چرا این مسیر برای دارنده‌ی پاسپورت ایرانی باز نیست.' } },
   '/privacy': { en: { title: 'Privacy Policy', description: 'How Startup Visa Roads collects, uses, and protects your personal information.' }, fa: { title: 'سیاست حریم خصوصی', description: 'نحوه جمع‌آوری، استفاده و حفاظت از اطلاعات شخصی شما توسط راه‌های ویزای استارتاپ.' } },
   '/terms': { en: { title: 'Terms of Service', description: 'The terms and conditions governing your use of the Startup Visa Roads website and services.' }, fa: { title: 'شرایط استفاده از خدمات', description: 'شرایط و ضوابط حاکم بر استفاده شما از وب‌سایت و خدمات راه‌های ویزای استارتاپ.' } },
   '/book-meeting': {
