@@ -235,6 +235,48 @@ The $15,000–$50,000 a year that circulates is a practitioner estimate, and
 printing it would turn an estimate into a rule — the same reasoning that keeps
 lira amounts off the Türkiye guide.
 
+## The Australia guide (9 Sep 2026)
+
+`77965a7 → 2703b39`. `/fa/australia` is new, `/country/australia` was
+rewritten, and `/australia/entrepreneur-stream` is gone and 301s into it.
+
+**The deck Farjad supplied is a sales deck, and the page is built against it
+rather than from it.** Three corrections, all from the Department's own
+material:
+
+| The deck says | What is actually true |
+|---|---|
+| Priority hierarchy per Ministerial Direction 112 | **Direction 120 revoked 112 on 25 July 2026** — three days before the deck is dated. Five priority groups now, and it covers the whole Class BX including on-hand Global Talent and Distinguished Talent files |
+| Get a state nomination; Priority 2 is the key | **Priority 2 drew fewer than 20 invitations** in Apr–Jun 2026 and 15 in Jan–Mar, against **192 and 113 for Priority 3**. The recommended lane is the narrowest one |
+| A golden window of opportunity | **2,166 EOIs → 248 invitations** (Apr–Jun 2026); **1,815 → 146** (Jan–Mar). Roughly one in nine |
+
+**And the thing the name hides: it is not a startup visa.** Subclass 858 is
+the Distinguished Talent visa renamed, assessed on the individual; a team
+cannot apply together; and subclass 188 closed to new applications in 2024, so
+there is no startup route underneath it. A seed-stage founder does not clear
+this bar, and the page says so in its first section.
+
+**No refund undertaking — and the reason differs from Israel's.** Israel has
+none because we cannot deliver the route at all. Australia has none because
+there is no evaluating body to undertake against. See owed item 17.
+
+**Two English pages had to become one.** `/country/australia` and
+`/australia/entrepreneur-stream` were near-duplicates competing for the same
+query, and both had gone stale. The country page survives; the other 301s via
+`next.config.ts` redirects (bare and locale-prefixed) and is out of
+`EN_INDEXABLE_PATHS` and the autopilot inventory. **This retired a live URL —
+reversible by dropping the redirect and restoring the page from `2703b39^`.**
+
+**Not in `lib/fa/programmes.ts`, and for a sharper reason than Israel's.** The
+NIV sets no financial threshold at all, and `compare.ts` sorts an absent
+threshold as the *lowest* barrier — so an entry would rank the hardest route
+on the site as its most accessible one.
+
+**The visa application charge is the one figure published with a caveat.** It
+rose on 1 July 2026, secondary sources disagree (≈AUD 6,235 for the main
+applicant), and Home Affairs blocks automated reads, so both pages tell the
+reader to take the number from the Department before budgeting.
+
 ## Things that will bite you
 
 - **Two Prisma schemas.** SQLite for dev, Postgres for production, and
@@ -283,9 +325,9 @@ lira amounts off the Türkiye guide.
 
 ### Opened 8 Sep 2026
 
-8. **Three country guides are blocked on source material**: Australia,
-   Norway, Sweden. (Israel was the fourth and is now written — see below.)
-   Their NotebookLM notebooks exist but have never been exported; Estonia, the Netherlands and Türkiye only got written because
+8. **Two country guides are blocked on source material**: Norway and Sweden.
+   (Israel and Australia were two of the original four and are now written —
+   see below.) Their NotebookLM notebooks exist but have never been exported; Estonia, the Netherlands and Türkiye only got written because
    PDFs were sitting in Drive. The Claude in Chrome extension cannot reach
    `notebook.google.com` — several attempts, and after the site permission
    was changed the connected profile still had no site access at all. Export
@@ -315,11 +357,26 @@ lira amounts off the Türkiye guide.
 14. **Video view counts are a floor with a 1,000 threshold**, refreshed with
     `scripts/fetch-video-views.ts`. Twelve of twenty-four videos sit below it
     and show no count. If that threshold is wrong it is one constant.
-15. **No Persian guide has an English twin except Denmark, Finland and
-    Israel.** Türkiye, Estonia and the Netherlands are Persian-only.
+15. **No Persian guide has an English twin except Denmark, Finland, Israel
+    and Australia.** Türkiye, Estonia and the Netherlands are Persian-only.
 
 16. **`/turkey-tech-visa` is missing from `FA_SITE_PAGES`** in
     `lib/autopilot/inventory.ts`, so a Persian article the autopilot writes
     can never link to the Türkiye guide. Found 9 Sep while adding Israel to
     the same list; not fixed, because the right fix is a test asserting every
     route in `FA_PATHS` has an inventory entry, and that is its own change.
+
+17. **The Australia contract needs its own milestone definition.** Every other
+    contract ties the refund undertaking to an evaluating body's approval. The
+    NIV has no such body — the gate is a government invitation at roughly one
+    in nine — so `/fa/australia` carries no undertaking and no instalment
+    structure, and says why. Before anything is signed for Australia, decide
+    what the instalments attach to.
+
+18. **`/fa/which-path` sends every research profile to EB-2 NIW**, with a
+    caveat about US entry restrictions for Iranian nationals attached to the
+    recommendation. Australia's NIV is the direct analogue, carries no such
+    restriction, and grants permanent residence on day one. Whether the
+    research branch should offer it — instead of, or alongside, NIW — is a
+    question about advice rather than code, and is Farjad's call. Left
+    unchanged deliberately.
