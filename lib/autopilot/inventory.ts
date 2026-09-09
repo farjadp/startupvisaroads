@@ -83,6 +83,7 @@ export const FA_SITE_PAGES: FaPage[] = [
   { path: '/europe/denmark', label: 'ویزای استارتاپ دانمارک (Start-up Denmark)', kind: 'program' },
   { path: '/europe/netherlands', label: 'ویزای استارتاپ هلند', kind: 'program' },
   { path: '/europe/estonia', label: 'ویزای استارتاپ استونی', kind: 'program' },
+  { path: '/turkey-tech-visa', label: 'تک‌ویزای ترکیه (Türkiye Tech Visa)', kind: 'program' },
   { path: '/usa-eb2-niw', label: 'ویزای EB-2 NIW آمریکا برای متخصصان ایرانی', kind: 'program' },
   // A reference page, not a route we run: kind 'page' on purpose, so the
   // writer cites it as background rather than recommending it as a path.
