@@ -32,6 +32,17 @@ const nextConfig: NextConfig = {
     ],
   },
 
+  // Two English pages once described the same visa — /country/australia and
+  // /australia/entrepreneur-stream were near-duplicates competing for the same
+  // query. The country page is now the single Australian guide and the other
+  // permanently redirects into it.
+  async redirects() {
+    return [
+      { source: '/australia/entrepreneur-stream', destination: '/en/country/australia', permanent: true },
+      { source: '/:locale(en|fa)/australia/entrepreneur-stream', destination: '/:locale/country/australia', permanent: true },
+    ];
+  },
+
   // Security and SEO headers
   async headers() {
     return [

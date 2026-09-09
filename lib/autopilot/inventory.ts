@@ -46,11 +46,10 @@ export const SITE_PAGES: Page[] = [
   { path: '/europe/netherlands', en: 'Netherlands start-up visa', kind: 'program' },
   { path: '/europe/finland', en: 'Finland start-up permit', kind: 'program' },
   { path: '/europe/denmark', en: 'Start-up Denmark', kind: 'program' },
-  { path: '/australia/entrepreneur-stream', en: 'Australia entrepreneur pathway', kind: 'program' },
   { path: '/uae/golden-visa', en: 'UAE Golden Visa', kind: 'program' },
   { path: '/country/canada', en: 'Immigrate to Canada as a founder', kind: 'page' },
   { path: '/country/usa', en: 'Immigrate to the USA as a founder', kind: 'page' },
-  { path: '/country/australia', en: 'Immigrate to Australia as a founder', kind: 'page' },
+  { path: '/country/australia', en: 'The Australian National Innovation Visa (subclass 858)', kind: 'program' },
   { path: '/country/uae', en: 'Relocate to the UAE', kind: 'page' },
   { path: '/country/denmark', en: 'Immigrate to Denmark', kind: 'page' },
   { path: '/country/finland', en: 'Immigrate to Finland', kind: 'page' },
@@ -88,6 +87,7 @@ export const FA_SITE_PAGES: FaPage[] = [
   // A reference page, not a route we run: kind 'page' on purpose, so the
   // writer cites it as background rather than recommending it as a path.
   { path: '/israel', label: 'ویزای نوآوری اسرائیل — و چرا برای متقاضی ایرانی باز نیست', kind: 'page' },
+  { path: '/australia', label: 'ویزای نوآوری ملی استرالیا (ساب‌کلاس ۸۵۸)', kind: 'program' },
   { path: '/which-path', label: 'کدام مسیر مهاجرت برای شما مناسب است؟ (ارزیابی رایگان)', kind: 'tool' },
   { path: '/mentorship', label: 'برنامه منتورشیپ و آماده‌سازی بنیان‌گذاران', kind: 'page' },
   { path: '/faq', label: 'سؤالات متداول مهاجرت استارتاپی', kind: 'page' },

@@ -150,7 +150,7 @@ export function getRecommendedService(title: string, categoryName: string, local
   if (matches(['australia', 'استرالیا'])) {
     return isFa
       ? { path: '/which-path', title: 'راهنمای انتخاب مسیر', desc: 'مسیرهای موجود را بر اساس شرایط و هدف خود مقایسه کنید.' }
-      : { path: '/australia/entrepreneur-stream', title: 'Australia Entrepreneur Pathway Guide', desc: 'Review current information about Australia’s entrepreneur pathway.' };
+      : { path: '/country/australia', title: 'Australia National Innovation Visa Guide', desc: 'Review current information about Australia’s entrepreneur pathway.' };
   }
   if (matches(['eb1', 'eb-1', 'ای بی ۱'])) {
     return isFa
