@@ -1,4 +1,4 @@
-# Handoff — 6 Sep 2026
+# Handoff — 8 Sep 2026
 
 Read this before touching anything. It carries the state, the things that
 will surprise you, and the decisions worth knowing before you change them.
@@ -155,6 +155,51 @@ the model when it runs dry, so the lane never stops for want of a topic. A
 test locks the keyword coverage — it caught two real gaps the moment it was
 written.
 
+### The route guides were rebuilt on official sources (8 Sep 2026)
+
+Four guides rewritten and one built from scratch, each verified against the
+programme's own authority rather than against the Persian material in
+circulation. Ten commits, `e16b027` → `241335a`, all live.
+
+**Every guide now carries one fact that changes the reader's decision**, and
+in each case the material we were handed said the opposite:
+
+| Route | The correction |
+|---|---|
+| Denmark | Permanent residence is **8 years**, not the 5 everyone repeats. Four only with all four supplementary conditions. And renewal is **not** light-touch: the expert panel assesses the business again |
+| Estonia | **Estonia does not permit dual citizenship.** An Iranian who cannot renounce reaches permanent residence and stops. The passport line in every Persian guide is unreachable for this audience |
+| Netherlands | The startup permit **cannot be extended**. IND says so plainly. Twelve months, then a fresh self-employed application on RVO's points system — there is no second startup year |
+| Türkiye | **22 foreign startups admitted** between 16 Sep 2024 and 3 Mar 2026. The route is open but narrow |
+| Finland | (unchanged this session) ~92% refused by Business Finland |
+
+**The refund undertaking now says what the contracts say.** Farjad supplied
+four signed contracts. The undertaking covers exactly one failure: not
+obtaining the evaluating body's approval within **12 months of the first
+instalment**, then 100% back at the currency rate of the day. It does **not**
+cover a residence refusal by SIRI/Migri/IND/an embassy, or a refusal traced
+to the applicant's own papers. Denmark had been promising a refund "if the
+file does not reach residence" — a promise covering refusals nobody here
+controls. Corrected on Denmark, Finland, and the Canada cost page's
+scam-signal list, which had quietly become a description of our own offer.
+
+**No VisaRoads figure appears anywhere on the site.** Farjad's rule, 8 Sep:
+instalment structure yes — contract signing / approval / permit issued —
+amounts never. It surfaced because the Netherlands NotebookLM deck carries
+our pricing and would otherwise have flowed onto the page. Government and
+statutory numbers are the opposite: welcome, cited, with the year they apply
+to.
+
+**Türkiye is a new top-level route**, `/fa/turkey-tech-visa`, deliberately
+not under `/europe` — it is the one route here that leads nowhere near an EU
+passport, and the menu should not imply otherwise. It has three Istanbul
+photographs, two of Farjad's videos, a flag, and a place in the quiz and the
+comparison table.
+
+**`lib/fa/programmes.ts` and the pages hold the same thresholds twice.** Its
+own header warns they must move together, and this session proved the point:
+four guides were rebuilt before the table caught up. If you change a figure
+on a page, change it there too.
+
 ## Things that will bite you
 
 - **Two Prisma schemas.** SQLite for dev, Postgres for production, and
@@ -170,7 +215,19 @@ written.
   at all — the one that was already in the code had never worked.
 - **The preview browser in this environment keeps pages `hidden`**, which
   pauses `requestAnimationFrame`. Every screenshot is a frozen mid-animation
-  frame. Check geometry and computed styles in the DOM instead.
+  frame. Check geometry and computed styles in the DOM instead. It also
+  reports `clientWidth: 0` and `naturalWidth: 0` for lazy images at random —
+  both produced false alarms this session. Before believing a measurement,
+  repeat it on a page you know is fine.
+- **Validate a deploy-poll sentinel before you wait on it.** Two polls this
+  session watched for the wrong string: one matched text the *previous*
+  commit had already put in the nav, the other watched for `unscored` copy
+  that is never in the server HTML because it renders inside a client
+  component. Pick a string, confirm an existing analogue of it is present,
+  then poll.
+- **The Persian pages throw a hydration error in dev.** Site-wide and
+  pre-existing — `/fa/europe/estonia` does it too and was untouched. Not
+  chased. Likely the Jalali date or the quiz-memory `localStorage` read.
 
 ## Owed, in rough priority
 
@@ -188,3 +245,39 @@ written.
    this byline. Excluded from tweet selection, still published.
 7. On production: `npx tsx scripts/fix-fa-article-links.ts --write`, then
    resubmit the sitemap.
+
+### Opened 8 Sep 2026
+
+8. **Four country guides are blocked on source material**: Australia, Israel,
+   Norway, Sweden. Their NotebookLM notebooks exist but have never been
+   exported; Estonia, the Netherlands and Türkiye only got written because
+   PDFs were sitting in Drive. The Claude in Chrome extension cannot reach
+   `notebook.google.com` — several attempts, and after the site permission
+   was changed the connected profile still had no site access at all. Export
+   to Drive is the path that works.
+9. **Norway and Sweden have no startup visa.** Norway is self-employment via
+   UDI, Sweden via Migrationsverket. There is no evaluating body, so the
+   refund undertaking cannot be written the way it is on the other four.
+   Needs a decision before either page is drafted.
+10. **Israel**: an Iranian passport holder cannot enter. Whether the page
+    should exist, and who it would be for, is Farjad's call.
+11. **The Netherlands commercial model needs a conversation.** The brief says
+    «طرح و ایده و موارد بیزینس را ما انجام میدهیم» and that a team «دو خانواده
+    جای خالی دارد». IND requires an active role — "more than a shareholder or
+    financier" — and the facilitator may hold no majority interest. That is
+    not on the page; the page says we do not sell a seat in another team's
+    startup. If placement really is the intent, the failure lands on the
+    client at the IND stage.
+12. **The Denmark contract must cap the pitch deck at 15 pages**, not the 20
+    the Finland contract uses. Over 15 is a published Start-up Denmark
+    screen-out reason, so the current wording commits us to something that
+    gets the file rejected.
+13. **Türkiye is not in `lib/fa/programmes.ts`'s scored thresholds beyond the
+    capital condition, and not in the eligibility calculator's venture
+    stage.** Deliberate — the technopark committee's bar is a business-plan
+    judgement and inventing an MVP requirement would be a guess.
+14. **Video view counts are a floor with a 1,000 threshold**, refreshed with
+    `scripts/fetch-video-views.ts`. Twelve of twenty-four videos sit below it
+    and show no count. If that threshold is wrong it is one constant.
+15. **No Persian guide has an English twin except Denmark and Finland.**
+    Türkiye, Estonia and the Netherlands are Persian-only.
