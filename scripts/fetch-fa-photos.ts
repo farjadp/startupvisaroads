@@ -79,6 +79,13 @@ const SLOTS: Record<string, string> = {
   israel: 'Tel Aviv Israel skyline beach',
   'israel-2': 'Tel Aviv business district towers Israel',
   'israel-3': 'Tel Aviv Israel street cafe',
+
+  // Australia. The guide is about the National Innovation Visa — researchers
+  // and critical-technology founders, not tourism — so only the hero is the
+  // identifying harbour shot; the other two are the working city.
+  australia: 'Sydney Opera House harbour Australia',
+  'australia-2': 'Sydney central business district skyscrapers Australia',
+  'australia-3': 'Melbourne Australia city street tram',
 };
 
 type Photo = {

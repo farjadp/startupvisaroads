@@ -160,5 +160,32 @@
     "photographerUrl": "https://www.pexels.com/@taty-gkiozos-696965791",
     "description": "Enjoying a pleasant meal at Café Noir on the vibrant streets of Tel Aviv.",
     "fetched": "2026-09-09"
+  },
+  "australia": {
+    "source": "Pexels",
+    "id": 26834716,
+    "page": "https://www.pexels.com/photo/sydney-harbour-bridge-and-sydney-opera-house-26834716/",
+    "photographer": "Donovan Kelly",
+    "photographerUrl": "https://www.pexels.com/@donovan-kelly-110228397",
+    "description": "A scenic view of Sydney Opera House and Harbour Bridge at dusk, captured on a tranquil evening.",
+    "fetched": "2026-09-09"
+  },
+  "australia-2": {
+    "source": "Pexels",
+    "id": 35981627,
+    "page": "https://www.pexels.com/photo/aerial-view-of-sydney-s-central-business-district-35981627/",
+    "photographer": "Gu Bra",
+    "photographerUrl": "https://www.pexels.com/@gu-bra-11680150",
+    "description": "Stunning aerial shot of Sydney's skyscrapers and urban landscape, highlighting the city's architecture.",
+    "fetched": "2026-09-09"
+  },
+  "australia-3": {
+    "source": "Pexels",
+    "id": 31481131,
+    "page": "https://www.pexels.com/photo/pink-tram-on-melbourne-s-city-street-31481131/",
+    "photographer": "Macourt Media",
+    "photographerUrl": "https://www.pexels.com/@macourt-media-1519726",
+    "description": "A vibrant pink tram travels down a tree-lined street in Melbourne, Australia.",
+    "fetched": "2026-09-09"
   }
 }
