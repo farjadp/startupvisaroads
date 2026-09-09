@@ -1,4 +1,4 @@
-# Handoff — 8 Sep 2026
+# Handoff — 9 Sep 2026
 
 Read this before touching anything. It carries the state, the things that
 will surprise you, and the decisions worth knowing before you change them.
@@ -200,6 +200,41 @@ own header warns they must move together, and this session proved the point:
 four guides were rebuilt before the table caught up. If you change a figure
 on a page, change it there too.
 
+## The Israel guide (9 Sep 2026)
+
+`344e567 → 71b211e`, three commits, both locales, live.
+
+**`/fa/israel` is the first Persian route page that is a reference rather than
+an offer, and every unusual thing about it follows from that.** Iran is a
+designated enemy state under Israeli law: the Interior Minister is barred from
+granting entry or stay permits to citizens of enemy states outside a small
+humanitarian quota, and Iranian law and the Iranian passport separately
+prohibit travel to Israel. The reader `/fa` is written for cannot use this
+route.
+
+So, deliberately, and each of these will look like an omission to someone
+tidying up later:
+
+| What | Why |
+|---|---|
+| The access bar is the status banner, above the fold | In Persian-language material this programme is sold as a migration pathway with that half left out. The page is what a reader puts in front of whoever sold it to them |
+| **No instalment structure and no refund undertaking** — the only Persian guide without them | Publishing our commercial terms on a route we cannot run is selling something unreachable. `lib/fa/__tests__/israel.test.ts` locks this |
+| **Not in `lib/fa/programmes.ts`, not a `which-path` outcome** | Both derive from `RULES`; an entry would rank Israel against routes a reader can actually take. The passport bar is not a threshold anyone clears |
+| No flag | The legislated spec fixes the field and the two blue bands but not the Star of David between them, and every hexagram figure available is a reconstruction. Same rule that keeps the US flag off `/fa/usa-eb2-niw` |
+| The defence-linked programmes appear in English only | INNOFENSE/DDR&D, INNOTAL, MEIMAD and the cyber tracks get one neutral out-of-scope sentence on `/en/country/israel` and nothing on the Persian page |
+
+**Two source findings worth not re-deriving.** The procedure was *re-approved
+in 2024* with PIBA, so the programme is live rather than a lapsed 2017 pilot —
+but the **twelve landing pads list is still the 2017 announcement**, and
+nothing newer restates it. Both pages print that list with its date. And
+**Tnufa is NIS 200,000 at 80% of an approved budget capped at NIS 250,000**;
+the 85%-over-two-years version in circulation is a superseded structure.
+
+**No proof-of-funds figure appears on either page.** Israel publishes none.
+The $15,000–$50,000 a year that circulates is a practitioner estimate, and
+printing it would turn an estimate into a rule — the same reasoning that keeps
+lira amounts off the Türkiye guide.
+
 ## Things that will bite you
 
 - **Two Prisma schemas.** SQLite for dev, Postgres for production, and
@@ -248,9 +283,9 @@ on a page, change it there too.
 
 ### Opened 8 Sep 2026
 
-8. **Four country guides are blocked on source material**: Australia, Israel,
-   Norway, Sweden. Their NotebookLM notebooks exist but have never been
-   exported; Estonia, the Netherlands and Türkiye only got written because
+8. **Three country guides are blocked on source material**: Australia,
+   Norway, Sweden. (Israel was the fourth and is now written — see below.)
+   Their NotebookLM notebooks exist but have never been exported; Estonia, the Netherlands and Türkiye only got written because
    PDFs were sitting in Drive. The Claude in Chrome extension cannot reach
    `notebook.google.com` — several attempts, and after the site permission
    was changed the connected profile still had no site access at all. Export
@@ -259,8 +294,9 @@ on a page, change it there too.
    UDI, Sweden via Migrationsverket. There is no evaluating body, so the
    refund undertaking cannot be written the way it is on the other four.
    Needs a decision before either page is drafted.
-10. **Israel**: an Iranian passport holder cannot enter. Whether the page
-    should exist, and who it would be for, is Farjad's call.
+10. ~~**Israel**: an Iranian passport holder cannot enter.~~ **Settled 9 Sep
+    2026** — Farjad asked for the page in both locales, and it was built and
+    shipped. See "The Israel guide" below.
 11. **The Netherlands commercial model needs a conversation.** The brief says
     «طرح و ایده و موارد بیزینس را ما انجام میدهیم» and that a team «دو خانواده
     جای خالی دارد». IND requires an active role — "more than a shareholder or
@@ -279,5 +315,11 @@ on a page, change it there too.
 14. **Video view counts are a floor with a 1,000 threshold**, refreshed with
     `scripts/fetch-video-views.ts`. Twelve of twenty-four videos sit below it
     and show no count. If that threshold is wrong it is one constant.
-15. **No Persian guide has an English twin except Denmark and Finland.**
-    Türkiye, Estonia and the Netherlands are Persian-only.
+15. **No Persian guide has an English twin except Denmark, Finland and
+    Israel.** Türkiye, Estonia and the Netherlands are Persian-only.
+
+16. **`/turkey-tech-visa` is missing from `FA_SITE_PAGES`** in
+    `lib/autopilot/inventory.ts`, so a Persian article the autopilot writes
+    can never link to the Türkiye guide. Found 9 Sep while adding Israel to
+    the same list; not fixed, because the right fix is a test asserting every
+    route in `FA_PATHS` has an inventory entry, and that is its own change.
