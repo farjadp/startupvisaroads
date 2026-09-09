@@ -66,6 +66,15 @@ const COUNTRIES = [
     iconColor: 'text-[#002F6C]'
   },
   {
+    id: 'turkey',
+    name: 'Türkiye',
+    slug: 'turkey',
+    tag: 'Three Years',
+    desc: 'Tech Visa. The longest first permit here — judged by a technopark jury.',
+    color: 'hover:border-[#E30A17] hover:bg-[#E30A17] hover:text-white',
+    iconColor: 'text-[#E30A17]'
+  },
+  {
     id: 'israel',
     name: 'Israel',
     slug: 'israel',

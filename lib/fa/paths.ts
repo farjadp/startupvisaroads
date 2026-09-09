@@ -71,7 +71,7 @@ export const FA_PAIRED: Record<FaPath, string | null> = {
   '/europe/denmark': '/country/denmark',
   '/europe/netherlands': '/europe/netherlands',
   '/europe/estonia': null,
-  '/turkey-tech-visa': null,
+  '/turkey-tech-visa': '/country/turkey',
   '/israel': '/country/israel',
   '/australia': '/country/australia',
   '/usa-eb2-niw': '/usa/eb2-niw',

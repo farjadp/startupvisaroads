@@ -54,6 +54,7 @@ export const SITE_PAGES: Page[] = [
   { path: '/country/denmark', en: 'Immigrate to Denmark', kind: 'page' },
   { path: '/country/finland', en: 'Immigrate to Finland', kind: 'page' },
   { path: '/country/israel', en: 'The Israel Innovation Visa', kind: 'page' },
+  { path: '/country/turkey', en: 'The Türkiye Tech Visa', kind: 'program' },
   { path: '/tools/express-entry', en: 'Free Express Entry pathway diagnostic (CRS calculator)', kind: 'tool' },
   { path: '/tools', en: 'Free immigration tools', kind: 'tool' },
   { path: '/services', en: 'Business plan, financial model and pitch deck services', kind: 'page' },
