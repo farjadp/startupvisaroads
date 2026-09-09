@@ -16,6 +16,13 @@
 //
 // The United States has no entry: the fifty-star canton is not worth ten
 // kilobytes inlined for one page, so /fa/usa-eb2-niw keeps the acid rule.
+//
+// Israel has no entry either, and for the first reason rather than the
+// second. The legislated spec fixes the field and the two blue bands exactly,
+// but not the size of the Star of David between them, and every figure for
+// the hexagram we could find is somebody's reconstruction rather than the
+// published geometry. A national symbol — this one especially — drawn nearly
+// right is worse than none, so /fa/israel carries no flag.
 // ============================================================================
 
 export type FlagCode = 'dk' | 'fi' | 'nl' | 'ee' | 'tr' | 'ca';
