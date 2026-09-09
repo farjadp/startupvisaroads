@@ -200,6 +200,24 @@ own header warns they must move together, and this session proved the point:
 four guides were rebuilt before the table caught up. If you change a figure
 on a page, change it there too.
 
+## The Türkiye English twin (9 Sep 2026)
+
+`/country/turkey` closes item 15 for Türkiye: the guide was Persian-only since
+8 Sep, and `/fa/turkey-tech-visa` is no longer `FA_PAIRED: null`.
+
+Everything on it comes from the Persian guide's verification pass, **so the two
+must move together** — above all the two facts that make the page worth
+reading. It leads with **22 foreign startups admitted between 16 Sep 2024 and
+3 Mar 2026**, in a section of its own. And it leaves the **five-Turkish-
+employees rule honestly open**: the programme write-ups say Tech Visa startups
+are exempt, no official text we found grants a blanket exemption, and for
+three foreign founders that is zero hires against fifteen discovered in month
+seven. The page says get it in writing rather than repeating the claim.
+
+No lira figures for fees or running costs, same rule as the Persian page. The
+one lira amount is the statutory 500,000 capital condition, which is a rule
+rather than a cost.
+
 ## The Israel guide (9 Sep 2026)
 
 `344e567 → 71b211e`, three commits, both locales, live.
@@ -277,6 +295,55 @@ rose on 1 July 2026, secondary sources disagree (≈AUD 6,235 for the main
 applicant), and Home Affairs blocks automated reads, so both pages tell the
 reader to take the number from the Department before budgeting.
 
+## The routes menu, and two CSS traps (9 Sep 2026)
+
+`687b1e4` → `0ef2731`. The Persian dropdown was taller than the viewport and
+scrolled inside its own `max-h-[80vh]`.
+
+**Two causes.** Seven headings for thirteen links — Türkiye, Israel and
+Australia each had a heading of their own for one link — and a single column.
+The groups are now four of roughly equal weight (Europe, Canada, other
+destinations, where to start), and `groupSubLinks()` turns the flat array into
+real groups that both renderers lay out as a grid.
+
+**The column count only ever divides the groups evenly: two (2x2) up to 2xl,
+four (1x4) above it. Never three** — four groups in three columns leaves a
+hole in row two, which was the first attempt and looked unfinished.
+
+Two things that will bite anyone touching this again:
+
+- **A grid panel needs an EXPLICIT width.** Tailwind's `grid-cols-*` is
+  `repeat(n, minmax(0,1fr))`, and inside a shrink-to-fit absolutely positioned
+  box those tracks resolve to **0px**. The first attempt collapsed the panel
+  to 128px with three zero-width columns.
+- **A wide panel cannot be centred on its trigger.** The trigger sits near the
+  edge of the bar, so a centred panel is capped at twice its distance from
+  that edge — about 680px at 1024, in either locale. At 940px it hung 92px off
+  the left in Persian and 106px off the right in English. Multi-group panels
+  anchor to the trigger and grow inward; single-group ones stay centred and
+  are sized to content at 240px.
+
+Measured, no scroll and no overflow: 1024 and 1280 at 600x386 in two columns;
+1600 at 940x229 (fa) and 940x212 (en) in four.
+
+**Flags went from 12px to 16px.** The Nordic and Dutch bands read fine at 12;
+the Turkish crescent-and-star and the Canadian maple leaf turn to mush. And
+the labels went back to the real names — they had been shortened to fit
+columns, which is the wrong way round.
+
+**Australia now has a flag**, from the Wikimedia Commons public-domain file,
+inlined unchanged apart from namespacing its two clip-path ids. Nothing in it
+is redrawn because nothing in it is drawable by eye: the Union Jack's saltire
+is offset rather than centred, the Commonwealth Star has seven points, and the
+Southern Cross is four seven-pointed stars plus a five-pointed Epsilon.
+**Israel still has none**, and `flags.ts` now records why the two cases differ
+— for Australia the official artwork existed; for Israel the legislated spec
+fixes the field and the two bands but not the Star of David between them.
+
+**The Türkiye flag was checked and is correct**: its path in `Flag.tsx` is
+byte-identical to the official Commons artwork. If it looks wrong, the size is
+the problem, not the geometry.
+
 ## Things that will bite you
 
 - **Two Prisma schemas.** SQLite for dev, Postgres for production, and
@@ -350,21 +417,25 @@ reader to take the number from the Department before budgeting.
     the Finland contract uses. Over 15 is a published Start-up Denmark
     screen-out reason, so the current wording commits us to something that
     gets the file rejected.
-13. **Türkiye is not in `lib/fa/programmes.ts`'s scored thresholds beyond the
-    capital condition, and not in the eligibility calculator's venture
-    stage.** Deliberate — the technopark committee's bar is a business-plan
-    judgement and inventing an MVP requirement would be a guess.
+13. ~~**Türkiye is not in `lib/fa/programmes.ts`'s scored thresholds beyond
+    the capital condition.**~~ **Closed 9 Sep 2026.** It now carries a
+    founders cap of 5 — *derived* from the 20% shareholding rule, not
+    guessed — and the product stage is named as explicitly unscored rather
+    than silently absent, which had let the calculator imply an idea-stage
+    founder cleared everything. Still no fabricated MVP threshold; that was
+    the original reason for leaving it and it has not changed.
 14. **Video view counts are a floor with a 1,000 threshold**, refreshed with
     `scripts/fetch-video-views.ts`. Twelve of twenty-four videos sit below it
     and show no count. If that threshold is wrong it is one constant.
-15. **No Persian guide has an English twin except Denmark, Finland, Israel
-    and Australia.** Türkiye, Estonia and the Netherlands are Persian-only.
+15. **No Persian guide has an English twin except Denmark, Finland, Israel,
+    Australia and Türkiye.** Estonia and the Netherlands are Persian-only.
 
-16. **`/turkey-tech-visa` is missing from `FA_SITE_PAGES`** in
-    `lib/autopilot/inventory.ts`, so a Persian article the autopilot writes
-    can never link to the Türkiye guide. Found 9 Sep while adding Israel to
-    the same list; not fixed, because the right fix is a test asserting every
-    route in `FA_PATHS` has an inventory entry, and that is its own change.
+16. ~~**`/turkey-tech-visa` is missing from `FA_SITE_PAGES`.**~~ **Closed
+    9 Sep 2026**, along with the tripwire that stops it recurring:
+    `lib/fa/__tests__/inventory-coverage.test.ts` asserts every path in
+    `FA_PATHS` is either in the inventory or named in an explicit exclusion
+    list. The three Canada sub-guides sit in that list — they arguably belong
+    in the inventory, but adding them changes what the autopilot links to.
 
 17. **The Australia contract needs its own milestone definition.** Every other
     contract ties the refund undertaking to an evaluating body's approval. The
