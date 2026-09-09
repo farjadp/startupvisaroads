@@ -14,6 +14,27 @@ import { localeSwitchTarget } from '@/lib/fa/paths';
 import { flagFor } from '@/lib/fa/flags';
 import Flag from '@/components/fa/Flag';
 
+type SubLink = { header?: string; href?: string; label?: string };
+
+/**
+ * Turn the flat nav list — a stream of headers followed by their links — into
+ * real groups, so the dropdown can lay them out as columns.
+ *
+ * The flat shape stays the source of truth because two renderers read it, but
+ * a single column of 7 headings and 13 links made a panel taller than the
+ * viewport that had to scroll. Columns are the fix, and they only need the
+ * grouping the data already implies.
+ */
+function groupSubLinks(subLinks: SubLink[]): { header: string; items: SubLink[] }[] {
+  const groups: { header: string; items: SubLink[] }[] = [];
+  for (const sub of subLinks) {
+    if (sub.header) groups.push({ header: sub.header, items: [] });
+    else if (groups.length) groups[groups.length - 1].items.push(sub);
+    else groups.push({ header: '', items: [sub] });
+  }
+  return groups;
+}
+
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -104,6 +125,10 @@ export default function Header() {
     {
       label: 'مسیرها',
       key: 'jurisdictions',
+      // Four groups of roughly equal weight, not seven with singletons in
+      // them. Türkiye, Israel and Australia each had a heading of their own
+      // for one link, which is most of why this panel used to scroll. The
+      // flags carry the geography the headings were carrying.
       subLinks: [
         { header: 'اروپا' },
         { href: '/europe/denmark', label: 'دانمارک' },
@@ -111,26 +136,21 @@ export default function Header() {
         { href: '/europe/finland', label: 'فنلاند' },
         { href: '/europe/estonia', label: 'استونی' },
 
-        { header: 'ترکیه' },
-        { href: '/turkey-tech-visa', label: 'تک‌ویزای ترکیه' },
-
-        { header: 'خاورمیانه' },
-        { href: '/israel', label: 'اسرائیل — چرا باز نیست' },
-
-        { header: 'استرالیا' },
-        { href: '/australia', label: 'ویزای نوآوری ملی (۸۵۸)' },
-
         { header: 'کانادا' },
         { href: '/pnp/new-brunswick', label: 'نیوبرانزویک (کارآفرینی)' },
         { href: '/pnp/nova-scotia', label: 'نوااسکوشیا (کارآفرینی)' },
         { href: '/pnp', label: 'همه‌ی برنامه‌های استانی' },
         { href: '/canada-startup-visa', label: 'ویزای استارتاپ — وضعیت فعلی' },
 
-        { header: 'آمریکا' },
-        { href: '/usa-eb2-niw', label: 'EB-2 NIW' },
+        { header: 'مقصدهای دیگر' },
+        { href: '/turkey-tech-visa', label: 'ترکیه — تک‌ویزا' },
+        { href: '/australia', label: 'استرالیا — ویزای نوآوری ملی' },
+        { href: '/usa-eb2-niw', label: 'آمریکا — EB-2 NIW' },
+        { href: '/israel', label: 'اسرائیل — چرا باز نیست' },
 
-        { header: 'شروع' },
+        { header: 'از کجا شروع کنم' },
         { href: '/which-path', label: 'کدام مسیر برای من؟' },
+        { href: '/mentorship', label: 'منتورشیپ' },
       ],
     },
     { href: '/mentorship', label: 'منتورشیپ' },
@@ -261,28 +281,43 @@ export default function Header() {
                 {/* Dropdown Menu (Desktop) */}
                 {link.subLinks && (
                   <div className="absolute top-full rtl:right-1/2 rtl:translate-x-1/2 ltr:left-1/2 ltr:-translate-x-1/2 pt-8 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform translate-y-2 group-hover:translate-y-0 text-start">
-                    <div className="bg-[#1a1a1a] border-t-2 border-[#CCFF00] p-8 min-w-[280px] shadow-[0_20px_50px_rgba(0,0,0,0.5)] relative max-h-[80vh] overflow-y-auto">
-                      <div className="flex flex-col gap-3">
-                        {link.subLinks.map((sub, i) => (
-                          sub.header ? (
-                            <div key={i} className="mt-4 first:mt-0 pb-1 mb-1 border-b border-[#F2F0E9]/10">
-                              <span className={`${navMicro} text-[#CCFF00] block select-none`}>
-                                {sub.header}
+                    <div className={`bg-[#1a1a1a] border-t-2 border-[#CCFF00] p-7 shadow-[0_20px_50px_rgba(0,0,0,0.5)] relative max-h-[80vh] overflow-y-auto ${
+                      groupSubLinks(link.subLinks).length > 1
+                        ? 'w-[min(92vw,560px)] lg:w-[min(92vw,800px)]'
+                        : 'w-max min-w-[240px] max-w-[92vw]'
+                    }`}>
+                      {/* Columns, not one long list. Two below lg, three above.
+                          The panel needs an EXPLICIT width: Tailwind's
+                          grid-cols-* is repeat(n, minmax(0,1fr)), and inside a
+                          shrink-to-fit absolutely positioned box those tracks
+                          resolve to 0 and the panel collapses. 92vw keeps it
+                          on screen at any width. */}
+                      <div className={`grid gap-x-9 gap-y-7 ${
+                        groupSubLinks(link.subLinks).length > 1 ? 'grid-cols-2 lg:grid-cols-3' : 'grid-cols-1'
+                      }`}>
+                        {groupSubLinks(link.subLinks).map((group, gi) => (
+                          <div key={gi} className="min-w-[150px]">
+                            {group.header && (
+                              <span className={`${navMicro} text-[#CCFF00] block select-none pb-2 mb-3 border-b border-[#F2F0E9]/10`}>
+                                {group.header}
                               </span>
+                            )}
+                            <div className="flex flex-col gap-2.5">
+                              {group.items.map((sub) => (
+                                <Link
+                                  key={sub.href}
+                                  href={sub.href!}
+                                  className={`${isFa ? 'font-vazir text-[15px]' : 'font-serif text-base'} text-[#F2F0E9] hover:text-[#CCFF00] hover:translate-x-1.5 rtl:hover:-translate-x-1.5 transition-all flex items-start gap-2.5 leading-snug opacity-80 hover:opacity-100`}
+                                >
+                                  {/* The menu is the densest list of routes on
+                                      the site, so the flag does the work the
+                                      label needs three words for. */}
+                                  {isFa && flagFor(sub.href!) && <Flag code={flagFor(sub.href!)!} className="h-3 w-auto shrink-0 mt-[0.35em] text-[#F2F0E9]" />}
+                                  {sub.label}
+                                </Link>
+                              ))}
                             </div>
-                          ) : (
-                            <Link
-                              key={sub.href}
-                              href={sub.href!}
-                              className={`${isFa ? 'font-vazir text-base' : 'font-serif text-lg'} text-[#F2F0E9] hover:text-[#CCFF00] hover:translate-x-2 rtl:hover:-translate-x-2 transition-all flex items-center gap-2.5 whitespace-nowrap opacity-80 hover:opacity-100`}
-                            >
-                              {/* The menu is the densest list of routes on the
-                                  site, so the flag does the work the label
-                                  needs three words for. */}
-                              {isFa && flagFor(sub.href!) && <Flag code={flagFor(sub.href!)!} className="h-3 w-auto shrink-0 text-[#F2F0E9]" />}
-                              {sub.label}
-                            </Link>
-                          )
+                          </div>
                         ))}
                       </div>
                     </div>
@@ -390,23 +425,30 @@ export default function Header() {
                     </button>
 
                     {/* Sub-menu Links */}
-                    <div className={`overflow-hidden transition-all duration-500 ${expandedMobileMenu === link.key ? 'max-h-[600px] opacity-100 mt-6' : 'max-h-0 opacity-0'}`}>
-                      <div className="pl-12 flex flex-col gap-3 border-l border-[#F2F0E9]/10 ml-2 border-s border-e-0 rtl:mr-2 rtl:ml-0 rtl:border-r rtl:border-l-0 rtl:pr-12 rtl:pl-0">
-                        {link.subLinks.map((sub, i) => (
-                          sub.header ? (
-                            <span key={i} className={`${navMicro} text-[#CCFF00]/70 mt-4 first:mt-0`}>
-                              {sub.header}
-                            </span>
-                          ) : (
-                            <Link
-                              key={sub.href}
-                              href={sub.href!}
-                              className={`${isFa ? 'font-vazir text-base' : 'font-serif text-lg'} text-[#F2F0E9] hover:text-[#CCFF00] transition-colors flex items-center gap-2.5`}
-                            >
-                              {isFa && flagFor(sub.href!) && <Flag code={flagFor(sub.href!)!} className="h-3 w-auto shrink-0 text-[#F2F0E9]" />}
-                              {sub.label}
-                            </Link>
-                          )
+                    <div className={`overflow-hidden transition-all duration-500 ${expandedMobileMenu === link.key ? 'max-h-[900px] opacity-100 mt-6' : 'max-h-0 opacity-0'}`}>
+                      <div className={`pl-6 grid gap-x-5 gap-y-6 border-l border-[#F2F0E9]/10 ml-2 border-s border-e-0 rtl:mr-2 rtl:ml-0 rtl:border-r rtl:border-l-0 rtl:pr-6 rtl:pl-0 ${
+                        groupSubLinks(link.subLinks).length > 1 ? 'grid-cols-2' : 'grid-cols-1'
+                      }`}>
+                        {groupSubLinks(link.subLinks).map((group, gi) => (
+                          <div key={gi}>
+                            {group.header && (
+                              <span className={`${navMicro} text-[#CCFF00]/70 block mb-2.5`}>
+                                {group.header}
+                              </span>
+                            )}
+                            <div className="flex flex-col gap-2.5">
+                              {group.items.map((sub) => (
+                                <Link
+                                  key={sub.href}
+                                  href={sub.href!}
+                                  className={`${isFa ? 'font-vazir text-[15px]' : 'font-serif text-base'} text-[#F2F0E9] hover:text-[#CCFF00] transition-colors flex items-center gap-2`}
+                                >
+                                  {isFa && flagFor(sub.href!) && <Flag code={flagFor(sub.href!)!} className="h-3 w-auto shrink-0 text-[#F2F0E9]" />}
+                                  {sub.label}
+                                </Link>
+                              ))}
+                            </div>
+                          </div>
                         ))}
                       </div>
                     </div>
