@@ -23,6 +23,8 @@ const C = {
   eeBlue: '#0072CE',
   trRed: '#E30A17',
   caRed: '#D52B1E',
+  auBlue: '#012169',
+  auRed: '#E4002B',
   eeBlack: '#000000',
   white: '#FFFFFF',
 };
@@ -86,6 +88,45 @@ function Shapes({ code }: { code: FlagCode }) {
     // path carries the pale field and the leaf as one subpath, so the default
     // nonzero fill rule punches the leaf out and the red beneath shows
     // through — which is why the red rect underneath must be full-bleed.
+    // Official artwork (Wikimedia Commons, public domain), authored at
+    // 10080x5040. Nothing here is redrawn: the Union Jack's offset saltire
+    // needs those two clip paths to come out right, the Commonwealth Star has
+    // seven points, and the Southern Cross is four seven-pointed stars plus a
+    // five-pointed Epsilon. Every one of those is a thing you get subtly
+    // wrong by eye.
+    //
+    // The ids are namespaced `au-` rather than made unique per instance:
+    // Flag renders in both server and client components, so useId is not
+    // available, and two Australian flags on one page would resolve their
+    // clip-path references to identical definitions anyway.
+    case 'au':
+      return (
+        <>
+          <defs>
+            <clipPath id="au-c1">
+              <path d="M0,0H6V3H0z" />
+            </clipPath>
+            <clipPath id="au-c2">
+              <path d="M0,0V1.5H6V3H6zM6,0H3V3H0V3z" />
+            </clipPath>
+          </defs>
+          <g transform="scale(840)">
+            <rect width={12} height={6} fill={C.auBlue} />
+            <path d="M0,0 6,3M6,0 0,3" stroke={C.white} strokeWidth={0.6} clipPath="url(#au-c1)" />
+            <path d="M0,0 6,3M6,0 0,3" stroke={C.auRed} strokeWidth={0.4} clipPath="url(#au-c2)" />
+            <path d="M3,0V3M0,1.5H6" stroke={C.white} />
+            <path d="M3,0V3M0,1.5H6" stroke={C.auRed} strokeWidth={0.6} />
+          </g>
+          <g fill={C.white}>
+            <path d="M0,-360 69.421398,-144.155019 281.459334,-224.456329 155.988466,-35.603349 350.974048,80.107536 125.093037,99.758368 156.198146,324.348792 0,160 -156.198146,324.348792 -125.093037,99.758368 -350.974048,80.107536 -155.988466,-35.603349 -281.459334,-224.456329 -69.421398,-144.155019z" transform="translate(2520 3780) scale(2.1)" />
+            <path d="M0,-360 69.421398,-144.155019 281.459334,-224.456329 155.988466,-35.603349 350.974048,80.107536 125.093037,99.758368 156.198146,324.348792 0,160 -156.198146,324.348792 -125.093037,99.758368 -350.974048,80.107536 -155.988466,-35.603349 -281.459334,-224.456329 -69.421398,-144.155019z" transform="translate(7560 4200)" />
+            <path d="M0,-360 69.421398,-144.155019 281.459334,-224.456329 155.988466,-35.603349 350.974048,80.107536 125.093037,99.758368 156.198146,324.348792 0,160 -156.198146,324.348792 -125.093037,99.758368 -350.974048,80.107536 -155.988466,-35.603349 -281.459334,-224.456329 -69.421398,-144.155019z" transform="translate(6300 2205)" />
+            <path d="M0,-360 69.421398,-144.155019 281.459334,-224.456329 155.988466,-35.603349 350.974048,80.107536 125.093037,99.758368 156.198146,324.348792 0,160 -156.198146,324.348792 -125.093037,99.758368 -350.974048,80.107536 -155.988466,-35.603349 -281.459334,-224.456329 -69.421398,-144.155019z" transform="translate(7560 840)" />
+            <path d="M0,-360 69.421398,-144.155019 281.459334,-224.456329 155.988466,-35.603349 350.974048,80.107536 125.093037,99.758368 156.198146,324.348792 0,160 -156.198146,324.348792 -125.093037,99.758368 -350.974048,80.107536 -155.988466,-35.603349 -281.459334,-224.456329 -69.421398,-144.155019z" transform="translate(8680 1869)" />
+            <path d="M0,-210 54.859957,-75.508253 199.721868,-64.893569 88.765275,28.841586 123.434903,169.893569 0,93.333333 -123.434903,169.893569 -88.765275,28.841586 -199.721868,-64.893569 -54.859957,-75.508253z" transform="translate(8064 2730)" />
+          </g>
+        </>
+      );
     case 'ca':
       return (
         <>
@@ -103,7 +144,13 @@ export default function Flag({ code, className }: { code: FlagCode; className?: 
   // Canada's official artwork is authored at 9600x4800; the others are drawn
   // directly in their ratio units.
   const { w, h } =
-    code === 'ca' ? { w: 9600, h: 4800 } : code === 'tr' ? { w: 90000, h: 60000 } : FLAG_RATIO[code];
+    code === 'ca'
+      ? { w: 9600, h: 4800 }
+      : code === 'tr'
+        ? { w: 90000, h: 60000 }
+        : code === 'au'
+          ? { w: 10080, h: 5040 }
+          : FLAG_RATIO[code];
   const name = FLAG_NAME[code];
   return (
     <svg

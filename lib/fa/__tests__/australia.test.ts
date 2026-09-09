@@ -77,8 +77,8 @@ describe('/fa/australia', () => {
     expect(RULES.map((r) => r.href)).not.toContain('/australia');
   });
 
-  it('carries no flag', () => {
-    expect(flagFor('/australia')).toBeNull();
+  it('carries the flag, from the official artwork', () => {
+    expect(flagFor('/australia')).toBe('au');
   });
 
   it('sends the reader on to routes inside the Persian site', () => {

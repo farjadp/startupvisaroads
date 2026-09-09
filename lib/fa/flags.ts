@@ -23,9 +23,15 @@
 // the hexagram we could find is somebody's reconstruction rather than the
 // published geometry. A national symbol — this one especially — drawn nearly
 // right is worse than none, so /fa/israel carries no flag.
+//
+// Australia IS here, and only because the official artwork could be had: the
+// Union Jack canton, the seven-pointed Commonwealth Star and the Southern
+// Cross are none of them geometry to attempt by eye. It is the Wikimedia
+// Commons public-domain file, inlined unchanged apart from namespacing its
+// ids.
 // ============================================================================
 
-export type FlagCode = 'dk' | 'fi' | 'nl' | 'ee' | 'tr' | 'ca';
+export type FlagCode = 'dk' | 'fi' | 'nl' | 'ee' | 'tr' | 'ca' | 'au';
 
 const BY_PATH: Record<string, FlagCode> = {
   '/europe/denmark': 'dk',
@@ -33,6 +39,7 @@ const BY_PATH: Record<string, FlagCode> = {
   '/europe/netherlands': 'nl',
   '/europe/estonia': 'ee',
   '/turkey-tech-visa': 'tr',
+  '/australia': 'au',
   '/pnp': 'ca',
   '/pnp/new-brunswick': 'ca',
   '/pnp/nova-scotia': 'ca',
@@ -50,6 +57,7 @@ export const FLAG_NAME: Record<FlagCode, string> = {
   nl: 'هلند',
   ee: 'استونی',
   tr: 'ترکیه',
+  au: 'استرالیا',
   ca: 'کانادا',
 };
 
@@ -63,5 +71,6 @@ export const FLAG_RATIO: Record<FlagCode, { w: number; h: number }> = {
   nl: { w: 3, h: 2 },
   ee: { w: 11, h: 7 },
   tr: { w: 3, h: 2 }, // Türk Bayrağı Kanunu
+  au: { w: 2, h: 1 }, // Flags Act 1953
   ca: { w: 2, h: 1 },
 };

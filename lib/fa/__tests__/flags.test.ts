@@ -26,6 +26,22 @@ describe('flagFor', () => {
     expect(flagFor('/usa-eb2-niw')).toBeNull();
   });
 
+  // Australia earns one because the official artwork was available. The
+  // Union Jack canton, the seven-pointed Commonwealth Star and the Southern
+  // Cross are none of them drawable by eye, so the alternative was nothing.
+  it('flags Australia at the 2:1 of the Flags Act', () => {
+    expect(flagFor('/australia')).toBe('au');
+    expect(FLAG_RATIO.au).toEqual({ w: 2, h: 1 });
+    expect(FLAG_NAME.au).toBe('استرالیا');
+  });
+
+  // Israel is the case where the artwork could NOT be had: the legislated
+  // spec fixes the field and the two bands but not the Star of David between
+  // them. Nearly right is worse than absent for a symbol like that one.
+  it('leaves the Israel guide unflagged, deliberately', () => {
+    expect(flagFor('/israel')).toBeNull();
+  });
+
   it('says nothing for a path that is not a country guide', () => {
     expect(flagFor('/mentorship')).toBeNull();
     expect(flagFor('/faq')).toBeNull();
