@@ -112,7 +112,11 @@ export const RULES: Rule[] = [
     key: 'turkey',
     name: 'تک‌ویزای ترکیه',
     href: '/turkey-tech-visa',
-    founders: { min: 1 },
+    // The cap is DERIVED, not invented: if every foreign partner must hold at
+    // least 20% of the shares, at most five of them can hold any. The guide's
+    // "teams of three" is practice; five is what the rule actually permits,
+    // and this table is about rules.
+    founders: { min: 1, max: 5 },
     // Contributed share capital per foreign partner under the general Turkish
     // work-permit rules, not a programme-specific threshold — which is exactly
     // why founders meet it late. Waived when the partner's capital share is
@@ -121,9 +125,13 @@ export const RULES: Rule[] = [
     unscored: [
       'تأیید کمیته‌ی داوران تکنوپارک',
       'حداقل ۲۰ درصد سهم برای هر شریک خارجی',
+      // Deliberately named rather than silently absent. Türkiye is the one
+      // route here with no published product-stage bar, and saying nothing
+      // let the calculator imply an idea-stage founder clears everything.
+      'مرحله‌ی محصول: آستانه‌ی اعلام‌شده‌ای ندارد و کمیته آن را قضاوت می‌کند. ایده‌ی صرف رد می‌شود، اما برخلاف استونی، MVP هم شرط رسمی نیست',
       'قاعده‌ی پنج کارمند ترک به ازای هر خارجی از ماه هفتم — معافیت کامل تأیید نشده است',
     ],
-    updated: '2026-09-08',
+    updated: '2026-09-09',
     source: 'https://turkiyetechvisa.gov.tr/',
   },
   {
