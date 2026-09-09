@@ -278,12 +278,21 @@ export default function Header() {
                   </Link>
                 )}
 
-                {/* Dropdown Menu (Desktop) */}
+                {/* Dropdown Menu (Desktop).
+                    A wide panel cannot be centred on its trigger: the trigger
+                    sits near the edge of the bar, so a centred panel is capped
+                    at twice its distance from that edge — about 680px at 1024.
+                    Wide menus anchor to the trigger and grow inward instead;
+                    narrow ones stay centred. */}
                 {link.subLinks && (
-                  <div className="absolute top-full rtl:right-1/2 rtl:translate-x-1/2 ltr:left-1/2 ltr:-translate-x-1/2 pt-8 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform translate-y-2 group-hover:translate-y-0 text-start">
+                  <div className={`absolute top-full pt-8 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform translate-y-2 group-hover:translate-y-0 text-start ${
+                    groupSubLinks(link.subLinks).length > 1
+                      ? 'rtl:right-0 ltr:left-0'
+                      : 'rtl:right-1/2 rtl:translate-x-1/2 ltr:left-1/2 ltr:-translate-x-1/2'
+                  }`}>
                     <div className={`bg-[#1a1a1a] border-t-2 border-[#CCFF00] p-7 shadow-[0_20px_50px_rgba(0,0,0,0.5)] relative max-h-[80vh] overflow-y-auto ${
                       groupSubLinks(link.subLinks).length > 1
-                        ? 'w-[min(92vw,560px)] lg:w-[min(92vw,800px)]'
+                        ? 'w-[min(92vw,600px)] 2xl:w-[min(92vw,940px)]'
                         : 'w-max min-w-[240px] max-w-[92vw]'
                     }`}>
                       {/* Columns, not one long list. Two below lg, three above.
@@ -292,8 +301,8 @@ export default function Header() {
                           shrink-to-fit absolutely positioned box those tracks
                           resolve to 0 and the panel collapses. 92vw keeps it
                           on screen at any width. */}
-                      <div className={`grid gap-x-9 gap-y-7 ${
-                        groupSubLinks(link.subLinks).length > 1 ? 'grid-cols-2 lg:grid-cols-3' : 'grid-cols-1'
+                      <div className={`grid gap-x-7 gap-y-7 ${
+                        groupSubLinks(link.subLinks).length > 1 ? 'grid-cols-2 2xl:grid-cols-4' : 'grid-cols-1'
                       }`}>
                         {groupSubLinks(link.subLinks).map((group, gi) => (
                           <div key={gi} className="min-w-[150px]">
