@@ -71,6 +71,14 @@ const SLOTS: Record<string, string> = {
   turkey: 'Istanbul Bosphorus city Turkey',
   'turkey-2': 'Istanbul Levent business district skyscrapers',
   'turkey-3': 'Istanbul Turkey ferry Bosphorus commuters',
+
+  // Israel. The guide is about the Innovation Visa, the twelve landing pads
+  // and the Israel Innovation Authority — a working-city subject, not a
+  // religious or a conflict one. Tel Aviv is where every approved landing pad
+  // that has a public address actually sits, so all three slots stay there.
+  israel: 'Tel Aviv Israel skyline beach',
+  'israel-2': 'Tel Aviv business district towers Israel',
+  'israel-3': 'Tel Aviv Israel street cafe',
 };
 
 type Photo = {

@@ -133,5 +133,32 @@
     "photographerUrl": "https://www.pexels.com/@leyla21m",
     "description": "Crowd gathering on a dock, boarding a ferry in Istanbul, Turkey.",
     "fetched": "2026-09-08"
+  },
+  "israel": {
+    "source": "Pexels",
+    "id": 18837990,
+    "page": "https://www.pexels.com/photo/aviv-beach-with-the-view-of-skyscrapers-tel-aviv-israel-18837990/",
+    "photographer": "Виктор Соломоник",
+    "photographerUrl": "https://www.pexels.com/@solomonikvik",
+    "description": "A scenic view of Tel Aviv's modern skyline and rocky coastline with a bird flying overhead.",
+    "fetched": "2026-09-09"
+  },
+  "israel-2": {
+    "source": "Pexels",
+    "id": 26971954,
+    "page": "https://www.pexels.com/photo/azrieli-center-in-tel-aviv-26971954/",
+    "photographer": "davebusiness GT13",
+    "photographerUrl": "https://www.pexels.com/@davebusiness-gt13-542772306",
+    "description": "Stunning low angle view of Azrieli Center skyscrapers against a clear blue sky in Tel Aviv.",
+    "fetched": "2026-09-09"
+  },
+  "israel-3": {
+    "source": "Pexels",
+    "id": 18950298,
+    "page": "https://www.pexels.com/photo/people-in-outside-cafe-in-tel-aviv-israel-18950298/",
+    "photographer": "Taty  Gkiozos",
+    "photographerUrl": "https://www.pexels.com/@taty-gkiozos-696965791",
+    "description": "Enjoying a pleasant meal at Café Noir on the vibrant streets of Tel Aviv.",
+    "fetched": "2026-09-09"
   }
 }
