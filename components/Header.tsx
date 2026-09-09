@@ -143,9 +143,9 @@ export default function Header() {
         { href: '/canada-startup-visa', label: 'ویزای استارتاپ — وضعیت فعلی' },
 
         { header: 'مقصدهای دیگر' },
-        { href: '/turkey-tech-visa', label: 'ترکیه — تک‌ویزا' },
-        { href: '/australia', label: 'استرالیا — ویزای نوآوری ملی' },
-        { href: '/usa-eb2-niw', label: 'آمریکا — EB-2 NIW' },
+        { href: '/turkey-tech-visa', label: 'تک‌ویزای ترکیه' },
+        { href: '/australia', label: 'ویزای نوآوری ملی استرالیا' },
+        { href: '/usa-eb2-niw', label: 'EB-2 NIW آمریکا' },
         { href: '/israel', label: 'اسرائیل — چرا باز نیست' },
 
         { header: 'از کجا شروع کنم' },
@@ -192,6 +192,7 @@ export default function Header() {
         { header: t('global') },
         { href: '/country/uae', label: t('uae') },
         { href: '/country/australia', label: t('australia') },
+        { href: '/country/turkey', label: t('turkey') },
         { href: '/country/israel', label: t('israel') },
         { href: '/country', label: t('view_all') },
       ]
@@ -321,7 +322,7 @@ export default function Header() {
                                   {/* The menu is the densest list of routes on
                                       the site, so the flag does the work the
                                       label needs three words for. */}
-                                  {isFa && flagFor(sub.href!) && <Flag code={flagFor(sub.href!)!} className="h-3 w-auto shrink-0 mt-[0.35em] text-[#F2F0E9]" />}
+                                  {isFa && flagFor(sub.href!) && <Flag code={flagFor(sub.href!)!} className="h-4 w-auto shrink-0 mt-[0.2em] text-[#F2F0E9]" />}
                                   {sub.label}
                                 </Link>
                               ))}
@@ -452,7 +453,7 @@ export default function Header() {
                                   href={sub.href!}
                                   className={`${isFa ? 'font-vazir text-[15px]' : 'font-serif text-base'} text-[#F2F0E9] hover:text-[#CCFF00] transition-colors flex items-center gap-2`}
                                 >
-                                  {isFa && flagFor(sub.href!) && <Flag code={flagFor(sub.href!)!} className="h-3 w-auto shrink-0 text-[#F2F0E9]" />}
+                                  {isFa && flagFor(sub.href!) && <Flag code={flagFor(sub.href!)!} className="h-4 w-auto shrink-0 text-[#F2F0E9]" />}
                                   {sub.label}
                                 </Link>
                               ))}
