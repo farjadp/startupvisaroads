@@ -26,7 +26,7 @@ import { originality, tooClose } from './originality';
 import { AIO_RULES, FACT_RULES, WRITER_MODEL, chatJson, chatText, expand, houseStyle, humanise, type GenerateResult } from './pipeline';
 import { generateBrandImage, imagesBlocked } from './images';
 import { harvest, markLedger, type SourceArticle } from './sources';
-import { decidePlannedPublication, enforceLinks, wordCountHtml } from './text';
+import { decidePlannedPublication, enforceLinks, sameSubject, wordCountHtml } from './text';
 import { draftMeta, placeVisuals, wordTarget } from './writer';
 import type { Brief } from './planner';
 
@@ -222,6 +222,20 @@ export async function runFromSources(n: number, locale: Locale, opts: RunOpts = 
         continue;
       }
 
+      // Before any drafting, because a repeat costs three model passes and an
+      // image before anyone sees it. The English lane has no human backlog to
+      // deduplicate against — its topics come from whatever the feeds carried
+      // this week, and feeds repeat themselves for days.
+      const seen = [...inv.recentTitles, ...result.created.map((c) => c.title)];
+      const echo = seen.find((t) => sameSubject(t, brief.workingTitle));
+      if (echo) {
+        const reason = `same subject as "${echo}"`;
+        if (!opts.dryRun) await markLedger(article.ledgerId, 'skipped', reason);
+        result.skipped.push({ title: brief.workingTitle, reason });
+        console.warn(`autopilot/source-writer: SKIPPED as a repeat of "${echo}" — "${brief.workingTitle}"`);
+        continue;
+      }
+
       const { min, target } = wordTarget(brief.depth);
       let body = await draftFromFacts(brief, article, inv);
       const stages = [`draft ${wordCountHtml(body)}`];
@@ -274,6 +288,17 @@ export async function runFromSources(n: number, locale: Locale, opts: RunOpts = 
       if (opts.dryRun) {
         result.created.push({ id: 'dry-run', slug: d.slugEn || 'dry-run', title: d.title });
         console.log(`autopilot/source-writer (dry): "${d.title}" — ${wordCountHtml(body)} words, overlap ${o.shared}, links ${linked.links.join(', ') || 'none'}`);
+        continue;
+      }
+
+      // The writer renames the piece, so the title that ships is not the one
+      // checked above.
+      const repeat = seen.find((t) => sameSubject(t, d.title));
+      if (repeat) {
+        const reason = `already published as "${repeat}"`;
+        await markLedger(article.ledgerId, 'skipped', reason);
+        result.skipped.push({ title: d.title, reason });
+        console.warn(`autopilot/source-writer: SKIPPED as a repeat of "${repeat}" — "${d.title}"`);
         continue;
       }
 

@@ -187,7 +187,9 @@ async function writeOne(brief: Brief, inv: Inventory, opts: RunOpts, result: Gen
     // written, but it did for three days, and nothing downstream noticed that
     // it was publishing the same article again under a slightly different
     // title and a `-1` slug. A repeat is worth losing an article over.
-    const repeat = inv.recentTitles.find((t) => sameSubject(t, d.title));
+    // Including what this run has already written: the inventory is read once
+    // at the start, so a three-article run could otherwise repeat itself.
+    const repeat = [...inv.recentTitles, ...result.created.map((c) => c.title)].find((t) => sameSubject(t, d.title));
     if (repeat) {
       result.skipped.push({ title: d.title, reason: `already published as "${repeat}"` });
       console.warn(`autopilot/writer: SKIPPED as a repeat of "${repeat}" — "${d.title}"`);

@@ -46,3 +46,22 @@ describe('pickTopics', () => {
     expect(pickTopics(1, [])[0]?.slug).toBe(FA_TOPICS[0].slug);
   });
 });
+
+// The English lane has no human backlog to deduplicate against: its topics are
+// whatever the feeds carried, and feeds repeat a story for days. These are two
+// real titles it published a day apart.
+describe('the English lane repeats too', () => {
+  it('recognises two pieces about the same programme change', () => {
+    expect(sameSubject(
+      'Manage your Canada study permit and PGWP for Fall 2026 success',
+      'Study permit and PGWP eligibility for the Fall 2026 intake in Canada',
+    )).toBe(true);
+  });
+
+  it('leaves a different subject alone', () => {
+    expect(sameSubject(
+      'Manage your Canada study permit and PGWP for Fall 2026 success',
+      'What the Netherlands asks of a startup facilitator agreement',
+    )).toBe(false);
+  });
+});
