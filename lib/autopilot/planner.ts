@@ -8,6 +8,7 @@
 import type { Locale } from '@/lib/seo';
 import { BRAND_FACTS, linkBlock, type Inventory } from './inventory';
 import { pickTopics, topicToBrief } from '@/content/fa/topics';
+import { keywordsForToday } from '@/content/keywords';
 import { chatJson, WRITER_MODEL } from './pipeline';
 
 export type Brief = {
@@ -101,6 +102,14 @@ async function planBriefsWithModel(n: number, inv: Inventory): Promise<Brief[]> 
   const wanted = [...counts.entries()].sort((a, b) => a[1] - b[1]).map(([name]) => name).slice(0, Math.max(n, 3));
 
   const lang = inv.locale === 'fa' ? 'Persian (Farsi)' : 'English';
+  // Three candidates per brief, so the model has room to choose one it can
+  // write a real article to without being handed the same head of the list
+  // every morning.
+  const keywords = keywordsForToday(inv.locale, inv.usedKeywords, n * 3);
+  const keywordRule = keywords.length
+    ? `TARGET KEYWORDS — this is the queue, not a suggestion. Choose ${n} of these, one per brief, and set primaryKeyword to the chosen keyword EXACTLY as written here. Build the brief around what someone searching it actually wants; if a keyword is too thin for an article on its own, widen it into the decision behind it rather than swapping it for a different subject. Never reuse one across two briefs.
+${keywords.map((k) => `- ${k}`).join('\n')}`
+    : 'The keyword queue is empty, so choose the keyword yourself: one specific search a founder or skilled professional would actually type.';
   const { briefs } = await chatJson<{ briefs: RawBrief[] }>(
     `You are the content editor of Startup Visa Roads (visaroads.com). Plan ${n} article briefs for today, to be written in ${lang}.
 
@@ -108,6 +117,8 @@ BRAND FACTS: ${BRAND_FACTS}
 
 Editorial line: useful, specific, grounded in a decision a founder or skilled professional actually faces — which programme, which province, which document, in what order, what gets cases refused. Never generic listicles ("10 tips…"). Each brief answers one real question and links to real pages on the site.
 Prefer these categories today (least recently covered): ${wanted.join(', ')}.
+
+${keywordRule}
 Today: ${new Date().toISOString().slice(0, 10)}. Calendar hooks: ${seasonalHooks().join('; ')}.
 
 INVENTORY of linkable paths (mustLink only from here; at least two per brief, one of them a programme page):

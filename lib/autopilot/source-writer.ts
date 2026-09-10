@@ -317,7 +317,7 @@ export async function runFromSources(n: number, locale: Locale, opts: RunOpts = 
           summaryEn: d.summaryEn,
           faq: d.faq,
           aiModel: WRITER_MODEL,
-          topicSeed: `${article.sourceName}: ${article.title} — ${brief.angle}`,
+          topicSeed: `${brief.primaryKeyword ? `[kw:${brief.primaryKeyword}] ` : ''}${article.sourceName}: ${article.title} — ${brief.angle}`,
           internalLinks: linked.links,
         },
         // Same gate as the planned writer: a piece whose only sourcing is a

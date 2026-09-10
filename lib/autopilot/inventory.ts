@@ -24,6 +24,8 @@ export type Inventory = {
   recentTitles: string[];
   /** Backlog topic ids already written, read back off the articles themselves. */
   recentTopicSlugs: string[];
+  /** Keywords already spent, so the planner is never handed one twice. */
+  usedKeywords: string[];
   /** Category names of the recent articles, one entry per article (for rotation). */
   recentCategories: string[];
   categories: { name: string; slug: string }[];
@@ -113,7 +115,10 @@ export async function buildInventory(locale: Locale): Promise<Inventory> {
       where: { status: 'PUBLISHED', locale },
       select: { slug: true, title: true, topicSeed: true, category: { select: { name: true } } },
       orderBy: { createdAt: 'desc' },
-      take: 60,
+      // Titles and categories only need the recent past; a spent keyword is
+      // spent for good, so this reaches back further than the 60 the rotation
+      // used to need.
+      take: 400,
     }),
   ]);
 
@@ -126,11 +131,14 @@ export async function buildInventory(locale: Locale): Promise<Inventory> {
   return {
     locale,
     targets,
-    recentTitles: recent.map((a) => a.title),
+    recentTitles: recent.slice(0, 60).map((a) => a.title),
     recentTopicSlugs: recent
-      .map((a) => /^\[topic:([a-z0-9-]+)\]/.exec(a.topicSeed ?? '')?.[1])
+      .map((a) => /\[topic:([a-z0-9-]+)\]/.exec(a.topicSeed ?? '')?.[1])
       .filter((s): s is string => Boolean(s)),
-    recentCategories: recent.map((a) => a.category?.name ?? ''),
+    usedKeywords: recent
+      .map((a) => /\[kw:([^\]]+)\]/.exec(a.topicSeed ?? '')?.[1])
+      .filter((s): s is string => Boolean(s)),
+    recentCategories: recent.slice(0, 60).map((a) => a.category?.name ?? ''),
     categories: cats,
   };
 }

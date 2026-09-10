@@ -11,6 +11,7 @@ const inv: Inventory = {
   ],
   recentTitles: [],
   recentTopicSlugs: [],
+  usedKeywords: [],
   recentCategories: [],
   categories: [],
 };

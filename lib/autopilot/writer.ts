@@ -223,7 +223,7 @@ async function writeOne(brief: Brief, inv: Inventory, opts: RunOpts, result: Gen
         // The id first, in a shape a later run can parse. The prose after it
         // is for a human reading the row; the tag is what stops the lane
         // rewriting the same backlog topic every morning.
-        topicSeed: `${brief.topicSlug ? `[topic:${brief.topicSlug}] ` : ''}${brief.whyNow} — ${brief.angle}`,
+        topicSeed: `${brief.topicSlug ? `[topic:${brief.topicSlug}] ` : ''}${brief.primaryKeyword ? `[kw:${brief.primaryKeyword}] ` : ''}${brief.whyNow} — ${brief.angle}`,
         internalLinks: linked.links,
       },
       { locale: inv.locale, status: publication.status },

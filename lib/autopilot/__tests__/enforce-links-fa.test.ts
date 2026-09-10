@@ -8,6 +8,7 @@ const faInv: Inventory = {
   targets: FA_SITE_PAGES.map((p) => ({ path: p.path, label: p.label, kind: p.kind })),
   recentTitles: [],
   recentTopicSlugs: [],
+  usedKeywords: [],
   recentCategories: [],
   categories: [],
 };
