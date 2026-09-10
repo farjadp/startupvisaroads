@@ -150,6 +150,9 @@ export async function placeVisuals(html: string, visuals: Visual[], dryRun: bool
 
 type RunOpts = { publish?: boolean; dryRun?: boolean };
 
+/** How many extra briefs to plan, so a refused one does not empty the day. */
+const SPARES = 2;
+
 async function writeOne(brief: Brief, inv: Inventory, opts: RunOpts, result: GenerateResult): Promise<void> {
   try {
     const { min, target } = wordTarget(brief.depth);
@@ -244,14 +247,26 @@ export async function runPlanned(n: number, locale: Locale, opts: RunOpts = {}):
   let briefs: Brief[];
   try {
     inv = await buildInventory(locale);
-    briefs = await planBriefs(n, inv);
+    // Spares, because a brief can be refused after it is written: the title
+    // the writer lands on may turn out to be a subject the site already
+    // covers, and a day that plans exactly one article then publishes nothing
+    // is how the Persian lane went quiet while looking healthy.
+    briefs = await planBriefs(n + SPARES, inv);
   } catch (e) {
     result.errors.push({ error: `plan: ${e instanceof Error ? e.message : String(e)}` });
     await finish(run.id, result, opts);
     return result;
   }
 
-  await Promise.all(briefs.map((b) => writeOne(b, inv, opts, result)));
+  // The day's quota concurrently, as before — a batch has to fit in one
+  // invocation. The spares come after, one at a time and only while the quota
+  // is short, so they cost nothing on a normal day.
+  await Promise.all(briefs.slice(0, n).map((b) => writeOne(b, inv, opts, result)));
+  for (const brief of briefs.slice(n)) {
+    if (result.created.length >= n) break;
+    console.log(`autopilot/writer: ${result.created.length}/${n} written — trying the spare "${brief.workingTitle}"`);
+    await writeOne(brief, inv, opts, result);
+  }
   await finish(run.id, result, opts);
   return result;
 }
