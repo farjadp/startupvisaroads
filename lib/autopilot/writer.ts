@@ -15,7 +15,7 @@ import { BRAND_FACTS, buildInventory, linkBlock, type Inventory } from './invent
 import { AIO_RULES, FACT_RULES, WRITER_MODEL, chatJson, chatText, expand, houseStyle, humanise, type GenerateResult } from './pipeline';
 import { planBriefs, type Brief } from './planner';
 import { officialSourcePromptForBrief } from './official-sources';
-import { decidePlannedPublication, enforceLinks, wordCountHtml } from './text';
+import { decidePlannedPublication, enforceLinks, sameSubject, wordCountHtml } from './text';
 
 type Visual =
   | { type: 'PHOTO'; prompt: string; caption: string }
@@ -183,6 +183,17 @@ async function writeOne(brief: Brief, inv: Inventory, opts: RunOpts, result: Gen
       body = `<script type="application/json" id="quick-facts-data">${JSON.stringify(d.quickFacts)}</script>\n${body}`;
     }
 
+    // The last net. The planner should never hand out a topic already
+    // written, but it did for three days, and nothing downstream noticed that
+    // it was publishing the same article again under a slightly different
+    // title and a `-1` slug. A repeat is worth losing an article over.
+    const repeat = inv.recentTitles.find((t) => sameSubject(t, d.title));
+    if (repeat) {
+      result.skipped.push({ title: d.title, reason: `already published as "${repeat}"` });
+      console.warn(`autopilot/writer: SKIPPED as a repeat of "${repeat}" — "${d.title}"`);
+      return;
+    }
+
     const coverImage = opts.dryRun ? null : await generateBrandImage(d.coverImagePrompt, 'cover');
 
     if (opts.dryRun) {
@@ -204,7 +215,10 @@ async function writeOne(brief: Brief, inv: Inventory, opts: RunOpts, result: Gen
         summaryEn: d.summaryEn,
         faq: d.faq,
         aiModel: WRITER_MODEL,
-        topicSeed: `${brief.whyNow} — ${brief.angle}`,
+        // The id first, in a shape a later run can parse. The prose after it
+        // is for a human reading the row; the tag is what stops the lane
+        // rewriting the same backlog topic every morning.
+        topicSeed: `${brief.topicSlug ? `[topic:${brief.topicSlug}] ` : ''}${brief.whyNow} — ${brief.angle}`,
         internalLinks: linked.links,
       },
       { locale: inv.locale, status: publication.status },

@@ -22,6 +22,8 @@ export type Inventory = {
   locale: Locale;
   targets: LinkTarget[];
   recentTitles: string[];
+  /** Backlog topic ids already written, read back off the articles themselves. */
+  recentTopicSlugs: string[];
   /** Category names of the recent articles, one entry per article (for rotation). */
   recentCategories: string[];
   categories: { name: string; slug: string }[];
@@ -109,7 +111,7 @@ export async function buildInventory(locale: Locale): Promise<Inventory> {
     prisma.category.findMany({ select: { name: true, slug: true }, orderBy: { name: 'asc' } }),
     prisma.article.findMany({
       where: { status: 'PUBLISHED', locale },
-      select: { slug: true, title: true, category: { select: { name: true } } },
+      select: { slug: true, title: true, topicSeed: true, category: { select: { name: true } } },
       orderBy: { createdAt: 'desc' },
       take: 60,
     }),
@@ -125,6 +127,9 @@ export async function buildInventory(locale: Locale): Promise<Inventory> {
     locale,
     targets,
     recentTitles: recent.map((a) => a.title),
+    recentTopicSlugs: recent
+      .map((a) => /^\[topic:([a-z0-9-]+)\]/.exec(a.topicSeed ?? '')?.[1])
+      .filter((s): s is string => Boolean(s)),
     recentCategories: recent.map((a) => a.category?.name ?? ''),
     categories: cats,
   };

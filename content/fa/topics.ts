@@ -19,6 +19,7 @@
 // say who it is for produces prose for nobody.
 // ============================================================================
 import type { Brief } from '@/lib/autopilot/planner';
+import { sameSubject } from '@/lib/autopilot/text';
 
 export type FaTopic = Brief & {
   /** Stable id, so a topic can be tracked across runs. */
@@ -41,8 +42,8 @@ export const FA_TOPICS: FaTopic[] = [
     searchQueryEn: 'proof of funds startup visa Denmark Finland requirement',
     mustLink: ['/europe/denmark', '/europe/finland', '/mentorship'],
     imageScenes: [
-      'A closed bank passbook on a bare wooden desk beside a cold cup of tea, flat overcast daylight',
-      'An empty glass-fronted bank counter photographed from the queue side, no signage legible',
+      'An empty bank vestibule with a queue rail and a bare counter edge, flat overcast daylight',
+      'A single unmarked steel deposit box door in a plain wall, shallow depth of field',
     ],
     depth: 'deep',
     audience: 'An Iranian founder with savings inside Iran who has read the funds requirement and cannot see how to evidence it.',
@@ -79,7 +80,7 @@ export const FA_TOPICS: FaTopic[] = [
     searchQueryEn: 'immigration agency vs startup mentor difference what to check',
     mustLink: ['/mentorship', '/canada-startup-visa', '/about'],
     imageScenes: [
-      'Two plain chairs facing each other across a bare oak table by a tall window, a closed notebook between them',
+      'Two plain chairs facing each other across a bare oak table by a tall window, nothing on the table',
       'A blank contract page and an uncapped pen on a desk, nothing legible, soft side light',
     ],
     depth: 'standard',
@@ -98,7 +99,7 @@ export const FA_TOPICS: FaTopic[] = [
     searchQueryEn: 'certified translation education verification documents startup visa application',
     mustLink: ['/europe/finland', '/pnp/new-brunswick', '/faq'],
     imageScenes: [
-      'A stack of stapled paper documents squared on a desk edge, an embossing seal beside them, no text readable',
+      'A brass embossing seal on a bare counter, one worn leather satchel beside it',
       'A flat file drawer half open showing tabbed dividers, cool even light',
     ],
     depth: 'standard',
@@ -285,8 +286,8 @@ export const FA_TOPICS: FaTopic[] = [
     searchQueryEn: 'startup visa mentor what they do business plan pitch deck',
     mustLink: ['/mentorship', '/europe/denmark', '/which-path'],
     imageScenes: [
-      'A whiteboard wiped clean with faint ghost marks and a single marker on the tray',
-      'A bare oak desk with a closed laptop and one printed document squared beside it',
+      'A single dry-erase marker resting on an empty aluminium tray against a plain wall',
+      'A bare oak desk with a closed laptop and a single matte ceramic cup, cool overcast light',
     ],
     depth: 'standard',
     audience: 'A founder who has decided to get help and wants to know what the work actually is before paying for it.',
@@ -295,21 +296,23 @@ export const FA_TOPICS: FaTopic[] = [
 
 /** Strip the backlog-only fields so the writer receives a plain Brief. */
 export function topicToBrief(topic: FaTopic): Brief {
-  const { slug: _slug, audience: _audience, ...brief } = topic;
-  return brief;
+  const { slug, audience: _audience, ...brief } = topic;
+  return { ...brief, topicSlug: slug };
 }
 
 /**
  * The next `n` topics that have not been written yet.
  *
- * Matching on the working title is deliberately loose: the writer renames the
- * piece, so an exact match would never fire. A title the writer produced that
- * contains the backlog title, or the reverse, counts as covered.
+ * `writtenSlugs` is the reliable half: the writer records the topic's id on
+ * the article, so a rewritten title cannot hide it. The title comparison is
+ * the backstop, and covers the articles published before ids were recorded.
  */
-export function pickTopics(n: number, writtenTitles: string[]): FaTopic[] {
+export function pickTopics(n: number, writtenTitles: string[], writtenSlugs: string[] = []): FaTopic[] {
   const done = writtenTitles.map((t) => t.trim()).filter(Boolean);
+  const slugs = new Set(writtenSlugs.filter(Boolean));
   const covered = (t: FaTopic) =>
-    done.some((w) => w.includes(t.workingTitle) || t.workingTitle.includes(w));
+    slugs.has(t.slug) ||
+    done.some((w) => w.includes(t.workingTitle) || t.workingTitle.includes(w) || sameSubject(w, t.workingTitle));
 
   const out: FaTopic[] = [];
   let deepUsed = false;

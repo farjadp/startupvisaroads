@@ -10,6 +10,7 @@ const inv: Inventory = {
     { path: '/blog/old-post', label: 'An older post', kind: 'article' },
   ],
   recentTitles: [],
+  recentTopicSlugs: [],
   recentCategories: [],
   categories: [],
 };

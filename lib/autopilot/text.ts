@@ -122,3 +122,49 @@ export function decidePlannedPublication(
     warning: 'Publication downgraded to DRAFT: no allowlisted official citation survived link enforcement.',
   };
 }
+
+/**
+ * Words that carry no subject. Every Persian title on this site contains most
+ * of them, so leaving them in makes any two titles look alike.
+ */
+const STOPWORDS = new Set([
+  'برای', 'با', 'از', 'در', 'به', 'که', 'را', 'و', 'یا', 'این', 'آن', 'است', 'چه', 'چیست',
+  'وقتی', 'دارید', 'کنید', 'چگونه', 'راهنمای', 'عملی', 'کامل', 'باید', 'های', 'ها', 'یک',
+  'ویزای', 'استارتاپ', 'مهاجرت', 'کجا', 'دقیقا', 'دقیقاً', 'شما', 'چرا',
+  // English, for the lane that writes in it. Same reasoning: these words are
+  // in half the titles on the site and say nothing about the subject.
+  'the', 'and', 'for', 'with', 'your', 'you', 'what', 'how', 'why', 'when', 'where',
+  'guide', 'complete', 'practical', 'from', 'into', 'about', 'that', 'this', 'are',
+  'visa', 'startup', 'immigration', 'canada', 'canadas',
+]);
+
+/** Content words of a title, without the punctuation a writer adds. */
+function subjectWords(title: string): Set<string> {
+  return new Set(
+    title
+      .replace(/[«»"'’:،.؟?!()\[\]{}\-—–]/g, ' ')
+      .replace(/\u200c/g, ' ')
+      .split(/\s+/)
+      .map((w) => w.trim())
+      .filter((w) => w.length > 2 && !STOPWORDS.has(w)),
+  );
+}
+
+/**
+ * Whether two titles are about the same thing.
+ *
+ * Substring matching was the whole bug: the backlog says "اثبات تمکن مالی برای
+ * ویزای استارتاپ وقتی حساب ایرانی دارید" and the writer published "اثبات تمکن
+ * مالی ویزای استارتاپ با حساب بانکی ایرانی". Neither contains the other, so
+ * the topic never counted as written and the Persian lane published it four
+ * times in three days. Shared subject words are what actually distinguishes
+ * one topic here from another.
+ */
+export function sameSubject(a: string, b: string): boolean {
+  const x = subjectWords(a);
+  const y = subjectWords(b);
+  if (!x.size || !y.size) return false;
+  let shared = 0;
+  for (const w of x) if (y.has(w)) shared++;
+  return shared / Math.min(x.size, y.size) >= 0.6;
+}

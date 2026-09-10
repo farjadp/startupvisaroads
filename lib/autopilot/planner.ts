@@ -21,6 +21,12 @@ export type Brief = {
   mustLink: string[]; // paths from the inventory only
   imageScenes: [string, string];
   depth: 'standard' | 'deep';
+  /**
+   * The backlog topic this brief came from, when it came from one. Recorded on
+   * the article so a later run can tell what has been written without having
+   * to recognise a title the writer rewrote.
+   */
+  topicSlug?: string;
 };
 
 /** What is on a founder's or skilled worker's mind this month. */
@@ -74,7 +80,7 @@ export async function planBriefs(n: number, inv: Inventory): Promise<Brief[]> {
   // exhausted the model plans the remainder as before, so the lane never
   // stops for want of a topic.
   if (inv.locale === 'fa') {
-    const picked = pickTopics(n, inv.recentTitles).map(topicToBrief);
+    const picked = pickTopics(n, inv.recentTitles, inv.recentTopicSlugs).map(topicToBrief);
     if (picked.length >= n) {
       console.log(`autopilot/planner: ${picked.length}/${n} briefs from the Persian backlog`);
       return picked.slice(0, n);
