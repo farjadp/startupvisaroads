@@ -61,7 +61,66 @@ export function scoreChunk(parts: EvidenceItem['parts']): number {
   return WEIGHTS.cosine * parts.cosine + WEIGHTS.keyword * parts.keyword + WEIGHTS.trust * parts.trust + WEIGHTS.recency * parts.recency;
 }
 
-const intersects = (a: string[], b: string[]) => a.some((x) => b.includes(x));
+/**
+ * Topic matching, and why it is not string equality.
+ *
+ * It was. A source the admin tagged «start-up visa» never matched a brief
+ * whose keyword was "startup visa canada process", so the pinned canada.ca
+ * pages contributed nothing to an article about exactly their subject. The
+ * admin types a topic the way a person writes it; the planner writes keywords
+ * the way a searcher types them. They will never be the same string.
+ *
+ * Two strengths, because the two uses have opposite failure costs:
+ *  · RELATED (loose) pre-filters documents. Over-matching only widens recall,
+ *    and there is a fallback to the whole corpus behind it.
+ *  · CONTAINS (phrase) gates pinned digests, which go into the prompt whether
+ *    they are relevant or not. Over-matching there would put the Start-up
+ *    Visa's status into an article about Estonia.
+ */
+const compact = (s: string) => s.toLowerCase().replace(/[^\p{L}\p{N}]+/gu, '');
+
+/**
+ * Words that every route on this site shares, so a shared one proves nothing.
+ * «startup» earns its place here: without it an Estonian start-up permit and
+ * the Canadian Start-up Visa counted as the same topic. The phrase test still
+ * connects "start-up visa" to "startup visa canada process", which is the
+ * match we actually wanted.
+ */
+const GENERIC = new Set([
+  'visa', 'visas', 'immigration', 'immigrate', 'program', 'programme', 'permit', 'permits',
+  'startup', 'start', 'founder', 'founders', 'مهاجرت', 'ویزا', 'استارتاپ',
+]);
+
+function tokens(s: string): string[] {
+  return s
+    .toLowerCase()
+    .split(/[^\p{L}\p{N}]+/u)
+    .filter((t) => t.length >= 4 && !GENERIC.has(t));
+}
+
+/** Loose: one shared distinctive word, or one phrase inside the other. */
+export function topicsRelated(a: string[], b: string[]): boolean {
+  if (!a.length || !b.length) return false;
+  for (const x of a) {
+    const cx = compact(x);
+    for (const y of b) {
+      const cy = compact(y);
+      if (cx && cy && (cx.includes(cy) || cy.includes(cx))) return true;
+    }
+  }
+  const bt = new Set(b.flatMap(tokens));
+  return a.flatMap(tokens).some((t) => bt.has(t));
+}
+
+/** Phrase-strength: the topic appears inside the brief's own words. */
+export function topicMentioned(topics: string[], briefWords: string[]): boolean {
+  const haystack = compact(briefWords.join(' '));
+  if (!haystack) return false;
+  return topics.some((t) => {
+    const needle = compact(t);
+    return needle.length >= 4 && haystack.includes(needle);
+  });
+}
 const parseList = (s: string): string[] => {
   try {
     const v = JSON.parse(s);
@@ -90,7 +149,7 @@ export async function retrieveEvidence(query: string, opts: RetrieveOpts = {}): 
   // Pre-filter by topic when the brief has one; widen when that leaves too little.
   let pool = docs;
   if (topics.length) {
-    const narrowed = docs.filter((d) => d.source.pinned || intersects(topics, parseList(d.source.topics)) || intersects(topics, parseList(d.matchedTopics)));
+    const narrowed = docs.filter((d) => d.source.pinned || topicsRelated(topics, parseList(d.source.topics)) || topicsRelated(topics, parseList(d.matchedTopics)));
     if (narrowed.length >= 3) pool = narrowed;
   }
   const byDoc = new Map(pool.map((d) => [d.id, d]));
@@ -103,7 +162,9 @@ export async function retrieveEvidence(query: string, opts: RetrieveOpts = {}): 
     select: { id: true, title: true, url: true, topics: true, documents: { where: { status: 'ready', digest: { not: null } }, select: { title: true, digest: true }, take: 1, orderBy: { fetchedAt: 'desc' } } },
   });
   const pinnedOut = pinned
-    .filter((s) => !topics.length || intersects(topics, parseList(s.topics)))
+    // A pinned digest joins every prompt on its topics, so it needs the
+    // phrase test, not the loose one.
+    .filter((s) => !topics.length || topicMentioned(parseList(s.topics), topics))
     .map((s) => ({ sourceId: s.id, title: s.title ?? s.documents[0]?.title ?? 'Pinned source', url: s.url, digest: s.documents[0]?.digest ?? '' }))
     .filter((p) => p.digest);
 
@@ -177,4 +238,28 @@ export function render(items: EvidenceItem[], pinned: EvidencePack['pinned']): s
     out.push('EVIDENCE: none on file for this subject. Do not invent figures; write only what BRAND_FACTS and the site pages support.');
   }
   return out.join('\n\n');
+}
+
+/**
+ * Every pinned source's digest, with no topic filter.
+ *
+ * The writer gets pinned digests only for its own topic. The PLANNER needs
+ * them all: it was picking "step-by-step guide to the Start-up Visa process"
+ * for a programme IRCC had paused, because nothing upstream of the brief knew
+ * the programme's state. A digest is a few hundred tokens; a handful of them
+ * in the planning prompt is the cheapest correction available.
+ */
+export async function pinnedDigests(limit = 8): Promise<{ title: string; url: string | null; digest: string }[]> {
+  const rows = await prisma.source.findMany({
+    where: { pinned: true, enabled: true, documents: { some: { status: 'ready', digest: { not: null } } } },
+    select: {
+      title: true,
+      url: true,
+      documents: { where: { status: 'ready', digest: { not: null } }, select: { title: true, digest: true }, take: 1, orderBy: { fetchedAt: 'desc' } },
+    },
+    take: limit,
+  });
+  return rows
+    .map((r) => ({ title: r.title ?? r.documents[0]?.title ?? 'Pinned source', url: r.url, digest: r.documents[0]?.digest ?? '' }))
+    .filter((r) => r.digest);
 }

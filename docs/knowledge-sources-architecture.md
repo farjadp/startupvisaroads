@@ -1,16 +1,33 @@
 # Knowledge Sources — architecture
 
-Status: phase 1 BUILT (12 Sep 2026); phases 2–4 pending. Owner: Farjad.
+Status: phases 1 and 2 BUILT (12 Sep 2026); phases 3 and 4 pending. Owner: Farjad.
 
-Phase 1 as shipped: `lib/knowledge/*` (chunk, embed, adapters/html, adapters/pdf,
-digest, sources, ingest, retrieve, admin), `/api/admin/sources*`,
-`/api/cron/sources`, `/admin/sources` and `/admin/sources/[id]`. Verified
-end to end on a pasted text, a canada.ca page and an uploaded 15-page PDF:
-chunks carry page/heading locators, the digest is a fact list, retrieval
-ranks an off-topic document out. One deviation from the plan below: the
-`SourceArticle` backfill moves to phase 3, where the source-writer lane
-starts reading `SourceDocument` — backfilling earlier would mean two tables
-holding the same ledger with only one being read.
+Phase 1: `lib/knowledge/*` (chunk, embed, adapters/html, adapters/pdf, digest,
+sources, ingest, retrieve, admin, storage), `/api/admin/sources*`,
+`/api/cron/sources`, `/admin/sources` and `/admin/sources/[id]`.
+
+Phase 2: `lib/autopilot/evidence.ts` — the evidence pack in both writing
+lanes, `[Sn]` citations rendered into one Sources block, and the figure gate.
+`lib/knowledge/retrieve.ts` also grew `pinnedDigests()`, which the planner
+reads before it chooses an angle.
+
+Two things phase 2 changed that were not in the plan below, both because the
+first live dry run exposed them:
+
+1. **Topic matching was string equality.** A source the admin tagged
+   «start-up visa» never matched a brief whose keyword was "startup visa
+   canada process", so pinned canada.ca pages contributed nothing to an
+   article about exactly their subject. Matching is now a phrase test for
+   pinned digests and a distinctive-token test for the document pre-filter.
+2. **The planner had no idea what state a programme was in.** It commissioned
+   "Step-by-step guide to the Startup Visa Canada process in 2024" for a
+   programme IRCC had paused. It now reads the pinned digests first, and the
+   same run produced "Canada Start-Up Visa Pause: Rules, Deadlines and
+   Alternatives" instead.
+
+The `SourceArticle` backfill stays in phase 3, where the source lane starts
+reading `SourceDocument`; backfilling earlier would mean two tables holding
+the same ledger with only one being read.
 
 ## 1. What we are building, in one paragraph
 
@@ -293,8 +310,14 @@ exactly like a watch document that scored 5 — the admin's act of adding it
    (URL **and** upload to a GCS bucket in `visaroads-website`) and text
    adapters, ingest cron, chunk/embed/digest, admin list + add + source page,
    *Test retrieval* box. Nothing changes in what gets published yet.
-2. **Writer integration** — `retrieve()`, evidence pack in both lanes, `[Sn]`
-   citations, the number gate. This is when article quality changes.
+2. **Writer integration** — DONE. `buildEvidence()` per brief in both lanes,
+   the pack in the draft prompt, `[Sn]` citations resolved into one Sources
+   block (the source lane's origin article joins the same list rather than
+   getting a second block), and `gateFigures()` before any image is bought.
+   The gate is fatal when we supplied evidence and a warning when we did not:
+   blocking on an empty pack would stop the planned lane for a reason the
+   writer cannot fix. `GATE_WITHOUT_EVIDENCE` in `lib/autopilot/evidence.ts`
+   flips that once there are enough sources on file.
 3. **Watch** — the three hard-coded feeds become rows; listing/sitemap modes;
    triage at ingest; `source-writer` reads `SourceDocument`; *Write from this
    now*.

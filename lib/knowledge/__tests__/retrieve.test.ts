@@ -35,3 +35,35 @@ describe('retrieve scoring', () => {
     expect(r).toContain('PINNED SOURCES');
   });
 });
+
+import { topicsRelated, topicMentioned } from '../retrieve';
+
+describe('topic matching', () => {
+  // The bug this replaced: the admin tags a source «start-up visa», the
+  // planner writes the keyword "startup visa canada process", and exact
+  // string equality matched neither to the other.
+  it('relates a hand-typed topic to a searcher-typed keyword', () => {
+    expect(topicsRelated(['startup visa canada process'], ['start-up visa'])).toBe(true);
+    expect(topicsRelated(['Start-Up Visa'], ['startup visa'])).toBe(true);
+    expect(topicsRelated(['canada express entry draw'], ['express entry'])).toBe(true);
+  });
+
+  it('does not relate two different routes just because both are about visas', () => {
+    expect(topicsRelated(['estonia startup permit'], ['canadian startup visa requirements'])).toBe(false);
+    expect(topicsRelated(['eb-2 niw usa'], ['start-up visa'])).toBe(false);
+  });
+
+  it('is empty-safe', () => {
+    expect(topicsRelated([], ['start-up visa'])).toBe(false);
+    expect(topicsRelated(['start-up visa'], [])).toBe(false);
+  });
+
+  it('gates pinned digests on the phrase, so one route’s status cannot leak into another’s article', () => {
+    expect(topicMentioned(['start-up visa'], ['startup visa canada process', 'how to apply'])).toBe(true);
+    expect(topicMentioned(['start-up visa'], ['estonia startup permit', 'how to apply'])).toBe(false);
+    expect(topicMentioned(['canada'], ['canada express entry'])).toBe(true);
+    expect(topicMentioned([], ['anything'])).toBe(false);
+    // Too short to be a phrase worth matching.
+    expect(topicMentioned(['ai'], ['air canada'])).toBe(false);
+  });
+});

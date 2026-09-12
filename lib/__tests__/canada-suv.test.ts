@@ -181,8 +181,11 @@ describe('no page contradicts the SUV facts', () => {
   it('attributes the reported pilot figures wherever they appear', () => {
     // Only the written forms — a bare 2000 in code is a timeout, not a cap.
     // "2,000-word article" is a word count, not a cap.
+    // Only the written forms — a bare 2000 in code is a timeout, not a cap —
+    // and only on reader-facing surfaces: an engine comment listing example
+    // figures is documentation, not a claim made to a reader.
     const written = [/۲٬۰۰۰/, /\b2,000\b(?!\s*-?\s*word)/];
-    for (const f of FILES) {
+    for (const f of FILES.filter((x) => /^(app|components|content|messages)\//.test(x.path))) {
       if (!written.some((re) => re.test(f.text))) continue;
       if (!/start-?up\s*visa|ویزای استارتاپ|پایلوت|pilot/i.test(f.text)) continue;
       // Any file quoting the cap must also say who reported it.

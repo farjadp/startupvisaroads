@@ -85,9 +85,16 @@ describe('prompt and legacy cron safety', () => {
   });
 
   it('keeps source editorial citations free of nofollow', () => {
+    // The Sources block moved out of source-writer.ts into evidence.ts when
+    // both lanes started citing retrieved passages alongside the origin
+    // article. Same rule, followed to where it is now rendered.
+    const evidence = readFileSync(`${root}/lib/autopilot/evidence.ts`, 'utf8');
+    expect(evidence).toContain('rel="noopener noreferrer"');
+    expect(evidence).not.toMatch(/rel="[^"]*nofollow/);
     const writer = readFileSync(`${root}/lib/autopilot/source-writer.ts`, 'utf8');
-    expect(writer).toContain('rel="noopener noreferrer"');
-    expect(writer).not.toContain('rel="nofollow noopener"');
+    expect(writer).not.toMatch(/rel="[^"]*nofollow/);
+    // And it no longer hand-rolls a second block of its own.
+    expect(writer).not.toContain('function sourcesBlock');
   });
 });
 
