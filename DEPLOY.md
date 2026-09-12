@@ -165,6 +165,12 @@ output can be read before the volume goes up.
 export RUN_URL=$(gcloud run services describe $SERVICE --region $REGION --format='value(status.url)')
 export AUTH="Authorization=Bearer YOUR_CRON_SECRET"
 
+# Stop here if RUN_URL came back empty — an expired gcloud token or the wrong
+# region leaves it unset, and every job below then fails with "Bad value
+# [/api/cron/...]: Must be a valid HTTP or HTTPS URL", which reads like a
+# broken command rather than a missing variable.
+[ -n "$RUN_URL" ] || { echo "RUN_URL is empty — run 'gcloud auth login' and check \$SERVICE/\$REGION"; return 2>/dev/null || exit 1; }
+
 gcloud scheduler jobs create http svr-autopilot-en        --location $REGION --schedule "0 6 * * *"  --uri "$RUN_URL/api/cron/autopilot?n=1&locale=en&publish=1"        --http-method GET --headers "$AUTH" --attempt-deadline 900s
 gcloud scheduler jobs create http svr-autopilot-fa        --location $REGION --schedule "0 7 * * *"  --uri "$RUN_URL/api/cron/autopilot?n=1&locale=fa&publish=1"        --http-method GET --headers "$AUTH" --attempt-deadline 900s
 gcloud scheduler jobs create http svr-autopilot-source-1  --location $REGION --schedule "0 11 * * *" --uri "$RUN_URL/api/cron/autopilot-source?n=1&locale=en&publish=1" --http-method GET --headers "$AUTH" --attempt-deadline 900s
