@@ -9,6 +9,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { CheckCircle2, XCircle, ArrowRight, ShieldAlert, Clock } from 'lucide-react';
+import SuvStatusNotice from '@/components/SuvStatusNotice';
 
 export default function CanadaFastTrackPage() {
   return (
@@ -26,16 +27,16 @@ export default function CanadaFastTrackPage() {
       <section className="pt-40 pb-20 px-4 text-center max-w-4xl mx-auto">
          <div className="inline-flex items-center gap-2 bg-[#b91c1c]/10 text-[#b91c1c] px-3 py-1 mb-6 rounded-sm border border-[#b91c1c]/20">
             <ShieldAlert size={14} />
-            <span className="text-xs font-bold uppercase tracking-widest">SUV Processing Alert: 32+ Months</span>
+            <span className="text-xs font-bold uppercase tracking-widest">Start-Up Visa: Paused by IRCC</span>
          </div>
-         
+
          <h1 className="font-serif text-5xl md:text-7xl mb-8 leading-[1.1]">
-            Stop waiting for the <br/>
-            <span className="line-through decoration-[#b91c1c] text-[#1a1a1a]/40">Start-Up Visa.</span>
+            Canada is open. <br/>
+            <span className="line-through decoration-[#b91c1c] text-[#1a1a1a]/40">The Start-Up Visa isn't.</span>
          </h1>
-         
+
          <p className="text-xl md:text-2xl text-[#1a1a1a]/70 leading-relaxed mb-10 max-w-2xl mx-auto">
-            The queue is stuck. Smart founders are pivoting to <strong>Operational Work Permits (C11 / ICT)</strong> to land in Canada in <span className="bg-[#CCFF00] px-1 font-bold">3-6 months</span>, not 3 years.
+            IRCC has stopped accepting new Start-up Visa applications. Founders who still want to build in Canada are using <strong>Operational Work Permits (C11 / ICT)</strong>, which are <span className="bg-[#CCFF00] px-1 font-bold">still open</span> to new applications.
          </p>
 
          <a href="#audit" className="inline-flex items-center gap-4 bg-[#1a1a1a] text-[#F2F0E9] px-10 py-5 text-lg font-bold uppercase tracking-widest hover:scale-105 transition-transform shadow-xl">
@@ -43,6 +44,9 @@ export default function CanadaFastTrackPage() {
          </a>
          <p className="mt-4 text-xs opacity-50 uppercase tracking-widest">No Letter of Support Required</p>
       </section>
+
+      {/* 2b. THE STATUS OF THE PROGRAMME THIS PAGE IS ABOUT */}
+      <SuvStatusNotice />
 
 
       {/* 3. THE COMPARISON (Why Switch?) */}
@@ -54,13 +58,10 @@ export default function CanadaFastTrackPage() {
                <h3 className="font-serif text-2xl mb-6 text-[#1a1a1a]/50">Start-Up Visa (SUV)</h3>
                <ul className="space-y-4">
                   <li className="flex items-center gap-3 text-[#b91c1c]">
-                     <XCircle size={20} /> <span>30-40 Month Wait</span>
+                     <XCircle size={20} /> <span>Paused — no new applications</span>
                   </li>
                   <li className="flex items-center gap-3 text-[#b91c1c]">
                      <XCircle size={20} /> <span>Dependent on Angel/Incubator</span>
-                  </li>
-                  <li className="flex items-center gap-3 text-[#b91c1c]">
-                     <XCircle size={20} /> <span>High Rejection Risk (2025)</span>
                   </li>
                </ul>
             </div>
@@ -71,7 +72,7 @@ export default function CanadaFastTrackPage() {
                <h3 className="font-serif text-2xl mb-6 text-[#CCFF00]">ICT / C11 Strategy</h3>
                <ul className="space-y-4">
                   <li className="flex items-center gap-3 text-[#F2F0E9]">
-                     <CheckCircle2 size={20} className="text-[#CCFF00]" /> <span>Arrival in 3-6 Months</span>
+                     <CheckCircle2 size={20} className="text-[#CCFF00]" /> <span>Open to new applications today</span>
                   </li>
                   <li className="flex items-center gap-3 text-[#F2F0E9]">
                      <CheckCircle2 size={20} className="text-[#CCFF00]" /> <span>Full Ownership (No Investors needed)</span>
@@ -95,18 +96,14 @@ export default function CanadaFastTrackPage() {
                We don't sell forms; we build corporate infrastructure. 
                Our team specializes in structuring international transfers specifically for high-net-worth founders.
             </p>
-            <div className="grid grid-cols-3 gap-4 border-t border-[#1a1a1a]/10 pt-8">
-               <div>
-                  <span className="block font-serif text-3xl font-bold">98%</span>
-                  <span className="text-[10px] uppercase tracking-widest">Approval Rate</span>
-               </div>
+            <div className="grid grid-cols-2 gap-4 border-t border-[#1a1a1a]/10 pt-8">
                <div>
                   <span className="block font-serif text-3xl font-bold">$200k+</span>
-                  <span className="text-[10px] uppercase tracking-widest">Min Liquidity</span>
+                  <span className="text-[10px] uppercase tracking-widest">Liquidity we look for (our own guidance, not a programme requirement)</span>
                </div>
                <div>
                   <span className="block font-serif text-3xl font-bold">14</span>
-                  <span className="text-[10px] uppercase tracking-widest">Days to File</span>
+                  <span className="text-[10px] uppercase tracking-widest">Days for us to prepare your filing (our service, not a government timeline)</span>
                </div>
             </div>
          </div>
@@ -119,7 +116,7 @@ export default function CanadaFastTrackPage() {
             <h3 className="font-serif text-3xl mb-2 text-center">Priority Audit</h3>
             <p className="text-center text-sm opacity-60 mb-8">
                Verify if you qualify for the C11 or ICT stream. 
-               <br/><span className="text-[#CCFF00]">24h Turnaround time.</span>
+               <br/><span className="text-[#CCFF00]">Our team replies within 24h — our service turnaround, not a government timeline.</span>
             </p>
 
             <form className="space-y-4">

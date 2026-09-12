@@ -56,7 +56,7 @@ export default function HeroHorizon() {
                     <div key={i} className="w-8 h-8 rounded-full bg-slate-200 border-2 border-white"></div>
                  ))}
               </div>
-              <p>Trusted by 120+ Founders in 2024</p>
+              <p>Independent advisory for founders choosing a route</p>
            </div>
         </div>
 
@@ -65,11 +65,11 @@ export default function HeroHorizon() {
            {/* Main Glass Card */}
            <div className="absolute top-10 right-10 w-full h-full glass-panel rounded-3xl p-8 transform rotate-[-2deg] hover:rotate-0 transition-transform duration-700 ease-out">
               
-              {/* Fake Dashboard UI */}
+              {/* Illustrative dashboard — not real case data */}
               <div className="flex justify-between items-center mb-8">
                  <div>
-                    <p className="text-xs text-slate-400 uppercase font-bold">Current Status</p>
-                    <p className="text-2xl font-bold text-slate-800">Approved</p>
+                    <p className="text-xs text-slate-400 uppercase font-bold">Illustration — sample tracker</p>
+                    <p className="text-2xl font-bold text-slate-800">Not client data</p>
                  </div>
                  <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center text-green-600">
                     <Plane size={24} />
@@ -82,8 +82,8 @@ export default function HeroHorizon() {
                        <Globe2 size={20}/>
                     </div>
                     <div>
-                       <p className="font-bold text-slate-700">Canada SUV</p>
-                       <p className="text-xs text-slate-400">Letter of Support Issued</p>
+                       <p className="font-bold text-slate-700">Canada — work permit routes</p>
+                       <p className="text-xs text-slate-400">Illustration only, not a client record</p>
                     </div>
                  </div>
                  

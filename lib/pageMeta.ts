@@ -6,6 +6,14 @@
 
 import type { Metadata } from 'next';
 import { buildMetadata } from '@/lib/seo';
+import { SUV_STATE } from '@/lib/canada-suv';
+
+/** The pause date, written out, so no page metadata hardcodes it. */
+const SUV_PAUSED_ON_LABEL = new Date(SUV_STATE.pausedOn).toLocaleDateString('en-CA', {
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+});
 
 interface Entry {
   en: { title: string; description: string };
@@ -77,12 +85,20 @@ const META: Record<string, Entry> = {
     fa: { title: 'تیم ما — منتورهای استارتاپ و مشاوران', description: 'با تیم استارتاپ ویزا رودز آشنا شوید: منتورهای استارتاپ، پروداکت منیجرها و مسئولان عملیات که بنیان‌گذاران را برای ویزای استارتاپ و مسیرهای مهاجرت کارآفرینی آماده می‌کنند.' },
   },
   '/startup-visa-canada': {
-    en: { title: 'Canada Startup Visa (SUV)', description: 'Complete guide and end-to-end support for the Canada Startup Visa: eligibility, designated organizations, letters of support, and permanent residency.' },
-    fa: { title: 'ویزای استارتاپ کانادا (SUV)', description: 'راهنمای کامل و پشتیبانی سرتاسری برای ویزای استارتاپ کانادا: شرایط، نهادهای تأییدشده، نامه حمایتی و اقامت دائم.' },
+    en: {
+      title: 'Canada Start-up Visa — paused since 30 June 2026',
+      description:
+        'IRCC paused the Canada Start-up Visa on 30 June 2026 and takes no new applications. What that means for a file already in progress, the open work permit that is still available, what IRCC has and has not said about the entrepreneur pilot replacing it, and the full requirements kept for reference.',
+    },
+    fa: {
+      title: 'ویزای استارتاپ کانادا — متوقف از ۳۰ ژوئن ۲۰۲۶',
+      description:
+        'IRCC ویزای استارتاپ کانادا را از ۳۰ ژوئن ۲۰۲۶ متوقف کرده و پرونده‌ی جدید نمی‌پذیرد. این صفحه می‌گوید برای پرونده‌ی در جریان چه معنایی دارد، کدام مجوز کار هنوز باز است، و IRCC درباره‌ی برنامه‌ی جایگزین چه گفته و چه نگفته است.',
+    },
   },
   '/startupworkpermit': {
-    en: { title: 'Canada Startup Work Permit', description: 'Launch and operate your business in Canada while your Startup Visa permanent residence application is processed.' },
-    fa: { title: 'مجوز کار استارتاپی کانادا', description: 'راه‌اندازی و اداره کسب‌وکارتان در کانادا هم‌زمان با بررسی پرونده اقامت دائم ویزای استارتاپ.' },
+    en: { title: 'Canada Startup Work Permit', description: 'The Startup Visa is paused and closed to new applications. For permanent residence applications already filed: the open work permit that lets you operate your business in Canada while yours is processed.' },
+    fa: { title: 'مجوز کار استارتاپی کانادا', description: 'استارتاپ ویزا متوقف است و پرونده‌ی جدید پذیرفته نمی‌شود. این صفحه برای پرونده‌های اقامت دائم ثبت‌شده است: مجوز کار بازی که اجازه می‌دهد هم‌زمان با بررسی پرونده، کسب‌وکارتان را در کانادا اداره کنید.' },
   },
   '/pnp': {
     en: { title: 'Provincial Nominee Programs (PNP)', description: 'Compare Canada\'s Provincial Nominee Programs and entrepreneur streams to find the province that fits your capital, skills, and goals.' },
@@ -121,8 +137,8 @@ const META: Record<string, Entry> = {
     fa: { title: 'جلسه منتورشیپ پولی استارتاپ', description: 'یک جلسه آنلاین ۶۰ دقیقه‌ای منتورشیپ استارتاپ با هزینه ۱۴۰ دلار رزرو کنید؛ مبلغ مستقیماً به یک خیریه معتبر پرداخت می‌شود.' },
   },
   '/webinar': {
-    en: { title: 'Startup Visa Canada Webinar', description: 'Register for the July 1, 2026 online meetup covering Canada Startup Visa updates, current priorities, alternative pathways, and live questions.' },
-    fa: { title: 'وبینار استارتاپ ویزای کانادا', description: 'ثبت‌نام دورهمی آنلاین درباره به‌روزرسانی‌های استارتاپ ویزای کانادا در سال ۲۰۲۶، اولویت‌های فعلی، مسیرهای جایگزین و پرسش و پاسخ زنده.' },
+    en: { title: 'Startup Visa Canada Webinar', description: `Our online meetup on what the Startup Visa pause of ${SUV_PAUSED_ON_LABEL} means for applications already filed, the routes still open to new applicants, and live questions.` },
+    fa: { title: 'وبینار استارتاپ ویزای کانادا', description: 'دورهمی آنلاین درباره‌ی معنای توقف استارتاپ ویزای کانادا برای پرونده‌های ثبت‌شده، مسیرهایی که هنوز باز است، و پرسش و پاسخ زنده.' },
   },
   '/unsubscribe': {
     en: { title: 'Unsubscribe from Newsletter', description: 'Confirm your email address to stop receiving marketing emails from Startup Visa Roads.' },

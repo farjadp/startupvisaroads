@@ -74,8 +74,8 @@ export default function SmartAudit() {
 
   // Logic for result
   const getResult = () => {
-    if (score >= 80) return { title: "Exceptional Candidate", desc: "Your profile strongly matches the criteria for EB-1A or SUV Direct Stream.", color: "bg-[#CCFF00]" };
-    if (score >= 50) return { title: "Strong Potential", desc: "You qualify for standard SUV or UK Innovator paths. Strategy is needed.", color: "bg-white" };
+    if (score >= 80) return { title: "Exceptional Candidate", desc: "Your profile strongly matches the criteria for EB-1A.", color: "bg-[#CCFF00]" };
+    if (score >= 50) return { title: "Strong Potential", desc: "The UK Innovator route is worth examining for a profile like yours. Canada's Start-up Visa is paused, so it is not an option today. Strategy is needed.", color: "bg-white" };
     return { title: "Development Needed", desc: "You may need to bolster your financials or IP before applying.", color: "bg-[#b91c1c] text-white" };
   };
 

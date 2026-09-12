@@ -20,6 +20,7 @@ import {
 import type { Metadata } from 'next';
 
 import { metaFor } from '@/lib/pageMeta';
+import SuvStatusNotice from '@/components/SuvStatusNotice';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
@@ -58,8 +59,8 @@ export default function CanadaPage() {
            <div className="lg:col-span-5">
               <p className="font-sans text-sm text-[#1a1a1a]/70 leading-relaxed text-justify border-l-2 border-[#D80027] pl-6">
                  Canada remains the primary destination for founders scaling into the US market. 
-                 However, the landscape has shifted. With tighter caps on the Start-Up Visa in late 2025, 
-                 smart founders are pivoting to <strong>Operational Visas (ICT & C11)</strong> to secure their foothold.
+                 However, the landscape has shifted. With the Start-Up Visa paused and closed to new applications,
+                 founders are turning to <strong>Operational Visas (ICT & C11)</strong> to secure their foothold.
               </p>
            </div>
         </div>
@@ -125,19 +126,22 @@ export default function CanadaPage() {
                   <div className="flex flex-col">
                      <span className="font-sans text-xs font-bold uppercase tracking-widest mb-2 text-[#1a1a1a]/40">Permanent Residency</span>
                      <h3 className="font-serif text-4xl mb-2">Start-Up Visa</h3>
-                     <span className="text-xs font-bold uppercase tracking-widest text-[#D80027] bg-[#D80027]/10 px-2 py-1 w-fit">Capped / Waitlist</span>
+                     <span className="text-xs font-bold uppercase tracking-widest text-[#D80027] bg-[#D80027]/10 px-2 py-1 w-fit">Paused</span>
                   </div>
                   <Leaf className="w-12 h-12 text-[#1a1a1a]/20" />
                </div>
 
                <p className="font-sans text-sm opacity-70 mb-8 leading-relaxed">
-                  The direct PR route. Due to high demand, processing times have increased (30+ months). 
-                  We now reserve this for clients with <strong>significant traction</strong> or those willing to wait for the 2026 allocation.
+                  The direct PR route, and it is <strong>paused</strong>. IRCC is not accepting new applications;
+                  files submitted before the pause are still being processed, and an open work permit remains
+                  available to those applicants while their application is assessed.
                </p>
+
+               <SuvStatusNotice variant="inline" showRoutesLink={false} className="mb-8" />
 
                <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest opacity-40">
                   <span className="w-2 h-2 bg-[#1a1a1a] rounded-full"></span>
-                  Wait time: 2-3 Years
+                  Closed to new applications
                </div>
             </div>
 
@@ -157,7 +161,7 @@ export default function CanadaPage() {
 
                   <p className="font-sans text-sm opacity-80 mb-8 leading-relaxed">
                      The strategic alternative. Launch your Canadian branch and transfer yourself as an Executive (ICT) or Significant Benefit Entrepreneur (C11). 
-                     <strong>Land in 3-6 months.</strong> Convert to PR later via Express Entry (additional points for Canadian job).
+                     <strong>A route that is open to new applications today.</strong> Convert to PR later via Express Entry (additional points for Canadian job).
                   </p>
                   
                   <ul className="space-y-3 font-sans text-sm">
@@ -183,9 +187,10 @@ export default function CanadaPage() {
             <div>
                <h3 className="font-serif text-3xl mb-4 text-[#D80027]">"No More Passive Income."</h3>
                <p className="font-sans text-[#1a1a1a]/70 text-lg leading-relaxed mb-6">
-                  Canada has cracked down on "Paper Businesses". Whether you choose SUV or ICT, 
-                  you must have a physical office, active Canadian employees, and real revenue generation. 
-                  Virtual offices and passive holding companies are automatically rejected.
+                  In our experience, a business that exists only on paper does not survive scrutiny. Whichever route you take,
+                  we will not put forward a file without a real operating business behind it — premises, people in Canada,
+                  and revenue you can evidence. A virtual office and a passive holding company are, in our view, the weakest
+                  case you can present to an officer.
                </p>
                <p className="font-sans text-xs font-bold uppercase tracking-widest">
                   Our service includes: Commercial Lease Negotiation & Canadian Hiring Strategy.
@@ -244,7 +249,7 @@ export default function CanadaPage() {
                <div className="w-24 h-1 bg-[#D80027] mb-8"></div>
                <p className="font-sans text-lg opacity-70 leading-relaxed">
                   We don't just file forms. We build the <strong>Canadian Narrative</strong>. 
-                  We structure your company as a "Significant Benefit" to Canada's economy, ensuring your work permit approval.
+                  We structure your company as a "Significant Benefit" to Canada's economy and prepare your work permit application on that basis. The decision is the officer's, not ours.
                </p>
             </div>
             <div className="md:w-1/2 space-y-6 font-sans">
@@ -273,8 +278,8 @@ export default function CanadaPage() {
             Northbound.
          </h2>
          <p className="font-sans text-[#1a1a1a]/60 text-lg mb-12 max-w-xl mx-auto">
-            The market is open, but the doors are narrower. 
-            Secure your strategy before the 2026 pilot changes everything.
+            The Start-Up Visa is paused and IRCC has not published what replaces it.
+            Build your strategy around the routes that are open now.
          </p>
          <div className="flex flex-col sm:flex-row justify-center gap-6">
             <Link href="/contact" className="bg-[#D80027] text-white px-10 py-5 font-sans font-bold uppercase tracking-widest hover:bg-[#1a1a1a] transition-colors">

@@ -200,7 +200,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
                      </div>
                      <h3 className="font-serif text-4xl md:text-6xl mb-4 group-hover:italic transition-all">Endorsement</h3>
                      <p className="font-sans text-lg text-[#1a1a1a]/70 max-w-xl">
-                        Securing the "Letter of Support". We leverage our deep relationships with Incubators and Angel Networks in Canada and the UK to get your foot in the door.
+                        The "Letter of Support". Designated organisations are independent and publish their own criteria — nobody can sell you access to one. What we do is prepare your business, your plan and your pitch to the standard those organisations actually assess, and file to the right one for your sector.
                      </p>
                   </div>
 
@@ -301,10 +301,10 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
                   <span className="font-sans text-xs font-bold text-[#CCFF00] bg-black px-2 py-1 mb-6 inline-block">QUERIES</span>
 
                   {[
-                     { q: "What is the minimum capital required?", a: "It varies by jurisdiction. For Canada/UK, usually between $50k to $150k in available liquid assets." },
-                     { q: "Do you guarantee success?", a: "No one ethically can. However, we audit your case before applying. If we take you on, it's because we see a 95%+ probability." },
+                     { q: "What is the minimum capital required?", a: "Each programme sets its own rules, and the official figures are on the authority's own site. Separately, as our own client-profile guidance, we look for founders with roughly $50k to $150k in liquid assets behind them — that is our threshold, not a government requirement." },
+                     { q: "Do you guarantee success?", a: "No one ethically can. We audit your case before applying, and we turn down files we do not think are ready. We do not quote odds." },
                      { q: "Can I bring my co-founders?", a: "Yes. Most programs allow up to 5 co-founders and their families on a single startup application." },
-                     { q: "How long is the process?", a: "Expect 12-18 months for Permanent Residency tracks. Work permits can be issued in as little as 3 months." }
+                     { q: "How long is the process?", a: "It depends entirely on the route, and we will not invent a number. Where an authority publishes a processing time we will show you theirs; where it does not — as is the case for Canada's Start-up Visa, which is paused — there is no figure to give." }
                   ].map((item, i) => (
                      <div key={i} className="border-b border-[#1a1a1a]/20 py-8 group">
                         <details className="cursor-pointer">

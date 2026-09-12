@@ -10,10 +10,11 @@ import {
     Calendar,
     Building2,
     Users,
-    Briefcase,
-    ChevronDown
+    Briefcase
 } from 'lucide-react';
 import { submitStartupRecoveryForm } from './actions';
+import SuvStatusNotice from '@/components/SuvStatusNotice';
+import { SUV_SOURCES } from '@/lib/canada-suv';
 
 export default function StartupRecoveryForm() {
     // مدیریت استیت‌های فرم
@@ -97,8 +98,15 @@ export default function StartupRecoveryForm() {
                         فرم تحلیل و بازیابی پرونده
                     </h1>
                     <p className="text-[#64748B] text-lg max-w-xl mx-auto">
-                        این فرم جهت بررسی تکنیکال پرونده‌های استارتاپ ویزا که با چالش روبرو شده‌اند طراحی شده است.
+                        این فرم جهت بررسی تکنیکال پرونده‌های استارتاپ ویزا که با چالش روبرو شده‌اند طراحی شده است؛
+                        یعنی پرونده‌هایی که پیش از توقف برنامه ثبت شده‌اند. برنامه‌ی استارتاپ ویزا متوقف است و پرونده‌ی
+                        جدیدی پذیرفته نمی‌شود؛ مجوز کار باز برای متقاضیانی که پرونده‌ی اقامت دائمشان پیش‌تر ثبت شده
+                        هنوز در دسترس است و تمدید مجوز کار استارتاپ ویزا هم فقط برای دارندگان فعلی امکان‌پذیر است.
                     </p>
+                </div>
+
+                <div dir="ltr" className="text-left mb-10">
+                    <SuvStatusNotice variant="inline" showRoutesLink={false} />
                 </div>
 
                 <form onSubmit={handleSubmit} className="bg-white shadow-[0_20px_50px_rgba(30,58,138,0.1)] border-t-8 border-[#1E3A8A] p-8 md:p-12 rounded-sm space-y-10">
@@ -198,26 +206,26 @@ export default function StartupRecoveryForm() {
 
                         <div className="space-y-2">
                             <label className="text-sm font-bold text-[#475569]">سازمان حامی صادرکننده نامه (Designated Organization)</label>
-                            <div className="relative">
-                                <select
-                                    name="designatedOrg"
-                                    onChange={handleChange}
-                                    className="w-full p-4 bg-[#Fdfbf7] border border-[#E2E8F0] focus:border-[#1E3A8A] outline-none appearance-none rounded-sm"
+                            <input
+                                type="text"
+                                name="designatedOrg"
+                                className="w-full p-4 bg-[#Fdfbf7] border border-[#E2E8F0] focus:border-[#1E3A8A] outline-none transition-colors rounded-sm text-left ltr"
+                                placeholder="نام سازمان را دقیقاً مطابق نامه وارد کنید"
+                                onChange={handleChange}
+                            />
+                            <p className="text-xs text-[#64748B] leading-relaxed">
+                                نام سازمان را از روی نامه‌ی خودتان بنویسید. به هیچ فهرست دست‌دومی از سازمان‌های حامی
+                                اعتماد نکنید؛ فهرست معتبر فقط{' '}
+                                <a
+                                    href={SUV_SOURCES.designatedOrganizations}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="text-[#1E3A8A] underline"
                                 >
-                                    <option value="">انتخاب کنید...</option>
-                                    <option value="Alberta IoT Association">Alberta IoT Association</option>
-                                    <option value="Highline BETA Inc.">Highline BETA Inc.</option>
-                                    <option value="Interactive Niagara">Interactive Niagara</option>
-                                    <option value="Intrinsic Innovations">Intrinsic Innovations</option>
-                                    <option value="NEXT Canada">NEXT Canada</option>
-                                    <option value="Toronto Business Development Centre (TBDC)">Toronto Business Development Centre (TBDC)</option>
-                                    <option value="Treefrog">Treefrog</option>
-                                    <option value="TSRV Canada Inc.">TSRV Canada Inc. (operating as Techstars Canada)</option>
-                                    <option value="University of Toronto Entrepreneurship Hatchery">University of Toronto Entrepreneurship Hatchery</option>
-                                    <option value="YSpace (York University)">YSpace (York University)</option>
-                                </select>
-                                <ChevronDown className="absolute left-4 top-1/2 -translate-y-1/2 text-[#64748B] pointer-events-none" size={16} />
-                            </div>
+                                    فهرست رسمی IRCC
+                                </a>{' '}
+                                است.
+                            </p>
                         </div>
                     </div>
 
@@ -349,7 +357,7 @@ export default function StartupRecoveryForm() {
                             ارسال جهت بررسی حقوقی
                         </button>
                         <p className="text-center text-[10px] text-[#94A3B8] mt-4">
-                            تیم حقوقی ما ظرف ۴۸ ساعت کاری با شما تماس خواهند گرفت.
+                            تیم حقوقی ما معمولاً ظرف ۴۸ ساعت کاری با شما تماس می‌گیرد.
                         </p>
                     </div>
 
