@@ -18,6 +18,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { authorisedCron } from '@/lib/cron-auth';
 import { summarise, buildDigest, summariseSocial, DEFAULT_WINDOW_HOURS } from '@/lib/autopilot/digest';
+import { openReviewCount } from '@/lib/knowledge/review';
+import { pendingCount } from '@/lib/knowledge/queue';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 60;
@@ -64,7 +66,15 @@ export async function GET(req: NextRequest) {
 
   const lanes = summarise(runs, now, { windowHours: hours });
   const social = summariseSocial(socialRows, now, hours);
-  const message = buildDigest(lanes, now, social);
+  // Neither queue is an error, so neither belongs in a lane's reasons. They
+  // are things waiting for Farjad, and the digest is the one place he reads
+  // every day. A failure to count them must not lose the rest of the report.
+  const [reviews, suggestedEn, suggestedFa] = await Promise.all([
+    openReviewCount().catch(() => 0),
+    pendingCount('en').catch(() => 0),
+    pendingCount('fa').catch(() => 0),
+  ]);
+  const message = buildDigest(lanes, now, social, { reviews, suggestions: suggestedEn + suggestedFa });
 
   // Log it too. If Telegram is down or misconfigured, the digest must still
   // exist somewhere — this endpoint's whole purpose is defeated by a silent

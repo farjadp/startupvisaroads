@@ -197,3 +197,25 @@ describe('buildDigest with social', () => {
     expect(() => buildDigest(summarise([], NOW), NOW)).not.toThrow();
   });
 });
+
+describe('queues that need a person', () => {
+  const lanes = summarise([], new Date('2026-09-12T18:00:00Z'), { windowHours: 26 });
+
+  it('names both queues when either has something in it', () => {
+    const msg = buildDigest(lanes, new Date('2026-09-12T18:00:00Z'), [], { reviews: 2, suggestions: 5 });
+    expect(msg).toContain('2 article(s) need review');
+    expect(msg).toContain('a source they cite has changed');
+    expect(msg).toContain('5 triaged source item(s) waiting');
+  });
+
+  it('says nothing about a queue that is empty, so a quiet day stays short', () => {
+    const msg = buildDigest(lanes, new Date('2026-09-12T18:00:00Z'), [], { reviews: 0, suggestions: 0 });
+    expect(msg).not.toContain('need review');
+    expect(msg).not.toContain('waiting for approval');
+  });
+
+  it('is unchanged when no queue counts are passed at all', () => {
+    const now = new Date('2026-09-12T18:00:00Z');
+    expect(buildDigest(lanes, now, [])).toBe(buildDigest(lanes, now, [], {}));
+  });
+});

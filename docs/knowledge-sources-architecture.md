@@ -1,6 +1,6 @@
 # Knowledge Sources — architecture
 
-Status: phases 1, 2 and 3 BUILT (12 Sep 2026); phase 4 pending. Owner: Farjad.
+Status: all four phases BUILT (12 Sep 2026), with one part of phase 4 blocked by YouTube rather than by us. Owner: Farjad.
 
 Phase 1: `lib/knowledge/*` (chunk, embed, adapters/html, adapters/pdf, digest,
 sources, ingest, retrieve, admin, storage), `/api/admin/sources*`,
@@ -333,8 +333,38 @@ exactly like a watch document that scored 5 — the admin's act of adding it
    with reasons. The auto lane then wrote nothing and said why: "3 triaged
    items waiting for approval in the admin", which the daily Telegram digest
    reports as degraded.
-4. **Media + maintenance** — YouTube adapter (captions only), changed-document
-   → articles-needing-review queue.
+4. **Media + maintenance** — DONE, with a caveat on the first half.
+
+   *Changed-document review* works and is the more valuable half.
+   `lib/knowledge/review.ts` plus a hash comparison in the fetch step: when a
+   re-read of a document produces different text, every article written from
+   it is flagged, with what changed. `ArticleReview` rows are idempotent per
+   (article, document) and reopen if the source moves again after being
+   resolved. A document already written from now keeps `used` through a
+   re-read, so a changed source can never re-offer itself to the writers and
+   publish the same subject twice. Verified live: a forced change on a cited
+   canada.ca document produced exactly one open review naming the published
+   article, and the document stayed `used`.
+
+   *YouTube captions* are blocked, and not by anything in this repo.
+   Measured 12 Sep 2026 against three videos carrying 1, 28 and 65 MANUAL
+   caption tracks: the watch page still lists the tracks, and every fetch of
+   a track returns HTTP 200 with an empty body — with and without a browser
+   user agent, with and without `fmt=json3`. YouTube gates the timedtext
+   endpoint behind a proof-of-origin token its player mints in JavaScript,
+   which a server cannot produce; the supported API needs the video owner's
+   OAuth grant, which we will never have for IRCC's channel. The adapter is
+   written, tested on fixtures, and kept, because it costs nothing and starts
+   working if that endpoint reopens. The admin form says so plainly rather
+   than offering it as a feature, and every failure routes to the
+   transcript-paste path, which is what Farjad asked for originally and is
+   the only route that cannot be taken away.
+
+   Both queues that need a person — suggestions waiting for approval and
+   articles needing review — are now counted in the daily Telegram digest. A
+   queue reported nowhere is a backlog that grows until someone notices the
+   site is wrong, which is how the Start-up Visa pages stayed wrong for
+   months.
 
 Each phase ships on its own and is useful on its own.
 

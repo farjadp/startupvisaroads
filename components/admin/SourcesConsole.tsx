@@ -10,6 +10,7 @@ import Link from 'next/link';
 import { Link2, Rss, FileText, ClipboardPaste, Youtube, RefreshCw, Search, CheckCircle, AlertTriangle, Ban, Pin, ShieldCheck } from 'lucide-react';
 import type { SourceRow } from '@/lib/knowledge/admin';
 import type { EvidencePack } from '@/lib/knowledge/retrieve';
+import { CAPTIONS_BLOCKED_NOTE } from '@/lib/knowledge/captions-note';
 
 type Props = {
   initialSources: SourceRow[];
@@ -19,13 +20,14 @@ type Props = {
   children?: React.ReactNode;
 };
 
-type Mode = 'link' | 'watch' | 'pdf' | 'text';
+type Mode = 'link' | 'watch' | 'pdf' | 'text' | 'youtube';
 
 const MODES: { id: Mode; label: string; hint: string; Icon: React.ComponentType<{ className?: string }> }[] = [
   { id: 'link', label: 'News link', hint: 'One page, read once.', Icon: Link2 },
   { id: 'watch', label: 'Site to watch', hint: 'A news or updates page we re-read on a schedule.', Icon: Rss },
   { id: 'pdf', label: 'PDF', hint: 'Upload a file or give its URL.', Icon: FileText },
   { id: 'text', label: 'Paste text', hint: 'A transcript, notes, anything you already have as text.', Icon: ClipboardPaste },
+  { id: 'youtube', label: 'YouTube', hint: 'Usually blocked by YouTube — pasting the transcript works.', Icon: Youtube },
 ];
 
 const fmt = (iso: string | null) => (iso ? new Date(iso).toLocaleString('en-CA', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : '—');
@@ -97,7 +99,7 @@ export default function SourcesConsole({ initialSources, keywordPool, retainsFil
     setMessage(null);
     try {
       const fd = new FormData();
-      fd.set('kind', mode === 'text' ? 'text' : mode === 'pdf' ? 'pdf' : 'html');
+      fd.set('kind', mode === 'text' ? 'text' : mode === 'pdf' ? 'pdf' : mode === 'youtube' ? 'youtube' : 'html');
       fd.set('cadence', mode === 'watch' ? 'watch' : 'once');
       fd.set('url', url.trim());
       fd.set('title', title.trim());
@@ -187,17 +189,12 @@ export default function SourcesConsole({ initialSources, keywordPool, retainsFil
               <div className={`text-xs mt-1 ${mode === id ? 'text-[#CCFF00]/70' : 'text-[#1a1a1a]/50'}`}>{hint}</div>
             </button>
           ))}
-          <div className="text-left p-4 rounded-xl border border-dashed border-[#1a1a1a]/10 text-[#1a1a1a]/40">
-            <Youtube className="w-5 h-5 mb-2" />
-            <div className="text-sm font-bold">YouTube</div>
-            <div className="text-xs mt-1">Next phase. Paste the transcript as text for now.</div>
-          </div>
         </div>
 
         <div className="grid md:grid-cols-2 gap-4">
           {mode !== 'text' && (
             <label className={`${label} md:col-span-2`}>
-              {mode === 'pdf' ? 'PDF URL (or upload below)' : mode === 'watch' ? 'Page or feed URL to watch' : 'URL'}
+              {mode === 'pdf' ? 'PDF URL (or upload below)' : mode === 'watch' ? 'Page or feed URL to watch' : mode === 'youtube' ? 'YouTube video URL' : 'URL'}
               <input value={url} onChange={(e) => setUrl(e.target.value)} placeholder="https://…" className={input} required={mode !== 'pdf'} />
             </label>
           )}
@@ -220,7 +217,7 @@ export default function SourcesConsole({ initialSources, keywordPool, retainsFil
             </>
           )}
           <label className={label}>
-            Title {mode === 'text' ? '' : '(optional; read from the page if empty)'}
+            Title {mode === 'text' ? '' : mode === 'youtube' ? '(optional; read from the video if empty)' : '(optional; read from the page if empty)'}
             <input value={title} onChange={(e) => setTitle(e.target.value)} className={input} required={mode === 'text'} />
           </label>
           <label className={label}>
@@ -265,9 +262,13 @@ export default function SourcesConsole({ initialSources, keywordPool, retainsFil
             {busy ? <RefreshCw className="w-4 h-4 animate-spin" /> : <CheckCircle className="w-4 h-4" />}
             {busy ? 'Registering' : 'Register and read'}
           </button>
-          {message && <p className="text-sm text-[#1a1a1a]/70">{message}</p>}
         </div>
+        {/* Its own block, not a cell in the button row: registering a video
+            can fail with two sentences of instructions and they have to be
+            readable. */}
+        {message && <p className="mt-3 max-w-3xl text-sm leading-relaxed text-[#1a1a1a]/70 whitespace-pre-line">{message}</p>}
         {mode === 'watch' && <p className="mt-3 text-xs text-[#1a1a1a]/40">The page is read now. Scheduled re-reading and per-item relevance triage arrive in the next phase.</p>}
+        {mode === 'youtube' && <p className="mt-3 max-w-3xl text-xs leading-relaxed text-[#1a1a1a]/40">{CAPTIONS_BLOCKED_NOTE}</p>}
       </form>
 
       {/* Test retrieval */}

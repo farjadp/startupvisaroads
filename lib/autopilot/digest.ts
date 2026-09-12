@@ -158,7 +158,16 @@ const clip = (s: string, n: number) => (s.length > n ? `${s.slice(0, n - 1)}…`
  * is three lines, so the day it is not stands out instead of arriving as the
  * same wall of text as every other day.
  */
-export function buildDigest(lanes: LaneSummary[], now: Date, social: SocialSummary[] = []): string {
+/**
+ * Queues that need a person. Both exist because of decisions taken on
+ * purpose — an item needs approval before it is written, an article needs
+ * checking after its source moved — and both fail the same way: nobody looks.
+ * A queue reported once a day is a queue; a queue reported nowhere is a
+ * backlog that grows until someone notices the site is wrong.
+ */
+export type QueueSummary = { suggestions?: number; reviews?: number };
+
+export function buildDigest(lanes: LaneSummary[], now: Date, social: SocialSummary[] = [], queues: QueueSummary = {}): string {
   const created = lanes.reduce((n, l) => n + l.created, 0);
   const worst = lanes.some((l) => l.state !== 'healthy');
 
@@ -175,7 +184,15 @@ export function buildDigest(lanes: LaneSummary[], now: Date, social: SocialSumma
     .filter((d) => d.state !== 'healthy')
     .map((d) => `${d.state === 'failing' ? '⚠️' : '🔌'} ${d.destination}: ${d.state}${d.reasons.length ? ` — ${clip(d.reasons[0], REASON_CHARS)}` : ''}`);
 
-  return clip([head, ...lines, ...socialLines, ...detail].join('\n'), TELEGRAM_LIMIT);
+  const queueLines: string[] = [];
+  if (queues.reviews) {
+    queueLines.push(`📌 ${queues.reviews} article(s) need review — a source they cite has changed since they were written.`);
+  }
+  if (queues.suggestions) {
+    queueLines.push(`📥 ${queues.suggestions} triaged source item(s) waiting for approval in the admin.`);
+  }
+
+  return clip([head, ...lines, ...socialLines, ...queueLines, ...detail].join('\n'), TELEGRAM_LIMIT);
 }
 
 // ── Social delivery ────────────────────────────────────────────────────────

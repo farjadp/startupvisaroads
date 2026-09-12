@@ -302,3 +302,22 @@ model IngestJob {
 
   @@index([status, runAfter])
 }
+
+// When a source we cited changes under us. A watch re-read that produces a
+// different contentHash for a document some article was written from is the
+// only automatic signal we get that a published piece may now be wrong, and
+// on an immigration site "may now be wrong" is the whole risk. One row per
+// (article, document) pair, resolved by a person.
+model ArticleReview {
+  id         String    @id @default(cuid())
+  articleId  String
+  documentId String?
+  reason     String
+  detail     String?
+  createdAt  DateTime  @default(now())
+  resolvedAt DateTime?
+  resolvedBy String?
+
+  @@unique([articleId, documentId])
+  @@index([resolvedAt, createdAt])
+}

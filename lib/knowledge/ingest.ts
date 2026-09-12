@@ -15,6 +15,7 @@ import { writeDigest } from './digest';
 import { getObject } from './storage';
 import { MIN_TEXT_CHARS, sha256 } from './sources';
 import { triageDocument } from './triage';
+import { CHANGED_SOURCE, flagArticlesForReview } from './review';
 
 const MAX_ATTEMPTS = 3;
 const EMBED_BATCH = 64;
@@ -104,7 +105,34 @@ async function stepFetch(job: Job): Promise<{ documentId: string; unchanged: boo
     await prisma.source.update({ where: { id: source.id }, data: { title: source.title ?? title, lastCheckedAt: new Date() } });
     return { documentId: existing.id, unchanged: true };
   }
-  const data = { title, text, charCount: text.length, contentHash: hash, publishedAt, language: language ?? (/[؀-ۿ]/.test(text.slice(0, 2000)) ? 'fa' : 'en'), fetchedAt: new Date(), status: 'new', digest: null };
+  // A re-read that produced different text on a document some article was
+  // written from is the one automatic warning we get that a published piece
+  // may now be wrong. Flag it before anything else touches the row: if the
+  // rest of this pass fails, the warning must still have been raised.
+  const wasUsed = existing && !itemUrl ? await prisma.sourceDocument.findUnique({ where: { id: existing.id }, select: { status: true, contentHash: true, charCount: true } }) : null;
+  if (existing && wasUsed && wasUsed.contentHash && wasUsed.contentHash !== hash) {
+    const delta = text.length - wasUsed.charCount;
+    await flagArticlesForReview(
+      existing.id,
+      CHANGED_SOURCE,
+      `re-read on ${new Date().toISOString().slice(0, 10)}; the text is ${delta === 0 ? 'the same length but different' : `${delta > 0 ? `${delta} characters longer` : `${-delta} characters shorter`}`}`,
+    );
+  }
+
+  const data = {
+    title,
+    text,
+    charCount: text.length,
+    contentHash: hash,
+    publishedAt,
+    language: language ?? (/[؀-ۿ]/.test(text.slice(0, 2000)) ? 'fa' : 'en'),
+    fetchedAt: new Date(),
+    // A document already written from stays `used`. Resetting it to `new`
+    // would put it back in the writing queue and publish the same subject
+    // twice, which is the bug that made the Persian lane repeat itself.
+    status: wasUsed?.status === 'used' ? 'used' : 'new',
+    digest: null,
+  };
   const doc = existing
     ? await prisma.sourceDocument.update({ where: { id: existing.id }, data })
     : await prisma.sourceDocument.create({ data: { ...data, sourceId: source.id, url: source.url } });
@@ -136,8 +164,12 @@ async function stepDigest(documentId: string) {
   const doc = await prisma.sourceDocument.findUniqueOrThrow({ where: { id: documentId }, include: { source: { select: { url: true, trust: true } } } });
   const digest = await writeDigest({ title: doc.title, text: doc.text, url: doc.url ?? doc.source.url, trust: doc.source.trust });
   // `ready` here is provisional for a watch item: the triage step that runs
-  // next can send it to `ignored`.
-  await prisma.sourceDocument.update({ where: { id: documentId }, data: { digest, status: 'ready' } });
+  // next can send it to `ignored`. A document already written from keeps
+  // `used`, so a re-read never re-offers it to the writers.
+  await prisma.sourceDocument.update({
+    where: { id: documentId },
+    data: { digest, status: doc.status === 'used' ? 'used' : 'ready' },
+  });
 }
 
 // ---------------------------------------------------------------------------

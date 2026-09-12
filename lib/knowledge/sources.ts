@@ -8,6 +8,7 @@ import { createHash } from 'node:crypto';
 import prisma from '@/lib/prisma';
 import { officialCitationUrl } from '@/lib/autopilot/official-sources';
 import { pdfToText, MAX_PDF_BYTES } from './adapters/pdf';
+import { canonicalUrl, isYouTubeUrl, NoCaptions, videoId, youtubeToText } from './adapters/youtube';
 import { putObject } from './storage';
 
 export const KINDS = ['html', 'pdf', 'youtube', 'text'] as const;
@@ -74,9 +75,8 @@ export function cleanTopics(topics: unknown): string[] {
  */
 export async function createSource(input: NewSource) {
   if (!KINDS.includes(input.kind)) throw new SourceError('Unknown source kind.');
-  if (input.kind === 'youtube') throw new SourceError('YouTube sources arrive in a later phase. Paste the transcript as text for now.');
   const cadence: Cadence = input.cadence === 'watch' ? 'watch' : 'once';
-  if (cadence === 'watch' && input.kind !== 'html') throw new SourceError('Only a web page can be watched.');
+  if (cadence === 'watch' && input.kind !== 'html') throw new SourceError('Only a web page can be watched. A channel needs its own discovery and is not built.');
 
   let url: string | null = null;
   let text: string | null = null;
@@ -84,7 +84,28 @@ export async function createSource(input: NewSource) {
   let storagePath: string | null = null;
   let firstStep: 'fetch' | 'chunk' = 'fetch';
 
-  if (input.kind === 'text') {
+  if (input.kind === 'youtube') {
+    // Read the captions now rather than in the job, so the admin finds out
+    // immediately that a video has none and can paste the transcript instead
+    // of waiting a quarter of an hour to be told.
+    if (!input.url || !isYouTubeUrl(input.url)) throw new SourceError('That is not a YouTube video URL.');
+    const id = videoId(input.url) as string;
+    url = canonicalUrl(id);
+    const clash = await prisma.source.findUnique({ where: { url }, select: { id: true } });
+    if (clash) throw new SourceError('That video is already registered.', 409);
+    let captions;
+    try {
+      captions = await youtubeToText(url, input.locale === 'fa' ? 'fa' : 'en');
+    } catch (e) {
+      throw new SourceError(e instanceof NoCaptions ? e.message : `Could not read that video: ${e instanceof Error ? e.message : String(e)}`);
+    }
+    text = captions.text;
+    docTitle = docTitle || captions.title;
+    if (captions.auto) {
+      input.notes = [input.notes, 'captions are auto-generated; names and figures in them are unreliable'].filter(Boolean).join(' · ');
+    }
+    firstStep = 'chunk';
+  } else if (input.kind === 'text') {
     text = (input.text ?? '').replace(/\r\n/g, '\n').trim();
     if (text.length < MIN_TEXT_CHARS) throw new SourceError(`Pasted text is too short to carry facts (${text.length} chars, minimum ${MIN_TEXT_CHARS}).`);
     if (!docTitle) throw new SourceError('Give pasted text a title so it can be cited.');
@@ -109,7 +130,7 @@ export async function createSource(input: NewSource) {
     url = normaliseUrl(input.url);
   }
 
-  if (url) {
+  if (url && input.kind !== 'youtube') {
     const clash = await prisma.source.findUnique({ where: { url }, select: { id: true } });
     if (clash && input.kind !== 'text') throw new SourceError('That URL is already registered.', 409);
     if (clash) url = null; // pasted text citing a URL we also crawl: keep the text, drop the unique claim
@@ -158,7 +179,7 @@ export async function enqueueRefetch(sourceId: string) {
   const open = await prisma.ingestJob.findFirst({ where: { sourceId, status: { in: ['pending', 'running'] } } });
   if (open) return open;
   const source = await prisma.source.findUniqueOrThrow({ where: { id: sourceId }, select: { kind: true, url: true } });
-  const step = source.kind === 'text' || (source.kind === 'pdf' && !source.url) ? 'chunk' : 'fetch';
+  const step = source.kind === 'text' || source.kind === 'youtube' || (source.kind === 'pdf' && !source.url) ? 'chunk' : 'fetch';
   const doc = step === 'chunk' ? await prisma.sourceDocument.findFirst({ where: { sourceId }, select: { id: true } }) : null;
   await prisma.source.update({ where: { id: sourceId }, data: { status: 'pending', lastError: null } });
   return prisma.ingestJob.create({ data: { sourceId, documentId: doc?.id ?? null, step } });
