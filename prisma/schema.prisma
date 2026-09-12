@@ -209,3 +209,89 @@ model SocialPost {
   @@unique([articleId, destination, kind])
   @@index([destination, createdAt])
 }
+
+// ─── Knowledge sources ───────────────────────────────────────────────────────
+// What the admin registers for the writer to draw evidence from. See
+// docs/knowledge-sources-architecture.md. A Source is the thing registered
+// (a URL, an uploaded PDF, pasted text); a SourceDocument is one concrete
+// text we read from it; a SourceChunk is a citable passage with its
+// embedding. Nothing in these tables is ever published — it is working input.
+
+model Source {
+  id            String    @id @default(cuid())
+  kind          String    // html | pdf | youtube | text
+  cadence       String    @default("once") // once | watch
+  url           String?   @unique
+  storagePath   String?   // GCS object path for uploaded PDFs
+  title         String?
+  trust         String    @default("press") // official | press | commentary
+  locale        String?   // en | fa | null
+  pinned        Boolean   @default(false)   // digest goes into every prompt on its topics
+  topics        String    @default("[]")    // JSON string[]
+  watchEvery    Int?      // hours; watch only
+  watchMode     String?   // feed | listing | sitemap
+  enabled       Boolean   @default(true)
+  status        String    @default("pending") // pending | ingesting | ready | blocked | error
+  lastCheckedAt DateTime?
+  lastError     String?
+  notes         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  documents     SourceDocument[]
+  jobs          IngestJob[]
+
+  @@index([cadence, enabled])
+}
+
+model SourceDocument {
+  id            String    @id @default(cuid())
+  sourceId      String
+  source        Source    @relation(fields: [sourceId], references: [id], onDelete: Cascade)
+  url           String?   @unique
+  title         String
+  publishedAt   DateTime?
+  fetchedAt     DateTime  @default(now())
+  contentHash   String
+  text          String    // full plain text — working input, never published
+  charCount     Int       @default(0)
+  language      String?
+  digest        String?   // ~300-word fact list, model-written at ingest
+  relevance     Int?      // 0–5 vs our keyword list (watch docs)
+  matchedTopics String    @default("[]") // JSON string[]
+  status        String    @default("new") // new | ready | ignored | used | failed
+  reason        String?
+  articleIds    String    @default("[]") // JSON string[]
+  chunks        SourceChunk[]
+  updatedAt     DateTime  @updatedAt
+
+  @@index([sourceId, status, publishedAt])
+}
+
+model SourceChunk {
+  id          String         @id @default(cuid())
+  documentId  String
+  document    SourceDocument @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  ord         Int
+  text        String
+  locator     String?        // "p.12" | "00:14:32" | "Eligibility > Funding"
+  embedding   Bytes?         // Float32 LE, 1536 dims; null until embedded
+  tokenCount  Int            @default(0)
+
+  @@index([documentId, ord])
+}
+
+model IngestJob {
+  id         String   @id @default(cuid())
+  sourceId   String
+  source     Source   @relation(fields: [sourceId], references: [id], onDelete: Cascade)
+  documentId String?
+  step       String   @default("fetch") // fetch | chunk | embed | digest | done
+  status     String   @default("pending") // pending | running | done | failed
+  attempts   Int      @default(0)
+  error      String?
+  runAfter   DateTime @default(now())
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([status, runAfter])
+}

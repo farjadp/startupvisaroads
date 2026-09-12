@@ -21,6 +21,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@google-cloud/storage": "^8.1.0",
     "@prisma/client": "^5.22.0",
     "@swc/helpers": "0.5.18",
     "@tiptap/extension-image": "^3.26.1",
@@ -41,7 +42,8 @@
     "resend": "^6.16.0",
     "slugify": "^1.6.9",
     "twilio": "^6.0.2",
-    "twitter-api-v2": "^1.29.0"
+    "twitter-api-v2": "^1.29.0",
+    "unpdf": "^1.8.1"
   },
   "devDependencies": {
     "@types/node": "^24.10.2",

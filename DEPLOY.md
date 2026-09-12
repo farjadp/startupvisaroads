@@ -132,6 +132,7 @@ Two writers and a watchdog, all behind `Authorization: Bearer $CRON_SECRET`:
 |---|---|
 | `/api/cron/autopilot?n=&locale=&publish=1` | Plans briefs from the site's own pages and the immigration calendar, writes, publishes. Always delivers `n`. |
 | `/api/cron/autopilot-source?n=&locale=&publish=1` | Harvests IRCC / CIC News / Moving2Canada, reads each item into a fact sheet, writes an original, runs the originality gate. Refuses roughly half of what it reads, so it may deliver fewer than `n`. |
+| `/api/cron/sources?limit=5` | Works through pending knowledge-source ingest jobs (fetch → chunk → embed → digest). The admin console calls it right after registering a source; the schedule is the safety net for anything deferred. |
 | `/api/cron/autopilot-digest[?hours=26&dry=1]` | Reads the day's `AutopilotRun` rows, decides per locale whether the lane is healthy / degraded / silent / stuck, and sends one Telegram message. `dry=1` returns the message instead of sending it. Requires `TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHAT_ID`. |
 | `/api/cron/social-short[?dry=1]` | On a day nothing was published, posts one idea from the article that has gone longest without attention to the Telegram channel. Does nothing on a day an article published. Requires `TELEGRAM_CHANNEL_BOT_TOKEN` and `TELEGRAM_CHANNEL_ID`. |
 | `/api/cron/social-insights[?n=2&dry=1]` | Two or three insight tweets a day, one idea per article, to both X accounts — @ashavidgroup in English inside the standard limit, @FarjadTalks in Persian long-form with the digital-assistant signature. Runs whether or not an article published. |
@@ -173,6 +174,15 @@ gcloud scheduler jobs create http svr-autopilot-source-fa --location $REGION --s
 # dead lane visible: without it the pipeline reports its own failures only
 # into an HTTP response body that Cloud Scheduler throws away.
 gcloud scheduler jobs create http svr-autopilot-digest    --location $REGION --schedule "0 18 * * *" --uri "$RUN_URL/api/cron/autopilot-digest"                          --http-method GET --headers "$AUTH" --attempt-deadline 120s
+
+# Knowledge-source ingestion. Every 15 minutes; a tick with nothing pending
+# returns in under a second.
+gcloud scheduler jobs create http svr-sources-ingest      --location $REGION --schedule "*/15 * * * *" --uri "$RUN_URL/api/cron/sources?limit=5"                        --http-method GET --headers "$AUTH" --attempt-deadline 300s
+
+# Uploaded PDFs keep their original in a bucket (text is in the database either way):
+#   gcloud storage buckets create gs://visaroads-knowledge --location=$REGION --uniform-bucket-level-access
+#   gcloud storage buckets add-iam-policy-binding gs://visaroads-knowledge --member="serviceAccount:<cloud-run-service-account>" --role=roles/storage.objectAdmin
+#   gcloud run services update $SERVICE --region $REGION --update-env-vars KNOWLEDGE_BUCKET=visaroads-knowledge
 
 # The quiet-day channel post. Runs after the last writing job and before the
 # digest, so a day that produced nothing still puts something in the channel.
