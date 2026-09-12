@@ -85,9 +85,17 @@ model AutopilotRun {
   @@index([startedAt])
 }
 
-// Ledger of external articles we have seen, so "n new ones" means something
-// across daily runs. `text` is a working input for the fact-sheet step and is
-// never published.
+// SUPERSEDED by SourceDocument (knowledge phase 3, 12 Sep 2026). Nothing
+// reads this table any more: the source writer picks from SourceDocument and
+// lib/knowledge/backfill.ts copies these rows across on every watch tick,
+// idempotently.
+//
+// It stays for one release, and only for one reason: if the backfill has not
+// yet run against production, dropping the table would lose the record of
+// which news items the old harvester already wrote from, and the watch pass
+// would rediscover them and publish the same articles again. Drop it — with
+// backfill.ts — once a production watch tick reports documents carried over
+// and then zero on the next.
 model SourceArticle {
   id          String    @id @default(cuid())
   sourceSlug  String
@@ -284,7 +292,7 @@ model IngestJob {
   sourceId   String
   source     Source   @relation(fields: [sourceId], references: [id], onDelete: Cascade)
   documentId String?
-  step       String   @default("fetch") // fetch | chunk | embed | digest | done
+  step       String   @default("fetch") // fetch | chunk | embed | digest | triage | done
   status     String   @default("pending") // pending | running | done | failed
   attempts   Int      @default(0)
   error      String?

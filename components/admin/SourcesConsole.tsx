@@ -11,7 +11,13 @@ import { Link2, Rss, FileText, ClipboardPaste, Youtube, RefreshCw, Search, Check
 import type { SourceRow } from '@/lib/knowledge/admin';
 import type { EvidencePack } from '@/lib/knowledge/retrieve';
 
-type Props = { initialSources: SourceRow[]; keywordPool: string[]; retainsFiles: boolean };
+type Props = {
+  initialSources: SourceRow[];
+  keywordPool: string[];
+  retainsFiles: boolean;
+  /** Rendered between the retrieval box and the sources table — the suggestion queue. */
+  children?: React.ReactNode;
+};
 
 type Mode = 'link' | 'watch' | 'pdf' | 'text';
 
@@ -32,7 +38,7 @@ function StatusPill({ status, job }: { status: string; job: string | null }) {
   return <span className="inline-flex items-center gap-1 text-blue-700"><RefreshCw className="w-3.5 h-3.5 animate-spin" /> {job ? job.split(':')[1] : status}</span>;
 }
 
-export default function SourcesConsole({ initialSources, keywordPool, retainsFiles }: Props) {
+export default function SourcesConsole({ initialSources, keywordPool, retainsFiles, children }: Props) {
   const [sources, setSources] = useState<SourceRow[]>(initialSources);
   const [mode, setMode] = useState<Mode>('link');
   const [url, setUrl] = useState('');
@@ -299,6 +305,8 @@ export default function SourcesConsole({ initialSources, keywordPool, retainsFil
           </div>
         )}
       </form>
+
+      {children}
 
       {/* List */}
       <div className="bg-white rounded-2xl border border-[#1a1a1a]/5 shadow-sm overflow-hidden">

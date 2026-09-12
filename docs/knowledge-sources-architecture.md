@@ -1,6 +1,6 @@
 # Knowledge Sources — architecture
 
-Status: phases 1 and 2 BUILT (12 Sep 2026); phases 3 and 4 pending. Owner: Farjad.
+Status: phases 1, 2 and 3 BUILT (12 Sep 2026); phase 4 pending. Owner: Farjad.
 
 Phase 1: `lib/knowledge/*` (chunk, embed, adapters/html, adapters/pdf, digest,
 sources, ingest, retrieve, admin, storage), `/api/admin/sources*`,
@@ -318,9 +318,21 @@ exactly like a watch document that scored 5 — the admin's act of adding it
    blocking on an empty pack would stop the planned lane for a reason the
    writer cannot fix. `GATE_WITHOUT_EVIDENCE` in `lib/autopilot/evidence.ts`
    flips that once there are enough sources on file.
-3. **Watch** — the three hard-coded feeds become rows; listing/sitemap modes;
-   triage at ingest; `source-writer` reads `SourceDocument`; *Write from this
-   now*.
+3. **Watch** — DONE. `lib/knowledge/watch.ts` (feed / listing / sitemap
+   discovery, mode autodetection, the ledger), `lib/knowledge/triage.ts`
+   (relevance 0–5 at ingest), `lib/knowledge/queue.ts` (what a writer may
+   take, and what waits for a click), `lib/knowledge/backfill.ts`, the
+   `/api/cron/sources-watch` route and the admin suggestion queue. The three
+   feeds are installed as rows on the first tick and `lib/autopilot/sources.ts`
+   is gone; only its feed parser survived, as `lib/knowledge/feed.ts`.
+
+   Verified locally: the backfill carried 50 old ledger rows across, so
+   discovery found only 2 new items in a 30-item IRCC feed instead of
+   rediscovering all 30. Triage scored three provincial-nomination items 5/5
+   and refused a fuel-tax notice and a citizenship-by-descent piece at 0/5,
+   with reasons. The auto lane then wrote nothing and said why: "3 triaged
+   items waiting for approval in the admin", which the daily Telegram digest
+   reports as degraded.
 4. **Media + maintenance** — YouTube adapter (captions only), changed-document
    → articles-needing-review queue.
 

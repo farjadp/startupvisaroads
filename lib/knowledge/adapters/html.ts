@@ -2,10 +2,10 @@
 // lib/knowledge/adapters/html.ts
 // A web page → plain text with heading markers the chunker understands.
 //
-// This is a sibling of htmlToText in lib/autopilot/sources.ts, not a
-// replacement: that one flattens headings and caps at 9,000 chars because it
-// feeds a one-shot fact sheet. Here the whole page is the point, and a
-// heading path is what makes a chunk citable ("Eligibility > Funding").
+// This replaced the old autopilot harvester's htmlToText, which flattened
+// headings and capped at 9,000 characters because it fed a one-shot fact
+// sheet. Here the whole page is the point, and a heading path is what makes
+// a chunk citable ("Eligibility > Funding").
 // ============================================================================
 import * as cheerio from 'cheerio';
 

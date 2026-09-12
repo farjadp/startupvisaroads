@@ -95,3 +95,38 @@ export async function sourceDetail(id: string) {
 }
 
 export type SourceDetailData = NonNullable<Awaited<ReturnType<typeof sourceDetail>>>;
+
+/**
+ * Items that cleared triage but are not eligible for an unasked run: the
+ * admin's suggestion queue. One click writes from any of them.
+ *
+ * Ordered by score then recency, because the decision a reader faces is
+ * usually the newest high-scoring item, not the oldest.
+ */
+export async function suggestedDocuments(limit = 40) {
+  const rows = await prisma.sourceDocument.findMany({
+    where: { status: 'ready', articleIds: '[]', text: { not: '' }, relevance: { gte: 1 }, source: { enabled: true } },
+    orderBy: [{ relevance: 'desc' }, { publishedAt: 'desc' }, { fetchedAt: 'desc' }],
+    take: limit,
+    include: { source: { select: { id: true, title: true, url: true, trust: true, locale: true, cadence: true } } },
+  });
+  return rows.map((d) => ({
+    id: d.id,
+    title: d.title,
+    url: d.url,
+    relevance: d.relevance,
+    matchedTopics: parseList(d.matchedTopics),
+    publishedAt: d.publishedAt?.toISOString() ?? null,
+    fetchedAt: d.fetchedAt.toISOString(),
+    charCount: d.charCount,
+    digest: d.digest,
+    sourceId: d.source.id,
+    sourceName: d.source.title ?? d.source.url ?? 'a source',
+    trust: d.source.trust,
+    locale: d.source.locale,
+    /** True when a scheduled run would have taken this already. */
+    autoEligible: d.source.trust === 'official' && (d.relevance ?? 0) >= 5,
+  }));
+}
+
+export type SuggestedDocument = Awaited<ReturnType<typeof suggestedDocuments>>[number];

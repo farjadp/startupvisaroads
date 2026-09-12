@@ -25,7 +25,7 @@ import { BRAND_FACTS, buildInventory, linkBlock, type Inventory } from './invent
 import { originality, tooClose } from './originality';
 import { AIO_RULES, FACT_RULES, WRITER_MODEL, chatJson, chatText, expand, houseStyle, humanise, type GenerateResult } from './pipeline';
 import { generateBrandImage, imagesBlocked } from './images';
-import { harvest, markLedger, type SourceArticle } from './sources';
+import { markDocument, pendingCount, writableDocumentById, writableDocuments, type WritableDocument } from '@/lib/knowledge/queue';
 import { decidePlannedPublication, enforceLinks, sameSubject, wordCountHtml } from './text';
 import { applyCitations, buildEvidence, gateFigures, recordEvidenceUse, type Evidence } from './evidence';
 import { draftMeta, placeVisuals, wordTarget } from './writer';
@@ -54,7 +54,7 @@ type SourceBrief = {
 const str = (v: unknown) => (typeof v === 'string' ? v.trim() : '');
 const arr = (v: unknown) => (Array.isArray(v) ? v.map(String).map((s) => s.trim()).filter(Boolean) : []);
 
-async function readSource(article: SourceArticle, inv: Inventory): Promise<SourceBrief> {
+async function readSource(article: WritableDocument, inv: Inventory): Promise<SourceBrief> {
   const lang = inv.locale === 'fa' ? 'Persian (Farsi)' : 'English';
   const raw = await chatJson<Record<string, unknown>>(
     `You are the content editor of Startup Visa Roads (visaroads.com). ${BRAND_FACTS}
@@ -136,7 +136,7 @@ function briefGap(b: SourceBrief): string | null {
 // ---------------------------------------------------------------------------
 // 2. Draft from the fact sheet
 // ---------------------------------------------------------------------------
-async function draftFromFacts(brief: SourceBrief, article: SourceArticle, inv: Inventory, evidence: Evidence): Promise<string> {
+async function draftFromFacts(brief: SourceBrief, article: WritableDocument, inv: Inventory, evidence: Evidence): Promise<string> {
   const lang = inv.locale === 'fa' ? 'Persian (Farsi)' : 'English';
   const { min, target } = wordTarget(brief.depth);
   const html = await chatText(
@@ -180,32 +180,66 @@ Return ONLY the HTML body. No <html>/<body>, no code fence, no commentary.`,
 // ---------------------------------------------------------------------------
 // 3. Run
 // ---------------------------------------------------------------------------
-type RunOpts = { publish?: boolean; dryRun?: boolean };
+type RunOpts = {
+  publish?: boolean;
+  dryRun?: boolean;
+  /**
+   * 'auto' (the default) takes only what may be written unasked: an official
+   * source at the top triage score. 'any' takes everything that cleared
+   * triage, for a run a person triggered.
+   */
+  mode?: 'auto' | 'any';
+  /** Write from this one document, whatever its score. The admin's "write from this". */
+  documentId?: string;
+};
 
 /**
- * Write up to `n` posts from external sources, sequentially: each article is
- * three model passes plus images, and the harvest is shared state. Anything
- * this run does not reach stays `new` in the ledger for the next run.
+ * Write up to `n` posts from source documents, sequentially: each article is
+ * three model passes plus images. Discovery and reading happen on their own
+ * schedule now (lib/knowledge/watch.ts and ingest.ts), so this only picks
+ * from rows that already exist. Anything this run does not reach stays
+ * `ready` for the next one.
  */
 export async function runFromSources(n: number, locale: Locale, opts: RunOpts = {}): Promise<GenerateResult & { notes: string[] }> {
   const result: GenerateResult & { notes: string[] } = { created: [], errors: [], skipped: [], warnings: [], notes: [] };
   const run = await prisma.autopilotRun.create({ data: { requested: n, locale, mode: 'source', notes: opts.dryRun ? 'dry-run' : null } });
 
   let inv: Inventory;
-  let articles: SourceArticle[];
+  let articles: WritableDocument[];
   try {
     inv = await buildInventory(locale);
-    // Over-fetch: the reader refuses roughly half of what it is handed (a
-    // first run rejected 2 of 2), and a refusal costs one cheap read.
-    const h = await harvest(n * 3);
-    articles = h.articles;
-    result.notes.push(...h.notes);
+    if (opts.documentId) {
+      // The admin asked for this one by name, which is itself the approval.
+      const one = await writableDocumentById(opts.documentId);
+      if (!one) {
+        result.errors.push({ error: 'that source document has no readable text, or does not exist' });
+        await finish(run.id, result);
+        return result;
+      }
+      articles = [one];
+    } else {
+      // Over-fetch: the reader refuses a good share of what it is handed even
+      // after triage, and a refusal costs one cheap read.
+      articles = await writableDocuments(n * 3, locale, opts.mode ?? 'auto');
+    }
   } catch (e) {
-    result.errors.push({ error: `harvest: ${e instanceof Error ? e.message : String(e)}` });
+    result.errors.push({ error: `queue: ${e instanceof Error ? e.message : String(e)}` });
     await finish(run.id, result);
     return result;
   }
-  if (!articles.length) result.notes.push('nothing new to write from');
+
+  // A deliberately quiet lane and a broken one look identical from outside,
+  // and this project has twice mistaken one for the other. Say what is
+  // waiting, every run, whether or not anything was written.
+  const waiting = await pendingCount(locale).catch(() => 0);
+  if (waiting) result.notes.push(`${waiting} triaged item${waiting === 1 ? '' : 's'} waiting for approval in the admin`);
+  if (!articles.length) {
+    result.notes.push(
+      waiting
+        ? 'nothing eligible for an unasked run; the queue above needs a click'
+        : 'nothing new to write from — no source document cleared triage',
+    );
+  }
 
   for (const article of articles) {
     if (result.created.length >= n) break;
@@ -214,7 +248,7 @@ export async function runFromSources(n: number, locale: Locale, opts: RunOpts = 
       const gap = brief.usable ? briefGap(brief) : null;
       if (!brief.usable || gap) {
         const reason = brief.usable ? `brief incomplete: ${gap}` : brief.rejectReason || 'rejected without a reason';
-        if (!opts.dryRun) await markLedger(article.ledgerId, 'skipped', reason);
+        if (!opts.dryRun) await markDocument(article.documentId, 'ignored', reason);
         result.skipped.push({ title: article.title, reason });
         continue;
       }
@@ -227,7 +261,7 @@ export async function runFromSources(n: number, locale: Locale, opts: RunOpts = 
       const echo = seen.find((t) => sameSubject(t, brief.workingTitle));
       if (echo) {
         const reason = `same subject as "${echo}"`;
-        if (!opts.dryRun) await markLedger(article.ledgerId, 'skipped', reason);
+        if (!opts.dryRun) await markDocument(article.documentId, 'ignored', reason);
         result.skipped.push({ title: brief.workingTitle, reason });
         console.warn(`autopilot/source-writer: SKIPPED as a repeat of "${echo}" — "${brief.workingTitle}"`);
         continue;
@@ -252,7 +286,7 @@ export async function runFromSources(n: number, locale: Locale, opts: RunOpts = 
       const o = originality(body, article.text);
       if (tooClose(o)) {
         const reason = `overlap with source: ${o.shared} shared ten-word runs — "${o.sample?.slice(0, 80) ?? ''}"`;
-        if (!opts.dryRun) await markLedger(article.ledgerId, 'skipped', reason);
+        if (!opts.dryRun) await markDocument(article.documentId, 'ignored', reason);
         result.skipped.push({ title: article.title, reason });
         continue;
       }
@@ -287,7 +321,7 @@ export async function runFromSources(n: number, locale: Locale, opts: RunOpts = 
       const gate = gateFigures(body, allowed, true);
       if (!gate.ok) {
         const reason = `figures in neither the fact sheet nor the evidence: ${gate.violations.join(', ')}`;
-        if (!opts.dryRun) await markLedger(article.ledgerId, 'skipped', reason);
+        if (!opts.dryRun) await markDocument(article.documentId, 'ignored', reason);
         result.skipped.push({ title: d.title, reason });
         console.warn(`autopilot/source-writer: REFUSED — "${d.title}" states ${gate.violations.join(', ')} with nothing behind them`);
         continue;
@@ -315,7 +349,7 @@ export async function runFromSources(n: number, locale: Locale, opts: RunOpts = 
       const repeat = seen.find((t) => sameSubject(t, d.title));
       if (repeat) {
         const reason = `already published as "${repeat}"`;
-        await markLedger(article.ledgerId, 'skipped', reason);
+        await markDocument(article.documentId, 'ignored', reason);
         result.skipped.push({ title: d.title, reason });
         console.warn(`autopilot/source-writer: SKIPPED as a repeat of "${repeat}" — "${d.title}"`);
         continue;
@@ -344,12 +378,12 @@ export async function runFromSources(n: number, locale: Locale, opts: RunOpts = 
         // property) must not auto-publish as though it were authoritative.
         { locale: inv.locale, status: publication.status },
       );
-      await markLedger(article.ledgerId, 'used', brief.angle, created.id);
+      await markDocument(article.documentId, 'used', brief.angle, created.id);
       await recordEvidenceUse(created.id, evidence.pack, cited.used);
       result.created.push({ id: created.id, slug: created.slug, title: created.title });
     } catch (e) {
       const msg = e instanceof Error ? e.message : String(e);
-      if (!opts.dryRun) await markLedger(article.ledgerId, 'failed', msg);
+      if (!opts.dryRun) await markDocument(article.documentId, 'failed', msg);
       result.errors.push({ title: article.title, error: msg });
     }
   }

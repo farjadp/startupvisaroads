@@ -132,6 +132,7 @@ Two writers and a watchdog, all behind `Authorization: Bearer $CRON_SECRET`:
 |---|---|
 | `/api/cron/autopilot?n=&locale=&publish=1` | Plans briefs from the site's own pages and the immigration calendar, writes, publishes. Always delivers `n`. |
 | `/api/cron/autopilot-source?n=&locale=&publish=1` | Harvests IRCC / CIC News / Moving2Canada, reads each item into a fact sheet, writes an original, runs the originality gate. Refuses roughly half of what it reads, so it may deliver fewer than `n`. |
+| `/api/cron/sources-watch?limit=10[&ingest=1]` | Asks every watch source what it has published since we last looked, ledgers the new item URLs and queues an ingest job for each fresh one. Installs the three default feeds and carries the old `SourceArticle` ledger across on its first call, so it needs no setup step. |
 | `/api/cron/sources?limit=5` | Works through pending knowledge-source ingest jobs (fetch → chunk → embed → digest). The admin console calls it right after registering a source; the schedule is the safety net for anything deferred. |
 | `/api/cron/autopilot-digest[?hours=26&dry=1]` | Reads the day's `AutopilotRun` rows, decides per locale whether the lane is healthy / degraded / silent / stuck, and sends one Telegram message. `dry=1` returns the message instead of sending it. Requires `TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHAT_ID`. |
 | `/api/cron/social-short[?dry=1]` | On a day nothing was published, posts one idea from the article that has gone longest without attention to the Telegram channel. Does nothing on a day an article published. Requires `TELEGRAM_CHANNEL_BOT_TOKEN` and `TELEGRAM_CHANNEL_ID`. |
@@ -178,6 +179,14 @@ gcloud scheduler jobs create http svr-autopilot-digest    --location $REGION --s
 # Knowledge-source ingestion. Every 15 minutes; a tick with nothing pending
 # returns in under a second.
 gcloud scheduler jobs create http svr-sources-ingest      --location $REGION --schedule "*/15 * * * *" --uri "$RUN_URL/api/cron/sources?limit=5"                        --http-method GET --headers "$AUTH" --attempt-deadline 300s
+
+# Watch sources: what the feeds published since the last look. Hourly is
+# plenty — each source has its own `watchEvery` (12 h for the two news feeds,
+# 24 h for the third) and this job only visits the ones that are due, so an
+# hourly tick usually finds nothing to do and costs a few hundred
+# milliseconds. It runs BEFORE the writing jobs so the day's items are
+# already triaged by the time a writer looks for one.
+gcloud scheduler jobs create http svr-sources-watch       --location $REGION --schedule "20 * * * *"  --uri "$RUN_URL/api/cron/sources-watch?limit=10"                  --http-method GET --headers "$AUTH" --attempt-deadline 300s
 
 # Uploaded PDFs keep their original in a bucket (text is in the database either way):
 #   gcloud storage buckets create gs://visaroads-knowledge --location=$REGION --uniform-bucket-level-access
