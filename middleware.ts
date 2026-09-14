@@ -22,6 +22,14 @@ async function getAdminPayload(request: NextRequest): Promise<any | null> {
 export default async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
+  // One canonical host: www.visaroads.com answers with a 301 to the apex.
+  // Behind Cloud Run request.url carries the internal host, so read the
+  // host the visitor actually asked for.
+  const host = (request.headers.get('x-forwarded-host') ?? request.headers.get('host') ?? '').toLowerCase();
+  if (host.startsWith('www.')) {
+    return NextResponse.redirect(`https://${host.slice(4)}${pathname}${request.nextUrl.search}`, 301);
+  }
+
   const isAdminPath = /^\/(en|fa)\/admin(\/|$)/.test(pathname) || pathname === '/admin';
   const isLoginPage = /^\/(en|fa)\/admin\/login(\/|$)/.test(pathname) || pathname === '/admin/login';
 
