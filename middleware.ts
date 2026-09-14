@@ -6,6 +6,9 @@ import { faRedirectTarget } from './lib/fa/redirects';
 
 const intlMiddleware = createMiddleware(routing);
 
+const CANONICAL_HOST = 'visaroads.com';
+const ALIAS_HOSTS = new Set(['www.visaroads.com', 'startupvisaroads.com', 'www.startupvisaroads.com']);
+
 // Returns the verified admin payload, or null. Fails closed: if the JWT secret
 // is misconfigured we treat the request as unauthenticated rather than crashing.
 async function getAdminPayload(request: NextRequest): Promise<any | null> {
@@ -22,12 +25,13 @@ async function getAdminPayload(request: NextRequest): Promise<any | null> {
 export default async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // One canonical host: www.visaroads.com answers with a 301 to the apex.
-  // Behind Cloud Run request.url carries the internal host, so read the
-  // host the visitor actually asked for.
-  const host = (request.headers.get('x-forwarded-host') ?? request.headers.get('host') ?? '').toLowerCase();
-  if (host.startsWith('www.')) {
-    return NextResponse.redirect(`https://${host.slice(4)}${pathname}${request.nextUrl.search}`, 301);
+  // One canonical host: www and the old startupvisaroads.com domain answer
+  // with a 301 to visaroads.com. Behind Cloud Run request.url carries the
+  // internal host, so read the host the visitor actually asked for. The
+  // run.app URL (Cloud Scheduler) and localhost are not in the list.
+  const host = (request.headers.get('x-forwarded-host') ?? request.headers.get('host') ?? '').toLowerCase().split(':')[0];
+  if (ALIAS_HOSTS.has(host)) {
+    return NextResponse.redirect(`https://${CANONICAL_HOST}${pathname}${request.nextUrl.search}`, 301);
   }
 
   const isAdminPath = /^\/(en|fa)\/admin(\/|$)/.test(pathname) || pathname === '/admin';
