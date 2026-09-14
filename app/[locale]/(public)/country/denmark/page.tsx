@@ -265,7 +265,7 @@ export default function DenmarkPage() {
           <div className="grid grid-cols-2 md:grid-cols-4 divide-x divide-white/10">
             {[
               { stat: '75', label: 'Visas Per Year', sub: 'per person, not per team' },
-              { stat: '2 Yrs', label: 'Initial Permit', sub: 'fully renewable' },
+              { stat: '2 Yrs', label: 'Initial Permit', sub: 'extendable up to 3 yrs' },
               { stat: '3.5/5', label: 'Panel Pass Mark', sub: 'average across 4 criteria' },
               { stat: '8 Yrs', label: 'To Permanent Residence', sub: '4 only with all four extras' },
             ].map((s, i) => (
@@ -748,7 +748,7 @@ export default function DenmarkPage() {
 
             {[
               { phase: 'Year 1–2', title: 'Initial Permit', color: '#AEC6CF', desc: 'Launch your startup. Get your CPR, MitID, CVR. Attend free Danish classes.', dot: '#AEC6CF' },
-              { phase: 'Year 3–5', title: '3-Year Extension', color: '#003D73', desc: 'The panel assesses the business again, then SIRI extends. Scale, hire, and start Danish classes — you will need the exam later.', dot: '#003D73' },
+              { phase: 'Year 3–5', title: '3-Year Extension', color: '#003D73', desc: 'The panel assesses the business again, then SIRI extends by up to 3 years. What happens after year 5 is not set out in the official sources — do not plan on it. Start Danish classes: you will need the exam later.', dot: '#003D73' },
               { phase: 'Year 8', title: 'Permanent Residency', color: '#0d1017', desc: 'Eight lawful years, Prøve i Dansk 2, 3.5 years of full-time work or self-employment, and at least 2 of the 4 supplementary conditions. Four years only if you meet all 4.', dot: '#0d1017' },
               { phase: 'Year 10+', title: 'Danish Passport', color: '#C8102E', desc: 'Nine years of continuous residence, but you must also have held PR for 2 years, passed Prøve i Dansk 3 and the citizenship test. Dual citizenship is allowed.', dot: '#C8102E' },
             ].map((p, i) => (

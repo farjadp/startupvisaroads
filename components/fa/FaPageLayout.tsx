@@ -72,11 +72,15 @@ function stepsOf(s: FaSection): Step[] | null {
   const parsed = s.bullets.map((b) => {
     const m = b.match(NUMBERED);
     if (!m) return null;
-    const rest = b.slice(m[0].length);
-    const cut = rest.search(/[—–:.]/);
-    const title = cut > 0 && cut < 70 ? rest.slice(0, cut).trim() : rest.slice(0, 60).trim();
-    const body = cut > 0 && cut < 70 ? rest.slice(cut + 1).trim() : rest;
-    return { n: m[1], title, body: body || rest };
+    const rest = b.slice(m[0].length).trim();
+    const cut = rest.search(/[—–:.؛]/);
+    // A delimiter near the start splits title from body. A step with none —
+    // or whose only one is its closing full stop — is all title: it used to be
+    // cut at a fixed 60 characters, mid-word («… و ثبت ش»).
+    if (cut > 0 && cut < 70 && rest.slice(cut + 1).trim()) {
+      return { n: m[1], title: rest.slice(0, cut).trim(), body: rest.slice(cut + 1).trim() };
+    }
+    return { n: m[1], title: rest.replace(/[.。]$/, ''), body: '' };
   });
   return parsed.every(Boolean) ? (parsed as Step[]) : null;
 }

@@ -80,8 +80,8 @@ export default function Stepper({ steps }: { steps: Step[] }) {
             exit={reduced ? undefined : { opacity: 0, x: 12, transition: { duration: 0.15 } }}
             transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
           >
-            <h3 className="font-estedad font-black text-2xl md:text-3xl mb-4">{s.title}</h3>
-            <p className="text-lg leading-[1.9] text-[#1a1a1a]/80 max-w-3xl">{s.body}</p>
+            <h3 className={`font-estedad font-black leading-snug ${s.title.length > 70 ? 'text-xl md:text-2xl' : 'text-2xl md:text-3xl'} ${s.body ? 'mb-4' : ''}`}>{s.title}</h3>
+            {s.body && <p className="text-lg leading-[1.9] text-[#1a1a1a]/80 max-w-3xl">{s.body}</p>}
           </motion.div>
         </AnimatePresence>
         <div className="mt-8 flex items-center justify-between">

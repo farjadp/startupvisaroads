@@ -313,7 +313,7 @@ export const page: FaPage = {
 
   faqGroups: [
     { heading: 'پرسش‌های پرتکرار', faqs: COMMON_FAQS },
-    { heading: 'مکانیک کمیته، مالیات و اقامت دائم — با جزئیات', faqs: DEEP_DIVE_FAQS },
+    { heading: 'سازوکار کمیته، مالیات و اقامت دائم — با جزئیات', faqs: DEEP_DIVE_FAQS },
   ],
 
   videos: ['cXAWOW-Wdco', 'WG9QFxaw0tI'],
