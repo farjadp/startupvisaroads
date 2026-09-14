@@ -9,13 +9,13 @@ export default async function AutopilotPage() {
 
   const [runs, ledger, published7d, recentSkips] = await Promise.all([
     prisma.autopilotRun.findMany({ orderBy: { startedAt: 'desc' }, take: 30 }),
-    prisma.sourceArticle.groupBy({ by: ['status'], _count: { _all: true } }),
+    prisma.sourceDocument.groupBy({ by: ['status'], _count: { _all: true } }),
     prisma.article.count({ where: { aiModel: { not: null }, status: 'PUBLISHED', createdAt: { gte: since7d } } }),
-    prisma.sourceArticle.findMany({
-      where: { status: { in: ['skipped', 'failed'] } },
+    prisma.sourceDocument.findMany({
+      where: { status: { in: ['ignored', 'failed'] } },
       orderBy: { updatedAt: 'desc' },
       take: 12,
-      select: { title: true, sourceSlug: true, status: true, reason: true, updatedAt: true },
+      select: { title: true, status: true, reason: true, updatedAt: true, source: { select: { title: true, url: true } } },
     }),
   ]);
 
@@ -45,11 +45,20 @@ export default async function AutopilotPage() {
         initialRuns={rows}
         stats={{
           published7d,
-          ledgerNew: ledgerCounts.new ?? 0,
+          // SourceDocument's states: `ready` is triaged and waiting, `used`
+          // written from, `ignored`/`failed` refused. `new` is discovered but
+          // not yet read, so it counts as waiting too.
+          ledgerNew: (ledgerCounts.ready ?? 0) + (ledgerCounts.new ?? 0),
           ledgerUsed: ledgerCounts.used ?? 0,
-          ledgerSkipped: (ledgerCounts.skipped ?? 0) + (ledgerCounts.failed ?? 0),
+          ledgerSkipped: (ledgerCounts.ignored ?? 0) + (ledgerCounts.failed ?? 0),
         }}
-        recentSkips={recentSkips.map((s) => ({ ...s, updatedAt: s.updatedAt.toISOString() }))}
+        recentSkips={recentSkips.map((s) => ({
+          title: s.title,
+          sourceSlug: s.source.title ?? s.source.url ?? 'source',
+          status: s.status,
+          reason: s.reason,
+          updatedAt: s.updatedAt.toISOString(),
+        }))}
       />
     </div>
   );

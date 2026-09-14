@@ -18,8 +18,8 @@
 // deliberate state, not a bug: the row is the ledger entry saying "we have
 // seen this URL", which is what makes "n new items" mean something across
 // runs, and the unique index on url gives us deduplication for free. The
-// ingest job's fetch step fills the text in. It is the same two-phase shape
-// SourceArticle had, with one table instead of two.
+// ingest job's fetch step fills the text in. It is the two-phase shape the
+// old SourceArticle ledger had, in the one table that replaced it.
 // ============================================================================
 import * as cheerio from 'cheerio';
 import prisma from '@/lib/prisma';

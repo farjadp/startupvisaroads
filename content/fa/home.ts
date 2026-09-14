@@ -10,20 +10,22 @@
 //   · every path in `href` must be in FA_PATHS
 // ============================================================================
 import type { FaCta, FaFaq } from '@/lib/fa/content';
+import { MAIN_CONTACT } from '@/content/contact';
 
 export const TELEGRAM_URL = 'https://t.me/farjadtalks';
 export const TELEGRAM_CHANNEL_URL = 'https://t.me/Heros_Journey';
 
-/** Contact details, taken from farjadp.com (2026-09-06). Telegram stays first everywhere. */
+/** Main contact details come from content/contact.ts. Telegram stays first everywhere. */
 export const CONTACT = {
   telegram: TELEGRAM_URL,
   telegramChannel: TELEGRAM_CHANNEL_URL,
-  whatsappNumber: '+1 (437) 661-1674',
-  whatsapp: 'https://wa.me/14376611674',
-  email: 'farjad@ashavid.ca',
+  whatsappNumber: MAIN_CONTACT.phone,
+  whatsapp: MAIN_CONTACT.whatsapp,
+  tel: MAIN_CONTACT.tel,
+  email: MAIN_CONTACT.email,
   linkedin: 'https://www.linkedin.com/in/farjadpourmohammad/',
   instagram: 'https://instagram.com/FarjadTalks',
-  youtube: 'https://www.youtube.com/@FarjadTalks',
+  youtube: MAIN_CONTACT.youtube,
   location: 'تورنتو، کانادا',
 };
 
@@ -257,8 +259,8 @@ export const home = {
         external: true,
       },
       {
-        title: 'واتساپ',
-        body: 'اگر تلگرام ندارید. همان شماره، همان آدم.',
+        title: 'واتساپ و تلفن',
+        body: 'شماره‌ی اصلی؛ هم تماس، هم واتساپ.',
         cta: { label: CONTACT.whatsappNumber, href: CONTACT.whatsapp },
         external: true,
       },
@@ -268,8 +270,8 @@ export const home = {
         cta: { label: 'شروع ارزیابی', href: '/which-path' },
       },
       {
-        title: 'جلسه‌ی مشاوره',
-        body: 'گفت‌وگوی اختصاصی درباره‌ی وضعیت شما و نقشه‌ی راه.',
+        title: 'جلسه‌ی مشاوره‌ی رایگان',
+        body: 'گفت‌وگوی اختصاصی و رایگان درباره‌ی وضعیت شما و نقشه‌ی راه.',
         cta: { label: 'رزرو جلسه', href: '/contact' },
       },
       {

@@ -8,7 +8,8 @@
 // next quarter-hour tick.
 //
 // The three feeds the autopilot used to read from a constant in the code are
-// installed as rows on the first call, so this needs no setup step.
+// installed as rows on the first call, so this needs no setup step. The old
+// SourceArticle ledger was carried over and dropped on 14 Sep 2026.
 //
 // Auth and timing as for the other cron routes: Bearer CRON_SECRET or an
 // admin session; call the Cloud Run URL directly, not through Cloudflare.
@@ -17,7 +18,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import { authorisedCron } from '@/lib/cron-auth';
 import { ensureDefaultWatchSources, runWatch } from '@/lib/knowledge/watch';
 import { runPendingJobs } from '@/lib/knowledge/ingest';
-import { backfillSourceArticles } from '@/lib/knowledge/backfill';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 300;
@@ -31,10 +31,6 @@ export async function GET(req: NextRequest) {
   const started = Date.now();
 
   const installed = await ensureDefaultWatchSources();
-  // Idempotent, and it has to run before discovery: without the old URLs in
-  // the ledger the first watch pass rediscovers everything the previous
-  // harvester already wrote from.
-  const backfilled = await backfillSourceArticles();
   const watch = await runWatch({ limit, sourceId });
   const ingest = q.get('ingest') === '1' ? await runPendingJobs({ limit: 5, budgetMs: 180_000, sourceId }) : null;
 
@@ -42,7 +38,6 @@ export async function GET(req: NextRequest) {
     ok: true,
     seconds: Math.round((Date.now() - started) / 1000),
     installed,
-    backfilled,
     ...watch,
     ingest,
   });
