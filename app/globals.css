@@ -173,6 +173,27 @@
   color: #1a1a1a;
 }
 
+/* Links in article bodies. Preflight strips the underline and the Typography
+   plugin is not installed (so `prose-a:` classes emit nothing): without this
+   rule a link in an article is indistinguishable from the text around it. */
+.prose a[href] {
+  color: #1a1a1a;
+  font-weight: 600;
+  text-decoration-line: underline;
+  text-decoration-color: rgba(26, 26, 26, 0.45);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.25em;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+  transition: background-color 150ms, text-decoration-color 150ms;
+}
+
+.prose a[href]:hover,
+.prose a[href]:focus-visible {
+  background-color: #CCFF00;
+  text-decoration-color: #1a1a1a;
+}
+
 .prose blockquote {
   font-family: var(--font-serif), serif;
   font-style: italic;
