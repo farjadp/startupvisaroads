@@ -10,6 +10,7 @@ const faInv: Inventory = {
   recentTopicSlugs: [],
   usedKeywords: [],
   recentCategories: [],
+  recentTags: [],
   categories: [],
 };
 

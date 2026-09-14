@@ -11,6 +11,7 @@
 import prisma from '@/lib/prisma';
 import { ensureDefaultCategories } from '@/lib/categories';
 import type { Locale } from '@/lib/seo';
+import { tagsOf, type Tagged } from './diversity';
 
 export type LinkTarget = {
   path: string; // locale-agnostic, e.g. /pnp/ontario
@@ -28,6 +29,12 @@ export type Inventory = {
   usedKeywords: string[];
   /** Category names of the recent articles, one entry per article (for rotation). */
   recentCategories: string[];
+  /**
+   * Subject family and destination of the recent articles, newest first. What
+   * the variety rules in diversity.ts read, so the next pick continues from
+   * what was actually published rather than from a clean slate.
+   */
+  recentTags: Tagged[];
   categories: { name: string; slug: string }[];
 };
 
@@ -139,6 +146,7 @@ export async function buildInventory(locale: Locale): Promise<Inventory> {
       .map((a) => /\[kw:([^\]]+)\]/.exec(a.topicSeed ?? '')?.[1])
       .filter((s): s is string => Boolean(s)),
     recentCategories: recent.slice(0, 60).map((a) => a.category?.name ?? ''),
+    recentTags: recent.slice(0, 30).map((a) => tagsOf(a)),
     categories: cats,
   };
 }

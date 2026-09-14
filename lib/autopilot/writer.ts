@@ -17,6 +17,7 @@ import { planBriefs, type Brief } from './planner';
 import { officialSourcePromptForBrief } from './official-sources';
 import { decidePlannedPublication, enforceLinks, sameSubject, wordCountHtml } from './text';
 import { applyCitations, buildEvidence, gateFigures, recordEvidenceUse, type Evidence } from './evidence';
+import { classify, seedTags } from './diversity';
 
 type Visual =
   | { type: 'PHOTO'; prompt: string; caption: string }
@@ -254,7 +255,9 @@ async function writeOne(brief: Brief, inv: Inventory, opts: RunOpts, result: Gen
         // The id first, in a shape a later run can parse. The prose after it
         // is for a human reading the row; the tag is what stops the lane
         // rewriting the same backlog topic every morning.
-        topicSeed: `${brief.topicSlug ? `[topic:${brief.topicSlug}] ` : ''}${brief.primaryKeyword ? `[kw:${brief.primaryKeyword}] ` : ''}${brief.whyNow} — ${brief.angle}`,
+        // Family and destination go on the row so the next run's variety rules
+        // read what was published, not a guess from the title it ended up with.
+        topicSeed: `${seedTags(brief.family && brief.destination ? { family: brief.family, destination: brief.destination } : classify(`${brief.workingTitle} ${brief.primaryKeyword}`))}${brief.topicSlug ? `[topic:${brief.topicSlug}] ` : ''}${brief.primaryKeyword ? `[kw:${brief.primaryKeyword}] ` : ''}${brief.whyNow} — ${brief.angle}`,
         internalLinks: linked.links,
       },
       { locale: inv.locale, status: publication.status },

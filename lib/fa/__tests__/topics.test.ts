@@ -17,7 +17,10 @@ describe('the Persian topic backlog', () => {
   it('gives every topic at least two links, one of them a programme page', () => {
     for (const t of FA_TOPICS) {
       expect(t.mustLink.length, t.slug).toBeGreaterThanOrEqual(2);
-      const programme = t.mustLink.some((p) => p.startsWith('/europe/') || p.startsWith('/pnp') || p === '/canada-startup-visa' || p === '/usa-eb2-niw');
+      // /australia and /turkey-tech-visa are programme guides too; they were
+      // added on 9 Sep, after this rule was written. /israel is deliberately
+      // absent: it is a reference page, not a route we offer.
+      const programme = t.mustLink.some((p) => p.startsWith('/europe/') || p.startsWith('/pnp') || p === '/canada-startup-visa' || p === '/usa-eb2-niw' || p === '/australia' || p === '/turkey-tech-visa');
       expect(programme, `${t.slug} has no programme page`).toBe(true);
     }
   });
@@ -133,5 +136,102 @@ describe('priority keyword coverage', () => {
     for (const kw of ['مهاجرت به کانادا', 'مهاجرت به فنلاند', 'مهاجرت به دانمارک', 'مهاجرت به آمریکا', 'استارتاپ ویزای کانادا', 'استارتاپ ویزای استونی', 'استارتاپ ویزای هلند', 'ویزای استارتاپ']) {
       expect(primaries.some((p) => p.includes(kw)), `no topic is primarily about «${kw}»`).toBe(true);
     }
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Variety — added 14 Sep 2026, after the Persian blog published eleven
+// startup-visa pieces in a row from a backlog that was eleven parts in
+// fourteen startup visa. See lib/autopilot/diversity.ts.
+// ---------------------------------------------------------------------------
+import { FAMILIES, DESTINATIONS, classify, tagsOf } from '@/lib/autopilot/diversity';
+
+describe('the backlog is varied in itself', () => {
+  it('places every topic in a family and a destination', () => {
+    for (const t of FA_TOPICS) {
+      expect(FAMILIES, t.slug).toContain(t.family);
+      expect(DESTINATIONS, t.slug).toContain(t.destination);
+    }
+  });
+
+  // The picker keeps the order varied; this keeps the POOL varied, so a later
+  // edit cannot quietly rebuild a one-subject backlog that no ordering can fix.
+  it('keeps startup-visa headlines to at most two topics in five', () => {
+    const suv = FA_TOPICS.filter((t) => classify(t.workingTitle).startupVisaHeadline);
+    expect(suv.length / FA_TOPICS.length, suv.map((t) => t.slug).join(', ')).toBeLessThanOrEqual(0.4);
+  });
+
+  it('gives every subject family at least two topics', () => {
+    for (const f of FAMILIES) {
+      expect(FA_TOPICS.filter((t) => t.family === f).length, `family ${f}`).toBeGreaterThanOrEqual(2);
+    }
+  });
+
+  it('covers at least six destinations', () => {
+    const places = new Set(FA_TOPICS.map((t) => t.destination).filter((d) => d !== 'general'));
+    expect(places.size, [...places].join(', ')).toBeGreaterThanOrEqual(6);
+  });
+});
+
+describe('what the Persian lane publishes next', () => {
+  // The Persian titles live on visaroads.com between 7 and 14 Sep 2026,
+  // newest first, as the RSS feed listed them. Every one is startup visa.
+  const PUBLISHED = [
+    'مهاجرت به کانادا از راه کارآفرینی پس از توقف استارتاپ ویزا',
+    'وضعیت استارتاپ ویزای کانادا ۲۰۲۶ و مسیرهای جایگزین',
+    'ویزای استارتاپ چیست و کدام کشورها این مسیر را باز گذاشته‌اند',
+    'مدارک ایرانی موردنیاز برای ویزای استارتاپ و ترتیب تهیه آن‌ها',
+    'اثبات تمکن مالی ویزای استارتاپ با حساب بانکی ایرانی',
+    'تفاوت خدمات منتور استارتاپ با مؤسسه مهاجرتی چیست؟',
+    'مقایسه ویزای استارتاپ دانمارک و فنلاند برای تیم‌های ایرانی',
+    'راهنمای انتخاب محل بیومتریک و ارائه مدارک ویزای استارتاپ برای ایرانیان',
+  ];
+  const WRITTEN_SLUGS = ['canada-entrepreneur-after-suv', 'canada-startup-visa-status', 'what-is-startup-visa', 'iranian-documents', 'funds-under-sanctions', 'mentorship-vs-agency', 'denmark-or-finland', 'where-to-interview'];
+
+  /** Two weeks of daily runs, each continuing from everything before it. */
+  function simulate(days: number) {
+    let titles = [...PUBLISHED];
+    let slugs = [...WRITTEN_SLUGS];
+    let recent = PUBLISHED.map((title) => tagsOf({ title }));
+    const out = [];
+    for (let d = 0; d < days; d++) {
+      const [next] = pickTopics(1, titles, slugs, recent);
+      if (!next) break;
+      out.push(next);
+      titles = [next.workingTitle, ...titles];
+      slugs = [next.slug, ...slugs];
+      recent = [{ family: next.family, destination: next.destination, startupVisaHeadline: classify(next.workingTitle).startupVisaHeadline }, ...recent];
+    }
+    return out;
+  }
+
+  it('opens with something that is not a startup-visa headline, after eight that were', () => {
+    const [first] = simulate(1);
+    expect(classify(first.workingTitle).startupVisaHeadline, first.slug).toBe(false);
+  });
+
+  it('never publishes two startup-visa headlines back to back over the next fortnight', () => {
+    const run = simulate(14);
+    for (let i = 1; i < run.length; i++) {
+      const both = classify(run[i - 1].workingTitle).startupVisaHeadline && classify(run[i].workingTitle).startupVisaHeadline;
+      expect(both, `${run[i - 1].slug} → ${run[i].slug}`).toBe(false);
+    }
+  });
+
+  it('runs at most one startup-visa headline in any three consecutive days', () => {
+    const run = simulate(14);
+    for (let i = 2; i < run.length; i++) {
+      const window = run.slice(i - 2, i + 1).filter((x) => classify(x.workingTitle).startupVisaHeadline);
+      expect(window.length, run.slice(i - 2, i + 1).map((x) => x.slug).join(' → ')).toBeLessThanOrEqual(1);
+    }
+  });
+
+  it('never repeats a subject family on consecutive days over the next fortnight', () => {
+    const run = simulate(14);
+    for (let i = 1; i < run.length; i++) expect(run[i].family, `${run[i - 1].slug} → ${run[i].slug}`).not.toBe(run[i - 1].family);
+  });
+
+  it('reaches at least five families in its first seven days', () => {
+    expect(new Set(simulate(7).map((t) => t.family)).size).toBeGreaterThanOrEqual(5);
   });
 });

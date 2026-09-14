@@ -28,6 +28,7 @@ import { generateBrandImage, imagesBlocked } from './images';
 import { markDocument, pendingCount, writableDocumentById, writableDocuments, type WritableDocument } from '@/lib/knowledge/queue';
 import { decidePlannedPublication, enforceLinks, sameSubject, wordCountHtml } from './text';
 import { applyCitations, buildEvidence, gateFigures, recordEvidenceUse, type Evidence } from './evidence';
+import { classify, seedTags } from './diversity';
 import { draftMeta, placeVisuals, wordTarget } from './writer';
 import type { Brief } from './planner';
 
@@ -370,7 +371,7 @@ export async function runFromSources(n: number, locale: Locale, opts: RunOpts = 
           summaryEn: d.summaryEn,
           faq: d.faq,
           aiModel: WRITER_MODEL,
-          topicSeed: `${brief.primaryKeyword ? `[kw:${brief.primaryKeyword}] ` : ''}${article.sourceName}: ${article.title} — ${brief.angle}`,
+          topicSeed: `${seedTags(classify(`${d.title} ${brief.primaryKeyword}`))}${brief.primaryKeyword ? `[kw:${brief.primaryKeyword}] ` : ''}${article.sourceName}: ${article.title} — ${brief.angle}`,
           internalLinks: linked.links,
         },
         // Same gate as the planned writer: a piece whose only sourcing is a

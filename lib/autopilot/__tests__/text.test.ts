@@ -13,6 +13,7 @@ const inv: Inventory = {
   recentTopicSlugs: [],
   usedKeywords: [],
   recentCategories: [],
+  recentTags: [],
   categories: [],
 };
 

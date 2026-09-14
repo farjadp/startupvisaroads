@@ -8,7 +8,8 @@
 import type { Locale } from '@/lib/seo';
 import { BRAND_FACTS, linkBlock, type Inventory } from './inventory';
 import { pickTopics, topicToBrief } from '@/content/fa/topics';
-import { keywordsForToday } from '@/content/keywords';
+import { diverseKeywordsForToday } from '@/content/keywords';
+import { classify, diversityPrompt, isDestination, isFamily, pickDiverse, planDiversity, violates, type Destination, type Family } from './diversity';
 import { chatJson, WRITER_MODEL } from './pipeline';
 import { pinnedDigests } from '@/lib/knowledge/retrieve';
 
@@ -29,6 +30,9 @@ export type Brief = {
    * to recognise a title the writer rewrote.
    */
   topicSlug?: string;
+  /** Subject family and destination, for the variety rules in diversity.ts. */
+  family?: Family;
+  destination?: Destination;
 };
 
 /** What is on a founder's or skilled worker's mind this month. */
@@ -70,6 +74,15 @@ function coerce(raw: RawBrief, inv: Inventory): Brief | null {
     mustLink,
     imageScenes: [scenes[0], scenes[1]],
     depth: raw.depth === 'deep' ? 'deep' : 'standard',
+    // The model is asked for both. When it skips one, read it off the brief's
+    // own words rather than leaving the variety rules blind to this article.
+    ...(() => {
+      const guessed = classify(`${workingTitle} ${String(raw.primaryKeyword ?? '')}`);
+      return {
+        family: isFamily(raw.family) ? raw.family : guessed.family,
+        destination: isDestination(raw.destination) ? raw.destination : guessed.destination,
+      };
+    })(),
   };
 }
 
@@ -82,7 +95,7 @@ export async function planBriefs(n: number, inv: Inventory): Promise<Brief[]> {
   // exhausted the model plans the remainder as before, so the lane never
   // stops for want of a topic.
   if (inv.locale === 'fa') {
-    const picked = pickTopics(n, inv.recentTitles, inv.recentTopicSlugs).map(topicToBrief);
+    const picked = pickTopics(n, inv.recentTitles, inv.recentTopicSlugs, inv.recentTags).map(topicToBrief);
     if (picked.length >= n) {
       console.log(`autopilot/planner: ${picked.length}/${n} briefs from the Persian backlog`);
       return picked.slice(0, n);
@@ -106,9 +119,10 @@ async function planBriefsWithModel(n: number, inv: Inventory): Promise<Brief[]> 
   // Three candidates per brief, so the model has room to choose one it can
   // write a real article to without being handed the same head of the list
   // every morning.
-  const keywords = keywordsForToday(inv.locale, inv.usedKeywords, n * 3);
+  const variety = planDiversity(inv.recentTags);
+  const keywords = diverseKeywordsForToday(inv.locale, inv.usedKeywords, n * 3, inv.recentTags);
   const keywordRule = keywords.length
-    ? `TARGET KEYWORDS — this is the queue, not a suggestion. Choose ${n} of these, one per brief, and set primaryKeyword to the chosen keyword EXACTLY as written here. Build the brief around what someone searching it actually wants; if a keyword is too thin for an article on its own, widen it into the decision behind it rather than swapping it for a different subject. Never reuse one across two briefs.
+    ? `TARGET KEYWORDS — this is the queue. Choose ${n} of these, one per brief, and set primaryKeyword to the chosen keyword EXACTLY as written here. If every keyword left would break the VARIETY rules below, variety wins: choose your own keyword in a family and destination the rules allow. Build the brief around what someone searching it actually wants; if a keyword is too thin for an article on its own, widen it into the decision behind it rather than swapping it for a different subject. Never reuse one across two briefs.
 ${keywords.map((k) => `- ${k}`).join('\n')}`
     : 'The keyword queue is empty, so choose the keyword yourself: one specific search a founder or skilled professional would actually type.';
   // What state the programmes are actually in, from the sources the editor
@@ -122,7 +136,7 @@ ${keywords.map((k) => `- ${k}`).join('\n')}`
 ${pinned.map((p) => `— ${p.title}${p.url ? ` <${p.url}>` : ''}\n${p.digest}`).join('\n\n')}
 
 Rules that follow from it, and they override the keyword queue:
-- If a digest says a programme is paused, closed, suspended or not accepting applications, DO NOT plan a "how to apply", "step by step", "requirements" or "process" article for it. Plan the article a reader who just found out actually needs: what changed and when, what it means for a file already in progress, and which routes are open instead.
+- If a digest says a programme is paused, closed, suspended or not accepting applications, DO NOT plan a "how to apply", "step by step", "requirements" or "process" article for it. This is a prohibition only. It is NOT a reason to write about that programme today; the digests are here so you do not get a programme's state wrong, not to choose today's subject.
 - Never put a past year in a working title. If a keyword contains one, drop the year.
 - Do not assert a programme is open unless a digest says so.`;
     }
@@ -136,6 +150,8 @@ Rules that follow from it, and they override the keyword queue:
 BRAND FACTS: ${BRAND_FACTS}
 
 ${statusBlock}
+
+${diversityPrompt(variety)}
 
 Editorial line: useful, specific, grounded in a decision a founder or skilled professional actually faces — which programme, which province, which document, in what order, what gets cases refused. Never generic listicles ("10 tips…"). Each brief answers one real question and links to real pages on the site.
 Prefer these categories today (least recently covered): ${wanted.join(', ')}.
@@ -151,13 +167,13 @@ ${inv.recentTitles.map((t) => `- ${t}`).join('\n') || '(nothing yet)'}
 
 Rules:
 - workingTitle: a statement or how-to, not a rhetorical question, ≤ 70 characters, specific (a programme, a province or a document in it). In ${lang}.
-- Each brief has a distinct angle; no two briefs about the same programme.
-- At least one brief tied to a calendar hook; at least one comparison piece (two programmes or two provinces side by side).
+- Each brief has a distinct angle; no two briefs about the same programme, family or destination.
+- A calendar hook may inform one brief, but only where it fits the VARIETY rules; never force one. When planning more than one brief, make one of them a comparison piece, again only where the rules allow its family.
 - depth: "deep" for a core pathway guide (EB-2 NIW evidence, active PNP comparison) — 2000–2800 words; "standard" otherwise — 1100–1500 words. At most one "deep" per day.
 - imageScenes: two sentences for an editorial photograph, cover then inline — a concrete object, workspace or place, no people's faces, no text, no flags.
 - category: exactly one of ${JSON.stringify(inv.categories.map((c) => c.name))}.
 
-Return JSON: {"briefs":[{"category","workingTitle","angle","whyNow","primaryKeyword","secondaryKeywords":[],"searchQueryEn","mustLink":[],"imageScenes":["",""],"depth"}]}`,
+Return JSON: {"briefs":[{"category","workingTitle","angle","whyNow","primaryKeyword","secondaryKeywords":[],"searchQueryEn","mustLink":[],"imageScenes":["",""],"depth","family","destination"}]}`,
     0.8,
   );
 
@@ -167,6 +183,20 @@ Return JSON: {"briefs":[{"category","workingTitle","angle","whyNow","primaryKeyw
     if (b) out.push(b);
     else console.warn('autopilot/planner: dropped malformed brief', JSON.stringify(raw).slice(0, 200));
   }
+  // The model was told the rules and does not always keep them. Re-order by
+  // variety so a brief that breaks them only survives when nothing better was
+  // planned — a slightly repetitive article beats an empty day — and say so.
+  const tagged = out.map((b) => ({ ...b, family: b.family ?? 'route-mechanics', destination: b.destination ?? 'general', startupVisaHeadline: classify(b.workingTitle).startupVisaHeadline }));
+  const ordered = pickDiverse(tagged, inv.recentTags, tagged.length);
+  // The caller plans spares beyond the day's quota, so a rule-breaking brief
+  // ranked last usually never gets written. Say where it landed rather than
+  // implying it shipped.
+  ordered.forEach((b, i) => {
+    const why = violates(b, variety);
+    if (why) console.warn(`autopilot/planner: ranked ${i + 1} of ${ordered.length} because it breaks the variety rules (${why}): "${b.workingTitle}"`);
+  });
+  out.splice(0, out.length, ...ordered.map(({ startupVisaHeadline: _s, ...rest }) => rest as Brief));
+
   // At most one deep guide per run, whatever the model marked.
   let deepSeen = false;
   for (const b of out) {

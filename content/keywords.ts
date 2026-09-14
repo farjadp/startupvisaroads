@@ -18,6 +18,7 @@
 import RAW_EN from '@/prisma/keywords.json';
 import { FA_TOPICS } from '@/content/fa/topics';
 import type { Locale } from '@/lib/seo';
+import { classify, pickDiverse, type Tagged } from '@/lib/autopilot/diversity';
 
 /**
  * Keywords that belong on a landing page, not in the magazine.
@@ -73,4 +74,32 @@ export function keywordsForToday(locale: Locale, used: string[], count: number, 
   const day = Math.floor(at.getTime() / 86_400_000);
   const start = (day * count) % left.length;
   return Array.from({ length: count }, (_, i) => left[(start + i) % left.length]);
+}
+
+/**
+ * `count` keywords chosen for spread rather than position.
+ *
+ * `keywordsForToday` rotates by the day, which stops the same head of the list
+ * appearing every morning but does nothing when most of the list is one
+ * subject — and the Persian pool is built from a backlog whose titles were
+ * mostly "startup visa + something". So each unused keyword is classified by
+ * subject family and destination, and the slice handed to the planner is the
+ * most varied one available given what was just published. The day rotation
+ * still breaks ties, so two runs with the same history do not see the same
+ * slice.
+ */
+export function diverseKeywordsForToday(
+  locale: Locale,
+  used: string[],
+  count: number,
+  recent: Tagged[],
+  at: Date = new Date(),
+): string[] {
+  const left = unusedKeywords(locale, used);
+  if (left.length <= count) return left;
+  const day = Math.floor(at.getTime() / 86_400_000);
+  const start = (day * count) % left.length;
+  const rotated = left.map((_, i) => left[(start + i) % left.length]);
+  const tagged = rotated.map((keyword) => ({ keyword, ...classify(keyword) }));
+  return pickDiverse(tagged, recent, count).map((t) => t.keyword);
 }
