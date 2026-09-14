@@ -2,12 +2,12 @@ import { describe, expect, it } from 'vitest';
 import { metaFor } from '../pageMeta';
 
 describe('page metadata', () => {
-  it('describes the paid book-meeting session accurately', () => {
+  it('describes the book-meeting session as free, with no price', () => {
     const metadata = metaFor('/book-meeting', 'en') as any;
 
-    expect(metadata.title.absolute).toContain('Paid Startup Mentorship Session');
-    expect(metadata.description).toContain('$140');
-    expect(metadata.description.toLowerCase()).not.toContain('free consultation');
+    expect(metadata.title.absolute).toContain('Free Startup Consultation');
+    expect(metadata.description.toLowerCase()).toContain('free');
+    expect(metadata.description).not.toMatch(/\$\s?\d/);
   });
 
   it('provides English webinar metadata', () => {

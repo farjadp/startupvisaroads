@@ -1,6 +1,7 @@
 import React from 'react';
 import type { Metadata } from 'next';
-import { Clock, Video, ShieldCheck, Target, CreditCard, HeartHandshake, Receipt, Info, Mail, Phone, MessageSquare, AlertTriangle, CheckCircle2 } from 'lucide-react';
+import { Clock, Video, ShieldCheck, BadgeCheck, Handshake, Info, Mail, Phone, MessageSquare, Send, Youtube, AlertTriangle, CheckCircle2 } from 'lucide-react';
+import { MAIN_CONTACT } from '@/content/contact';
 import { Link } from '@/navigation';
 import { metaFor } from '@/lib/pageMeta';
 
@@ -24,7 +25,7 @@ export default function BookMeetingPage() {
                   <Video size={16} /> Online Meeting
                </span>
                <span className="flex items-center gap-2 bg-white px-4 py-2 rounded-full border border-[#1a1a1a]">
-                  <Clock size={16} /> 60 Min Appointments
+                  <Clock size={16} /> Free 60 Min Appointments
                </span>
                <span className="flex items-center gap-2 bg-white px-4 py-2 rounded-full border border-[#1a1a1a]">
                   <Info size={16} /> Google Meet info added after booking
@@ -54,30 +55,22 @@ export default function BookMeetingPage() {
                   </div>
                </section>
 
-               {/* New Policy (August 2025) */}
+               {/* Free consultation */}
                <section className="border border-[#1a1a1a]/20 p-8 rounded-3xl relative overflow-hidden bg-white">
-                  <div className="absolute top-0 right-0 w-32 h-32 bg-[#CCFF00]/20 blur-3xl -z-10 rounded-full"></div>
-                  
                   <h3 className="font-bold text-xl mb-6 flex items-center gap-3">
-                     <Target className="text-red-500" /> Commitment Policy (Aug 2025)
+                     <BadgeCheck className="text-[#1a1a1a]" /> Consultation sessions are free
                   </h3>
                   <p className="text-[#1a1a1a]/80 mb-6 leading-relaxed">
-                     To maintain quality and respect for everyone's time, we have stopped free consultations. 
-                     Consultation sessions will only be held with real commitment. This decision is for both you to take a more serious step, and for us to fulfill our social responsibility.
+                     There is no charge for a consultation session. Pick a time in the calendar, come prepared, and we will give you an honest read on your situation and the route that fits it.
                   </p>
-                  
-                  <ul className="space-y-4 mb-6">
+                  <ul className="space-y-4">
                      <li className="flex items-center gap-3 font-medium bg-[#F2F0E9] p-3 rounded-xl">
-                        <CreditCard size={20} className="text-[#1a1a1a]/60" />
-                        Cost of each one-hour session: <span className="font-bold text-lg">140$</span>
+                        <Clock size={20} className="text-[#1a1a1a]/60" />
+                        One-hour online session, no fee
                      </li>
                      <li className="flex items-center gap-3 font-medium bg-[#F2F0E9] p-3 rounded-xl">
-                        <HeartHandshake size={20} className="text-[#1a1a1a]/60" />
-                        Payment method: Directly deposited to a reputable charity (Iran or your country)
-                     </li>
-                     <li className="flex items-center gap-3 font-medium bg-[#F2F0E9] p-3 rounded-xl">
-                        <Receipt size={20} className="text-[#1a1a1a]/60" />
-                        Send the payment receipt to arrange the meeting time
+                        <Handshake size={20} className="text-[#1a1a1a]/60" />
+                        Companies and partners: use the same calendar, or email {MAIN_CONTACT.b2bEmail}
                      </li>
                   </ul>
                </section>
@@ -119,17 +112,22 @@ export default function BookMeetingPage() {
                <section className="bg-black text-[#F2F0E9] p-8 rounded-3xl">
                   <h3 className="font-serif text-2xl mb-6">Need assistance?</h3>
                   <div className="space-y-4">
-                     <a href="mailto:its@farjadp.info" className="flex items-center gap-4 hover:text-[#CCFF00] transition-colors">
-                        <Mail size={20} /> <span>its@farjadp.info</span>
+                     <a href={MAIN_CONTACT.tel} className="flex items-center gap-4 hover:text-[#CCFF00] transition-colors">
+                        <Phone size={20} /> <span dir="ltr">{MAIN_CONTACT.phone}</span>
                      </a>
-                     <div className="flex items-center gap-4">
-                        <Phone size={20} /> <span>+1 437 661 1674 (Farjad Pourmohammad)</span>
-                     </div>
-                     <a href="https://t.me/farjadtalks" target="_blank" rel="noreferrer" className="flex items-center gap-4 hover:text-[#CCFF00] transition-colors">
-                        <MessageSquare size={20} /> <span>t.me/farjadtalks (Telegram)</span>
-                     </a>
-                     <a href="https://wa.me/14376611674" target="_blank" rel="noreferrer" className="flex items-center gap-4 hover:text-[#CCFF00] transition-colors text-[#CCFF00]">
+                     <a href={MAIN_CONTACT.whatsapp} target="_blank" rel="noreferrer" className="flex items-center gap-4 hover:text-[#CCFF00] transition-colors text-[#CCFF00]">
                         <MessageSquare size={20} /> <span className="font-bold underline decoration-1 underline-offset-4">Chat with us on WhatsApp</span>
+                     </a>
+                     {MAIN_CONTACT.emails.map((email) => (
+                        <a key={email} href={`mailto:${email}`} className="flex items-center gap-4 hover:text-[#CCFF00] transition-colors">
+                           <Mail size={20} /> <span>{email}</span>
+                        </a>
+                     ))}
+                     <a href={MAIN_CONTACT.telegram} target="_blank" rel="noreferrer" className="flex items-center gap-4 hover:text-[#CCFF00] transition-colors">
+                        <Send size={20} /> <span>t.me/farjadtalks (Telegram)</span>
+                     </a>
+                     <a href={MAIN_CONTACT.youtube} target="_blank" rel="noreferrer" className="flex items-center gap-4 hover:text-[#CCFF00] transition-colors">
+                        <Youtube size={20} /> <span>YouTube {MAIN_CONTACT.youtubeHandle}</span>
                      </a>
                   </div>
                </section>

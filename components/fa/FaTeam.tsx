@@ -3,9 +3,10 @@
 // The Persian team page: hero + team grid with contact channels.
 // ============================================================================
 import React from 'react';
-import { Send, MessageCircle, Phone, MapPin } from 'lucide-react';
+import { MapPin } from 'lucide-react';
 import { Link } from '@/navigation';
 import { TEAM_MEMBERS } from '@/content/team';
+import TeamContactLinks from '@/components/TeamContactLinks';
 import { page } from '@/content/fa/team';
 import JsonLd from '@/components/JsonLd';
 import { faWebPageJsonLd, faqJsonLd, breadcrumbJsonLd } from '@/lib/fa/content';
@@ -69,30 +70,7 @@ export default function FaTeam() {
 
               </div>
 
-              <div className="flex flex-wrap gap-4 pt-4 border-t border-[#1a1a1a]/10">
-                {member.telegram && (
-                  <a
-                    href={member.telegram}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 font-bold text-xs border-b border-[#1a1a1a] pb-0.5 hover:text-[#CCFF00] hover:border-[#CCFF00] transition-colors"
-                  >
-                    <Send className="w-3.5 h-3.5" />
-                    {member.telegramHandle}
-                  </a>
-                )}
-                {member.whatsapp && (
-                  <a
-                    href={member.whatsapp}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 font-bold text-xs text-[#1a1a1a]/60 hover:text-[#1a1a1a] transition-colors"
-                  >
-                    <MessageCircle className="w-3.5 h-3.5" />
-                    واتساپ
-                  </a>
-                )}
-              </div>
+              <TeamContactLinks member={member} locale="fa" />
             </div>
           ))}
         </div>

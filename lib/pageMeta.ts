@@ -133,8 +133,8 @@ const META: Record<string, Entry> = {
   '/privacy': { en: { title: 'Privacy Policy', description: 'How Startup Visa Roads collects, uses, and protects your personal information.' }, fa: { title: 'سیاست حریم خصوصی', description: 'نحوه جمع‌آوری، استفاده و حفاظت از اطلاعات شخصی شما توسط راه‌های ویزای استارتاپ.' } },
   '/terms': { en: { title: 'Terms of Service', description: 'The terms and conditions governing your use of the Startup Visa Roads website and services.' }, fa: { title: 'شرایط استفاده از خدمات', description: 'شرایط و ضوابط حاکم بر استفاده شما از وب‌سایت و خدمات راه‌های ویزای استارتاپ.' } },
   '/book-meeting': {
-    en: { title: 'Paid Startup Mentorship Session', description: 'Book a 60-minute online startup mentorship session for $140, paid directly to a reputable charity, with meeting details provided after booking.' },
-    fa: { title: 'جلسه منتورشیپ پولی استارتاپ', description: 'یک جلسه آنلاین ۶۰ دقیقه‌ای منتورشیپ استارتاپ با هزینه ۱۴۰ دلار رزرو کنید؛ مبلغ مستقیماً به یک خیریه معتبر پرداخت می‌شود.' },
+    en: { title: 'Book a Free Startup Consultation', description: 'Book a free 60-minute online startup consultation on Google Meet. Pick a time in the calendar; the meeting link arrives by email after booking.' },
+    fa: { title: 'رزرو جلسه مشاوره رایگان استارتاپ', description: 'یک جلسه‌ی آنلاین ۶۰ دقیقه‌ای و رایگان مشاوره‌ی استارتاپ در گوگل میت رزرو کنید؛ لینک جلسه پس از رزرو به ایمیلتان می‌آید.' },
   },
   '/webinar': {
     en: { title: 'Startup Visa Canada Webinar', description: `Our online meetup on what the Startup Visa pause of ${SUV_PAUSED_ON_LABEL} means for applications already filed, the routes still open to new applicants, and live questions.` },

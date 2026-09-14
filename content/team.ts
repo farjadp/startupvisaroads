@@ -2,14 +2,15 @@
 // content/team.ts
 // Bilingual team member data. One source of truth for the team page and the
 // contact page's team section. Contact details are factual, provided by the
-// founder. No invented credentials, no invented bios.
+// founder (updated 2026-09-14). No invented credentials, no invented bios.
 //
-// `phoneNumbers` is intentionally NOT rendered anywhere. Several are personal
-// Iranian (+98) mobiles, and the team and contact pages are public and
-// indexable; publishing them would put those individuals in a search index
-// permanently, on a site about leaving Iran. Telegram and WhatsApp carry the
-// routing instead. Keep the data here for internal use; if you decide to
-// publish a number, do it per person with their consent.
+// Every channel set here is rendered publicly. The numbers below were given
+// by the founder for publication; do not add a number here without that
+// person's consent. Older personal (+98) mobiles were removed on purpose.
+//
+//   phone    — shown with a call link
+//   sms      — the phone also takes text messages
+//   whatsapp — wa.me link; `whatsappNumber` is shown when there is no `phone`
 // ============================================================================
 
 export type TeamMember = {
@@ -22,10 +23,14 @@ export type TeamMember = {
   locationFa: string;
   telegram?: string;
   telegramHandle?: string;
+  phone?: string;
+  sms?: boolean;
   whatsapp?: string;
   whatsappNumber?: string;
-  phoneNumbers?: string[];
 };
+
+/** `+1 (437) 661-1674` -> `+14376611674`, for tel:/sms: links. */
+export const toE164 = (n: string) => '+' + n.replace(/\D/g, '');
 
 export const TEAM_MEMBERS: TeamMember[] = [
   {
@@ -38,23 +43,22 @@ export const TEAM_MEMBERS: TeamMember[] = [
     locationFa: 'تورنتو، کانادا',
     telegram: 'https://t.me/farjadtalks',
     telegramHandle: '@farjadtalks',
-    whatsapp: 'https://wa.me/14376611674',
-    whatsappNumber: '+1 (437) 661-1674',
-    phoneNumbers: ['+1 (437) 661-1674'],
+    phone: '+1 (437) 661-1674',
+    sms: true,
   },
   {
     id: 'mohsen',
     name: 'Mohsen',
     nameFa: 'محسن',
-    role: 'Account Manager & COO',
-    roleFa: 'اکانت منیجر و COO',
+    role: 'COO & Account Manager',
+    roleFa: 'مدیر عملیات (COO) و اکانت منیجر',
     location: 'Finland',
     locationFa: 'فنلاند',
     telegram: 'https://t.me/mohsenkavian',
     telegramHandle: '@mohsenkavian',
+    phone: '+358 41 7060295',
     whatsapp: 'https://wa.me/358417060295',
     whatsappNumber: '+358 41 7060295',
-    phoneNumbers: ['+98 919 761 2839', '+358 41 7060295'],
   },
   {
     id: 'meysam',
@@ -66,19 +70,22 @@ export const TEAM_MEMBERS: TeamMember[] = [
     locationFa: 'دانمارک',
     telegram: 'https://t.me/Mayneech',
     telegramHandle: '@Mayneech',
-    phoneNumbers: ['+98 937 112 0408', '+45 71 539 757'],
+    phone: '+45 71 53 97 57',
+    whatsapp: 'https://wa.me/4571539757',
+    whatsappNumber: '+45 71 53 97 57',
   },
   {
     id: 'hamid',
     name: 'Hamid',
     nameFa: 'حمید',
-    role: 'Startup Mentor',
-    roleFa: 'منتور استارتاپ',
+    role: 'Partnership Management & Startup Mentor',
+    roleFa: 'مدیریت همکاری‌ها و منتور استارتاپ',
     location: 'Iran',
     locationFa: 'ایران',
     telegram: 'https://t.me/Hamidrezasm',
     telegramHandle: '@Hamidrezasm',
-    phoneNumbers: ['+98 921 413 4435'],
+    whatsapp: 'https://wa.me/989214134435',
+    whatsappNumber: '+98 921 413 4435',
   },
   {
     id: 'iman',
@@ -108,3 +115,5 @@ export const TEAM_MEMBERS: TeamMember[] = [
     locationFa: '',
   },
 ];
+
+export const hasDirectLine = (m: TeamMember) => Boolean(m.telegram || m.whatsapp || m.phone);

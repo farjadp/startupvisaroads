@@ -10,7 +10,9 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import BookingCTA from '@/components/BookingCTA';
 import { sendContactForm } from './actions';
-import { TEAM_MEMBERS } from '@/content/team';
+import { TEAM_MEMBERS, hasDirectLine } from '@/content/team';
+import TeamContactLinks from '@/components/TeamContactLinks';
+import { MAIN_CONTACT } from '@/content/contact';
 import {
    ArrowRight,
    Mail,
@@ -25,17 +27,23 @@ import {
    Rocket,
    Phone,
    MessageCircle,
-   Users
+   Users,
+   Youtube,
+   Handshake
 } from 'lucide-react';
 
 export default function ContactPage() {
    const [isSubmitting, setIsSubmitting] = useState(false);
-   const [copied, setCopied] = useState(false);
+   const [copied, setCopied] = useState<string | null>(null);
 
-   const copyEmail = () => {
-      navigator.clipboard.writeText("farjad@ashavid.ca");
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+   const copyEmail = (email: string) => {
+      navigator.clipboard.writeText(email).then(
+         () => {
+            setCopied(email);
+            setTimeout(() => setCopied(null), 2000);
+         },
+         () => setCopied(null),
+      );
    };
 
    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -88,17 +96,46 @@ export default function ContactPage() {
             {/* LEFT COLUMN: STATIC DATA */}
             <div className="lg:col-span-4 bg-[#1a1a1a] text-[#F2F0E9] flex flex-col justify-between">
 
-               {/* Email Block */}
-               <div className="p-12 border-b border-[#F2F0E9]/20 group hover:bg-[#222] transition-colors">
-                  <span className="font-sans text-xs font-bold text-[#CCFF00] mb-4 block uppercase tracking-widest">Digital Channel</span>
-                  <div className="flex items-center justify-between cursor-pointer" onClick={copyEmail}>
-                     <h3 className="font-serif text-3xl md:text-4xl hover:text-[#CCFF00] transition-colors">
-                        hello@ashavid.ca
-                     </h3>
-                     <button className="text-[#F2F0E9]/40 hover:text-[#CCFF00]">
-                        {copied ? <Check size={20} /> : <Copy size={20} />}
-                     </button>
+               {/* Main line */}
+               <div className="p-12 border-b border-[#F2F0E9]/20">
+                  <span className="font-sans text-xs font-bold text-[#CCFF00] mb-4 block uppercase tracking-widest">Main Line · Phone &amp; WhatsApp</span>
+                  <a href={MAIN_CONTACT.tel} className="font-serif text-3xl md:text-4xl hover:text-[#CCFF00] transition-colors block mb-4" dir="ltr">
+                     {MAIN_CONTACT.phone}
+                  </a>
+                  <div className="flex flex-wrap gap-6 font-sans text-sm uppercase tracking-widest">
+                     <a href={MAIN_CONTACT.tel} className="flex items-center gap-2 hover:text-[#CCFF00] transition-colors"><Phone className="w-4 h-4" /> Call</a>
+                     <a href={MAIN_CONTACT.whatsapp} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 hover:text-[#CCFF00] transition-colors"><MessageCircle className="w-4 h-4" /> WhatsApp</a>
                   </div>
+               </div>
+
+               {/* Email Block */}
+               <div className="p-12 border-b border-[#F2F0E9]/20">
+                  <span className="font-sans text-xs font-bold text-[#CCFF00] mb-4 block uppercase tracking-widest">Email</span>
+                  <div className="space-y-3">
+                     {MAIN_CONTACT.emails.map((email) => (
+                        <div key={email} className="flex items-center justify-between gap-4">
+                           <a href={`mailto:${email}`} className="font-serif text-2xl md:text-3xl hover:text-[#CCFF00] transition-colors break-all">{email}</a>
+                           <button type="button" onClick={() => copyEmail(email)} aria-label={`Copy ${email}`} className="text-[#F2F0E9]/40 hover:text-[#CCFF00] shrink-0">
+                              {copied === email ? <Check size={20} /> : <Copy size={20} />}
+                           </button>
+                        </div>
+                     ))}
+                  </div>
+                  <div className="flex flex-wrap gap-6 mt-8 font-sans text-sm uppercase tracking-widest">
+                     <a href={MAIN_CONTACT.telegram} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 hover:text-[#CCFF00] transition-colors"><Send className="w-4 h-4" /> {MAIN_CONTACT.telegramHandle}</a>
+                     <a href={MAIN_CONTACT.youtube} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 hover:text-[#CCFF00] transition-colors"><Youtube className="w-4 h-4" /> {MAIN_CONTACT.youtubeHandle}</a>
+                  </div>
+               </div>
+
+               {/* B2B */}
+               <div className="p-12 border-b border-[#F2F0E9]/20">
+                  <span className="font-sans text-xs font-bold text-[#CCFF00] mb-4 block uppercase tracking-widest">B2B Partnerships</span>
+                  <p className="font-sans text-sm opacity-70 leading-relaxed mb-4">
+                     Accelerators, law firms, agencies and companies that want to work with us: choose &ldquo;B2B partnership&rdquo; in the form, or write directly.
+                  </p>
+                  <a href={`mailto:${MAIN_CONTACT.b2bEmail}?subject=B2B%20partnership`} className="inline-flex items-center gap-2 font-sans text-sm font-bold border-b border-[#CCFF00] pb-1 hover:text-[#CCFF00] transition-colors">
+                     <Handshake className="w-4 h-4" /> {MAIN_CONTACT.b2bEmail}
+                  </a>
                </div>
 
                {/* Address Block */}
@@ -182,6 +219,7 @@ export default function ContactPage() {
                         <option value="eu">Europe (Denmark / Finland)</option>
                         <option value="uae">UAE (Golden Visa)</option>
                         <option value="other">Global Strategy Audit</option>
+                        <option value="b2b">B2B Partnership</option>
                      </select>
                      <ArrowDownLeft className="absolute right-6 top-1/2 -translate-y-1/2 w-5 h-5 text-[#1a1a1a]/20 pointer-events-none" />
                   </div>
@@ -245,7 +283,7 @@ export default function ContactPage() {
                         <span className="font-sans text-xs font-bold text-[#1a1a1a]/40 mb-2 block uppercase tracking-widest">Phase 02</span>
                         <h3 className="font-serif text-3xl mb-2">Strategy Session</h3>
                         <p className="font-sans text-lg text-[#1a1a1a]/60 leading-relaxed max-w-xl">
-                           A 45-minute deep dive. We construct your narrative. Is this a "National Interest" case? Is it a "Significant Benefit" play? We define the legal argument.
+                           A free 45-minute deep dive. We construct your narrative. Is this a "National Interest" case? Is it a "Significant Benefit" play? We define the legal argument.
                         </p>
                      </div>
                   </div>
@@ -282,7 +320,7 @@ export default function ContactPage() {
                </div>
 
                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px bg-[#1a1a1a]/20 border border-[#1a1a1a]/20">
-                  {TEAM_MEMBERS.filter((m) => m.telegram || m.whatsapp || m.phoneNumbers?.length).map((member) => (
+                  {TEAM_MEMBERS.filter(hasDirectLine).map((member) => (
                      <div key={member.id} className="bg-[#F2F0E9] p-8 flex flex-col justify-between min-h-[280px] group hover:bg-white transition-colors duration-300">
                         <div>
                            <h3 className="font-serif text-2xl mb-1">{member.name}</h3>
@@ -294,20 +332,7 @@ export default function ContactPage() {
                               </div>
                            )}
                         </div>
-                        <div className="flex flex-wrap gap-4 pt-4 border-t border-[#1a1a1a]/10">
-                           {member.telegram && (
-                              <a href={member.telegram} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 font-sans text-xs font-bold uppercase tracking-widest border-b border-[#1a1a1a] pb-0.5 hover:text-[#CCFF00] hover:border-[#CCFF00] transition-colors">
-                                 <Send className="w-3.5 h-3.5" />
-                                 {member.telegramHandle}
-                              </a>
-                           )}
-                           {member.whatsapp && (
-                              <a href={member.whatsapp} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 font-sans text-xs font-bold uppercase tracking-widest text-[#1a1a1a]/60 hover:text-[#1a1a1a] transition-colors">
-                                 <MessageCircle className="w-3.5 h-3.5" />
-                                 WhatsApp
-                              </a>
-                           )}
-                        </div>
+                        <TeamContactLinks member={member} locale="en" />
                      </div>
                   ))}
                </div>
@@ -349,7 +374,7 @@ export default function ContactPage() {
                   <div className="border-b border-[#F2F0E9]/20 pb-8">
                      <h4 className="font-serif text-2xl mb-2 text-[#CCFF00]">What are the fees?</h4>
                      <p className="font-sans text-sm opacity-60 leading-relaxed">
-                        We operate on a retainer basis. Fees vary by jurisdiction and complexity (e.g., SUV vs PNP). A detailed quote is provided after the initial Strategy Session.
+                        We operate on a retainer basis. Fees vary by jurisdiction and complexity (e.g., SUV vs PNP). A detailed quote is provided after the initial Strategy Session, which is free.
                      </p>
                   </div>
                   <div className="border-b border-[#F2F0E9]/20 pb-8">

@@ -23,6 +23,7 @@ import type { Metadata } from 'next';
 
 import { metaFor } from '@/lib/pageMeta';
 import BookingCTA from '@/components/BookingCTA';
+import { MAIN_CONTACT } from '@/content/contact';
 import {
   SUV_ORGS,
   SUV_RULES,
@@ -439,8 +440,8 @@ export default function CanadaSUVPage() {
                <Link href="/book-meeting" className="bg-[#CCFF00] text-[#1a1a1a] px-10 py-5 font-sans font-bold uppercase tracking-widest hover:bg-white transition-colors">
                   Book Consultation
                </Link>
-               <a href="tel:+14376611674" className="border border-white text-white px-10 py-5 font-sans font-bold uppercase tracking-widest hover:bg-white hover:text-[#1a1a1a] transition-colors">
-                  +1 (437) 661 16 74 
+               <a href={MAIN_CONTACT.tel} dir="ltr" className="border border-white text-white px-10 py-5 font-sans font-bold uppercase tracking-widest hover:bg-white hover:text-[#1a1a1a] transition-colors">
+                  {MAIN_CONTACT.phone}
                </a>
             </div>
          </div>

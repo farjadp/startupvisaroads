@@ -1,6 +1,7 @@
 import React from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import ContactCTA from "@/components/ContactCTA";
 import PageTracker from "@/components/PageTracker";
 import { setRequestLocale } from 'next-intl/server';
 
@@ -21,6 +22,7 @@ export default async function PublicLayout({
       <main className="flex-grow pt-24 md:pt-32">
         {children}
       </main>
+      <ContactCTA />
       <Footer />
     </>
   );

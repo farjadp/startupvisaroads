@@ -6,6 +6,7 @@
 
 import type { Metadata } from 'next';
 import { FA_PAIRED, EN_TO_FA, isFaPath, type FaPath } from '@/lib/fa/paths';
+import { MAIN_CONTACT } from '@/content/contact';
 
 // Resolution order:
 //  1. SITE_URL              — server runtime env (override dynamic routes on
@@ -213,6 +214,23 @@ export function organizationJsonLd() {
     },
     description: 'Mentorship and startup readiness for Startup Visa and global migration programs.',
     sameAs: ASHAVID.sameAs,
+    email: MAIN_CONTACT.email,
+    telephone: MAIN_CONTACT.phoneE164,
+    contactPoint: [
+      {
+        '@type': 'ContactPoint',
+        contactType: 'customer support',
+        telephone: MAIN_CONTACT.phoneE164,
+        email: MAIN_CONTACT.email,
+        availableLanguage: ['English', 'Persian'],
+      },
+      {
+        '@type': 'ContactPoint',
+        contactType: 'partnerships',
+        email: MAIN_CONTACT.b2bEmail,
+        availableLanguage: ['English', 'Persian'],
+      },
+    ],
     address: {
       '@type': 'PostalAddress',
       addressLocality: 'Toronto',

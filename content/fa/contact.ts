@@ -1,11 +1,13 @@
 // ============================================================================
 // content/fa/contact.ts
-// «تماس» — all four channels on one page, in the order an Iranian reader
-// actually uses them: Telegram, the free assessment, a booked call, the
-// webinar. No WhatsApp: no number exists. Says what happens after each and
+// «تماس» — every channel on one page, in the order an Iranian reader
+// actually uses them: Telegram, the main line (phone + WhatsApp) and email,
+// the free assessment, a free booked call, the webinar, and B2B partnerships.
+// Main details come from content/contact.ts. Says what happens after each and
 // how long a reply takes.
 // ============================================================================
-import { TELEGRAM_URL, TELEGRAM_CHANNEL_URL, CONTACT } from './home';
+import { TELEGRAM_URL, TELEGRAM_CHANNEL_URL } from './home';
+import { MAIN_CONTACT } from '@/content/contact';
 
 export const BOOKING_IFRAME_URL =
   'https://calendar.google.com/calendar/appointments/schedules/AcZssZ0c9kl9WXgD2feLxqByk8S1fPcngsfXdvOISc-dWrbhXnhNx7uVuM1RyLJfWKkT2l5XX7I3wNLf?gv=true';
@@ -13,15 +15,15 @@ export const BOOKING_IFRAME_URL =
 export const contact = {
   meta: {
     path: '/contact',
-    title: 'تماس و مشاوره — تلگرام، ارزیابی رایگان، رزرو جلسه',
+    title: 'تماس و مشاوره‌ی رایگان — تلفن، واتساپ، تلگرام، رزرو جلسه',
     description:
-      'پنج راه برای رسیدن به ما: تلگرام (سریع‌ترین)، واتساپ و ایمیل، ارزیابی رایگان مسیر، رزرو جلسه‌ی مشاوره، و وبینار. بدون تماس فروش؛ پاسخ صادقانه ظرف دو روز کاری.',
-    keywords: ['تماس با ما', 'رزرو مشاوره مهاجرت استارتاپی', 'مشاوره ویزای استارتاپ تلگرام', 'مشاوره رایگان مهاجرت کارآفرینی'],
+      'شش راه برای رسیدن به ما: تلگرام (سریع‌ترین)، تلفن و واتساپ ‎+1 (613) 515-0727‎ و ایمیل، ارزیابی رایگان مسیر، رزرو جلسه‌ی مشاوره‌ی رایگان، وبینار، و همکاری B2B. بدون تماس فروش؛ پاسخ صادقانه ظرف دو روز کاری.',
+    keywords: ['تماس با ما', 'رزرو مشاوره مهاجرت استارتاپی', 'مشاوره ویزای استارتاپ تلگرام', 'مشاوره رایگان مهاجرت کارآفرینی', 'همکاری B2B مهاجرت استارتاپی'],
   },
   hero: {
     eyebrow: 'تماس · بدون تماس فروش',
-    headline: 'پنج راه برای رسیدن به ما',
-    sub: 'سؤال کوتاه دارید، تلگرام. نمی‌دانید کدام مسیر، ارزیابی رایگان. می‌خواهید وضعیت خودتان را با جزئیات بررسی کنیم، جلسه رزرو کنید. هر کدام را انتخاب کنید، پاسخ صادقانه می‌گیرید — حتی اگر پاسخ «مسیر شما این نیست» باشد.',
+    headline: 'شش راه برای رسیدن به ما',
+    sub: 'سؤال کوتاه دارید، تلگرام. نمی‌دانید کدام مسیر، ارزیابی رایگان. می‌خواهید وضعیت خودتان را با جزئیات بررسی کنیم، جلسه‌ی رایگان رزرو کنید. هر کدام را انتخاب کنید، پاسخ صادقانه می‌گیرید — حتی اگر پاسخ «مسیر شما این نیست» باشد.',
   },
   channels: [
     {
@@ -33,10 +35,10 @@ export const contact = {
     },
     {
       n: '۰۲',
-      title: 'واتساپ یا ایمیل',
-      body: 'اگر تلگرام ندارید یا می‌خواهید مدارک بفرستید. واتساپ همان شماره‌ی تورنتو است؛ ایمیل برای گفت‌وگوی مکتوب.',
-      cta: { label: CONTACT.whatsappNumber, href: CONTACT.whatsapp },
-      secondary: { label: CONTACT.email, href: `mailto:${CONTACT.email}` },
+      title: 'تلفن، واتساپ و ایمیل',
+      body: 'شماره‌ی اصلی هم برای تماس تلفنی و هم واتساپ فعال است؛ برای فرستادن مدارک هم مناسب است. ایمیل برای گفت‌وگوی مکتوب: farjad@visaroads.com یا mohsen@visaroads.com.',
+      cta: { label: MAIN_CONTACT.phone, href: MAIN_CONTACT.whatsapp },
+      secondary: { label: MAIN_CONTACT.email, href: `mailto:${MAIN_CONTACT.email}` },
     },
     {
       n: '۰۳',
@@ -46,8 +48,8 @@ export const contact = {
     },
     {
       n: '۰۴',
-      title: 'جلسه‌ی مشاوره',
-      body: 'گفت‌وگوی اختصاصی آنلاین درباره‌ی وضعیت شما، مسیر پیشنهادی و نقشه‌ی راه. زمان را از تقویم پایین انتخاب کنید؛ تأیید و لینک جلسه به ایمیلتان می‌آید.',
+      title: 'جلسه‌ی مشاوره‌ی رایگان',
+      body: 'گفت‌وگوی اختصاصی آنلاین درباره‌ی وضعیت شما، مسیر پیشنهادی و نقشه‌ی راه — بدون هزینه. زمان را از تقویم پایین انتخاب کنید؛ تأیید و لینک جلسه به ایمیلتان می‌آید.',
       cta: { label: 'انتخاب زمان', href: '#booking' },
     },
     {
@@ -56,10 +58,17 @@ export const contact = {
       body: 'جلسه‌ی گروهی رایگان درباره‌ی مسیرهای مهاجرت استارتاپی، با پرسش و پاسخ. مناسب کسانی که هنوز در مرحله‌ی شناخت هستند.',
       cta: { label: 'ثبت‌نام وبینار', href: '/webinar' },
     },
+    {
+      n: '۰۶',
+      title: 'همکاری B2B',
+      body: 'برای شتاب‌دهنده‌ها، دفاتر حقوقی، مؤسسه‌ها و شرکت‌هایی که می‌خواهند با ما همکاری کنند. در فرم پایین «همکاری B2B» را انتخاب کنید یا مستقیم ایمیل بزنید.',
+      cta: { label: MAIN_CONTACT.b2bEmail, href: `mailto:${MAIN_CONTACT.b2bEmail}?subject=B2B%20partnership` },
+      secondary: { label: 'فرم تماس', href: '#form' },
+    },
   ],
   teamSection: {
     heading: 'تماس مستقیم با اعضای تیم',
-    body: 'هر یک از اعضای تیم در دسترس هستند. تلگرام سریع‌ترین راه است؛ واتساپ برای ارسال مدارک. در صفحه‌ی تیم با نقش هر کس آشنا شوید.',
+    body: 'هر یک از اعضای تیم مستقیم در دسترس است — تلفن، واتساپ یا تلگرام، بسته به هر نفر. در صفحه‌ی تیم با نقش هر کس آشنا شوید.',
     teamPageLink: 'مشاهده‌ی صفحه‌ی تیم',
   },
   form: {
@@ -68,9 +77,9 @@ export const contact = {
     name: 'نام',
     email: 'ایمیل',
     phone: 'تلفن یا آیدی تلگرام (اختیاری)',
-    company: 'نام کسب‌وکار (اختیاری)',
+    company: 'نام کسب‌وکار یا سازمان (اختیاری)',
     objective: 'مسیر مورد نظر',
-    objectives: ['ویزای استارتاپ کانادا', 'برنامه‌های استانی کانادا', 'EB-2 NIW آمریکا', 'هنوز نمی‌دانم'],
+    objectives: ['ویزای استارتاپ کانادا', 'برنامه‌های استانی کانادا', 'EB-2 NIW آمریکا', 'همکاری B2B (سازمان‌ها و شرکا)', 'هنوز نمی‌دانم'],
     brief: 'چند خط درباره‌ی وضعیت شما',
     submit: 'ارسال پیام',
     sending: 'در حال ارسال…',
@@ -78,7 +87,7 @@ export const contact = {
     error: 'ارسال نشد. می‌توانید مستقیم در تلگرام پیام بدهید.',
   },
   booking: {
-    heading: 'رزرو جلسه‌ی مشاوره',
+    heading: 'رزرو جلسه‌ی مشاوره‌ی رایگان',
     body: 'زمان را به وقت تورنتو انتخاب کنید؛ تقویم به‌طور خودکار به منطقه‌ی زمانی شما تبدیل می‌شود.',
   },
   disclaimer: 'ما وکیل مهاجرت یا مشاور رسمی (RCIC) نیستیم و پرونده ثبت نمی‌کنیم. گفت‌وگو با ما درباره‌ی آماده‌سازی کسب‌وکار و انتخاب مسیر است، نه مشاوره‌ی حقوقی.',

@@ -5,7 +5,7 @@
 import React from 'react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { ArrowRight, Send, MessageCircle, Phone, MapPin } from 'lucide-react';
+import { ArrowRight, MapPin } from 'lucide-react';
 import { setRequestLocale } from 'next-intl/server';
 import { metaFor } from '@/lib/pageMeta';
 import { buildMetadata } from '@/lib/seo';
@@ -13,6 +13,7 @@ import FaTeam from '@/components/fa/FaTeam';
 import { page as faPage } from '@/content/fa/team';
 import { faMeta } from '@/lib/fa/content';
 import { TEAM_MEMBERS } from '@/content/team';
+import TeamContactLinks from '@/components/TeamContactLinks';
 
 type Props = { params: Promise<{ locale: string }> };
 
@@ -92,30 +93,7 @@ export default async function TeamPage({ params }: Props) {
 
                 </div>
 
-                <div className="flex flex-wrap gap-4 pt-4 border-t border-[#1a1a1a]/10">
-                  {member.telegram && (
-                    <a
-                      href={member.telegram}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 font-sans text-xs font-bold uppercase tracking-widest border-b border-[#1a1a1a] pb-0.5 hover:text-[#CCFF00] hover:border-[#CCFF00] transition-colors"
-                    >
-                      <Send className="w-3.5 h-3.5" />
-                      {member.telegramHandle}
-                    </a>
-                  )}
-                  {member.whatsapp && (
-                    <a
-                      href={member.whatsapp}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 font-sans text-xs font-bold uppercase tracking-widest text-[#1a1a1a]/60 hover:text-[#1a1a1a] transition-colors"
-                    >
-                      <MessageCircle className="w-3.5 h-3.5" />
-                      WhatsApp
-                    </a>
-                  )}
-                </div>
+                <TeamContactLinks member={member} locale="en" />
               </div>
             ))}
           </div>

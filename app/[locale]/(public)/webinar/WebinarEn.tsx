@@ -351,7 +351,7 @@ export default function WebinarPage() {
                             <div className="space-y-2 text-xs">
                                 <div className="flex justify-between items-center bg-[#F2F0E9]/50 p-2.5 rounded-xl border border-[#1a1a1a]/5">
                                     <span className="text-[#1a1a1a]/50">ایمیل پشتیبانی:</span>
-                                    <a href="mailto:its@farjadp.com" className="font-sans font-bold hover:underline">its@farjadp.com</a>
+                                    <a href="mailto:farjad@visaroads.com" className="font-sans font-bold hover:underline">farjad@visaroads.com</a>
                                 </div>
                                 <div className="flex justify-between items-center bg-[#F2F0E9]/50 p-2.5 rounded-xl border border-[#1a1a1a]/5">
                                     <span className="text-[#1a1a1a]/50">ارتباط تلگرام:</span>

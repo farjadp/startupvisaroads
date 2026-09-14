@@ -7,6 +7,7 @@
 import React from 'react';
 import { getLocale, getTranslations } from 'next-intl/server';
 import { CONTACT } from '@/content/fa/home';
+import { MAIN_CONTACT } from '@/content/contact';
 import { Link } from '@/navigation';
 import { 
   ArrowUpRight, 
@@ -94,15 +95,17 @@ export default async function Footer() {
               <div className="flex gap-4 mt-12">
                  {(isRtl
                     ? [
-                        { Icon: Youtube, href: CONTACT.youtube, label: 'YouTube' },
+                        { Icon: Youtube, href: MAIN_CONTACT.youtube, label: 'YouTube' },
                         { Icon: Instagram, href: CONTACT.instagram, label: 'Instagram' },
                         { Icon: Linkedin, href: CONTACT.linkedin, label: 'LinkedIn' },
-                        { Icon: MessageCircle, href: CONTACT.whatsapp, label: 'WhatsApp' },
+                        { Icon: MessageCircle, href: MAIN_CONTACT.whatsapp, label: 'WhatsApp' },
                       ]
                     : [
                         { Icon: Linkedin, href: 'https://www.linkedin.com/company/ashavid/', label: 'LinkedIn' },
                         { Icon: Twitter, href: 'https://x.com/ashavidgroup', label: 'X (Twitter)' },
                         { Icon: Instagram, href: 'https://www.instagram.com/ashavidgroup/', label: 'Instagram' },
+                        { Icon: Youtube, href: MAIN_CONTACT.youtube, label: 'YouTube' },
+                        { Icon: MessageCircle, href: MAIN_CONTACT.whatsapp, label: 'WhatsApp' },
                       ]).map(({ Icon, href, label }, i) => (
                     <a key={i} href={href} target="_blank" rel="noopener noreferrer" aria-label={label} className="w-12 h-12 rounded-full border border-[#F2F0E9]/20 flex items-center justify-center hover:bg-[#CCFF00] hover:text-black hover:border-[#CCFF00] transition-all duration-300">
                        <Icon size={20} />
@@ -143,14 +146,14 @@ export default async function Footer() {
                     <strong>{t('entity')}</strong><br/>
                     {t('address_1')}<br/>
                     {t('address_2')}<br/>
-                    {isRtl ? (
-                       <>
-                          <a href={`mailto:${CONTACT.email}`} className="hover:text-white transition-colors" dir="ltr">{CONTACT.email}</a><br/>
-                          <a href={CONTACT.whatsapp} className="hover:text-white transition-colors" dir="ltr">{CONTACT.whatsappNumber}</a>
-                       </>
-                    ) : (
-                       <a href="mailto:hello@ashavid.ca" className="hover:text-white transition-colors">hello@ashavid.ca</a>
-                    )}
+                    <a href={MAIN_CONTACT.tel} className="hover:text-white transition-colors" dir="ltr">{MAIN_CONTACT.phone}</a>
+                    {' · '}
+                    <a href={MAIN_CONTACT.whatsapp} target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">{isRtl ? 'واتساپ' : 'WhatsApp'}</a><br/>
+                    {MAIN_CONTACT.emails.map((email) => (
+                       <React.Fragment key={email}>
+                          <a href={`mailto:${email}`} className="hover:text-white transition-colors" dir="ltr">{email}</a><br/>
+                       </React.Fragment>
+                    ))}
                  </address>
                  
                  <Link href={links.audit} className="inline-flex items-center gap-2 font-sans font-bold border-b border-[#CCFF00] pb-1 hover:text-[#CCFF00] transition-colors text-sm tracking-widest uppercase">
