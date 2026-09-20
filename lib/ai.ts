@@ -25,6 +25,8 @@ export type ImageOptions = {
   raw?: boolean;
   /** Fal image_size preset. Covers render in a 16:9 frame on the article page. */
   size?: 'landscape_4_3' | 'landscape_16_9' | 'square_hd';
+  /** Providers to try first, best-first. The rest stay on as fallbacks. */
+  prefer?: ImageProvider[];
 };
 
 /**
@@ -37,21 +39,36 @@ export type ImageOptions = {
  * by design, so nothing shouted. One dead provider must not cost a week of
  * imagery again.
  *
- * Override the order with IMAGE_PROVIDER_ORDER="openai,fal"; a provider
- * whose key is missing drops out of the chain on its own.
+ * The two are not interchangeable in quality. Across the twelve covers
+ * backfilled on 20 Sep 2026, gpt-image-2 held the art direction every time
+ * while flux drifted — soft CGI surfaces, a green cast, and once two toy
+ * robots with a figure walking behind them. So the caller says which
+ * provider it wants first: covers are the frame everyone sees and go to
+ * OpenAI, in-article photos are smaller and more numerous and go to Fal.
+ *
+ * IMAGE_PROVIDER_ORDER="openai,fal" overrides every caller's preference; a
+ * provider whose key is missing drops out of the chain on its own.
  */
 export type ImageProvider = 'fal' | 'openai';
 
-export function imageProviders(): ImageProvider[] {
+export function imageProviders(prefer?: ImageProvider[]): ImageProvider[] {
   const configured: Record<ImageProvider, boolean> = {
     fal: Boolean(process.env.FAL_KEY),
     openai: Boolean(process.env.OPENAI_API_KEY),
   };
-  return (process.env.IMAGE_PROVIDER_ORDER ?? 'fal,openai')
-    .split(',')
-    .map((p) => p.trim().toLowerCase())
+  const order = process.env.IMAGE_PROVIDER_ORDER
+    ? process.env.IMAGE_PROVIDER_ORDER.split(',')
+    : (prefer ?? ['fal', 'openai']);
+  const chain = order
+    .map((p) => String(p).trim().toLowerCase())
     .filter((p): p is ImageProvider => p === 'fal' || p === 'openai')
     .filter((p) => configured[p]);
+  // A preference must never shrink the chain: whatever is configured stays
+  // available as a fallback, just after what the caller asked for.
+  for (const p of ['fal', 'openai'] as ImageProvider[]) {
+    if (configured[p] && !chain.includes(p)) chain.push(p);
+  }
+  return chain;
 }
 
 type RawImage = { bytes: Uint8Array; contentType: string };
@@ -63,7 +80,7 @@ type RawImage = { bytes: Uint8Array; contentType: string };
  * of to a missing image.
  */
 export async function generateAndSaveImage(prompt: string, opts: ImageOptions = {}): Promise<string> {
-  const providers = imageProviders();
+  const providers = imageProviders(opts.prefer);
   if (providers.length === 0) throw new Error('No image provider configured (FAL_KEY / OPENAI_API_KEY)');
 
   const fullPrompt = opts.raw ? prompt : `${prompt}${PHOTO_STYLE_SUFFIX}`;

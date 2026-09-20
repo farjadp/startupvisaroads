@@ -38,7 +38,13 @@ export async function generateBrandImage(scene: string, role: ImageRole): Promis
     return null;
   }
   try {
-    return await generateAndSaveImage(brandPrompt(scene), { raw: true, size: role === 'cover' ? 'landscape_16_9' : 'landscape_4_3' });
+    return await generateAndSaveImage(brandPrompt(scene), {
+      raw: true,
+      size: role === 'cover' ? 'landscape_16_9' : 'landscape_4_3',
+      // The cover carries the article everywhere it is linked; buy the
+      // better render for it and let Fal take the in-article photos.
+      prefer: role === 'cover' ? ['openai', 'fal'] : ['fal', 'openai'],
+    });
   } catch (e) {
     console.error(`autopilot/images: ${role} failed, continuing without it`, e);
     return null;

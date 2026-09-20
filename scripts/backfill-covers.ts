@@ -18,6 +18,11 @@
 // To replace one cover that came out wrong (--force needs --slug, so it can
 // never re-buy the whole blog):
 //   npx tsx scripts/backfill-covers.ts --remote --force --slug some-article
+//
+// In-article photographs instead of the cover, and redoing covers after the
+// art direction itself changed:
+//   npx tsx scripts/backfill-covers.ts --remote --inline --limit 3
+//   npx tsx scripts/backfill-covers.ts --remote --force-all --limit 12
 // CRON_SECRET comes from .env; --url overrides https://visaroads.com.
 // ============================================================================
 import fs from 'node:fs';
@@ -44,6 +49,8 @@ const opts = {
   slug: value('slug'),
   dryRun: flag('dry-run'),
   force: flag('force'),
+  forceAll: flag('force-all'),
+  mode: flag('inline') ? 'inline' : undefined,
 };
 
 async function remote() {
@@ -56,6 +63,8 @@ async function remote() {
   if (opts.locale) url.searchParams.set('locale', opts.locale);
   if (opts.slug) url.searchParams.set('slug', opts.slug);
   if (opts.force) url.searchParams.set('force', '1');
+  if (opts.forceAll) url.searchParams.set('forceAll', '1');
+  if (opts.mode) url.searchParams.set('mode', opts.mode);
 
   console.log(`${opts.dryRun ? 'GET' : 'POST'} ${url.toString()}`);
   const res = await fetch(url, {
@@ -69,8 +78,8 @@ async function remote() {
 
 async function local() {
   // Imported lazily so --remote never touches Prisma or the image providers.
-  const { backfillCovers } = await import('../lib/covers');
-  return backfillCovers(opts);
+  const { backfillCovers, backfillInlinePhotos } = await import('../lib/covers');
+  return opts.mode === 'inline' ? backfillInlinePhotos(opts) : backfillCovers(opts);
 }
 
 async function main() {
