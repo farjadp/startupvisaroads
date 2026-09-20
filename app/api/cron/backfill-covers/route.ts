@@ -25,6 +25,7 @@ function options(req: NextRequest): BackfillOptions {
     limit: Number(q.get('limit') ?? 5),
     locale: locale === 'en' || locale === 'fa' ? locale : undefined,
     slug: q.get('slug') ?? undefined,
+    force: q.get('force') === '1',
   };
 }
 

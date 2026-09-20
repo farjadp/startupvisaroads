@@ -26,6 +26,13 @@ export type BackfillOptions = {
   slug?: string;
   /** Pick the articles and write the prompts, generate nothing, change nothing. */
   dryRun?: boolean;
+  /**
+   * Replace a cover that already exists. Requires `slug`, deliberately: a
+   * model occasionally returns something off-brand (flux made toy robots of
+   * "robotic components" once), and that is a one-article fix, never a
+   * reason to re-buy every cover on the blog.
+   */
+  force?: boolean;
 };
 
 export type BackfillResult = {
@@ -66,6 +73,8 @@ Return JSON: {"scene":"..."}`;
  */
 export async function backfillCovers(opts: BackfillOptions = {}): Promise<BackfillResult> {
   const limit = Math.max(1, Math.min(opts.limit ?? 10, 50));
+  // force only ever touches the one article named on the command line.
+  const force = Boolean(opts.force && opts.slug);
   const result: BackfillResult = { blocked: null, considered: 0, done: [], failed: [] };
 
   // The same gate the autopilot uses — no point paying for an image that
@@ -79,7 +88,7 @@ export async function backfillCovers(opts: BackfillOptions = {}): Promise<Backfi
   const articles = await prisma.article.findMany({
     where: {
       status: 'PUBLISHED',
-      OR: [{ coverImage: null }, { coverImage: '' }],
+      ...(force ? {} : { OR: [{ coverImage: null }, { coverImage: '' }] }),
       ...(opts.locale ? { locale: opts.locale } : {}),
       ...(opts.slug ? { slug: opts.slug } : {}),
     },
