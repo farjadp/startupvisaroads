@@ -8,7 +8,6 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY || 'dummy-key-for-build',
 });
 
-const FAL_KEY = process.env.FAL_KEY;
 
 /**
  * Style suffix appended to every Fal.ai photo prompt for consistent
@@ -21,13 +20,6 @@ const PHOTO_STYLE_SUFFIX =
 
 // ─── Image Generation ─────────────────────────────────────────────────────────
 
-/**
- * Generate a high-quality photo via Fal.ai Flux Dev (28-step diffusion model)
- * and persist it through the pluggable storage layer.
- *
- * Upgraded from flux/schnell (4 steps, low quality) to flux/dev (28 steps,
- * editorial quality) for noticeably better in-article visuals.
- */
 export type ImageOptions = {
   /** Skip PHOTO_STYLE_SUFFIX — for prompts that carry their own art direction (the autopilot). */
   raw?: boolean;
@@ -35,17 +27,73 @@ export type ImageOptions = {
   size?: 'landscape_4_3' | 'landscape_16_9' | 'square_hd';
 };
 
+/**
+ * Image providers, in the order they are tried.
+ *
+ * Fal (flux/dev) is the house look and the cheaper of the two. OpenAI
+ * gpt-image-2 is the standby, and it exists because on 14 Sep 2026 the Fal
+ * account was locked for a top-up and every article for the next six days
+ * published with no cover at all — generateBrandImage swallows the failure
+ * by design, so nothing shouted. One dead provider must not cost a week of
+ * imagery again.
+ *
+ * Override the order with IMAGE_PROVIDER_ORDER="openai,fal"; a provider
+ * whose key is missing drops out of the chain on its own.
+ */
+export type ImageProvider = 'fal' | 'openai';
+
+export function imageProviders(): ImageProvider[] {
+  const configured: Record<ImageProvider, boolean> = {
+    fal: Boolean(process.env.FAL_KEY),
+    openai: Boolean(process.env.OPENAI_API_KEY),
+  };
+  return (process.env.IMAGE_PROVIDER_ORDER ?? 'fal,openai')
+    .split(',')
+    .map((p) => p.trim().toLowerCase())
+    .filter((p): p is ImageProvider => p === 'fal' || p === 'openai')
+    .filter((p) => configured[p]);
+}
+
+type RawImage = { bytes: Uint8Array; contentType: string };
+
+/**
+ * Generate a photo and persist it through the pluggable storage layer.
+ * Each provider is tried in turn; the last error is reported only when all
+ * of them have failed, so a locked account degrades to the standby instead
+ * of to a missing image.
+ */
 export async function generateAndSaveImage(prompt: string, opts: ImageOptions = {}): Promise<string> {
+  const providers = imageProviders();
+  if (providers.length === 0) throw new Error('No image provider configured (FAL_KEY / OPENAI_API_KEY)');
+
+  const fullPrompt = opts.raw ? prompt : `${prompt}${PHOTO_STYLE_SUFFIX}`;
   console.log('[AI] Generating photo — prompt:', prompt.slice(0, 120));
 
+  const failures: string[] = [];
+  for (const provider of providers) {
+    try {
+      const image = provider === 'fal' ? await generateWithFal(fullPrompt, opts) : await generateWithOpenAI(fullPrompt, opts);
+      if (provider !== providers[0]) console.warn(`[AI] Photo came from the standby provider "${provider}"`);
+      return await storeImage(image.bytes, image.contentType);
+    } catch (e) {
+      const message = e instanceof Error ? e.message : String(e);
+      console.error(`[AI] Image provider "${provider}" failed: ${message}`);
+      failures.push(`${provider}: ${message}`);
+    }
+  }
+  throw new Error(`Image generation failed — ${failures.join('; ')}`);
+}
+
+/** Fal.ai Flux Dev (28-step diffusion). */
+async function generateWithFal(prompt: string, opts: ImageOptions): Promise<RawImage> {
   const response = await fetch('https://fal.run/fal-ai/flux/dev', {
     method: 'POST',
     headers: {
-      Authorization: `Key ${FAL_KEY}`,
+      Authorization: `Key ${process.env.FAL_KEY}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      prompt: opts.raw ? prompt : `${prompt}${PHOTO_STYLE_SUFFIX}`,
+      prompt,
       image_size: opts.size ?? 'landscape_4_3',
       num_inference_steps: 28,
       guidance_scale: 3.5,
@@ -55,30 +103,57 @@ export async function generateAndSaveImage(prompt: string, opts: ImageOptions = 
   });
 
   if (!response.ok) {
-    const error = await response.text();
-    console.error('[AI] Fal.ai error:', error);
-    throw new Error('Image generation failed');
+    // The body carries the reason — "User is locked. Reason: TOP_UP" is a
+    // billing problem, not a bug, and the log must say so.
+    throw new Error(`fal.run ${response.status}: ${(await response.text()).slice(0, 200)}`);
   }
 
   const data = await response.json();
-  const imageUrl = data.images[0].url;
+  const imageUrl = data?.images?.[0]?.url;
+  if (!imageUrl) throw new Error('fal.run returned no image URL');
 
-  // Download the generated image from Fal.ai's CDN.
-  // IMPORTANT: validate the response before storing — if the CDN returns an
-  // error page (non-ok status or non-image content-type), we must throw so
-  // the caller's catch block can skip this visual rather than persisting an
-  // "Internal server error" string as a JPEG file.
+  // Download from Fal's CDN. IMPORTANT: validate before storing — if the CDN
+  // returns an error page, throw, rather than persisting "Internal server
+  // error" as a JPEG.
   const imageRes = await fetch(imageUrl);
-  if (!imageRes.ok) {
-    throw new Error(`Failed to download generated image (${imageRes.status}): ${imageUrl}`);
-  }
+  if (!imageRes.ok) throw new Error(`Failed to download generated image (${imageRes.status}): ${imageUrl}`);
   const contentType = imageRes.headers.get('content-type') || '';
-  if (!contentType.startsWith('image/')) {
-    throw new Error(`Fal.ai CDN returned non-image content-type "${contentType}" for: ${imageUrl}`);
-  }
-  const arrayBuffer = await imageRes.arrayBuffer();
+  if (!contentType.startsWith('image/')) throw new Error(`fal CDN returned non-image content-type "${contentType}"`);
 
-  return storeImage(new Uint8Array(arrayBuffer), contentType);
+  return { bytes: new Uint8Array(await imageRes.arrayBuffer()), contentType };
+}
+
+/**
+ * OpenAI gpt-image-2. It returns base64 rather than a URL, and it has no
+ * 16:9 preset — 1536×1024 is the widest frame on offer and crops cleanly to
+ * the article header. JPEG at quality 80 keeps a cover around 200 KB, in
+ * line with what Fal was putting in the bucket.
+ */
+async function generateWithOpenAI(prompt: string, opts: ImageOptions): Promise<RawImage> {
+  const size = opts.size === 'square_hd' ? '1024x1024' : '1536x1024';
+  const response = await fetch('https://api.openai.com/v1/images/generations', {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      model: process.env.OPENAI_IMAGE_MODEL ?? 'gpt-image-2',
+      prompt,
+      size,
+      quality: process.env.OPENAI_IMAGE_QUALITY ?? 'medium',
+      output_format: 'jpeg',
+      output_compression: 80,
+      n: 1,
+    }),
+  });
+
+  if (!response.ok) throw new Error(`openai images ${response.status}: ${(await response.text()).slice(0, 200)}`);
+
+  const data = await response.json();
+  const b64 = data?.data?.[0]?.b64_json;
+  if (!b64) throw new Error('openai returned no image data');
+  return { bytes: Uint8Array.from(Buffer.from(b64, 'base64')), contentType: 'image/jpeg' };
 }
 
 // ─── Diagram Helpers ──────────────────────────────────────────────────────────

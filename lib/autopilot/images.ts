@@ -10,15 +10,19 @@
 // allowed so a local run can still be looked at. Verified 5 Sep 2026 that
 // production serves from storage.googleapis.com/svr-media-visaroads-website.
 // ============================================================================
-import { generateAndSaveImage } from '@/lib/ai';
+import { generateAndSaveImage, imageProviders } from '@/lib/ai';
 import { isStorageConfigured } from '@/lib/storage';
 import { brandPrompt } from './art-direction';
 
 export type ImageRole = 'cover' | 'inline';
 
-/** True when generating an image would be wasteful or harmful right now. */
+/**
+ * True when generating an image would be wasteful or harmful right now.
+ * The provider chain (Fal, then OpenAI) is checked as a whole: one dead
+ * provider is a fallback, not a blocked run.
+ */
 export function imagesBlocked(): string | null {
-  if (!process.env.FAL_KEY) return 'FAL_KEY missing';
+  if (imageProviders().length === 0) return 'no image provider configured (FAL_KEY / OPENAI_API_KEY)';
   if (!isStorageConfigured() && process.env.NODE_ENV === 'production') return 'object storage not configured (S3_*); refusing to inline base64 in production';
   return null;
 }
