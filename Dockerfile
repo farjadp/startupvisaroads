@@ -55,4 +55,8 @@ EXPOSE 8080
 ENV PORT=8080
 ENV HOSTNAME="0.0.0.0"
 
-CMD ["sh", "-c", "npx prisma migrate deploy --schema=prisma/schema.production.prisma && node server.js"]
+# Migrations run in the entrypoint, where a database at its connection
+# ceiling can no longer keep the server from listening on $PORT.
+COPY --chown=nextjs:nodejs docker-entrypoint.sh ./docker-entrypoint.sh
+
+CMD ["./docker-entrypoint.sh"]

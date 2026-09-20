@@ -236,3 +236,50 @@ Every run leaves a row in `AutopilotRun`; the admin console at
 - Submit the domain + sitemap in **Google Search Console** and **Bing Webmaster
   Tools** to kick off indexing.
 ```
+
+## 7. Migrations and the connection ceiling
+
+Migrations run from `docker-entrypoint.sh` at boot, and they no longer gate
+the server. The old `CMD` was `prisma migrate deploy && node server.js`; on
+20 Sep 2026 that `&&` failed a deploy outright. Cloud SQL is a `db-f1-micro`
+with roughly 25 connection slots, the running revision held 22 of them, and
+`migrate deploy` could not get one:
+
+```
+FATAL: remaining connection slots are reserved for non-replication superuser connections
+ERROR: Revision 'startupvisaroads-00139-222' is not ready ... failed to start and listen on PORT=8080
+```
+
+The entrypoint now retries (the ceiling is usually transient while the old
+revision drains), then starts the server either way and sends a Telegram
+alert if the migrations did not land — a schema quietly behind the code is
+exactly the kind of silence that costs days.
+
+```
+RUN_MIGRATIONS=0    skip migrations at boot entirely
+MIGRATE_ATTEMPTS=5  tries before giving up (5s, 10s, 15s, 20s backoff)
+```
+
+That is a guard, not a cure. Two things still want doing:
+
+**Bound the Prisma pool.** Each instance opens its own pool, so a handful of
+instances exhausts f1-micro on their own. `DATABASE_URL` is a Secret Manager
+secret; add `?connection_limit=3&pool_timeout=20` to it and deploy a new
+version, or move the instance to `db-g1-small` (~50 slots).
+
+**Run migrations as their own step.** Once they run before the deploy rather
+than during it, set `RUN_MIGRATIONS=0` on the service and boot stops touching
+the database at all. The build trigger is an inline console config, so this
+needs a one-off job plus a build step:
+
+```bash
+gcloud run jobs create startupvisaroads-migrate \
+  --image=europe-west1-docker.pkg.dev/visaroads-website/cloud-run-source-deploy/startupvisaroads/startupvisaroads:latest \
+  --region=europe-west1 \
+  --set-cloudsql-instances=visaroads-website:us-central1:startupvisaroads-db \
+  --set-secrets=DATABASE_URL=DATABASE_URL:latest \
+  --command=npx --args=prisma,migrate,deploy,--schema=prisma/schema.production.prisma
+```
+
+then `gcloud run jobs execute startupvisaroads-migrate --region=europe-west1 --wait`
+as a step between Push and Deploy.
