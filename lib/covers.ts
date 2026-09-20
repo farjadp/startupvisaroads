@@ -14,8 +14,7 @@
 // ============================================================================
 import * as cheerio from 'cheerio';
 import prisma from '@/lib/prisma';
-import { generateAndSaveImage, wrapPhoto } from '@/lib/ai';
-import { brandPrompt } from '@/lib/autopilot/art-direction';
+import { wrapPhoto } from '@/lib/ai';
 import { generateBrandImage, imagesBlocked } from '@/lib/autopilot/images';
 import { chatJson } from '@/lib/autopilot/pipeline';
 
@@ -117,8 +116,11 @@ export async function backfillCovers(opts: BackfillOptions = {}): Promise<Backfi
         result.done.push({ slug: article.slug, scene, coverImage: null });
         continue;
       }
-      // 16:9 — the frame the article header and the blog cards crop to.
-      const coverImage = await generateAndSaveImage(brandPrompt(scene), { raw: true, size: 'landscape_16_9' });
+      // generateBrandImage, not generateAndSaveImage: the art direction AND
+      // the per-role provider policy (a cover belongs to gpt-image-2) both
+      // live there, and calling the lower level silently skipped the latter.
+      const coverImage = await generateBrandImage(scene, 'cover');
+      if (!coverImage) throw new Error('every image provider failed');
       await prisma.article.update({ where: { id: article.id }, data: { coverImage } });
       result.done.push({ slug: article.slug, scene, coverImage });
       console.log(`covers: ${article.slug} ← ${coverImage}`);
