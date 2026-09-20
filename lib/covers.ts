@@ -42,7 +42,15 @@ async function coverScene(article: { title: string; excerpt: string | null; keyT
 TITLE: ${article.title}
 SUMMARY: ${article.keyTakeaway ?? article.excerpt ?? ''}
 
-Write the scene for that photograph in ONE sentence: a concrete real-world object, material, threshold or space that carries the article's subject sideways. No people's faces, no posed professionals, no meeting rooms, no handshakes. Nothing with writing on it — no paper, documents, passports, signage or screens. No flags, no landmarks, no skylines, no maps.
+Write the scene for that photograph in ONE sentence: a concrete real-world object, material, threshold or space that carries the article's subject sideways.
+
+The scene is rendered with a fixed art direction, and a scene that fights it wins — so it must not ask for anything on this list:
+- NO writing surface of any kind: no notepads, paper, documents, labels, signage, books, passports, forms, whiteboards, business cards, maps. A laptop or phone may appear only closed or dark, never showing anything.
+- NO warm light: no sunlight streaming, no golden hour, no lamplight, no afternoon glow. The light is flat, cool, overcast daylight from one side.
+- NO flags, no maple leaf, no landmarks, no skylines, no national symbols, and no city named in the frame.
+- NO faces, no posed professionals, no meeting rooms, no handshakes. A hand or a partial figure at the edge of frame is the most a person may be.
+
+Colour is cool and desaturated — bone, pale grey, near-black. At most one small object may carry a sharp yellow-green accent, and it is never the subject.
 
 Return JSON: {"scene":"..."}`;
   const out = await chatJson<{ scene?: string }>(prompt, 0.8);
