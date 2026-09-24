@@ -5,11 +5,18 @@
 // which page the reader should read next and says why in two sentences.
 //
 // Since the Canada Start-up Visa closed to new applications (31 Dec 2025)
-// the outcomes are: a European startup visa (Finland for teams, Estonia or
-// Denmark for a solo founder), Türkiye when the founder needs runway more
-// than a European passport, an Atlantic Canada entrepreneur stream when the
-// money clears the thresholds, EB-2 NIW for research profiles, or
-// `too-early` — a real answer, not a failure.
+// the outcomes are: a European startup visa (Finland for teams, Italy for a
+// funded team chasing growth, Estonia or Denmark for a solo founder),
+// Türkiye when the founder needs runway more than a European passport, an
+// Atlantic Canada entrepreneur stream when the money clears the thresholds,
+// EB-2 NIW for research profiles, or `too-early` — a real answer, not a
+// failure.
+//
+// Italy is deliberately NOT offered for `goal: 'residency'` or `'family'`.
+// Naturalisation for a non-EU resident of Italy takes ten years, against
+// Denmark's eight and Finland's shorter path — so a reader optimising for a
+// passport is sent to those, and Italy answers the growth question, where the
+// market rather than the passport is the point.
 //
 // Türkiye is deliberately NOT offered to `goal: 'family'`. That option reads
 // «آینده‌ی تحصیلی و زندگی فرزندان» — a parent optimising for their children's
@@ -35,7 +42,7 @@ export type QuizAnswers = {
   horizon: 'urgent' | 'medium' | 'long';
 };
 
-export type PathId = 'finland' | 'denmark' | 'netherlands' | 'estonia' | 'turkey' | 'atlantic' | 'eb2niw' | 'too-early';
+export type PathId = 'finland' | 'denmark' | 'netherlands' | 'estonia' | 'italy' | 'turkey' | 'atlantic' | 'eb2niw' | 'too-early';
 
 export type Recommendation = {
   path: PathId;
@@ -49,6 +56,7 @@ const RESULT: Record<PathId, { title: string; href: string }> = {
   denmark: { title: 'ویزای استارتاپ دانمارک', href: '/europe/denmark' },
   netherlands: { title: 'ویزای استارتاپ هلند', href: '/europe/netherlands' },
   estonia: { title: 'ویزای استارتاپ استونی', href: '/europe/estonia' },
+  italy: { title: 'ویزای استارتاپ ایتالیا', href: '/europe/italy' },
   turkey: { title: 'تک‌ویزای ترکیه', href: '/turkey-tech-visa' },
   atlantic: { title: 'مسیر کارآفرینی نیوبرانزویک یا نوااسکوشیا', href: '/pnp/new-brunswick' },
   eb2niw: { title: 'EB-2 NIW آمریکا', href: '/usa-eb2-niw' },
@@ -99,6 +107,24 @@ export function recommendPath(a: QuizAnswers): Recommendation {
   // Operating business with acceptable language → Europe, by team size.
   if (hasBusiness && langOk) {
     if (a.team === 'team') {
+      // Finland is the default for a team, and stays the answer when the goal
+      // is residency or the children's future: it is the shortest of these
+      // routes to a Nordic passport. It has two hard edges, though — it needs
+      // at least two founders and refuses roughly nine files in ten.
+      //
+      // Italy is the better answer for a funded team whose goal is growth.
+      // Its cap is five founders rather than Denmark's three, its EUR 50,000
+      // is for the WHOLE team rather than per head, and it opens onto the
+      // EU's second manufacturing economy. It is not offered to a team on
+      // under CAD 50,000, and that is not a rounding: EUR 50,000 is about CAD
+      // 75,000, and the guidelines call even that figure "purely indicative"
+      // for a team, with the committee free to want considerably more.
+      if (a.goal === 'growth' && a.capital !== 'under50') {
+        return result(
+          'italy',
+          'تیمی که محصول دارد، بودجه دارد و رشد برایش اولویت است: ایتالیا تا پنج بنیان‌گذار را برای یک استارتاپ می‌پذیرد — دانمارک سه تا — و تمکن مالی ۵۰٬۰۰۰ یورویش برای کل تیم است، نه برای هر نفر. کمیته‌ی MIMIT ظرف ۳۰ روز و فقط از روی اسناد تصمیم می‌گیرد؛ مصاحبه‌ای در کار نیست. دو چیز را از همین حالا جدی بگیرید: رزومه‌ی هر عضو باید به طرح بخورد، و کسب‌وکار مشاوره‌ای و واسطه‌گری از دسامبر ۲۰۲۴ رد می‌شود.',
+        );
+      }
       return result(
         'finland',
         'کسب‌وکار در حال اجرا و تیم دو نفره، شما را دقیقاً در محدوده‌ی مجوز استارتاپ فنلاند قرار می‌دهد — همان منطق SUV کانادا، بدون سرمایه‌گذاری الزامی، با ارزیابی رایگان Business Finland. سؤال بعدی این است که آیا کسب‌وکارتان از نظر آن‌ها مقیاس‌پذیر بین‌المللی است.',

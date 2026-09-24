@@ -795,6 +795,73 @@ export const FA_TOPICS: FaTopic[] = [
     depth: 'standard',
     audience: 'A male Iranian founder of service age planning a move abroad.',
   },
+  // ── Italy, added 2026-09-24 with the guide at /fa/europe/italy ───────────
+  // Three topics rather than one, across three families, because a single
+  // route-mechanics piece would have the picker treating Italy as one subject
+  // and starving it between Denmark and Estonia runs.
+  {
+    slug: 'italy-five-founder-cap',
+    family: 'route-mechanics',
+    destination: 'italy',
+    category: 'European Visas',
+    workingTitle: 'چند نفر می‌توانیم با استارتاپ ویزای ایتالیا اقدام کنیم؟',
+    angle:
+      'Almost every Persian and English write-up says Italy sets no limit on the number of founders. The official MIMIT guidelines say a maximum of five Certificates of No Impediment per innovative startup, and no more than ten even in exceptional cases. Lead with that correction and cite the guidelines, then explain what a team application actually requires: every member a co-founder with a self-employment relationship and a share of the capital, no passive investors, all files sent at the same time, and anyone joining a project that already holds certificates needing a further EUR 50,000 on top of what the original team declared. Say clearly that the EUR 50,000 is for the whole team and that the guidelines call it purely indicative, so a five-person team showing exactly that figure has a weak file rather than a compliant one.',
+    whyNow:
+      'A six-person team that reads the wrong figure designs a cap table it then has to unpick, and finds out only when the files are refused.',
+    primaryKeyword: 'استارتاپ ویزای ایتالیا',
+    secondaryKeywords: ['ویزای استارتاپ ایتالیا', 'تعداد بنیان‌گذار ایتالیا', 'اقدام تیمی ویزای استارتاپ', 'نولا اوستا ایتالیا'],
+    searchQueryEn: 'Italia Startup Visa team application maximum founders certificates',
+    mustLink: ['/europe/italy', '/which-path', '/mentorship'],
+    imageScenes: [
+      'Five empty chairs set around a bare meeting table, overhead daylight, no signage legible',
+      'A row of five identical steel lockers in a plain corridor, flat daylight',
+    ],
+    depth: 'standard',
+    audience: 'A founding team of four or more planning an Italian application together, who have read that there is no cap.',
+  },
+  {
+    slug: 'italy-vs-estonia-hardware',
+    family: 'route-decision',
+    destination: 'italy',
+    category: 'European Visas',
+    workingTitle: 'ایتالیا یا استونی؟ انتخاب بین بازار بزرگ و تصمیم سریع',
+    angle:
+      'A comparison that turns on what the venture actually needs rather than on which country is nicer. Estonia decides in ten working days, asks no investment and has the lowest means threshold in Europe — but demands an MVP, has a home market of about 1.4 million, and does not accept dual citizenship. Italy asks EUR 50,000 for the team and moves in thirty days, and opens onto the EU second manufacturing economy, which matters when the product is hardware, machinery or anything with a supply chain. Give the reader a rule they can apply: light software and a small budget goes north, anything that has to be built or sourced goes south. Be explicit that Italy naturalisation for a non-EU resident takes ten years, so a reader whose horizon is a passport should look at Denmark instead.',
+    whyNow:
+      'These two routes are the cheapest and the fastest in Europe respectively, and are constantly compared on price alone, which is the wrong axis.',
+    primaryKeyword: 'مقایسه ویزای استارتاپ ایتالیا و استونی',
+    secondaryKeywords: ['استارتاپ ویزای ایتالیا', 'استارتاپ ویزای استونی', 'کدام کشور برای استارتاپ ویزا', 'مهاجرت به ایتالیا'],
+    searchQueryEn: 'Italy startup visa vs Estonia startup visa comparison founders',
+    mustLink: ['/europe/italy', '/europe/estonia', '/which-path'],
+    imageScenes: [
+      'Two unmarked cardboard shipping boxes of different sizes side by side on a concrete floor',
+      'A workbench with hand tools laid out in a row beside a closed laptop, flat window light',
+    ],
+    depth: 'standard',
+    audience: 'A founder choosing between the fastest European assessment and the largest European market, who has not yet worked out which constraint binds.',
+  },
+  {
+    slug: 'italy-certified-incubators',
+    family: 'ecosystem-and-market',
+    destination: 'italy',
+    category: 'European Visas',
+    workingTitle: 'انکوباتور تأییدشده در ایتالیا: چطور پیدا و چطور متقاعدش کنیم',
+    angle:
+      'The incubator route is the one lever an applicant with no prior connection to Italy can actually pull, and the guidelines name the absence of such a connection as a reason to judge a business plan weak. Explain what a certified incubator is in Italian law, where the official current list lives (the dedicated section of the Business Register, downloadable from the visa portal, with the ecosystem map alongside it), and what the undertaking to host does and does not do: it substitutes for the committee assessment of the business model, and the incubator interviews you where the committee never will. Correct the claim in circulation that it removes the funds requirement: it does not, though the value of the incubator in-kind services may count towards the total.',
+    whyNow:
+      'It is the only part of this route where a founder can improve their odds by doing work, rather than by waiting for a committee.',
+    primaryKeyword: 'انکوباتور تأییدشده ایتالیا',
+    secondaryKeywords: ['ویزای استارتاپ ایتالیا', 'تعهدنامه انکوباتور', 'اکوسیستم استارتاپی ایتالیا', 'میلان استارتاپ'],
+    searchQueryEn: 'Italy certified incubator list undertaking to host startup visa',
+    mustLink: ['/europe/italy', '/mentorship', '/which-path'],
+    imageScenes: [
+      'An empty co-working floor at dusk, long desks and stacked chairs, no signage legible',
+      'A closed glass door onto a dark stairwell, reflections of an unlit corridor',
+    ],
+    depth: 'standard',
+    audience: 'An applicant with no existing link to Italy who has been told an incubator will make the file easier and does not know how to approach one.',
+  },
 ];
 
 /** Strip the backlog-only fields so the writer receives a plain Brief. */

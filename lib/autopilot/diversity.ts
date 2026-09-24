@@ -50,7 +50,7 @@ export const FAMILY_BRIEF: Record<Family, string> = {
   'ecosystem-and-market': "the destination's startup scene — sectors that fund, investors, incubators, events, the market for a product",
 };
 
-export const DESTINATIONS = ['denmark', 'netherlands', 'finland', 'estonia', 'canada', 'usa', 'australia', 'turkiye', 'general'] as const;
+export const DESTINATIONS = ['denmark', 'netherlands', 'finland', 'estonia', 'italy', 'canada', 'usa', 'australia', 'turkiye', 'general'] as const;
 export type Destination = (typeof DESTINATIONS)[number];
 
 export type Tagged = { family: Family; destination: Destination; startupVisaHeadline: boolean };
@@ -63,6 +63,11 @@ const DEST_PATTERNS: [Destination, RegExp][] = [
   ['netherlands', /netherlands|dutch|holland|amsterdam|هلند|آمستردام/i],
   ['finland', /finland|finnish|helsinki|فنلاند|هلسینکی/i],
   ['estonia', /estonia|tallinn|استونی|تالین/i],
+  // Rome is left out on purpose: رم is a two-letter Persian word that appears
+  // inside ordinary text, and the Latin 'rome' is a substring of nothing here
+  // but would still be a loose match. The cities that identify the route are
+  // Milan, Turin and Florence, which is where the ecosystem actually is.
+  ['italy', /italy|italian|italia|milan|turin|florence|bologna|ایتالیا|ایتالیایی|میلان|تورین|فلورانس/i],
   ['canada', /canada|canadian|ontario|alberta|british columbia|\bbc\b|quebec|toronto|vancouver|pgwp|express entry|\bpnp\b|کانادا|انتاریو|آلبرتا|بریتیش|کبک|تورنتو|ونکوور|اکسپرس انتری|نیوبرانزویک|نوااسکوشیا/i],
   ['usa', /\busa\b|united states|america|\bniw\b|eb-?1|eb-?2|uscis|آمریکا|ایالات متحده/i],
   ['australia', /australia|sydney|melbourne|استرالیا|سیدنی|ملبورن/i],

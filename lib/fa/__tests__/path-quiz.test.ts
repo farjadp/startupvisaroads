@@ -33,6 +33,34 @@ describe('recommendPath', () => {
     expect(r.href).toBe('/europe/finland');
   });
 
+  it('sends a funded team chasing growth to Italy, not Finland', () => {
+    const r = recommendPath({ ...base, team: 'team', business: 'revenue', capital: '200to500', goal: 'growth' });
+    expect(r.path).toBe('italy');
+    expect(r.href).toBe('/europe/italy');
+  });
+
+  // EUR 50,000 is about CAD 75,000 and the guidelines call even that "purely
+  // indicative" for a team, so a team under CAD 50,000 has no business being
+  // pointed at Italy. Finland asks for no investment at all.
+  it('keeps a team on a small budget away from Italy', () => {
+    expect(
+      recommendPath({ ...base, team: 'team', business: 'revenue', capital: 'under50', goal: 'growth' }).path,
+    ).toBe('finland');
+  });
+
+  // Naturalisation in Italy takes ten years for a non-EU resident, against
+  // Denmark's eight. A reader optimising for a passport is sent to the routes
+  // that reach one sooner, so this exclusion gets a test rather than a comment.
+  it('never sends a passport-first goal to Italy', () => {
+    for (const goal of ['residency', 'family'] as const)
+      for (const capital of ['under50', '50to200', '200to500', 'over500'] as const)
+        for (const team of ['solo', 'team'] as const)
+          for (const horizon of ['urgent', 'medium', 'long'] as const)
+            expect(
+              recommendPath({ ...base, goal, business: 'mvp', language: 'mid', capital, horizon, team }).path,
+            ).not.toBe('italy');
+  });
+
   it('sends a solo founder in a hurry or on a small budget to Estonia', () => {
     expect(recommendPath({ ...base, business: 'mvp', capital: 'under50' }).path).toBe('estonia');
     expect(recommendPath({ ...base, business: 'revenue', capital: '50to200', horizon: 'urgent' }).path).toBe('estonia');
