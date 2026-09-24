@@ -109,6 +109,38 @@ export const RULES: Rule[] = [
     source: 'https://ind.nl/en/residence-permits/work/start-up',
   },
   {
+    key: 'italy',
+    name: 'ویزای استارتاپ ایتالیا',
+    href: '/europe/italy',
+    // A real cap, and the one number the Persian material in circulation gets
+    // wrong: the guidelines allow a maximum of five Certificates of No
+    // Impediment per startup, and no more than ten even in exceptional cases.
+    // Five is the rule; ten is a discretion, so five is what is scored.
+    founders: { min: 1, max: 5 },
+    // Project funds, for the whole team rather than per founder — and the
+    // guidelines call the figure "purely indicative" for teams, with the
+    // Committee free to demand considerably more. Scored as the floor it is.
+    investment: { amount: 50000, currency: 'EUR' },
+    // Deliberately NOT expressed as yearlyFunds. Italy's €8,400 is the
+    // applicant's INCOME in the previous year, not settlement funds they must
+    // hold, and the comparison table's «تمکن مالی سالانه» column would tell a
+    // reader with savings but no declared income that they clear a bar they
+    // do not. Named below instead, where it is read rather than scored.
+    unscored: [
+      'درآمد سال گذشته‌ی هر متقاضی بالای حدود ۸٬۴۰۰ یورو — یک آزمون درآمد است، نه پس‌انداز',
+      'تأیید کمیته‌ی فنی MIMIT با رأی اکثریت ساده',
+      'احراز دست‌کم یکی از سه شاخص نوآوری ماده‌ی ۲۵ قانون ۱۷۹/۲۰۱۲',
+      // Named because the guidelines name it: a file with no prior connection
+      // to Italy is listed among the reasons a business plan is judged weak.
+      'پیوند قبلی با ایتالیا و اکوسیستم نوآوری آن — نبودش صراحتاً از نشانه‌های ضعف پرونده است',
+      'هم‌خوانی تحصیلات و سابقه‌ی متقاضی با حوزه‌ی طرح',
+      'فعالیت غالبِ مشاوره‌ای یا واسطه‌گری از دسامبر ۲۰۲۴ پذیرفته نمی‌شود (قانون ۱۹۳/۲۰۲۴)',
+      'مسیر پیوستن به استارتاپ موجود: ۱۰۰٬۰۰۰ یورو از منابع خودِ متقاضی و شرکتی دست‌کم سه‌ساله',
+    ],
+    updated: '2026-09-24',
+    source: 'https://italiastartupvisa.mise.gov.it/',
+  },
+  {
     key: 'turkey',
     name: 'تک‌ویزای ترکیه',
     href: '/turkey-tech-visa',

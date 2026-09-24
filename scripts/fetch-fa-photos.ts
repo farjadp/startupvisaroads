@@ -61,6 +61,17 @@ const SLOTS: Record<string, string> = {
   'netherlands-2': 'Amsterdam bicycles bridge canal',
   'netherlands-3': 'Rotterdam modern architecture Netherlands',
 
+  // Italy. The guide argues that the reason to pick Italy is a market and an
+  // industrial base rather than a tax rate, so the slots lean to working
+  // cities. The third was first searched as 'Italy factory workshop': every
+  // candidate was a generic production line that could have been anywhere,
+  // and calling an unplaceable workshop Italian in alt text is the claim the
+  // Finland slot above already taught us not to make. It is a named Italian
+  // city instead.
+  italy: 'Florence rooftops Italy city',
+  'italy-2': 'Milan business district street Italy',
+  'italy-3': 'Turin Italy city street architecture',
+
   estonia: 'Tallinn old town Estonia',
   'estonia-2': 'Tallinn Estonia street',
   'estonia-3': 'Tallinn rooftops Estonia',

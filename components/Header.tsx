@@ -135,6 +135,7 @@ export default function Header() {
         { href: '/europe/netherlands', label: 'هلند' },
         { href: '/europe/finland', label: 'فنلاند' },
         { href: '/europe/estonia', label: 'استونی' },
+        { href: '/europe/italy', label: 'ایتالیا' },
 
         { header: 'کانادا' },
         { href: '/pnp/new-brunswick', label: 'نیوبرانزویک (کارآفرینی)' },
@@ -188,6 +189,7 @@ export default function Header() {
         { href: '/country/denmark', label: t('denmark') },
         { href: '/country/finland', label: t('finland') },
         { href: '/europe/netherlands', label: t('netherlands') },
+        { href: '/country/italy', label: t('italy') },
 
         { header: t('global') },
         { href: '/country/uae', label: t('uae') },

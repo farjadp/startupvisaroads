@@ -21,6 +21,8 @@ const C = {
   nlRed: '#AE1C28',
   nlBlue: '#21468B',
   eeBlue: '#0072CE',
+  itGreen: '#008C45',
+  itRed: '#CD212A',
   trRed: '#E30A17',
   caRed: '#D52B1E',
   auBlue: '#012169',
@@ -64,6 +66,17 @@ function Shapes({ code }: { code: FlagCode }) {
           <rect width={11} height={7} fill={C.white} />
           <rect width={11} height={4.6667} fill={C.eeBlack} />
           <rect width={11} height={2.3333} fill={C.eeBlue} />
+        </>
+      );
+    // Three equal vertical bands at 1:1:1, ratio 2:3, in the colours annexed
+    // to Legge 22/1998 (verde prato brillante, bianco latte, rosso pomodoro).
+    // The green band is at the hoist; that is the whole of the geometry.
+    case 'it':
+      return (
+        <>
+          <rect width={3} height={2} fill={C.white} />
+          <rect width={1} height={2} fill={C.itGreen} />
+          <rect x={2} width={1} height={2} fill={C.itRed} />
         </>
       );
     // Official artwork (Wikimedia Commons, public domain), authored on a

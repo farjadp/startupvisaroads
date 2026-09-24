@@ -57,6 +57,7 @@ export const SITE_PAGES: Page[] = [
   { path: '/europe/netherlands', en: 'Netherlands start-up visa', kind: 'program' },
   { path: '/europe/finland', en: 'Finland start-up permit', kind: 'program' },
   { path: '/europe/denmark', en: 'Start-up Denmark', kind: 'program' },
+  { path: '/country/italy', en: 'Italia Startup Visa', kind: 'program' },
   { path: '/uae/golden-visa', en: 'UAE Golden Visa', kind: 'program' },
   { path: '/country/canada', en: 'Immigrate to Canada as a founder', kind: 'page' },
   { path: '/country/usa', en: 'Immigrate to the USA as a founder', kind: 'page' },
@@ -95,6 +96,7 @@ export const FA_SITE_PAGES: FaPage[] = [
   { path: '/europe/denmark', label: 'ویزای استارتاپ دانمارک (Start-up Denmark)', kind: 'program' },
   { path: '/europe/netherlands', label: 'ویزای استارتاپ هلند', kind: 'program' },
   { path: '/europe/estonia', label: 'ویزای استارتاپ استونی', kind: 'program' },
+  { path: '/europe/italy', label: 'ویزای استارتاپ ایتالیا (Italia Startup Visa)', kind: 'program' },
   { path: '/turkey-tech-visa', label: 'تک‌ویزای ترکیه (Türkiye Tech Visa)', kind: 'program' },
   { path: '/usa-eb2-niw', label: 'ویزای EB-2 NIW آمریکا برای متخصصان ایرانی', kind: 'program' },
   // A reference page, not a route we run: kind 'page' on purpose, so the

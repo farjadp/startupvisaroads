@@ -31,13 +31,14 @@
 // ids.
 // ============================================================================
 
-export type FlagCode = 'dk' | 'fi' | 'nl' | 'ee' | 'tr' | 'ca' | 'au';
+export type FlagCode = 'dk' | 'fi' | 'nl' | 'ee' | 'it' | 'tr' | 'ca' | 'au';
 
 const BY_PATH: Record<string, FlagCode> = {
   '/europe/denmark': 'dk',
   '/europe/finland': 'fi',
   '/europe/netherlands': 'nl',
   '/europe/estonia': 'ee',
+  '/europe/italy': 'it',
   '/turkey-tech-visa': 'tr',
   '/australia': 'au',
   '/pnp': 'ca',
@@ -56,6 +57,7 @@ export const FLAG_NAME: Record<FlagCode, string> = {
   fi: 'فنلاند',
   nl: 'هلند',
   ee: 'استونی',
+  it: 'ایتالیا',
   tr: 'ترکیه',
   au: 'استرالیا',
   ca: 'کانادا',
@@ -70,6 +72,7 @@ export const FLAG_RATIO: Record<FlagCode, { w: number; h: number }> = {
   fi: { w: 18, h: 11 },
   nl: { w: 3, h: 2 },
   ee: { w: 11, h: 7 },
+  it: { w: 3, h: 2 }, // Legge 5 febbraio 1998, n. 22
   tr: { w: 3, h: 2 }, // Türk Bayrağı Kanunu
   au: { w: 2, h: 1 }, // Flags Act 1953
   ca: { w: 2, h: 1 },

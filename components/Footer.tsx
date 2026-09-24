@@ -29,6 +29,7 @@ const EN_LINKS = {
     { href: '/country/denmark', label: 'Denmark (SUV)' },
     { href: '/europe/netherlands', label: 'Netherlands (SUV)' },
     { href: '/europe/finland', label: 'Finland (SUV)' },
+    { href: '/country/italy', label: 'Italy (Startup Visa)' },
     { href: '/usa/eb2-niw', label: 'USA (NIW)' },
   ],
   strategy: [
@@ -49,6 +50,7 @@ const FA_LINKS = {
     { href: '/europe/finland', label: 'فنلاند' },
     { href: '/pnp', label: 'کارآفرینی استانی کانادا' },
     { href: '/europe/estonia', label: 'استونی' },
+    { href: '/europe/italy', label: 'ایتالیا' },
     { href: '/turkey-tech-visa', label: 'تک‌ویزای ترکیه' },
     { href: '/usa-eb2-niw', label: 'EB-2 NIW آمریکا' },
   ],

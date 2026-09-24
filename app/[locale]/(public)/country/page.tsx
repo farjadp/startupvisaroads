@@ -66,6 +66,15 @@ const COUNTRIES = [
     iconColor: 'text-[#002F6C]'
   },
   {
+    id: 'italy',
+    name: 'Italy',
+    slug: 'italy',
+    tag: 'Thirty Days',
+    desc: 'Startup Visa. Judged on documents alone by a committee of VCs — five founders, no more.',
+    color: 'hover:border-[#008C45] hover:bg-[#008C45] hover:text-white',
+    iconColor: 'text-[#008C45]'
+  },
+  {
     id: 'turkey',
     name: 'Türkiye',
     slug: 'turkey',

@@ -187,5 +187,32 @@
     "photographerUrl": "https://www.pexels.com/@macourt-media-1519726",
     "description": "A vibrant pink tram travels down a tree-lined street in Melbourne, Australia.",
     "fetched": "2026-09-09"
+  },
+  "italy": {
+    "source": "Pexels",
+    "id": 26180562,
+    "page": "https://www.pexels.com/photo/panorama-of-city-of-florence-in-italy-26180562/",
+    "photographer": "Efrem  Efre",
+    "photographerUrl": "https://www.pexels.com/@efrem-efre-2786187",
+    "description": "Panoramic view of Florence cityscape, showcasing historic architecture and the Arno River in Tuscany, Italy.",
+    "fetched": "2026-09-24"
+  },
+  "italy-2": {
+    "source": "Pexels",
+    "id": 10214421,
+    "page": "https://www.pexels.com/photo/porta-nuova-in-milan-10214421/",
+    "photographer": "Marco Ottaviano",
+    "photographerUrl": "https://www.pexels.com/@marco-ottaviano-2068087",
+    "description": "Explore the stunning modern architecture in Milan's Porta Nuova district with skyscrapers and urban views.",
+    "fetched": "2026-09-24"
+  },
+  "italy-3": {
+    "source": "Pexels",
+    "id": 32286560,
+    "page": "https://www.pexels.com/photo/historic-urban-street-view-in-turin-italy-32286560/",
+    "photographer": "Marivaldo Vivan",
+    "photographerUrl": "https://www.pexels.com/@marivaldo-vivan-2152600813",
+    "description": "A vibrant sunny day in the urban streets of Turin, Italy, showcasing classic architecture.",
+    "fetched": "2026-09-24"
   }
 }

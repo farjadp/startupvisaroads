@@ -16,6 +16,8 @@ export type OfficialSourceId =
   | 'denmark-business-authority'
   | 'estonia-startup-estonia'
   | 'netherlands-ind'
+  | 'italy-mimit-isv'
+  | 'italy-registro-imprese'
   | 'turkiye-tech-visa'
   | 'israel-innovation-authority'
   | 'israel-piba'
@@ -54,6 +56,8 @@ export const OFFICIAL_SOURCES: readonly OfficialSource[] = [
   { id: 'denmark-business-authority', authority: 'Danish Business Authority', url: 'https://danishbusinessauthority.dk/', programmePaths: ['/europe/denmark', '/country/denmark'], keywords: ['denmark', 'danish business authority'] },
   { id: 'estonia-startup-estonia', authority: 'Startup Estonia', url: 'https://startupestonia.ee/', programmePaths: ['/europe/estonia'], keywords: ['estonia', 'startup estonia'] },
   { id: 'netherlands-ind', authority: 'Immigration and Naturalisation Service (IND)', url: 'https://ind.nl/', programmePaths: ['/europe/netherlands'], keywords: ['netherlands', 'dutch', 'ind'] },
+  { id: 'italy-mimit-isv', authority: 'Italia Startup Visa, Ministry of Enterprises and Made in Italy (MIMIT)', url: 'https://italiastartupvisa.mise.gov.it/', programmePaths: ['/europe/italy', '/country/italy'], keywords: ['italy', 'italia', 'startup visa', 'nulla osta', 'mimit'] },
+  { id: 'italy-registro-imprese', authority: 'Registro delle Imprese — special section for innovative startups', url: 'https://startup.registroimprese.it/', programmePaths: ['/europe/italy', '/country/italy'], keywords: ['italy', 'italia', 'registro imprese', 'innovative startup', 'certified incubator'] },
   { id: 'turkiye-tech-visa', authority: 'Türkiye Tech Visa, Ministry of Industry and Technology', url: 'https://turkiyetechvisa.gov.tr/', programmePaths: ['/turkey-tech-visa', '/country/turkey'], keywords: ['turkey', 'türkiye', 'tech visa', 'technopark'] },
   { id: 'israel-innovation-authority', authority: 'Israel Innovation Authority', url: 'https://innovationisrael.org.il/', programmePaths: ['/country/israel', '/israel'], keywords: ['israel', 'innovation authority', 'innovation visa', 'tnufa'] },
   { id: 'israel-piba', authority: 'Population and Immigration Authority (PIBA), Israel', url: 'https://www.gov.il/', programmePaths: ['/country/israel', '/israel'], keywords: ['israel', 'piba', 'population and immigration'] },
