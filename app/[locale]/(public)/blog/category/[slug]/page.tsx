@@ -7,7 +7,7 @@ import { Clock, ArrowLeft, ArrowRight } from 'lucide-react';
 import JsonLd from '@/components/JsonLd';
 import { buildMetadata, breadcrumbJsonLd, collectionPageJsonLd, isDataImageUrl, localizedArchiveAlternates, SITE_URL } from '@/lib/seo';
 import { computeReadingTime, getCategoryArchiveData } from '@/lib/blog';
-import { faCategoryLabel } from '@/lib/fa/categories';
+import { faCategoryGuide, faCategoryLabel } from '@/lib/fa/categories';
 
 export const revalidate = 600;
 
@@ -21,13 +21,16 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   const isRtl = locale === 'fa';
   const categoryName = isRtl ? faCategoryLabel(category.slug, category.name) : category.name;
   const path = `/blog/category/${slug}`;
+  const guide = isRtl ? faCategoryGuide(category.slug) : null;
   const metadata = buildMetadata({
     locale,
     path,
-    title: isRtl ? `${categoryName} — مقالات` : `${categoryName} — Articles`,
-    description: isRtl
-      ? `جدیدترین راهنماها و تحلیل‌های دسته‌ی «${categoryName}» در راه‌های ویزای استارتاپ.`
-      : `The latest guides and analysis in the "${categoryName}" collection from Startup Visa Roads.`,
+    title: guide?.title ?? (isRtl ? `${categoryName} — مقالات` : `${categoryName} — Articles`),
+    description:
+      guide?.description ??
+      (isRtl
+        ? `جدیدترین راهنماها و تحلیل‌های دسته‌ی «${categoryName}» در راه‌های ویزای استارتاپ.`
+        : `The latest guides and analysis in the "${categoryName}" collection from Startup Visa Roads.`),
   });
   return { ...metadata, alternates: localizedArchiveAlternates(path, locale, availableLocales) };
 }
@@ -63,10 +66,11 @@ export default async function CategoryArchivePage({
   };
 
   const categoryName = isRtl ? faCategoryLabel(category.slug, category.name) : category.name;
+  const guide = isRtl ? faCategoryGuide(category.slug) : null;
   const categoryUrl = `${SITE_URL}/${locale}/blog/category/${category.slug}`;
-  const categoryDescription = isRtl
+  const categoryDescription = guide?.description ?? (isRtl
     ? `جدیدترین راهنماها و تحلیل‌های دسته‌ی «${categoryName}» در راه‌های ویزای استارتاپ.`
-    : `The latest guides and analysis in the "${categoryName}" collection from Startup Visa Roads.`;
+    : `The latest guides and analysis in the "${categoryName}" collection from Startup Visa Roads.`);
 
   return (
     <div className="container mx-auto px-6 py-12 md:py-20 max-w-5xl" dir={isRtl ? 'rtl' : 'ltr'}>
@@ -96,6 +100,15 @@ export default async function CategoryArchivePage({
         <p className="text-sm font-sans text-[#1a1a1a]/50">
           {t.articleCount(articles.length)}
         </p>
+        {guide && (
+          <Link
+            href={guide.path}
+            className="mt-6 inline-flex items-center gap-2 text-sm font-bold text-[#1a1a1a] border-b-2 border-[#1a1a1a] hover:bg-[#CCFF00] transition-colors"
+          >
+            راهنمای کامل مسیر {categoryName}
+            <ArrowLeft className="w-4 h-4" />
+          </Link>
+        )}
       </div>
 
       {/* Empty State */}
