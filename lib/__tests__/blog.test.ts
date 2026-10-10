@@ -32,6 +32,7 @@ import {
   computeReadingTime,
   getArticleBySlug,
   getBlogIndexData,
+  getOtherLocaleArticlePath,
   getCategoryArchiveData,
   getRelatedArticle,
   getRecommendedService,
@@ -78,6 +79,36 @@ describe('locale-safe article queries', () => {
       },
       orderBy: { createdAt: 'desc' },
     });
+  });
+});
+
+describe('article that lives in the other locale', () => {
+  it('points a Persian URL at the English article with the same slug', async () => {
+    mocks.articleFindFirst.mockResolvedValue({ locale: 'en' });
+
+    await expect(getOtherLocaleArticlePath('c10-permit', 'fa')).resolves.toBe('/en/blog/c10-permit');
+    expect(mocks.articleFindFirst).toHaveBeenCalledWith({
+      where: { slug: 'c10-permit', locale: 'en', status: 'PUBLISHED' },
+      select: { locale: true },
+    });
+  });
+
+  it('returns null when no published article has that slug', async () => {
+    mocks.articleFindFirst.mockResolvedValue(null);
+
+    await expect(getOtherLocaleArticlePath('missing', 'en')).resolves.toBeNull();
+  });
+
+  it('returns null rather than throwing when the database cannot answer', async () => {
+    mocks.articleFindFirst.mockRejectedValue(new Error('db down'));
+
+    await expect(getOtherLocaleArticlePath('x', 'fa')).resolves.toBeNull();
+  });
+
+  it('encodes the slug in the path', async () => {
+    mocks.articleFindFirst.mockResolvedValue({ locale: 'fa' });
+
+    await expect(getOtherLocaleArticlePath('مقاله ۱', 'en')).resolves.toBe(`/fa/blog/${encodeURIComponent('مقاله ۱')}`);
   });
 });
 

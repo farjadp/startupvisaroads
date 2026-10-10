@@ -404,6 +404,25 @@ export async function getArticleBySlug(slug: string, locale: string) {
   }
 }
 
+/**
+ * Where an article URL in the wrong locale should go: `/fa/blog/x` when only
+ * an English `x` exists answers 404 today, and Search Console still shows it.
+ * Returns the other locale's path when a published article has this slug
+ * there, else null. Never throws — a lookup failure falls through to 404.
+ */
+export async function getOtherLocaleArticlePath(slug: string, locale: string): Promise<string | null> {
+  const other = locale === 'fa' ? 'en' : 'fa';
+  try {
+    const found = await prisma.article.findFirst({
+      where: { slug, locale: other, status: 'PUBLISHED' },
+      select: { locale: true },
+    });
+    return found ? `/${other}/blog/${encodeURIComponent(slug)}` : null;
+  } catch {
+    return null;
+  }
+}
+
 export async function getRelatedArticle(article: {
   id: string;
   categoryId?: string | null;

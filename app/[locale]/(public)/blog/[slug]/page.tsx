@@ -3,14 +3,14 @@ import type { Metadata } from 'next';
 import Image from 'next/image';
 import prisma from '@/lib/prisma';
 import { setRequestLocale } from 'next-intl/server';
-import { notFound } from 'next/navigation';
+import { notFound, permanentRedirect } from 'next/navigation';
 import * as cheerio from 'cheerio';
 import { Link } from '@/navigation';
 import JsonLd from '@/components/JsonLd';
 import { sanitizeHtml } from '@/lib/sanitize';
 import { SITE_URL, articleJsonLd, breadcrumbJsonLd, buildMetadata, faqJsonLd, isDataImageUrl, selfLocalizedAlternates, stripHtml } from '@/lib/seo';
 import { blogType } from '@/lib/fa/blog-type';
-import { buildRelatedArticleBox, computeReadingTime, getArticleBySlug, getRecommendedService, getRelatedArticle, getSafeQuickFacts } from '@/lib/blog';
+import { buildRelatedArticleBox, computeReadingTime, getArticleBySlug, getOtherLocaleArticlePath, getRecommendedService, getRelatedArticle, getSafeQuickFacts } from '@/lib/blog';
 import { 
   Clock, 
   BarChart, 
@@ -74,6 +74,13 @@ export default async function BlogPostPage({ params }: { params: Promise<{ local
   setRequestLocale(locale);
 
   const article = await getArticleBySlug(slug, locale);
+
+  if (!article) {
+    // The same slug published in the other locale: send the reader and the
+    // crawler there permanently instead of a 404.
+    const elsewhere = await getOtherLocaleArticlePath(slug, locale);
+    if (elsewhere) permanentRedirect(elsewhere);
+  }
 
   if (!article || article.status !== 'PUBLISHED') {
     return notFound();
