@@ -21,3 +21,21 @@ export function unprefixedTarget(pathname: string): string | null {
   if (LEAVE_ALONE.some((p) => pathname === p || pathname.startsWith(`${p}/`))) return null;
   return `/en${pathname}`;
 }
+
+/**
+ * Articles withdrawn for being wrong, and the article that replaces each.
+ * Both settlement-funds pieces (autopilot, Sep 2026) invented a six-month
+ * statement rule and a three-to-six-month holding period for Denmark and
+ * Finland; neither appears on nyidanmark.dk or migri.fi. Until the corrected
+ * article is published they go to the verified Finland guide, whose funds
+ * section is written against Migri; point them at the new article then.
+ */
+const RETIRED_ARTICLES: Record<string, string> = {
+  '/fa/blog/startup-visa-settlement-funds-proof-from-iranian-account': '/fa/europe/finland',
+  '/fa/blog/startup-visa-settlement-funds-iranian-bank-account-1': '/fa/europe/finland',
+};
+
+/** A withdrawn article's URL -> its replacement; null otherwise. */
+export function retiredArticleTarget(pathname: string): string | null {
+  return RETIRED_ARTICLES[pathname.replace(/\/+$/, '')] ?? null;
+}

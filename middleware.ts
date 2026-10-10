@@ -3,7 +3,7 @@ import createMiddleware from 'next-intl/middleware';
 import { routing } from './routing';
 import { verifyJWT, getJwtSecret } from './lib/auth';
 import { faRedirectTarget } from './lib/fa/redirects';
-import { unprefixedTarget } from './lib/legacy-redirects';
+import { retiredArticleTarget, unprefixedTarget } from './lib/legacy-redirects';
 
 const intlMiddleware = createMiddleware(routing);
 
@@ -65,6 +65,12 @@ export default async function middleware(request: NextRequest) {
   const faTarget = faRedirectTarget(pathname);
   if (faTarget) {
     return NextResponse.redirect(new URL(faTarget, request.url), 301);
+  }
+
+  // A withdrawn article goes to the one that corrects it.
+  const retiredTarget = retiredArticleTarget(pathname);
+  if (retiredTarget) {
+    return NextResponse.redirect(new URL(retiredTarget, request.url), 301);
   }
 
   // A legacy path with no locale goes to English with a 301, not next-intl's

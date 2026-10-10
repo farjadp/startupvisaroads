@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { unprefixedTarget } from '../legacy-redirects';
+import { retiredArticleTarget, unprefixedTarget } from '../legacy-redirects';
 
 describe('unprefixedTarget', () => {
   it('sends a legacy unprefixed path to English permanently', () => {
@@ -33,5 +33,19 @@ describe('unprefixedTarget', () => {
     expect(unprefixedTarget('/admin/login')).toBeNull();
     expect(unprefixedTarget('/icon')).toBeNull();
     expect(unprefixedTarget('/apple-icon')).toBeNull();
+  });
+});
+
+describe('retiredArticleTarget', () => {
+  it('takes both versions of the withdrawn settlement-funds article off the site', () => {
+    const next = '/fa/europe/finland';
+    expect(retiredArticleTarget('/fa/blog/startup-visa-settlement-funds-proof-from-iranian-account')).toBe(next);
+    expect(retiredArticleTarget('/fa/blog/startup-visa-settlement-funds-iranian-bank-account-1')).toBe(next);
+  });
+
+  it('tolerates a trailing slash and ignores every other path', () => {
+    expect(retiredArticleTarget('/fa/blog/startup-visa-settlement-funds-iranian-bank-account-1/')).toBe('/fa/europe/finland');
+    expect(retiredArticleTarget('/fa/blog/startup-visa-proof-of-funds-denmark-finland-official')).toBeNull();
+    expect(retiredArticleTarget('/en/blog/startup-visa-settlement-funds-iranian-bank-account-1')).toBeNull();
   });
 });
