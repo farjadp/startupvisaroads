@@ -3,6 +3,7 @@ import createMiddleware from 'next-intl/middleware';
 import { routing } from './routing';
 import { verifyJWT, getJwtSecret } from './lib/auth';
 import { faRedirectTarget } from './lib/fa/redirects';
+import { unprefixedTarget } from './lib/legacy-redirects';
 
 const intlMiddleware = createMiddleware(routing);
 
@@ -64,6 +65,13 @@ export default async function middleware(request: NextRequest) {
   const faTarget = faRedirectTarget(pathname);
   if (faTarget) {
     return NextResponse.redirect(new URL(faTarget, request.url), 301);
+  }
+
+  // A legacy path with no locale goes to English with a 301, not next-intl's
+  // 307, so Google moves the old URL's signals to the /en page.
+  const legacyTarget = unprefixedTarget(pathname);
+  if (legacyTarget) {
+    return NextResponse.redirect(new URL(`${legacyTarget}${request.nextUrl.search}`, request.url), 301);
   }
 
   return intlMiddleware(request);
