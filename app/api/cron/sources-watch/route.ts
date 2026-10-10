@@ -18,6 +18,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { authorisedCron } from '@/lib/cron-auth';
 import { ensureDefaultWatchSources, runWatch } from '@/lib/knowledge/watch';
 import { runPendingJobs } from '@/lib/knowledge/ingest';
+import { ensurePinnedOfficialSources } from '@/lib/knowledge/pinned';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 300;
@@ -30,7 +31,7 @@ export async function GET(req: NextRequest) {
   const sourceId = q.get('source') || undefined;
   const started = Date.now();
 
-  const installed = await ensureDefaultWatchSources();
+  const installed = [...(await ensureDefaultWatchSources()), ...(await ensurePinnedOfficialSources())];
   const watch = await runWatch({ limit, sourceId });
   const ingest = q.get('ingest') === '1' ? await runPendingJobs({ limit: 5, budgetMs: 180_000, sourceId }) : null;
 
