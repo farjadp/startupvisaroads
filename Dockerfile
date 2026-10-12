@@ -24,6 +24,9 @@ ENV NEXT_TELEMETRY_DISABLED=1
 #  such as sitemap.xml and article canonicals without rebuilding.)
 ARG NEXT_PUBLIC_SITE_URL=https://visaroads.com
 ENV NEXT_PUBLIC_SITE_URL=$NEXT_PUBLIC_SITE_URL
+# GA4 measurement ID (public, baked into the client bundle). Empty = no tag.
+ARG NEXT_PUBLIC_GA_ID=
+ENV NEXT_PUBLIC_GA_ID=$NEXT_PUBLIC_GA_ID
 # Build with a placeholder DATABASE_URL so Next.js doesn't fail at build time
 ENV DATABASE_URL="postgresql://placeholder:placeholder@localhost/placeholder"
 RUN npm run build

@@ -11,6 +11,7 @@ import { Send } from 'lucide-react';
 import { registerWebinar } from '@/app/[locale]/(public)/webinar/actions';
 import { webinar, WEBINAR_DATE } from '@/content/fa/webinar';
 import { toPersianDigits, faDate } from '@/lib/fa/format';
+import { trackLead } from '@/lib/analytics';
 
 function useCountdown(target: string | null) {
   const [left, setLeft] = useState<{ d: number; h: number; m: number } | null>(null);
@@ -43,6 +44,7 @@ export default function FaWebinar() {
     start(async () => {
       const r = (await registerWebinar(data)) as { success: boolean; ticketNumber?: string };
       setTicket(r.ticketNumber ?? null);
+      if (r.success) trackLead('webinar', 'fa');
       setState(r.success ? 'done' : 'error');
     });
 

@@ -14,6 +14,7 @@ import { notFound } from 'next/navigation';
 import { routing } from '@/routing';
 import JsonLd from '@/components/JsonLd';
 import { SITE_URL, SITE_NAME, defaultOgImage, buildAlternates, ogLocale, organizationJsonLd, websiteJsonLd } from '@/lib/seo';
+import Analytics from '@/components/Analytics';
 
 // English Fonts
 const dmSerif = DM_Serif_Display({
@@ -120,6 +121,7 @@ export default async function RootLayout({
 
           {children}
         </NextIntlClientProvider>
+        <Analytics />
       </body>
     </html>
   );

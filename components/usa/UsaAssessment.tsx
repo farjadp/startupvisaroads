@@ -11,6 +11,7 @@ import React, { useMemo, useState, useTransition } from 'react';
 import { Send } from 'lucide-react';
 import { assess, type Degree, type O1Criterion, type Passport, type AssessmentResult } from '@/lib/usa/assessment';
 import { sendUsaAssessment } from '@/app/[locale]/(public)/usa/assessment/actions';
+import { trackLead } from '@/lib/analytics';
 
 type Copy = {
   passportsTitle: string;
@@ -183,6 +184,7 @@ export default function UsaAssessment({ locale }: { locale: 'en' | 'fa' }) {
   const submit = (fd: FormData) =>
     start(async () => {
       const res = await sendUsaAssessment(fd);
+      if (res.success) trackLead('usa_assessment', locale);
       setState(res.success ? 'done' : 'error');
     });
 

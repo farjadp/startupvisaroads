@@ -16,6 +16,7 @@ import {
     CalendarPlus,
     Youtube
 } from 'lucide-react';
+import { trackLead } from '@/lib/analytics';
 
 export default function WebinarPage() {
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -70,6 +71,7 @@ export default function WebinarPage() {
         try {
             const result = await registerWebinar(formData);
             if (result.success) {
+                trackLead('webinar', 'en');
                 const randomCode = 'SVR-' + Math.floor(100000 + Math.random() * 900000);
                 setTicketNumber(randomCode);
                 setIsSuccess(true);

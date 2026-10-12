@@ -19,6 +19,7 @@ import {
   ShieldCheck
 } from 'lucide-react';
 import { sendTelegramNotification } from '@/app/actions';
+import { trackLead } from '@/lib/analytics';
 
 // ==========================================
 // 1. CONSTANTS & OPTIONS
@@ -172,6 +173,7 @@ export default function StrategicAssessment() {
     
     setIsProcessing(true);
     await sendTelegramNotification(formData, results);
+    trackLead('pnp_assessment', 'en');
     setIsProcessing(false);
     setIsSent(true);
   };
@@ -235,7 +237,7 @@ export default function StrategicAssessment() {
          </p>
          <div className="flex flex-col gap-4 max-w-xs mx-auto">
             <a 
-               href="/book-meeting" 
+               href="/en/book-meeting" 
                className="bg-[#1a1a1a] text-[#F2F0E9] px-8 py-4 font-sans font-bold uppercase tracking-widest hover:bg-[#CCFF00] hover:text-[#1a1a1a] transition-colors text-center"
             >
                Book Strategy Call
