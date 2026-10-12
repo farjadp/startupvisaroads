@@ -57,3 +57,9 @@ describe('RETIRED_ARTICLE_PATHS', () => {
     expect(RETIRED_ARTICLE_PATHS.has('/fa/blog/startup-visa-settlement-funds-iranian-bank-account')).toBe(false);
   });
 });
+
+describe('retired Start-Up Visa guide', () => {
+  it('sends the pre-pause June guide to the status page', () => {
+    expect(retiredArticleTarget('/en/blog/comprehensive-guide-to-the-canada-startup-visa-requirements-processes-and-insights')).toBe('/en/startup-visa-canada');
+  });
+});

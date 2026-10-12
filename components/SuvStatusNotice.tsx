@@ -40,7 +40,7 @@ export default function SuvStatusNotice({ variant = 'band', showRoutesLink = tru
       <div className={`border-l-4 border-[#b91c1c] bg-[#b91c1c]/5 p-5 font-sans text-sm leading-relaxed ${className}`}>
         <p className="text-[#1a1a1a]/80">{body}</p>
         {showRoutesLink && (
-          <Link href="/which-path" className="mt-3 inline-block font-bold text-xs uppercase tracking-widest text-[#1a1a1a] underline decoration-[#1a1a1a]/30 hover:decoration-[#1a1a1a]">
+          <Link href="/country" className="mt-3 inline-block font-bold text-xs uppercase tracking-widest text-[#1a1a1a] underline decoration-[#1a1a1a]/30 hover:decoration-[#1a1a1a]">
             Routes open today
           </Link>
         )}
@@ -55,7 +55,7 @@ export default function SuvStatusNotice({ variant = 'band', showRoutesLink = tru
         <p className="font-sans text-sm text-[#F2F0E9]/70 leading-relaxed">{body}</p>
         {showRoutesLink && (
           <Link
-            href="/which-path"
+            href="/country"
             className="shrink-0 bg-[#CCFF00] text-[#1a1a1a] px-6 py-3 font-sans text-xs font-bold uppercase tracking-widest hover:bg-white transition-colors text-center"
           >
             Routes open today

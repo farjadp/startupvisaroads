@@ -33,6 +33,10 @@ export function unprefixedTarget(pathname: string): string | null {
 const RETIRED_ARTICLES: Record<string, string> = {
   '/fa/blog/startup-visa-settlement-funds-proof-from-iranian-account': '/fa/europe/finland',
   '/fa/blog/startup-visa-settlement-funds-iranian-bank-account-1': '/fa/europe/finland',
+  // A June 2026 guide that describes the Start-Up Visa as open, with an
+  // application walkthrough. The programme was paused on 30 June 2026; the
+  // status page owns the query now.
+  '/en/blog/comprehensive-guide-to-the-canada-startup-visa-requirements-processes-and-insights': '/en/startup-visa-canada',
 };
 
 /** Locale-prefixed paths of withdrawn articles, for keeping them out of the sitemap. */

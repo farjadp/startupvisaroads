@@ -115,6 +115,18 @@ export function buildRelatedArticleBox({
 
 type RecommendedService = { path: string; title: string; desc: string };
 
+/**
+ * True when an article is about Canada's Start-Up Visa, so the page can state
+ * the pause above the body. Needs both "Canada" and the programme name: an
+ * Entrepreneur PNP article mentions Canada but is about an open route.
+ */
+export function isCanadaSuvTopic(title: string, tags: string[] = []): boolean {
+  const text = `${title} ${tags.join(' ')}`.toLowerCase();
+  const canada = /canada|canadian|کانادا/.test(text);
+  const programme = /start-?up visa|\bsuv\b|start-?up business class|استارت‌?\s?آپ\s?ویزا|استارتاپ\s?ویزا|ویزای استارتاپ|ویزای استارت‌آپ/.test(text);
+  return canada && programme;
+}
+
 export function getRecommendedService(title: string, categoryName: string, locale: string): RecommendedService {
   const content = `${title} ${categoryName}`.toLowerCase();
   const isFa = locale === 'fa';
