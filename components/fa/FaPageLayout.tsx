@@ -115,7 +115,16 @@ function Section({ s, i }: { s: FaSection; i: number }) {
   );
 }
 
-export default function FaPageLayout({ page, trail }: { page: FaPage; trail: { name: string; path: string }[] }) {
+export default function FaPageLayout({
+  page,
+  trail,
+  extra,
+}: {
+  page: FaPage;
+  trail: { name: string; path: string }[];
+  /** Rendered after the sections, before the FAQ — a form, a link grid. */
+  extra?: React.ReactNode;
+}) {
   const img = page.image ? `/fa/img/${page.image}.webp` : null;
   const gallery = page.gallery ?? [];
   // Spread the gallery evenly through the sections so the page breathes
@@ -263,6 +272,8 @@ export default function FaPageLayout({ page, trail }: { page: FaPage; trail: { n
             })}
 
             {rule && <Eligibility only={rule.key} />}
+
+            {extra}
 
             {page.faqs.length > 0 && (
               <Reveal as="section" className="scroll-mt-28">
