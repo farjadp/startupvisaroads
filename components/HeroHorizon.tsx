@@ -8,7 +8,7 @@
 */
 
 import React from 'react';
-import Link from 'next/link';
+import { Link } from '@/routing';
 import Image from 'next/image'; // Assuming you will add an image
 import { ArrowRight, Plane, Globe2, Rocket } from 'lucide-react';
 

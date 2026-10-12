@@ -10,7 +10,7 @@
 // hardcode a date or a figure in here.
 // ============================================================================
 import React from 'react';
-import Link from 'next/link';
+import { Link } from '@/routing';
 import { ShieldAlert } from 'lucide-react';
 import { SUV_SOURCES, SUV_STATE } from '@/lib/canada-suv';
 

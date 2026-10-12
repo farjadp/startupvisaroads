@@ -38,7 +38,7 @@
 // ============================================================================
 
 import React from 'react';
-import Link from 'next/link';
+import { Link } from '@/routing';
 import Image from 'next/image';
 import {
   ArrowRight,
@@ -557,7 +557,7 @@ export default function IsraelPage() {
                   Treat any adviser who answers it confidently without seeing your file — or who
                   sells you this route as a migration pathway — as a warning sign. Our Persian
                   guide at{' '}
-                  <Link href="/fa/israel" className="text-[#0038B8] underline underline-offset-2">
+                  <Link href="/israel" locale="fa" className="text-[#0038B8] underline underline-offset-2">
                     /fa/israel
                   </Link>{' '}
                   says the same thing at greater length, because its whole readership is affected.

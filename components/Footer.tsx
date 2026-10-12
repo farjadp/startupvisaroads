@@ -28,7 +28,7 @@ const EN_LINKS = {
     { href: '/pnp', label: 'Canada (PNP)' },
     { href: '/country/denmark', label: 'Denmark (SUV)' },
     { href: '/europe/netherlands', label: 'Netherlands (SUV)' },
-    { href: '/europe/finland', label: 'Finland (SUV)' },
+    { href: '/country/finland', label: 'Finland (SUV)' },
     { href: '/country/italy', label: 'Italy (Startup Visa)' },
     { href: '/country/usa', label: 'USA (founder routes)' },
   ],

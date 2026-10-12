@@ -5,7 +5,7 @@
 // ============================================================================
 
 import React from 'react';
-import Link from 'next/link';
+import { Link } from '@/routing';
 import { ArrowRight, Globe, Map } from 'lucide-react';
 import type { Metadata } from 'next';
 import LifestyleCompass from '@/components/LifestyleCompass'; // Import

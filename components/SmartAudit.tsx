@@ -3,7 +3,7 @@
 
 import React, { useState } from 'react';
 import { ArrowRight, Check, X, RefreshCw } from 'lucide-react';
-import Link from 'next/link';
+import { Link } from '@/routing';
 
 type Question = {
   id: number;

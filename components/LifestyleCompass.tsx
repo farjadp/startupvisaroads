@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { RefreshCw, ArrowRight, Globe, Fingerprint } from 'lucide-react';
-import Link from 'next/link';
+import { Link } from '@/routing';
 
 // ==========================================
 // 1. DATA & LOGIC (Same as before)
