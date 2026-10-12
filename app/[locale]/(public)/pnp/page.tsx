@@ -22,6 +22,7 @@ import { metaFor } from '@/lib/pageMeta';
 import { buildMetadata } from '@/lib/seo';
 import { setRequestLocale } from 'next-intl/server';
 import FaPageLayout from '@/components/fa/FaPageLayout';
+import GuideJsonLd from '@/components/GuideJsonLd';
 import { page as faPage } from '@/content/fa/pnp';
 import { faMeta } from '@/lib/fa/content';
 
@@ -44,7 +45,8 @@ export default async function PNPPage({ params }: { params: Promise<{ locale: st
 
   return (
     <div className="w-full px-4 md:px-8 border-x border-[#1a1a1a]/10 max-w-[1400px] mx-auto bg-[#F2F0E9] text-[#1a1a1a]">
-      
+      <GuideJsonLd path="/pnp" />
+
       {/* =========================================
           1. HERO: REGIONAL SOVEREIGNTY
       ========================================= */}

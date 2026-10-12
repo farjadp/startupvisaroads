@@ -165,6 +165,13 @@ function titleFromPath(path: string): string {
   return last.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
+/** The title and description a path is published with, or null if it has no entry. */
+export function pageCopy(path: string, locale: string): { title: string; description: string } | null {
+  const entry = META[path];
+  if (!entry) return null;
+  return locale === 'fa' ? entry.fa : entry.en;
+}
+
 export function metaFor(path: string, locale: string): Metadata {
   const isRtl = locale === 'fa';
   const entry = META[path];
