@@ -37,6 +37,7 @@ import {
   getRelatedArticle,
   getRecommendedService,
   getSafeQuickFacts,
+  isCanadaSuvTopic,
 } from '../blog';
 
 beforeEach(() => {
@@ -250,5 +251,19 @@ describe('locale-safe recommendations', () => {
     for (const [title, category] of inputs) {
       expect(allowed.has(getRecommendedService(title, category, 'fa').path)).toBe(true);
     }
+  });
+});
+
+describe('isCanadaSuvTopic', () => {
+  it('flags articles about the Canadian Start-Up Visa in either language', () => {
+    expect(isCanadaSuvTopic("Canada's Start-Up Visa Overhaul: What's Next")).toBe(true);
+    expect(isCanadaSuvTopic('Navigating the Complexities of Canada’s Start-Up Business Class 2026')).toBe(true);
+    expect(isCanadaSuvTopic('وضعیت ویزای استارتاپ کانادا در ۲۰۲۶ و جایگزین‌ها')).toBe(true);
+  });
+
+  it('leaves open routes and other countries alone', () => {
+    expect(isCanadaSuvTopic('Alberta Rural Entrepreneur Stream for Canada')).toBe(false);
+    expect(isCanadaSuvTopic('Navigating the Dutch Startup Visa Process')).toBe(false);
+    expect(isCanadaSuvTopic('مهاجرت کارآفرینی نوااسکوشیا کانادا')).toBe(false);
   });
 });

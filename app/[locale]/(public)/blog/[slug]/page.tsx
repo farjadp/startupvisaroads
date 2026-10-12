@@ -10,7 +10,9 @@ import JsonLd from '@/components/JsonLd';
 import { sanitizeHtml } from '@/lib/sanitize';
 import { SITE_URL, articleJsonLd, breadcrumbJsonLd, buildMetadata, faqJsonLd, isDataImageUrl, selfLocalizedAlternates, stripHtml } from '@/lib/seo';
 import { blogType } from '@/lib/fa/blog-type';
-import { buildRelatedArticleBox, computeReadingTime, getArticleBySlug, getOtherLocaleArticlePath, getRecommendedService, getRelatedArticle, getSafeQuickFacts } from '@/lib/blog';
+import SuvStatusNotice from '@/components/SuvStatusNotice';
+import { suvPillarStatus } from '@/content/fa/suv-status';
+import { buildRelatedArticleBox, isCanadaSuvTopic, computeReadingTime, getArticleBySlug, getOtherLocaleArticlePath, getRecommendedService, getRelatedArticle, getSafeQuickFacts } from '@/lib/blog';
 import { 
   Clock, 
   BarChart, 
@@ -373,6 +375,22 @@ export default async function BlogPostPage({ params }: { params: Promise<{ local
           })}
         </div>
       </div>
+
+      {/* The SUV pause, stated before any article about the programme: most
+          of them predate 30 June 2026 and read as if it were still open. */}
+      {isCanadaSuvTopic(article.title, article.tags.map((tg) => tg.name)) && (
+        articleLocale === 'fa' ? (
+          <aside className={`mb-10 border-s-4 border-[#b91c1c] bg-[#b91c1c]/5 p-5 text-sm leading-relaxed ${T.body}`}>
+            <p className="font-bold text-[#1a1a1a]">{suvPillarStatus.title}</p>
+            <p className="mt-2 text-[#1a1a1a]/80">{suvPillarStatus.body}</p>
+            <Link href="/canada-startup-visa" className="mt-3 inline-block font-bold underline">
+              وضعیت کامل برنامه و مسیرهای باز
+            </Link>
+          </aside>
+        ) : (
+          <SuvStatusNotice variant="inline" showRoutesLink className="mb-10" />
+        )
+      )}
 
       {/* Render HTML content safely */}
       <article

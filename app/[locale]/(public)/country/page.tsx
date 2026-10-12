@@ -12,6 +12,7 @@ import LifestyleCompass from '@/components/LifestyleCompass'; // Import
 
 
 import { metaFor } from '@/lib/pageMeta';
+import GuideJsonLd from '@/components/GuideJsonLd';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
@@ -106,6 +107,7 @@ const COUNTRIES = [
 export default function CountryIndexPage() {
   return (
     <div className="w-full px-4 md:px-8 border-x border-[#1a1a1a]/10 max-w-[1400px] mx-auto bg-[#F2F0E9] text-[#1a1a1a]">
+      <GuideJsonLd path="/country" />
       
       {/* =========================================
           1. HERO: THE WORLD MAP

@@ -134,7 +134,7 @@ export default function CanadaSUVPage() {
                <span className="font-bold text-[#F2F0E9]">Everything below describes how the Start-up Visa worked before it was paused.</span>{' '}
                We keep it for two readers: anyone with an application already in progress, and anyone comparing it with the entrepreneur pilot IRCC says will replace it. The requirements below do not apply to that pilot, which IRCC has not published yet.
             </p>
-            <Link href="/which-path" className="shrink-0 bg-[#CCFF00] text-[#1a1a1a] px-6 py-3 font-sans text-xs font-bold uppercase tracking-widest hover:bg-white transition-colors text-center">
+            <Link href="/country" className="shrink-0 bg-[#CCFF00] text-[#1a1a1a] px-6 py-3 font-sans text-xs font-bold uppercase tracking-widest hover:bg-white transition-colors text-center">
                Routes open today
             </Link>
          </div>
