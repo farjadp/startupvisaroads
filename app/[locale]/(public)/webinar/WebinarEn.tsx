@@ -71,7 +71,7 @@ export default function WebinarPage() {
         try {
             const result = await registerWebinar(formData);
             if (result.success) {
-                trackLead('webinar', 'en');
+                trackLead('webinar', 'en', result.eventId);
                 const randomCode = 'SVR-' + Math.floor(100000 + Math.random() * 900000);
                 setTicketNumber(randomCode);
                 setIsSuccess(true);

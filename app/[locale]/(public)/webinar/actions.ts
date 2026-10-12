@@ -1,5 +1,7 @@
 'use server';
 
+import { reportLead } from '@/lib/openaiAds';
+
 export async function registerWebinar(formData: FormData) {
     const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
     const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID;
@@ -52,7 +54,7 @@ export async function registerWebinar(formData: FormData) {
             return { success: false, message: 'ارسال اطلاعات با خطا مواجه شد. لطفاً دوباره تلاش کنید.' };
         }
 
-        return { success: true, message: 'ثبت‌نام شما با موفقیت انجام شد. جزییات به زودی برای شما ارسال خواهد شد.' };
+        return { success: true, eventId: await reportLead({ email, phone, name }), message: 'ثبت‌نام شما با موفقیت انجام شد. جزییات به زودی برای شما ارسال خواهد شد.' };
     } catch (error) {
         console.error('Network Error:', error);
         return { success: false, message: 'خطای شبکه رخ داده است. لطفاً اتصال خود را بررسی کنید.' };

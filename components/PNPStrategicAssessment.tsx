@@ -172,8 +172,8 @@ export default function StrategicAssessment() {
     }
     
     setIsProcessing(true);
-    await sendTelegramNotification(formData, results);
-    trackLead('pnp_assessment', 'en');
+    const res = await sendTelegramNotification(formData, results);
+    if (res.success) trackLead('pnp_assessment', 'en', res.eventId);
     setIsProcessing(false);
     setIsSent(true);
   };

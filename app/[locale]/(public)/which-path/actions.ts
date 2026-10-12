@@ -6,11 +6,12 @@
 // env-var credentials, fail closed. Sends the quiz answers and the computed
 // recommendation so the reply can be specific.
 // ============================================================================
+import { reportLead } from '@/lib/openaiAds';
 import { recommendPath, type QuizAnswers } from '@/lib/fa/path-quiz';
 
 const KEYS: (keyof QuizAnswers)[] = ['goal', 'team', 'business', 'language', 'capital', 'background', 'horizon'];
 
-export async function sendWhichPathLead(formData: FormData): Promise<{ success: boolean; message: string }> {
+export async function sendWhichPathLead(formData: FormData): Promise<{ success: boolean; message: string; eventId?: string }> {
   const token = process.env.TELEGRAM_BOT_TOKEN;
   const chatId = process.env.TELEGRAM_CHAT_ID;
   if (!token || !chatId) {
@@ -63,7 +64,7 @@ horizon=${answers.horizon}`;
       console.error('Telegram API error', await res.text());
       return { success: false, message: 'telegram' };
     }
-    return { success: true, message: 'ok' };
+    return { success: true, message: 'ok', eventId: await reportLead({ email, name }) };
   } catch (e) {
     console.error('Telegram network error', e);
     return { success: false, message: 'network' };

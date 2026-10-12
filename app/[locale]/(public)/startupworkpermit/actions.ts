@@ -1,5 +1,7 @@
 'use server'
 
+import { reportLead } from '@/lib/openaiAds';
+
 export async function submitStartupRecoveryForm(formData: FormData) {
     const botToken = process.env.TELEGRAM_BOT_TOKEN;
     const chatId = process.env.TELEGRAM_CHAT_ID;
@@ -99,7 +101,14 @@ export async function submitStartupRecoveryForm(formData: FormData) {
             }
         }
 
-        return { success: true };
+        return {
+            success: true,
+            eventId: await reportLead({
+                email: String(rawData.email ?? ''),
+                phone: String(rawData.phoneNumber ?? ''),
+                name: String(rawData.fullName ?? ''),
+            }),
+        };
     } catch (error) {
         console.error("Telegram Error:", error);
         return { success: false, message: "Failed to send to Telegram" };

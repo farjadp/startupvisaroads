@@ -13,6 +13,7 @@ import { getMessages, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { routing } from '@/routing';
 import JsonLd from '@/components/JsonLd';
+import OpenAIPixel from '@/components/OpenAIPixel';
 import { SITE_URL, SITE_NAME, defaultOgImage, buildAlternates, ogLocale, organizationJsonLd, websiteJsonLd } from '@/lib/seo';
 import Analytics from '@/components/Analytics';
 
@@ -115,6 +116,7 @@ export default async function RootLayout({
     <html lang={locale} dir={isRtl ? 'rtl' : 'ltr'} className={fontVariables}>
       <body className={`bg-[#F2F0E9] text-[#1a1a1a] min-h-screen flex flex-col antialiased selection:bg-[#CCFF00] selection:text-black ${isRtl ? 'font-vazir' : 'font-sans'}`}>
         <JsonLd data={[organizationJsonLd(), websiteJsonLd()]} />
+        <OpenAIPixel />
         <NextIntlClientProvider messages={messages}>
           {/* Fixed Grain Overlay */}
           <div className="fixed inset-0 pointer-events-none opacity-[0.03] z-50 mix-blend-multiply bg-[url('/noise.svg')]"></div>

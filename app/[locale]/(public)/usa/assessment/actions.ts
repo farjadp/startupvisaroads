@@ -5,13 +5,14 @@
 // verdict is never trusted) and sends the lead to the same Telegram chat as
 // the contact form, as plain text so input cannot inject markup.
 // ============================================================================
+import { reportLead } from '@/lib/openaiAds';
 import { assess, O1_CRITERIA, PASSPORTS, type Degree, type O1Criterion, type Passport } from '@/lib/usa/assessment';
 
 const DEGREES: readonly Degree[] = ['masters', 'bachelor5', 'none'];
 
 const field = (fd: FormData, key: string, max: number) => ((fd.get(key) as string) || '').trim().slice(0, max);
 
-export async function sendUsaAssessment(fd: FormData): Promise<{ success: boolean }> {
+export async function sendUsaAssessment(fd: FormData): Promise<{ success: boolean; eventId?: string }> {
   const token = process.env.TELEGRAM_BOT_TOKEN;
   const chat = process.env.TELEGRAM_CHAT_ID;
   if (!token || !chat) {
@@ -56,7 +57,7 @@ Degree: ${degree} · national importance: ${nationalImportance} · plan: ${plan}
       console.error('usa-assessment: Telegram API error', await res.text());
       return { success: false };
     }
-    return { success: true };
+    return { success: true, eventId: await reportLead({ email, phone, name }) };
   } catch (err) {
     console.error('usa-assessment: network error', err);
     return { success: false };

@@ -1,5 +1,7 @@
 'use server'
 
+import { reportLead } from '@/lib/openaiAds';
+
 export async function sendTelegramNotification(formData: any, analysisResults: any) {
   const botToken = process.env.TELEGRAM_BOT_TOKEN;
   const chatId = process.env.TELEGRAM_CHAT_ID;
@@ -37,7 +39,8 @@ export async function sendTelegramNotification(formData: any, analysisResults: a
         text: message,
       }),
     });
-    return { success: true };
+    const eventId = await reportLead({ email: formData.email, phone: formData.phone, name: formData.fullName });
+    return { success: true, eventId };
   } catch (error) {
     console.error("Telegram Error:", error);
     return { success: false };

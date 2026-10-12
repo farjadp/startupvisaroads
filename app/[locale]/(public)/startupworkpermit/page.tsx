@@ -74,7 +74,7 @@ export default function StartupRecoveryForm() {
         try {
             const result = await submitStartupRecoveryForm(data);
             if (result.success) {
-                trackLead('startup_work_permit', 'en');
+                trackLead('startup_work_permit', 'en', result.eventId);
                 alert("اطلاعات با موفقیت برای تیم حقوقی ارسال شد.");
             } else {
                 alert("خطا در ارسال اطلاعات. لطفا دوباره تلاش کنید.");

@@ -184,7 +184,7 @@ export default function UsaAssessment({ locale }: { locale: 'en' | 'fa' }) {
   const submit = (fd: FormData) =>
     start(async () => {
       const res = await sendUsaAssessment(fd);
-      if (res.success) trackLead('usa_assessment', locale);
+      if (res.success) trackLead('usa_assessment', locale, res.eventId);
       setState(res.success ? 'done' : 'error');
     });
 

@@ -1,5 +1,7 @@
 'use server';
 
+import { reportLead } from '@/lib/openaiAds';
+
 export async function sendContactForm(formData: FormData) {
     const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
     const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID;
@@ -51,7 +53,7 @@ ${brief}`;
             return { success: false, message: 'Failed to notify via Telegram.' };
         }
 
-        return { success: true, message: 'Inquiry received.' };
+        return { success: true, message: 'Inquiry received.', eventId: await reportLead({ email, phone, name }) };
     } catch (error) {
         console.error('Network Error:', error);
         return { success: false, message: 'Network error occurred.' };

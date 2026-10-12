@@ -55,7 +55,7 @@ export default function ContactPage() {
       const result = await sendContactForm(formData);
 
       if (result.success) {
-         trackLead('contact', 'en');
+         trackLead('contact', 'en', result.eventId);
          alert("Application Received. Reference ID: #ASH-2025-X9");
       } else {
          alert("Error: " + result.message);

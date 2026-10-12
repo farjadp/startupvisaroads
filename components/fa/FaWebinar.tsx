@@ -42,9 +42,9 @@ export default function FaWebinar() {
 
   const submit = (data: FormData) =>
     start(async () => {
-      const r = (await registerWebinar(data)) as { success: boolean; ticketNumber?: string };
+      const r = (await registerWebinar(data)) as { success: boolean; ticketNumber?: string; eventId?: string };
       setTicket(r.ticketNumber ?? null);
-      if (r.success) trackLead('webinar', 'fa');
+      if (r.success) trackLead('webinar', 'fa', r.eventId);
       setState(r.success ? 'done' : 'error');
     });
 

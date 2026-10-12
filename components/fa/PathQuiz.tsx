@@ -61,7 +61,7 @@ export default function PathQuiz() {
     for (const [k, v] of Object.entries(answers)) form.set(k, String(v));
     startTransition(async () => {
       const r = await sendWhichPathLead(form);
-      if (r.success) trackLead('path_quiz', 'fa');
+      if (r.success) trackLead('path_quiz', 'fa', r.eventId);
       setLeadState(r.success ? 'done' : 'error');
     });
   };

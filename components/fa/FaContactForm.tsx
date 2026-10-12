@@ -19,7 +19,7 @@ export default function FaContactForm() {
   const submit = (data: FormData) =>
     start(async () => {
       const r = await sendContactForm(data);
-      if (r.success) trackLead('contact', 'fa');
+      if (r.success) trackLead('contact', 'fa', r.eventId);
       setState(r.success ? 'done' : 'error');
     });
 
