@@ -9,6 +9,7 @@ import { buildMetadata } from '@/lib/seo';
 import FaPageLayout from '@/components/fa/FaPageLayout';
 import { page } from '@/content/fa/usa-eb2-niw';
 import { faMeta } from '@/lib/fa/content';
+import UsaCluster from '@/components/usa/UsaCluster';
 
 type Props = { params: Promise<{ locale: string }> };
 
@@ -23,5 +24,11 @@ export default async function UsaEb2NiwFa({ params }: Props) {
   if (locale !== 'fa') notFound();
   setRequestLocale(locale);
 
-  return <FaPageLayout page={page} trail={[{ name: 'EB-2 NIW آمریکا', path: page.path }]} />;
+  return (
+    <FaPageLayout
+      page={page}
+      trail={[{ name: 'آمریکا', path: '/usa' }, { name: 'EB-2 NIW آمریکا', path: page.path }]}
+      extra={<UsaCluster locale="fa" current={page.path} />}
+    />
+  );
 }

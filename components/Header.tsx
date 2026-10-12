@@ -146,6 +146,7 @@ export default function Header() {
         { header: 'مقصدهای دیگر' },
         { href: '/turkey-tech-visa', label: 'تک‌ویزای ترکیه' },
         { href: '/australia', label: 'ویزای نوآوری ملی استرالیا' },
+        { href: '/usa', label: 'آمریکا: مسیرهای فاندر' },
         { href: '/usa-eb2-niw', label: 'EB-2 NIW آمریکا' },
         { href: '/israel', label: 'اسرائیل — چرا باز نیست' },
 
@@ -182,6 +183,7 @@ export default function Header() {
 
         { header: t('usa') },
         { href: '/country/usa', label: t('usa_profile') },
+        { href: '/usa/o-1a', label: 'O-1A for founders' },
         { href: '/usa/eb2-niw', label: t('eb2') },
         { href: '/usa/eb1', label: t('eb1') },
 

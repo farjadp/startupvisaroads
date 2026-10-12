@@ -152,8 +152,8 @@ export const page: FaPage = {
 
   videos: ['qODv_KLFGbk'],
   closing: [
-    { label: 'ارزیابی رایگان پروفایل', href: '/which-path' },
-    { label: 'برنامه‌ی آماده‌سازی بنیان‌گذاران', href: '/mentorship' },
+    { label: 'ارزیابی آمادگی آمریکا', href: '/usa/assessment' },
+    { label: 'برنامه‌ی آمادگی پرونده‌ی فاندر', href: '/usa/founder-readiness' },
     { label: 'مسیر کانادا را مقایسه کنید', href: '/canada-startup-visa' },
     { label: 'گفت‌وگو در تلگرام', href: TELEGRAM_URL },
   ],
