@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { retiredArticleTarget, unprefixedTarget } from '../legacy-redirects';
+import { RETIRED_ARTICLE_PATHS, retiredArticleTarget, unprefixedTarget } from '../legacy-redirects';
 
 describe('unprefixedTarget', () => {
   it('sends a legacy unprefixed path to English permanently', () => {
@@ -47,5 +47,13 @@ describe('retiredArticleTarget', () => {
     expect(retiredArticleTarget('/fa/blog/startup-visa-settlement-funds-iranian-bank-account-1/')).toBe('/fa/europe/finland');
     expect(retiredArticleTarget('/fa/blog/startup-visa-proof-of-funds-denmark-finland-official')).toBeNull();
     expect(retiredArticleTarget('/en/blog/startup-visa-settlement-funds-iranian-bank-account-1')).toBeNull();
+  });
+});
+
+describe('RETIRED_ARTICLE_PATHS', () => {
+  it('lists exactly the withdrawn articles, so the sitemap can skip them', () => {
+    expect(RETIRED_ARTICLE_PATHS.has('/fa/blog/startup-visa-settlement-funds-iranian-bank-account-1')).toBe(true);
+    expect(RETIRED_ARTICLE_PATHS.has('/fa/blog/startup-visa-settlement-funds-proof-from-iranian-account')).toBe(true);
+    expect(RETIRED_ARTICLE_PATHS.has('/fa/blog/startup-visa-settlement-funds-iranian-bank-account')).toBe(false);
   });
 });

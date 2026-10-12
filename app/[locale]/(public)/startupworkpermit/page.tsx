@@ -15,6 +15,7 @@ import {
 import { submitStartupRecoveryForm } from './actions';
 import SuvStatusNotice from '@/components/SuvStatusNotice';
 import { SUV_SOURCES } from '@/lib/canada-suv';
+import { trackLead } from '@/lib/analytics';
 
 export default function StartupRecoveryForm() {
     // مدیریت استیت‌های فرم
@@ -73,6 +74,7 @@ export default function StartupRecoveryForm() {
         try {
             const result = await submitStartupRecoveryForm(data);
             if (result.success) {
+                trackLead('startup_work_permit', 'en');
                 alert("اطلاعات با موفقیت برای تیم حقوقی ارسال شد.");
             } else {
                 alert("خطا در ارسال اطلاعات. لطفا دوباره تلاش کنید.");

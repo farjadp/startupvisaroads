@@ -20,7 +20,7 @@
 
 Several immigration programs have changed or closed. Always verify current status with the official government source before making decisions. Key changes include:
 
-- Canada Start-Up Visa: check IRCC for current intake status
+- Canada Start-Up Visa: paused by IRCC on 30 June 2026. Applications accepted before that date are still processed, and eligible applicants can still apply for an open work permit while they wait. IRCC has announced a replacement pilot with no published criteria or date. Source: https://www.canada.ca/en/immigration-refugees-citizenship/services/immigrate-canada/start-visa/about.html
 - Ontario OINP Entrepreneur stream: check Ontario.ca for current status
 - Saskatchewan SINP Entrepreneur stream: check Saskatchewan.ca for current status
 - Australia BIIP subclass 188: closed; check Home Affairs for current alternatives
@@ -35,6 +35,44 @@ Several immigration programs have changed or closed. Always verify current statu
 - https://visaroads.com/fa/mentorship — Persian mentorship program
 - https://visaroads.com/en/tools/express-entry — Free Express Entry CRS calculator
 - https://visaroads.com/fa/which-path — Free pathway assessment (Persian)
+
+## Route guides
+
+Canada — Entrepreneur Provincial Nominee Programs (our Canada specialty):
+- https://visaroads.com/en/pnp — Provincial Nominee Programs overview
+- https://visaroads.com/en/pnp/alberta — Alberta (AAIP) entrepreneur streams
+- https://visaroads.com/en/pnp/manitoba — Manitoba (MPNP) business investor stream
+- https://visaroads.com/en/pnp/nova-scotia — Nova Scotia entrepreneur stream
+- https://visaroads.com/en/pnp/pei — Prince Edward Island (PEI PNP) business impact
+- https://visaroads.com/en/pnp/new-brunswick — New Brunswick entrepreneurial stream
+- https://visaroads.com/fa/pnp — Persian guide to provincial entrepreneur programs
+
+Canada — Start-Up Visa status:
+- https://visaroads.com/en/startup-visa-canada — Current status of the paused Start-Up Visa
+- https://visaroads.com/fa/canada-startup-visa — Persian status guide
+
+Europe:
+- https://visaroads.com/en/country/denmark — Start-up Denmark
+- https://visaroads.com/fa/europe/denmark — Start-up Denmark (Persian)
+- https://visaroads.com/en/europe/netherlands — Netherlands startup visa
+- https://visaroads.com/fa/europe/netherlands — Netherlands startup visa (Persian)
+- https://visaroads.com/en/country/finland — Finland startup permit
+- https://visaroads.com/fa/europe/finland — Finland startup permit (Persian)
+- https://visaroads.com/en/country/italy — Italia Startup Visa
+- https://visaroads.com/fa/europe/estonia — Estonia startup visa (Persian)
+
+United States (founder routes):
+- https://visaroads.com/en/country/usa — US routes for founders
+- https://visaroads.com/en/usa/e-2 — E-2 treaty investor
+- https://visaroads.com/en/usa/o-1a — O-1A extraordinary ability
+- https://visaroads.com/en/usa/o-1a-eb-1a-niw — O-1A vs EB-1A vs EB-2 NIW
+- https://visaroads.com/en/usa/eb2-niw — EB-2 National Interest Waiver
+- https://visaroads.com/en/usa/why-petitions-fail — Why founder petitions fail
+
+Other:
+- https://visaroads.com/en/country/australia — Australia
+- https://visaroads.com/en/country/turkey — Türkiye
+- https://visaroads.com/en/uae/golden-visa — UAE Golden Visa
 
 ## Official sources we reference
 

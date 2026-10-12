@@ -9,6 +9,7 @@ import React, { useState, useTransition } from 'react';
 import { Send } from 'lucide-react';
 import { sendContactForm } from '@/app/[locale]/(public)/contact/actions';
 import { contact } from '@/content/fa/contact';
+import { trackLead } from '@/lib/analytics';
 
 export default function FaContactForm() {
   const f = contact.form;
@@ -18,6 +19,7 @@ export default function FaContactForm() {
   const submit = (data: FormData) =>
     start(async () => {
       const r = await sendContactForm(data);
+      if (r.success) trackLead('contact', 'fa');
       setState(r.success ? 'done' : 'error');
     });
 

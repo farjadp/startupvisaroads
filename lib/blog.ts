@@ -131,7 +131,7 @@ export function getRecommendedService(title: string, categoryName: string, local
       : { path: '/startupworkpermit', title: 'Canada Startup Work Permit Guide', desc: 'Read the current eligibility and process information for the startup work permit route.' };
   }
   if (matches(['finland', 'finnish', 'فنلاند'])) {
-    return { path: '/europe/finland', title: isFa ? 'راهنمای ویزای استارتاپ فنلاند' : 'Finland Startup Visa Guide', desc: isFa ? 'شرایط و مراحل مسیر استارتاپ فنلاند را مرور کنید.' : 'Review the requirements and process for Finland’s startup route.' };
+    return { path: isFa ? '/europe/finland' : '/country/finland', title: isFa ? 'راهنمای ویزای استارتاپ فنلاند' : 'Finland Startup Visa Guide', desc: isFa ? 'شرایط و مراحل مسیر استارتاپ فنلاند را مرور کنید.' : 'Review the requirements and process for Finland’s startup route.' };
   }
   if (matches(['denmark', 'danish', 'دانمارک'])) {
     return { path: isFa ? '/europe/denmark' : '/country/denmark', title: isFa ? 'راهنمای استارتاپ دانمارک' : 'Start-up Denmark Guide', desc: isFa ? 'شرایط و مراحل برنامه استارتاپ دانمارک را مرور کنید.' : 'Review the requirements and process for Start-up Denmark.' };

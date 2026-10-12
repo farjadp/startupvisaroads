@@ -15,7 +15,7 @@ import {
   Cpu,
   Download
 } from 'lucide-react';
-import Link from 'next/link';
+import { Link } from '@/routing';
 
 // ==========================================
 // 1. DATA CONSTANTS

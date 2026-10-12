@@ -1,5 +1,5 @@
 import React from 'react';
-import Link from 'next/link';
+import { Link } from '@/routing';
 import { Calendar, ArrowRight } from 'lucide-react';
 
 export default function BookingCTA() {

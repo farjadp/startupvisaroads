@@ -4,7 +4,7 @@
 // ============================================================================
 import React from 'react';
 import type { Metadata } from 'next';
-import Link from 'next/link';
+import { Link } from '@/routing';
 import { ArrowRight, MapPin } from 'lucide-react';
 import { setRequestLocale } from 'next-intl/server';
 import { metaFor } from '@/lib/pageMeta';

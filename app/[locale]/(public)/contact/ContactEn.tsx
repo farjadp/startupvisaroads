@@ -7,7 +7,7 @@
 "use client";
 
 import React, { useState } from 'react';
-import Link from 'next/link';
+import { Link } from '@/routing';
 import BookingCTA from '@/components/BookingCTA';
 import { sendContactForm } from './actions';
 import { TEAM_MEMBERS, hasDirectLine } from '@/content/team';
@@ -31,6 +31,7 @@ import {
    Youtube,
    Handshake
 } from 'lucide-react';
+import { trackLead } from '@/lib/analytics';
 
 export default function ContactPage() {
    const [isSubmitting, setIsSubmitting] = useState(false);
@@ -54,6 +55,7 @@ export default function ContactPage() {
       const result = await sendContactForm(formData);
 
       if (result.success) {
+         trackLead('contact', 'en');
          alert("Application Received. Reference ID: #ASH-2025-X9");
       } else {
          alert("Error: " + result.message);

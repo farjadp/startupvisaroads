@@ -14,6 +14,7 @@ import { recommendPath, type QuizAnswers, type Recommendation } from '@/lib/fa/p
 import { toPersianDigits } from '@/lib/fa/format';
 import { questions, ui, intro } from '@/content/fa/which-path';
 import { sendWhichPathLead } from '@/app/[locale]/(public)/which-path/actions';
+import { trackLead } from '@/lib/analytics';
 
 type Stage = 'intro' | 'quiz' | 'result';
 
@@ -60,6 +61,7 @@ export default function PathQuiz() {
     for (const [k, v] of Object.entries(answers)) form.set(k, String(v));
     startTransition(async () => {
       const r = await sendWhichPathLead(form);
+      if (r.success) trackLead('path_quiz', 'fa');
       setLeadState(r.success ? 'done' : 'error');
     });
   };
