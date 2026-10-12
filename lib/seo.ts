@@ -152,6 +152,19 @@ interface PageMetaInput {
   nofollow?: boolean;
 }
 
+/** Past this, Google truncates the title in results. */
+export const TITLE_MAX = 60;
+
+/**
+ * Appends the brand when it fits. A long title keeps its own words instead:
+ * "Italia Startup Visa: Thirty Days, And A Cap Nobody Mentions | Startup Visa
+ * Roads" was cut off before the brand anyway, and took the hook with it.
+ */
+export function brandedTitle(title: string): string {
+  const branded = `${title} | ${SITE_NAME}`;
+  return branded.length <= TITLE_MAX ? branded : title;
+}
+
 /** Build a complete, SEO-rich Metadata object for a page. */
 export function buildMetadata(input: PageMetaInput): Metadata {
   const { title, description, path, locale, image, type = 'website', publishedTime, modifiedTime, tags, noindex, nofollow = noindex } = input;
@@ -163,7 +176,7 @@ export function buildMetadata(input: PageMetaInput): Metadata {
   return {
     // Absolute title so the layout's "%s | SITE_NAME" template isn't applied
     // twice. Callers pass a brandless title; we append the brand once here.
-    title: { absolute: `${title} | ${SITE_NAME}` },
+    title: { absolute: brandedTitle(title) },
     description: cleanDescription,
     alternates: buildAlternates(path, locale),
     robots: noindex

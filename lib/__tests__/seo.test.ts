@@ -16,6 +16,7 @@ import {
   normalizeSeoImageUrl,
   selfLocalizedAlternates,
   stripHtml,
+  brandedTitle,
 } from '../seo';
 
 describe('buildAlternates', () => {
@@ -233,5 +234,16 @@ describe('schema identity and localization', () => {
       isPartOf: { '@id': `${url}#webpage` },
       publisher: { '@id': `${SITE_URL}/#organization` },
     });
+  });
+});
+
+describe('brandedTitle', () => {
+  it('appends the brand to a short title', () => {
+    expect(brandedTitle('Alberta PNP (AAIP)')).toBe('Alberta PNP (AAIP) | Startup Visa Roads');
+  });
+
+  it('keeps a long title unbranded rather than truncated', () => {
+    const t = 'Italia Startup Visa: Thirty Days, And A Cap Nobody Mentions';
+    expect(brandedTitle(t)).toBe(t);
   });
 });
