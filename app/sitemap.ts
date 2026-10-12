@@ -3,6 +3,7 @@ import prisma from '@/lib/prisma';
 import { SITE_URL } from '@/lib/seo';
 import { FA_PATHS, FA_PAIRED, EN_TO_FA, type FaPath } from '@/lib/fa/paths';
 import { EN_INDEXABLE_PATHS } from '@/lib/pageMeta';
+import { RETIRED_ARTICLE_PATHS } from '@/lib/legacy-redirects';
 
 export const revalidate = 600;
 
@@ -43,6 +44,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     });
     for (const a of articles) {
       const locale = a.locale === 'fa' ? 'fa' : 'en';
+      // Withdrawn articles still exist as rows but 301 away; listing them
+      // would hand Google a redirect as a canonical URL.
+      if (RETIRED_ARTICLE_PATHS.has(`/${locale}/blog/${a.slug}`)) continue;
       entries.push({
         url: `${SITE_URL}/${locale}/blog/${a.slug}`,
         lastModified: a.updatedAt,

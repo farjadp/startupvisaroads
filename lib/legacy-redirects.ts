@@ -35,6 +35,9 @@ const RETIRED_ARTICLES: Record<string, string> = {
   '/fa/blog/startup-visa-settlement-funds-iranian-bank-account-1': '/fa/europe/finland',
 };
 
+/** Locale-prefixed paths of withdrawn articles, for keeping them out of the sitemap. */
+export const RETIRED_ARTICLE_PATHS: ReadonlySet<string> = new Set(Object.keys(RETIRED_ARTICLES));
+
 /** A withdrawn article's URL -> its replacement; null otherwise. */
 export function retiredArticleTarget(pathname: string): string | null {
   return RETIRED_ARTICLES[pathname.replace(/\/+$/, '')] ?? null;
