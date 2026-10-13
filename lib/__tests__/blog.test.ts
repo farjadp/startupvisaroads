@@ -39,6 +39,7 @@ import {
   getSafeQuickFacts,
   isCanadaSuvTopic,
 } from '../blog';
+import { NOT_WITHDRAWN } from '../legacy-redirects';
 
 beforeEach(() => {
   for (const mock of Object.values(mocks)) mock.mockReset();
@@ -66,6 +67,7 @@ describe('locale-safe article queries', () => {
     expect(mocks.articleFindFirst).toHaveBeenNthCalledWith(1, {
       where: {
         NOT: { id: 'source' },
+        AND: [NOT_WITHDRAWN],
         status: 'PUBLISHED',
         locale: 'fa',
         categoryId: 'category',
@@ -75,6 +77,7 @@ describe('locale-safe article queries', () => {
     expect(mocks.articleFindFirst).toHaveBeenNthCalledWith(2, {
       where: {
         NOT: { id: 'source' },
+        AND: [NOT_WITHDRAWN],
         status: 'PUBLISHED',
         locale: 'fa',
       },

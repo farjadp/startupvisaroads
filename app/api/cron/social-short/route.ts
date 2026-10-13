@@ -19,6 +19,7 @@ import { authorisedCron } from '@/lib/cron-auth';
 import { shouldPostShort, pickForShortPost, explainNoPick } from '@/lib/social/pick-article';
 import { sendToChannel } from '@/lib/social/telegram';
 import { DESTINATIONS } from '@/lib/social/destinations';
+import { NOT_WITHDRAWN } from '@/lib/legacy-redirects';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 60;
@@ -35,7 +36,7 @@ export async function GET(req: NextRequest) {
   const locales = channel?.locales ?? ['fa'];
 
   const articles = await prisma.article.findMany({
-    where: { status: 'PUBLISHED', locale: { in: locales } },
+    where: { status: 'PUBLISHED', locale: { in: locales }, AND: [NOT_WITHDRAWN] },
     select: { id: true, slug: true, title: true, locale: true, keyTakeaway: true, excerpt: true, createdAt: true, coverImage: true },
     orderBy: { createdAt: 'desc' },
     take: 200,

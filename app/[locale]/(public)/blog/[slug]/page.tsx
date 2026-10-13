@@ -26,6 +26,7 @@ import {
 import { ScrollProgressBar, ShareButtons } from '@/components/blog/BlogClientHelper';
 import { faDate, isoDate } from '@/lib/fa/format';
 import { faCategoryLabel } from '@/lib/fa/categories';
+import { NOT_WITHDRAWN } from '@/lib/legacy-redirects';
 
 // Incrementally regenerate article pages (ISR) — fast, cacheable, SEO-friendly.
 export const revalidate = 3600;
@@ -33,7 +34,7 @@ export const revalidate = 3600;
 export async function generateStaticParams() {
   try {
     const articles = await prisma.article.findMany({
-      where: { status: 'PUBLISHED' },
+      where: { status: 'PUBLISHED', AND: [NOT_WITHDRAWN] },
       select: { slug: true, locale: true },
     });
     return articles.map((a) => ({ locale: a.locale === 'fa' ? 'fa' : 'en', slug: a.slug }));

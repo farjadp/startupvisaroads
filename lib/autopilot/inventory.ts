@@ -12,6 +12,7 @@ import prisma from '@/lib/prisma';
 import { ensureDefaultCategories } from '@/lib/categories';
 import type { Locale } from '@/lib/seo';
 import { tagsOf, type Tagged } from './diversity';
+import { NOT_WITHDRAWN } from '@/lib/legacy-redirects';
 
 export type LinkTarget = {
   path: string; // locale-agnostic, e.g. /pnp/ontario
@@ -136,7 +137,7 @@ export async function buildInventory(locale: Locale): Promise<Inventory> {
   const [cats, recent] = await Promise.all([
     prisma.category.findMany({ select: { name: true, slug: true }, orderBy: { name: 'asc' } }),
     prisma.article.findMany({
-      where: { status: 'PUBLISHED', locale },
+      where: { status: 'PUBLISHED', locale, AND: [NOT_WITHDRAWN] },
       select: { slug: true, title: true, topicSeed: true, category: { select: { name: true } } },
       orderBy: { createdAt: 'desc' },
       // Titles and categories only need the recent past; a spent keyword is

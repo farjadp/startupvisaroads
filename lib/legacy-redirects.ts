@@ -10,6 +10,8 @@
 // The root is left to next-intl: "/" is a real entry point, and choosing
 // between /en and /fa there is locale detection, not a legacy redirect.
 // ============================================================================
+import type { Prisma } from '@prisma/client';
+import { PRUNE_GONE, PRUNE_MERGED } from './blog-prune';
 
 /** Root-level routes that are not pages under a locale. */
 const LEAVE_ALONE = ['/admin', '/icon', '/apple-icon'];
@@ -39,10 +41,41 @@ const RETIRED_ARTICLES: Record<string, string> = {
   '/en/blog/comprehensive-guide-to-the-canada-startup-visa-requirements-processes-and-insights': '/en/startup-visa-canada',
 };
 
-/** Locale-prefixed paths of withdrawn articles, for keeping them out of the sitemap. */
-export const RETIRED_ARTICLE_PATHS: ReadonlySet<string> = new Set(Object.keys(RETIRED_ARTICLES));
+/** Withdrawn for being wrong, plus the October 2026 blog prune (lib/blog-prune.ts). */
+const REDIRECTED_ARTICLES: Record<string, string> = { ...RETIRED_ARTICLES, ...PRUNE_MERGED };
+
+/**
+ * Locale-prefixed paths of every article that no longer renders: redirected
+ * or gone. Nothing may link to or list these — the sitemap, the blog index,
+ * categories, RSS, related posts and the writer's link inventory all skip them.
+ */
+export const RETIRED_ARTICLE_PATHS: ReadonlySet<string> = new Set([...Object.keys(REDIRECTED_ARTICLES), ...PRUNE_GONE]);
 
 /** A withdrawn article's URL -> its replacement; null otherwise. */
 export function retiredArticleTarget(pathname: string): string | null {
-  return RETIRED_ARTICLES[pathname.replace(/\/+$/, '')] ?? null;
+  return REDIRECTED_ARTICLES[pathname.replace(/\/+$/, '')] ?? null;
 }
+
+/** True for an off-topic article taken down with no replacement (answers 410). */
+export function isGoneArticle(pathname: string): boolean {
+  return PRUNE_GONE.has(pathname.replace(/\/+$/, ''));
+}
+
+function slugsFor(locale: 'en' | 'fa'): string[] {
+  const prefix = `/${locale}/blog/`;
+  return [...RETIRED_ARTICLE_PATHS].filter((p) => p.startsWith(prefix)).map((p) => p.slice(prefix.length));
+}
+
+/**
+ * A Prisma `where` fragment that excludes withdrawn articles. The rows stay
+ * PUBLISHED in the database (restoring one is a one-line change), so every
+ * public query combines this with its own filter: `AND: [NOT_WITHDRAWN]`.
+ */
+export const NOT_WITHDRAWN: Prisma.ArticleWhereInput = {
+  NOT: {
+    OR: [
+      { locale: 'en', slug: { in: slugsFor('en') } },
+      { locale: 'fa', slug: { in: slugsFor('fa') } },
+    ],
+  },
+};
