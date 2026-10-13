@@ -87,6 +87,13 @@ export const PRUNE_MERGED: Record<string, string> = {
   '/en/blog/the-complete-guide-to-australias-subclass-858-national-innovation-visa': '/en/country/australia',
   '/en/blog/unlocking-your-business-potential-the-estonian-startup-visa': '/en/country',
   '/en/blog/comprehensive-guide-to-active-startup-visa-programs-globally': '/en/country',
+
+  // United Kingdom: added to scope on 13 Oct 2026 (Innovator Founder). These
+  // were 410s until the guide existed; Search Console shows ~80 impressions
+  // in 90 days on 'innovator founder visa' and 'endorsing bodies'.
+  '/en/blog/the-innovator-founder-visa-a-comprehensive-guide-for-aspiring-entrepreneurs-in-the-uk': '/en/uk/innovator-founder',
+  '/en/blog/exploring-the-uk-global-entrepreneur-programme-your-launchpad-to-global-expansion': '/en/uk/innovator-founder',
+  '/en/blog/navigating-the-uk-innovator-founder-and-scale-up-visa-endorsing-bodies': '/en/uk/innovator-founder',
 };
 
 /** Off-topic posts with no page to inherit them (410). */
@@ -103,9 +110,6 @@ export const PRUNE_GONE: ReadonlySet<string> = new Set([
   '/en/blog/the-ultimate-guide-to-renting-a-meeting-room-in-the-netherlands',
   // Routes and topics outside what we do.
   '/en/blog/streamlining-asylum-processes-how-the-ind-is-reducing-application-waiting-times',
-  '/en/blog/the-innovator-founder-visa-a-comprehensive-guide-for-aspiring-entrepreneurs-in-the-uk',
-  '/en/blog/exploring-the-uk-global-entrepreneur-programme-your-launchpad-to-global-expansion',
-  '/en/blog/navigating-the-uk-innovator-founder-and-scale-up-visa-endorsing-bodies',
   '/en/blog/navigating-european-expansion-choosing-between-the-uk-and-netherlands-for-startups',
   '/en/blog/visa-application-help-a-comprehensive-guide-for-success',
   '/en/blog/a-guide-to-canadas-latest-regulatory-developments-banking-appointments-and-environmental-protection',
