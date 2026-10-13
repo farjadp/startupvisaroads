@@ -18,6 +18,8 @@ import { officialSourcePromptForBrief } from './official-sources';
 import { decidePlannedPublication, enforceLinks, sameSubject, wordCountHtml } from './text';
 import { applyCitations, buildEvidence, gateFigures, recordEvidenceUse, type Evidence } from './evidence';
 import { classify, seedTags } from './diversity';
+import { closestOwnArticle, qualityVerdict, type OwnArticle } from './quality';
+import { ownCorpus } from './own-corpus';
 
 type Visual =
   | { type: 'PHOTO'; prompt: string; caption: string }
@@ -102,7 +104,7 @@ ${DIAGRAM_SPEC}
 
 Return JSON with ALL keys (article-language fields in ${lang}; summaryEn and slugEn always in English):
 {
-  "title": "statement or how-to, ≤ 70 chars, no colon-subtitle, no rhetorical question",
+  "title": "statement or how-to, ≤ 70 chars, no colon-subtitle, no rhetorical question, never opening with Comprehensive/Ultimate/Definitive or using Navigating/Mastering/Unlocking/Unveiling/Exploring/Demystifying/Leveraging or 'complete guide' (those titles are held as drafts)",
   "slugEn": "kebab-case ASCII slug from the English meaning of the title, ≤ 60 chars",
   "excerpt": "one or two sentences, no clickbait",
   "keyTakeaway": "40–60 words that answer the article's central question OUTRIGHT and standalone — no 'in this article', no pronoun referring to the title. This is the passage an answer engine quotes.",
@@ -157,6 +159,9 @@ type RunOpts = { publish?: boolean; dryRun?: boolean };
 
 /** How many extra briefs to plan, so a refused one does not empty the day. */
 const SPARES = 2;
+
+/** Bodies written earlier in the same run, so a run cannot repeat itself. */
+const writtenInRun = new WeakMap<GenerateResult, OwnArticle[]>();
 
 async function writeOne(brief: Brief, inv: Inventory, opts: RunOpts, result: GenerateResult): Promise<void> {
   try {
@@ -231,6 +236,26 @@ async function writeOne(brief: Brief, inv: Inventory, opts: RunOpts, result: Gen
       return;
     }
 
+    // The quality gate, after the title check and before any image is paid
+    // for: a repeat body is skipped; a thin body or a template title is kept
+    // as a DRAFT for a person to fix. See lib/autopilot/quality.ts.
+    const written = writtenInRun.get(result) ?? [];
+    writtenInRun.set(result, written);
+    const own = [...(await ownCorpus(inv.locale)), ...written];
+    const verdict = qualityVerdict({ title: d.title, words: wordCountHtml(body), min, closest: closestOwnArticle(body, own) });
+    if (verdict.skip) {
+      result.skipped.push({ title: d.title, reason: verdict.skip });
+      console.warn(`autopilot/writer: SKIPPED — "${d.title}" ${verdict.skip}`);
+      return;
+    }
+    let status = publication.status;
+    if (status === 'PUBLISHED' && verdict.draft.length) {
+      status = 'DRAFT';
+      result.warnings.push({ title: d.title, warning: `Publication downgraded to DRAFT: ${verdict.draft.join('; ')}` });
+      console.warn(`autopilot/writer: DRAFT (${verdict.draft.join('; ')}) — "${d.title}"`);
+    }
+    written.push({ title: d.title, content: body });
+
     const coverImage = opts.dryRun ? null : await generateBrandImage(d.coverImagePrompt, 'cover');
 
     if (opts.dryRun) {
@@ -260,7 +285,7 @@ async function writeOne(brief: Brief, inv: Inventory, opts: RunOpts, result: Gen
         topicSeed: `${seedTags(brief.family && brief.destination ? { family: brief.family, destination: brief.destination } : classify(`${brief.workingTitle} ${brief.primaryKeyword}`))}${brief.topicSlug ? `[topic:${brief.topicSlug}] ` : ''}${brief.primaryKeyword ? `[kw:${brief.primaryKeyword}] ` : ''}${brief.whyNow} — ${brief.angle}`,
         internalLinks: linked.links,
       },
-      { locale: inv.locale, status: publication.status },
+      { locale: inv.locale, status },
     );
     await recordEvidenceUse(article.id, evidence.pack, cited.used);
     result.created.push({ id: article.id, slug: article.slug, title: article.title });

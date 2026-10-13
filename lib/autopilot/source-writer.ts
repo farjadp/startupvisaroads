@@ -29,6 +29,8 @@ import { markDocument, pendingCount, writableDocumentById, writableDocuments, ty
 import { decidePlannedPublication, enforceLinks, sameSubject, wordCountHtml } from './text';
 import { applyCitations, buildEvidence, gateFigures, recordEvidenceUse, type Evidence } from './evidence';
 import { classify, seedTags } from './diversity';
+import { closestOwnArticle, qualityVerdict, type OwnArticle } from './quality';
+import { ownCorpus } from './own-corpus';
 import { draftMeta, placeVisuals, wordTarget } from './writer';
 import type { Brief } from './planner';
 
@@ -203,6 +205,8 @@ type RunOpts = {
  */
 export async function runFromSources(n: number, locale: Locale, opts: RunOpts = {}): Promise<GenerateResult & { notes: string[] }> {
   const result: GenerateResult & { notes: string[] } = { created: [], errors: [], skipped: [], warnings: [], notes: [] };
+  // Bodies this run has already written, so it cannot repeat itself.
+  const written: OwnArticle[] = [];
   const run = await prisma.autopilotRun.create({ data: { requested: n, locale, mode: 'source', notes: opts.dryRun ? 'dry-run' : null } });
 
   let inv: Inventory;
@@ -356,6 +360,27 @@ export async function runFromSources(n: number, locale: Locale, opts: RunOpts = 
         continue;
       }
 
+      // Same quality gate as the planned writer (lib/autopilot/quality.ts).
+      const verdict = qualityVerdict({
+        title: d.title,
+        words: wordCountHtml(body),
+        min,
+        closest: closestOwnArticle(body, [...(await ownCorpus(inv.locale)), ...written]),
+      });
+      if (verdict.skip) {
+        if (!opts.dryRun) await markDocument(article.documentId, 'ignored', verdict.skip);
+        result.skipped.push({ title: d.title, reason: verdict.skip });
+        console.warn(`autopilot/source-writer: SKIPPED — "${d.title}" ${verdict.skip}`);
+        continue;
+      }
+      let status = publication.status;
+      if (status === 'PUBLISHED' && verdict.draft.length) {
+        status = 'DRAFT';
+        result.warnings.push({ title: d.title, warning: `Publication downgraded to DRAFT: ${verdict.draft.join('; ')}` });
+        console.warn(`autopilot/source-writer: DRAFT (${verdict.draft.join('; ')}) — "${d.title}"`);
+      }
+      written.push({ title: d.title, content: body });
+
       const coverImage = await generateBrandImage(d.coverImagePrompt, 'cover');
 
       const created = await createArticleFromPayload(
@@ -377,7 +402,7 @@ export async function runFromSources(n: number, locale: Locale, opts: RunOpts = 
         // Same gate as the planned writer: a piece whose only sourcing is a
         // secondary outlet (cicnews.com is an immigration firm's own marketing
         // property) must not auto-publish as though it were authoritative.
-        { locale: inv.locale, status: publication.status },
+        { locale: inv.locale, status },
       );
       await markDocument(article.documentId, 'used', brief.angle, created.id);
       await recordEvidenceUse(created.id, evidence.pack, cited.used);
