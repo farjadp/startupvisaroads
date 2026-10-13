@@ -8,7 +8,8 @@ import * as cheerio from 'cheerio';
 import { Link } from '@/navigation';
 import JsonLd from '@/components/JsonLd';
 import { sanitizeHtml } from '@/lib/sanitize';
-import { SITE_URL, articleJsonLd, breadcrumbJsonLd, buildMetadata, faqJsonLd, isDataImageUrl, selfLocalizedAlternates, stripHtml } from '@/lib/seo';
+import { SITE_URL, articleJsonLd, breadcrumbJsonLd, buildMetadata, faqJsonLd, isDataImageUrl, isReviewed, reviewedPageJsonLd, selfLocalizedAlternates, stripHtml } from '@/lib/seo';
+import { REVIEWER } from '@/content/contact';
 import { blogType } from '@/lib/fa/blog-type';
 import SuvStatusNotice from '@/components/SuvStatusNotice';
 import { suvPillarStatus } from '@/content/fa/suv-status';
@@ -240,6 +241,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ local
   }
   const faqs = structuredFaq;
   const keyTakeaway = (article as { keyTakeaway?: string | null }).keyTakeaway ?? null;
+  const reviewed = isReviewed(article.createdAt);
   const structuredData = [
     articleJsonLd({
       title: article.title,
@@ -259,6 +261,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ local
       { name: article.title, url: articleUrl },
     ]),
     faqJsonLd(faqs, articleLocale),
+    ...(reviewed ? [reviewedPageJsonLd(articleUrl, articleLocale)] : []),
   ];
 
   return (
@@ -306,6 +309,14 @@ export default async function BlogPostPage({ params }: { params: Promise<{ local
         </h1>
         <div className={`${T.body} text-[#1a1a1a]/60 text-sm flex flex-wrap items-center justify-center md:justify-start gap-x-3 gap-y-1`}>
           <span>{t.byline} <strong className="text-[#1a1a1a]">{t.author}</strong></span>
+          {reviewed && (
+            <>
+              <span aria-hidden="true">·</span>
+              <span title={isRtl ? REVIEWER.bioFa : REVIEWER.bio}>
+                {isRtl ? 'بازبینی:' : 'Reviewed by'} <strong className="text-[#1a1a1a]">{isRtl ? REVIEWER.nameFa : REVIEWER.name}</strong>, {isRtl ? REVIEWER.roleFa : REVIEWER.role}
+              </span>
+            </>
+          )}
           <span aria-hidden="true">·</span>
           <span>
             {t.publishedOn}:{' '}

@@ -17,6 +17,8 @@ import {
   selfLocalizedAlternates,
   stripHtml,
   brandedTitle,
+  isReviewed,
+  reviewedPageJsonLd,
 } from '../seo';
 
 describe('buildAlternates', () => {
@@ -245,5 +247,21 @@ describe('brandedTitle', () => {
   it('keeps a long title unbranded rather than truncated', () => {
     const t = 'Italia Startup Visa: Thirty Days, And A Cap Nobody Mentions';
     expect(brandedTitle(t)).toBe(t);
+  });
+});
+
+describe('article review credit', () => {
+  const now = new Date('2026-10-13T12:00:00Z');
+
+  it('is claimed only once the post-publication review window has passed', () => {
+    expect(isReviewed('2026-10-12T12:00:00Z', now)).toBe(false);
+    expect(isReviewed('2026-10-06T12:00:00Z', now)).toBe(true);
+  });
+
+  it('puts the reviewer on the WebPage the article is the main entity of', () => {
+    const page = reviewedPageJsonLd('https://visaroads.com/en/blog/x', 'en') as { '@id': string; reviewedBy: { name: string } };
+    expect(page['@id']).toBe('https://visaroads.com/en/blog/x#webpage');
+    expect(page.reviewedBy.name).toBe('Roya Jahanbin');
+    expect((reviewedPageJsonLd('https://visaroads.com/fa/blog/y', 'fa') as { reviewedBy: { name: string } }).reviewedBy.name).toBe('رویا جهان‌بین');
   });
 });

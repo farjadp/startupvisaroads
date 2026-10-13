@@ -6,7 +6,7 @@
 
 import type { Metadata } from 'next';
 import { FA_PAIRED, EN_TO_FA, isFaPath, type FaPath } from '@/lib/fa/paths';
-import { FOUNDER, MAIN_CONTACT } from '@/content/contact';
+import { FOUNDER, MAIN_CONTACT, REVIEWER, REVIEW_LAG_DAYS } from '@/content/contact';
 
 // Resolution order:
 //  1. SITE_URL              — server runtime env (override dynamic routes on
@@ -69,6 +69,7 @@ export const DEFAULT_OG_IMAGE = defaultOgImage(DEFAULT_LOCALE);
 export const LOGO_URL = `${SITE_URL}/img/VisaRoads-Logo13.png`;
 export const ORGANIZATION_ID = `${SITE_URL}/#organization`;
 export const FOUNDER_ID = `${SITE_URL}/#founder`;
+export const REVIEWER_ID = `${SITE_URL}/#reviewer`;
 export const WEBSITE_ID = `${SITE_URL}/#website`;
 export const LOGO_ID = `${SITE_URL}/#logo`;
 
@@ -377,6 +378,33 @@ export function articleJsonLd(a: ArticleJsonLdInput) {
       url: `${SITE_URL}/${a.locale === 'fa' ? 'fa' : 'en'}/blog`,
     },
     publisher: { '@id': ORGANIZATION_ID },
+  };
+}
+
+/**
+ * True once an article is old enough to have had its post-publication review
+ * (REVIEW_LAG_DAYS). A newer article does not claim a review it has not had.
+ */
+export function isReviewed(publishedAt: string | Date, now: Date = new Date()): boolean {
+  return now.getTime() - new Date(publishedAt).getTime() >= REVIEW_LAG_DAYS * 86_400_000;
+}
+
+/** The article's WebPage node, carrying the reviewer. Pairs with articleJsonLd's mainEntityOfPage. */
+export function reviewedPageJsonLd(url: string, locale: string) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    '@id': `${url}#webpage`,
+    url,
+    inLanguage: schemaLanguage(locale),
+    isPartOf: { '@id': WEBSITE_ID },
+    reviewedBy: {
+      '@type': 'Person',
+      '@id': REVIEWER_ID,
+      name: locale === 'fa' ? REVIEWER.nameFa : REVIEWER.name,
+      jobTitle: locale === 'fa' ? REVIEWER.roleFa : REVIEWER.role,
+      description: locale === 'fa' ? REVIEWER.bioFa : REVIEWER.bio,
+    },
   };
 }
 
