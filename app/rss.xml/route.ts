@@ -1,5 +1,6 @@
 import prisma from '@/lib/prisma';
 import { SITE_URL, SITE_NAME, stripHtml } from '@/lib/seo';
+import { NOT_WITHDRAWN } from '@/lib/legacy-redirects';
 
 export const revalidate = 600;
 
@@ -14,7 +15,7 @@ function escapeXml(value: string): string {
 
 async function buildFeed(locale: 'en' | 'fa'): Promise<string> {
   const articles = await prisma.article.findMany({
-    where: { status: 'PUBLISHED', locale },
+    where: { status: 'PUBLISHED', locale, AND: [NOT_WITHDRAWN] },
     orderBy: { createdAt: 'desc' },
     take: 20,
     select: { slug: true, title: true, excerpt: true, createdAt: true, updatedAt: true },

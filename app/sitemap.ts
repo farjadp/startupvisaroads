@@ -3,9 +3,12 @@ import prisma from '@/lib/prisma';
 import { SITE_URL } from '@/lib/seo';
 import { FA_PATHS, FA_PAIRED, EN_TO_FA, type FaPath } from '@/lib/fa/paths';
 import { EN_INDEXABLE_PATHS } from '@/lib/pageMeta';
-import { RETIRED_ARTICLE_PATHS } from '@/lib/legacy-redirects';
+import { NOT_WITHDRAWN } from '@/lib/legacy-redirects';
 
-export const revalidate = 600;
+// Rendered per request. With ISR the build-time version (no database in the
+// Docker build, so no articles) was served to the first visitor after every
+// deploy; if that visitor was Googlebot, it saw a sitemap with no blog.
+export const dynamic = 'force-dynamic';
 
 /**
  * hreflang alternates for one sitemap entry. /fa is not a mirror of /en, so
@@ -38,15 +41,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Published blog articles (each in its own locale)
   try {
     const articles = await prisma.article.findMany({
-      where: { status: 'PUBLISHED' },
+      where: { status: 'PUBLISHED', AND: [NOT_WITHDRAWN] },
       select: { slug: true, updatedAt: true, locale: true },
       orderBy: { updatedAt: 'desc' },
     });
     for (const a of articles) {
       const locale = a.locale === 'fa' ? 'fa' : 'en';
-      // Withdrawn articles still exist as rows but 301 away; listing them
-      // would hand Google a redirect as a canonical URL.
-      if (RETIRED_ARTICLE_PATHS.has(`/${locale}/blog/${a.slug}`)) continue;
       entries.push({
         url: `${SITE_URL}/${locale}/blog/${a.slug}`,
         lastModified: a.updatedAt,
@@ -57,11 +57,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
     // Category archives
     const categories = await prisma.category.findMany({
-      where: { articles: { some: { status: 'PUBLISHED' } } },
+      where: { articles: { some: { status: 'PUBLISHED', AND: [NOT_WITHDRAWN] } } },
       select: {
         slug: true,
         articles: {
-          where: { status: 'PUBLISHED' },
+          where: { status: 'PUBLISHED', AND: [NOT_WITHDRAWN] },
           select: { locale: true, updatedAt: true },
         },
       },

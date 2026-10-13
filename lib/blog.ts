@@ -1,6 +1,7 @@
 import { Prisma } from '@prisma/client';
 import prisma from '@/lib/prisma';
 import { toPersianDigits } from '@/lib/fa/format';
+import { NOT_WITHDRAWN } from '@/lib/legacy-redirects';
 
 type CategoryRecord = {
   id: string;
@@ -303,6 +304,7 @@ export async function getBlogIndexData({
     const whereClause: Prisma.ArticleWhereInput = {
       status: 'PUBLISHED',
       locale,
+      AND: [NOT_WITHDRAWN],
       ...(activeCategorySlug ? { category: { slug: activeCategorySlug } } : {}),
     };
 
@@ -445,6 +447,7 @@ export async function getRelatedArticle(article: {
       await prisma.article.findFirst({
         where: {
           NOT: { id: article.id },
+          AND: [NOT_WITHDRAWN],
           status: 'PUBLISHED',
           locale: article.locale,
           ...(article.categoryId ? { categoryId: article.categoryId } : {}),
@@ -455,6 +458,7 @@ export async function getRelatedArticle(article: {
       await prisma.article.findFirst({
         where: {
           NOT: { id: article.id },
+          AND: [NOT_WITHDRAWN],
           status: 'PUBLISHED',
           locale: article.locale,
         },

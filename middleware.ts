@@ -3,7 +3,7 @@ import createMiddleware from 'next-intl/middleware';
 import { routing } from './routing';
 import { verifyJWT, getJwtSecret } from './lib/auth';
 import { faRedirectTarget } from './lib/fa/redirects';
-import { retiredArticleTarget, unprefixedTarget } from './lib/legacy-redirects';
+import { isGoneArticle, retiredArticleTarget, unprefixedTarget } from './lib/legacy-redirects';
 
 const intlMiddleware = createMiddleware(routing);
 
@@ -65,6 +65,12 @@ export default async function middleware(request: NextRequest) {
   const faTarget = faRedirectTarget(pathname);
   if (faTarget) {
     return NextResponse.redirect(new URL(faTarget, request.url), 301);
+  }
+
+  // An off-topic article taken down with nothing to replace it: 410, so
+  // Google drops it rather than reading a redirect to the blog as a soft 404.
+  if (isGoneArticle(pathname)) {
+    return new NextResponse('This article has been removed.', { status: 410, headers: { 'content-type': 'text/plain; charset=utf-8', 'x-robots-tag': 'noindex' } });
   }
 
   // A withdrawn article goes to the one that corrects it.

@@ -16,6 +16,7 @@ import prisma from '@/lib/prisma';
 import FaHome from '@/components/fa/FaHome';
 import { home as faHome } from '@/content/fa/home';
 import { faImageUrl } from '@/lib/fa/content';
+import { NOT_WITHDRAWN } from '@/lib/legacy-redirects';
 
 // The journal strip below reads the database. Without this the page is
 // prerendered once at build time — where Prisma cannot reach the DB — and the
@@ -45,7 +46,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
    let latestArticles: any[] = [];
    try {
       latestArticles = await prisma.article.findMany({
-         where: { status: 'PUBLISHED', locale },
+         where: { status: 'PUBLISHED', locale, AND: [NOT_WITHDRAWN] },
          orderBy: { createdAt: 'desc' },
          take: 3,
          include: { category: true }
