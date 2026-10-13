@@ -54,7 +54,9 @@ describe('RETIRED_ARTICLE_PATHS', () => {
   it('lists exactly the withdrawn articles, so the sitemap can skip them', () => {
     expect(RETIRED_ARTICLE_PATHS.has('/fa/blog/startup-visa-settlement-funds-iranian-bank-account-1')).toBe(true);
     expect(RETIRED_ARTICLE_PATHS.has('/fa/blog/startup-visa-settlement-funds-proof-from-iranian-account')).toBe(true);
-    expect(RETIRED_ARTICLE_PATHS.has('/fa/blog/startup-visa-settlement-funds-iranian-bank-account')).toBe(false);
+    expect(RETIRED_ARTICLE_PATHS.has('/fa/blog/startup-visa-settlement-funds-iranian-bank-account')).toBe(true);
+    expect(RETIRED_ARTICLE_PATHS.has('/fa/blog/startup-visa-settlement-funds-proof-iranian-bank-account')).toBe(true);
+    expect(RETIRED_ARTICLE_PATHS.has('/fa/blog/startup-visa-proof-of-funds-denmark-finland-official')).toBe(false);
   });
 });
 
