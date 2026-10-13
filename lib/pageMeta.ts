@@ -30,7 +30,6 @@ export const EN_INDEXABLE_PATHS = [
   '/team',
   '/blog',
   '/startup-visa-canada',
-  '/startupworkpermit',
   '/pnp',
   '/pnp/ontario',
   '/pnp/bc',
@@ -106,6 +105,10 @@ const META: Record<string, Entry> = {
   '/startupworkpermit': {
     en: { title: 'Canada Startup Work Permit', description: 'The Startup Visa is paused and closed to new applications. For permanent residence applications already filed: the open work permit that lets you operate your business in Canada while yours is processed.' },
     fa: { title: 'مجوز کار استارتاپی کانادا', description: 'استارتاپ ویزا متوقف است و پرونده‌ی جدید پذیرفته نمی‌شود. این صفحه برای پرونده‌های اقامت دائم ثبت‌شده است: مجوز کار بازی که اجازه می‌دهد هم‌زمان با بررسی پرونده، کسب‌وکارتان را در کانادا اداره کنید.' },
+    // A Persian intake form for clients with a filed SUV case, served at an
+    // English URL. Useful to them, not a search page, and the wrong language
+    // for /en: kept out of the index and the sitemap.
+    noindex: true,
   },
   '/pnp': {
     en: { title: 'Provincial Nominee Programs (PNP)', description: 'Compare Canada\'s Provincial Nominee Programs and entrepreneur streams to find the province that fits your capital, skills, and goals.' },

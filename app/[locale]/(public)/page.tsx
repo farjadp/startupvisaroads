@@ -17,6 +17,8 @@ import FaHome from '@/components/fa/FaHome';
 import { home as faHome } from '@/content/fa/home';
 import { faImageUrl } from '@/lib/fa/content';
 import { NOT_WITHDRAWN } from '@/lib/legacy-redirects';
+import JsonLd from '@/components/JsonLd';
+import { SITE_URL, faqJsonLd, webPageJsonLd } from '@/lib/seo';
 
 // The journal strip below reads the database. Without this the page is
 // prerendered once at build time — where Prisma cannot reach the DB — and the
@@ -37,6 +39,15 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
       : 'We mentor startup teams through startup visa and entrepreneur immigration routes in Denmark, the Netherlands, Finland and Canada: business plan, financial model, pitch deck and interview practice. Not immigration lawyers — we build the business case the evaluating body reads.',
   });
 }
+
+// Rendered on the page and emitted as FAQPage, so both say the same thing.
+// No VisaRoads figure appears here, by rule: thresholds are the authorities'.
+const HOME_FAQ = [
+   { q: "What is the minimum capital required?", a: "Each programme sets its own thresholds, and the official figures are on the authority's own site. Our route guides quote them with the source beside each number: Alberta's Rural Entrepreneur Stream, for example, asks for CAD 300,000 of net worth, Manitoba's Entrepreneur Pathway for CAD 500,000." },
+   { q: "Do you guarantee success?", a: "No one ethically can. We audit your case before applying, and we turn down files we do not think are ready. We do not quote odds." },
+   { q: "Can I bring my co-founders?", a: "Often, yes, but each programme sets its own rules on team size and on who counts as a founder. Each route guide says what that programme's authority allows." },
+   { q: "How long is the process?", a: "It depends entirely on the route, and we will not invent a number. Where an authority publishes a processing time we will show you theirs; where it does not — as is the case for Canada's Start-up Visa, which is paused — there is no figure to give." },
+];
 
 export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
    const { locale } = await params;
@@ -62,6 +73,12 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
 
    return (
       <div className="w-full px-4 md:px-8 border-x border-[#1a1a1a]/10 max-w-[1400px] mx-auto bg-[#F2F0E9]">
+         <JsonLd
+            data={[
+               webPageJsonLd({ title: 'Startup Visa mentorship', description: t('subtitle'), url: `${SITE_URL}/en`, locale: 'en' }),
+               faqJsonLd(HOME_FAQ.map((f) => ({ question: f.q, answer: f.a })), 'en'),
+            ]}
+         />
 
          {/* =========================================
           1. HERO: Big & Bold (No Images)
@@ -159,6 +176,19 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
                   </Link>
                ))}
             </div>
+            {/* Canada means the five provincial entrepreneur streams; each has its own guide. */}
+            <nav aria-label="Canada entrepreneur provinces" className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-3 font-sans text-sm">
+               <span className="text-xs font-bold uppercase tracking-widest text-[#1a1a1a]/50">Canada · Entrepreneur PNP</span>
+               {[
+                  { name: 'Alberta', href: '/pnp/alberta' },
+                  { name: 'Manitoba', href: '/pnp/manitoba' },
+                  { name: 'Nova Scotia', href: '/pnp/nova-scotia' },
+                  { name: 'New Brunswick', href: '/pnp/new-brunswick' },
+                  { name: 'Prince Edward Island', href: '/pnp/pei' },
+               ].map((p) => (
+                  <Link key={p.href} href={p.href} className="underline decoration-[#1a1a1a]/30 underline-offset-4 hover:decoration-[#1a1a1a]">{p.name}</Link>
+               ))}
+            </nav>
          </section>
 
          {/* =========================================
@@ -301,12 +331,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
                <div className="space-y-0">
                   <span className="font-sans text-xs font-bold text-[#CCFF00] bg-black px-2 py-1 mb-6 inline-block">QUERIES</span>
 
-                  {[
-                     { q: "What is the minimum capital required?", a: "Each programme sets its own rules, and the official figures are on the authority's own site. Separately, as our own client-profile guidance, we look for founders with roughly $50k to $150k in liquid assets behind them — that is our threshold, not a government requirement." },
-                     { q: "Do you guarantee success?", a: "No one ethically can. We audit your case before applying, and we turn down files we do not think are ready. We do not quote odds." },
-                     { q: "Can I bring my co-founders?", a: "Yes. Most programs allow up to 5 co-founders and their families on a single startup application." },
-                     { q: "How long is the process?", a: "It depends entirely on the route, and we will not invent a number. Where an authority publishes a processing time we will show you theirs; where it does not — as is the case for Canada's Start-up Visa, which is paused — there is no figure to give." }
-                  ].map((item, i) => (
+                  {HOME_FAQ.map((item, i) => (
                      <div key={i} className="border-b border-[#1a1a1a]/20 py-8 group">
                         <details className="cursor-pointer">
                            <summary className="list-none flex justify-between items-center font-serif text-2xl hover:text-[#555] transition-colors">

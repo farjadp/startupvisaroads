@@ -4,6 +4,7 @@ import { SITE_URL } from '@/lib/seo';
 import { FA_PATHS, FA_PAIRED, EN_TO_FA, type FaPath } from '@/lib/fa/paths';
 import { EN_INDEXABLE_PATHS } from '@/lib/pageMeta';
 import { NOT_WITHDRAWN } from '@/lib/legacy-redirects';
+import { MIN_INDEXABLE_CATEGORY_ARTICLES } from '@/lib/blog';
 
 // Rendered per request. With ISR the build-time version (no database in the
 // Docker build, so no articles) was served to the first visitor after every
@@ -67,7 +68,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       },
     });
     for (const category of categories) {
-      const locales = [...new Set(category.articles.map((article) => article.locale === 'fa' ? 'fa' : 'en'))];
+      // Only locales where the archive is substantial enough to index.
+      const countIn = (l: string) => category.articles.filter((a) => (a.locale === 'fa' ? 'fa' : 'en') === l).length;
+      const locales = (['en', 'fa'] as const).filter((l) => countIn(l) >= MIN_INDEXABLE_CATEGORY_ARTICLES);
       const languages = Object.fromEntries(
         locales.map((locale) => [locale, `${SITE_URL}/${locale}/blog/category/${category.slug}`]),
       );

@@ -6,7 +6,7 @@
 
 import type { Metadata } from 'next';
 import { FA_PAIRED, EN_TO_FA, isFaPath, type FaPath } from '@/lib/fa/paths';
-import { MAIN_CONTACT } from '@/content/contact';
+import { FOUNDER, MAIN_CONTACT } from '@/content/contact';
 
 // Resolution order:
 //  1. SITE_URL              — server runtime env (override dynamic routes on
@@ -58,6 +58,7 @@ export function defaultOgImage(locale: string): string {
 export const DEFAULT_OG_IMAGE = defaultOgImage(DEFAULT_LOCALE);
 export const LOGO_URL = `${SITE_URL}/img/VisaRoads-Logo13.png`;
 export const ORGANIZATION_ID = `${SITE_URL}/#organization`;
+export const FOUNDER_ID = `${SITE_URL}/#founder`;
 export const WEBSITE_ID = `${SITE_URL}/#website`;
 export const LOGO_ID = `${SITE_URL}/#logo`;
 
@@ -216,6 +217,8 @@ export function organizationJsonLd() {
     '@type': 'Organization',
     '@id': ORGANIZATION_ID,
     name: SITE_NAME,
+    // The brand is written three ways in the wild; all three are this entity.
+    alternateName: ['VisaRoads', 'Visa Roads'],
     url: SITE_URL,
     logo: {
       '@type': 'ImageObject',
@@ -226,7 +229,10 @@ export function organizationJsonLd() {
       height: 2000,
     },
     description: 'Mentorship and startup readiness for Startup Visa and global migration programs.',
-    sameAs: ASHAVID.sameAs,
+    // Ashavid's profiles describe the parent company, not this brand, so they
+    // sit under parentOrganization below rather than in our own sameAs.
+    founder: { '@id': FOUNDER_ID },
+    knowsAbout: ['Startup visa', 'Entrepreneur immigration', 'Provincial Nominee Program', 'Start-up Denmark', 'Netherlands startup visa', 'Finland startup permit'],
     email: MAIN_CONTACT.email,
     telephone: MAIN_CONTACT.phoneE164,
     contactPoint: [
@@ -256,6 +262,21 @@ export function organizationJsonLd() {
       url: ASHAVID.url,
       sameAs: ASHAVID.sameAs,
     },
+  };
+}
+
+/** The founder, as a Person the Organization and the site's videos point to. */
+export function founderJsonLd() {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Person',
+    '@id': FOUNDER_ID,
+    name: FOUNDER.name,
+    alternateName: FOUNDER.shortName,
+    jobTitle: FOUNDER.jobTitle,
+    worksFor: { '@id': ORGANIZATION_ID },
+    url: `${SITE_URL}/en/about`,
+    sameAs: [FOUNDER.linkedin, FOUNDER.youtube, FOUNDER.instagram, FOUNDER.telegram],
   };
 }
 

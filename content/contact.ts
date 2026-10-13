@@ -21,3 +21,20 @@ export const MAIN_CONTACT = {
   youtube: 'https://www.youtube.com/@ashavidgroup',
   youtubeHandle: '@ashavidgroup',
 };
+
+/**
+ * The founder's own public profiles, as already linked from the Persian site
+ * and the video schema. Used for the founder's schema.org Person `sameAs`,
+ * which is what lets an answer engine tie "Farjad" on this site to the same
+ * person on LinkedIn and YouTube.
+ */
+export const FOUNDER = {
+  name: 'Farjad Pourmohammad',
+  /** As the team page shows it. */
+  shortName: 'Farjad P.M.',
+  jobTitle: 'Startup Mentor & Founder of Ashavid',
+  linkedin: 'https://www.linkedin.com/in/farjadpourmohammad/',
+  youtube: 'https://www.youtube.com/@FarjadTalks',
+  instagram: 'https://instagram.com/FarjadTalks',
+  telegram: 'https://t.me/farjadtalks',
+};

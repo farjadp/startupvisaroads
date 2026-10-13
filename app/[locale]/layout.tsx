@@ -14,7 +14,7 @@ import { notFound } from 'next/navigation';
 import { routing } from '@/routing';
 import JsonLd from '@/components/JsonLd';
 import OpenAIPixel from '@/components/OpenAIPixel';
-import { SITE_URL, SITE_NAME, defaultOgImage, buildAlternates, ogLocale, organizationJsonLd, websiteJsonLd } from '@/lib/seo';
+import { SITE_URL, SITE_NAME, defaultOgImage, buildAlternates, ogLocale, organizationJsonLd, founderJsonLd, websiteJsonLd } from '@/lib/seo';
 import Analytics from '@/components/Analytics';
 
 // English Fonts
@@ -115,7 +115,7 @@ export default async function RootLayout({
   return (
     <html lang={locale} dir={isRtl ? 'rtl' : 'ltr'} className={fontVariables}>
       <body className={`bg-[#F2F0E9] text-[#1a1a1a] min-h-screen flex flex-col antialiased selection:bg-[#CCFF00] selection:text-black ${isRtl ? 'font-vazir' : 'font-sans'}`}>
-        <JsonLd data={[organizationJsonLd(), websiteJsonLd()]} />
+        <JsonLd data={[organizationJsonLd(), founderJsonLd(), websiteJsonLd()]} />
         <OpenAIPixel />
         <NextIntlClientProvider messages={messages}>
           {/* Fixed Grain Overlay */}
