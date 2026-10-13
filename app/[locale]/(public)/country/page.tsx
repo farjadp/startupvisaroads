@@ -35,9 +35,20 @@ const COUNTRIES = [
     name: 'Canada', 
     slug: 'canada',
     tag: 'The North', 
-    desc: 'Strategic entry via SUV & ICT. The gateway to the North American market.',
+    desc: 'Provincial entrepreneur streams in five provinces. The federal Start-up Visa is paused.',
     color: 'hover:border-[#D80027] hover:bg-[#D80027] hover:text-white',
     iconColor: 'text-[#D80027]'
+  },
+  {
+    id: 'uk',
+    name: 'United Kingdom',
+    slug: 'uk',
+    // The UK guide lives under /uk, not /country.
+    href: '/uk/innovator-founder',
+    tag: 'Innovator Founder',
+    desc: 'Endorsement-led founder visa. No minimum investment, settlement after three years.',
+    color: 'hover:border-[#012169] hover:bg-[#012169] hover:text-white',
+    iconColor: 'text-[#012169]'
   },
   { 
     id: 'uae', 
@@ -143,7 +154,7 @@ export default function CountryIndexPage() {
             
             {COUNTRIES.map((country) => (
                <Link 
-                  href={`/country/${country.slug}`} 
+                  href={'href' in country && country.href ? country.href : `/country/${country.slug}`} 
                   key={country.id}
                   className={`group border-r border-b border-[#1a1a1a]/10 p-12 min-h-[400px] flex flex-col justify-between transition-all duration-500 ${country.color}`}
                >

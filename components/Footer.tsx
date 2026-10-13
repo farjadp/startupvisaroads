@@ -31,6 +31,7 @@ const EN_LINKS = {
     { href: '/country/finland', label: 'Finland (SUV)' },
     { href: '/country/italy', label: 'Italy (Startup Visa)' },
     { href: '/country/usa', label: 'USA (founder routes)' },
+    { href: '/uk/innovator-founder', label: 'UK (Innovator Founder)' },
   ],
   strategy: [
     { href: '/services', label: 'Advisory' },
