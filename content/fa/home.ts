@@ -10,7 +10,7 @@
 //   · every path in `href` must be in FA_PATHS
 // ============================================================================
 import type { FaCta, FaFaq } from '@/lib/fa/content';
-import { MAIN_CONTACT } from '@/content/contact';
+import { FOUNDER, MAIN_CONTACT } from '@/content/contact';
 
 export const TELEGRAM_URL = 'https://t.me/farjadtalks';
 export const TELEGRAM_CHANNEL_URL = 'https://t.me/Heros_Journey';
@@ -23,8 +23,8 @@ export const CONTACT = {
   whatsapp: MAIN_CONTACT.whatsapp,
   tel: MAIN_CONTACT.tel,
   email: MAIN_CONTACT.email,
-  linkedin: 'https://www.linkedin.com/in/farjadpourmohammad/',
-  instagram: 'https://instagram.com/FarjadTalks',
+  linkedin: FOUNDER.linkedin,
+  instagram: FOUNDER.instagram,
   youtube: MAIN_CONTACT.youtube,
   location: 'تورنتو، کانادا',
 };

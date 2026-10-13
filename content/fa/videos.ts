@@ -7,6 +7,8 @@
 // ============================================================================
 
 import { toPersianDigits } from '@/lib/fa/format';
+import { FOUNDER_ID } from '@/lib/seo';
+import { FOUNDER } from '@/content/contact';
 
 export type VideoTag =
   | 'suv' | 'pnp' | 'new-brunswick' | 'ontario' | 'bc' | 'netherlands' | 'denmark' | 'finland' | 'turkey' | 'europe'
@@ -113,6 +115,6 @@ export function videoJsonLd(videos: Video[]) {
     contentUrl: watchUrl(v.id),
     embedUrl: `https://www.youtube-nocookie.com/embed/${v.id}`,
     ...(v.published ? { uploadDate: v.published } : {}),
-    author: { '@type': 'Person', name: 'Farjad Pourmohammad', url: CHANNEL_URL },
+    author: { '@type': 'Person', '@id': FOUNDER_ID, name: FOUNDER.name, url: CHANNEL_URL },
   }));
 }
