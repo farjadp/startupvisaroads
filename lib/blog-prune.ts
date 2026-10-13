@@ -13,6 +13,13 @@
 // 404. Both sets are kept out of the sitemap.
 //
 // To restore a post, delete its line. Nothing is deleted from the database.
+//
+// Restored on 2026-10-13 after Search Console became readable: the C10
+// Significant Benefit post carried the site's largest query cluster (about
+// 170 impressions in 90 days across "c10 significant benefit permit", "c10
+// work permit canada" and a dozen variants). Thin, but the only page we have
+// for that demand, and C10 is a Canadian entrepreneur work permit. It needs
+// a proper guide, not a 410.
 // ============================================================================
 
 /** Post path -> the page that replaces it (301). */
@@ -99,5 +106,4 @@ export const PRUNE_GONE: ReadonlySet<string> = new Set([
   '/en/blog/visa-application-help-a-comprehensive-guide-for-success',
   '/en/blog/a-guide-to-canadas-latest-regulatory-developments-banking-appointments-and-environmental-protection',
   '/en/blog/quebecs-peq-program-reopening-in-2026-key-details-and-steps-to-apply',
-  '/en/blog/understanding-the-c10-significant-benefit-work-permit-a-strategic-lmia-exempt-pathway',
 ]);
