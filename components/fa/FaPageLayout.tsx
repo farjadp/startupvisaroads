@@ -288,6 +288,24 @@ export default function FaPageLayout({
               </Reveal>
             )}
 
+            {page.sources && page.sources.length > 0 && (
+              <section id="sources" className="scroll-mt-28 border-t border-[#1a1a1a]/20 pt-10">
+                <h2 className="font-estedad font-black text-2xl md:text-3xl mb-2">منابع رسمی</h2>
+                <p className="text-sm text-[#1a1a1a]/60 mb-6">
+                  همه‌ی ارقام این صفحه در تاریخ <time dateTime={isoDate(page.updated)}>{faDate(page.updated)}</time> با این صفحه‌ها تطبیق داده شده است. دولت‌ها آستانه‌ها را بی‌اعلام تغییر می‌دهند؛ پیش از هر تصمیم، منبع را خودتان ببینید.
+                </p>
+                <ul className="space-y-3" dir="ltr">
+                  {page.sources.map((s) => (
+                    <li key={s.url} className="text-start">
+                      <a href={s.url} target="_blank" rel="noopener noreferrer" className="underline decoration-[#1a1a1a]/30 underline-offset-4 hover:decoration-[#1a1a1a] break-words">
+                        {s.label}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            )}
+
             {page.downloads && page.downloads.length > 0 && (
               <Reveal as="div" className="pt-4">
                 <Downloads

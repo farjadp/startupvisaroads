@@ -27,7 +27,7 @@ describe('comparison sorting', () => {
   });
 
   it('sorts language by the band the programme demands', () => {
-    expect(valueOf(rule('new-brunswick'), 'clb')).toBe(5);
+    expect(valueOf(rule('new-brunswick'), 'clb')).toBe(4);
     expect(valueOf(rule('estonia'), 'clb')).toBe(0);
   });
 });

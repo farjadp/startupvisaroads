@@ -23,6 +23,7 @@ import { buildMetadata } from '@/lib/seo';
 import { setRequestLocale } from 'next-intl/server';
 import FaPageLayout from '@/components/fa/FaPageLayout';
 import GuideJsonLd from '@/components/GuideJsonLd';
+import EntrepreneurComparison from '@/components/pnp/EntrepreneurComparison';
 import { page as faPage } from '@/content/fa/pnp';
 import { faMeta } from '@/lib/fa/content';
 
@@ -139,6 +140,8 @@ export default async function PNPPage({ params }: { params: Promise<{ locale: st
          </div>
       </section>
 
+
+      <EntrepreneurComparison />
 
       {/* =========================================
           3. THE JURISDICTIONS (Directory)
