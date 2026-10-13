@@ -37,6 +37,16 @@ export const ASHAVID = {
   ],
 };
 
+/**
+ * VisaRoads' own profiles. LinkedIn is the brand's own company page; video
+ * lives on the Ashavid channel, which the founder chose to keep as the
+ * brand's channel too (13 Oct 2026).
+ */
+export const VISAROADS_SAME_AS = [
+  'https://www.linkedin.com/company/visaroads/',
+  'https://www.youtube.com/@ashavidgroup',
+];
+
 export const LOCALES = ['en', 'fa'] as const;
 export type Locale = (typeof LOCALES)[number];
 export const DEFAULT_LOCALE: Locale = 'en';
@@ -229,8 +239,9 @@ export function organizationJsonLd() {
       height: 2000,
     },
     description: 'Mentorship and startup readiness for Startup Visa and global migration programs.',
-    // Ashavid's profiles describe the parent company, not this brand, so they
-    // sit under parentOrganization below rather than in our own sameAs.
+    // The brand's own profiles. Ashavid's full set describes the parent
+    // company and stays under parentOrganization below.
+    sameAs: VISAROADS_SAME_AS,
     founder: { '@id': FOUNDER_ID },
     knowsAbout: ['Startup visa', 'Entrepreneur immigration', 'Provincial Nominee Program', 'Start-up Denmark', 'Netherlands startup visa', 'Finland startup permit'],
     email: MAIN_CONTACT.email,

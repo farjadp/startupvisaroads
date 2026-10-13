@@ -17,14 +17,19 @@ const AI_AGENTS = [
   'ClaudeBot',
   'Claude-SearchBot',
   'Claude-User',
-  'Bytespider',
 ];
+
+// ByteDance's crawler feeds its own model training. It sends no visitors to
+// a site like this one and has a record of heavy crawling, so it is shut out
+// (decided 13 Oct 2026; delete this group to readmit it).
+const BLOCKED_AGENTS = ['Bytespider'];
 
 export default function robots(): MetadataRoute.Robots {
   return {
     rules: [
       { userAgent: '*', allow: '/', disallow: DISALLOW },
       ...AI_AGENTS.map((userAgent) => ({ userAgent, allow: '/', disallow: DISALLOW })),
+      ...BLOCKED_AGENTS.map((userAgent) => ({ userAgent, disallow: '/' })),
     ],
     sitemap: `${SITE_URL}/sitemap.xml`,
   };
