@@ -44,6 +44,7 @@ type Page = { path: string; en: string; kind: LinkTarget['kind'] };
 /** English static pages. Keep in step with EN_PATHS in app/sitemap.ts. */
 export const SITE_PAGES: Page[] = [
   { path: '/startup-visa-canada', en: 'Canada Start-up Visa (SUV) status guide', kind: 'page' },
+  { path: '/c10-work-permit', en: 'C10 significant benefit work permit (C10, C11, C60)', kind: 'page' },
   { path: '/pnp', en: 'Provincial Nominee Programs overview', kind: 'program' },
   { path: '/pnp/bc', en: 'British Columbia PNP (BC PNP)', kind: 'program' },
   { path: '/pnp/alberta', en: 'Alberta Rural Entrepreneur Stream (AAIP)', kind: 'program' },

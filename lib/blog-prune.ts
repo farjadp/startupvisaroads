@@ -19,7 +19,8 @@
 // 170 impressions in 90 days across "c10 significant benefit permit", "c10
 // work permit canada" and a dozen variants). Thin, but the only page we have
 // for that demand, and C10 is a Canadian entrepreneur work permit. It needs
-// a proper guide, not a 410.
+// a proper guide, not a 410. The guide, /en/c10-work-permit, went up the same
+// day and the post now 301s to it (PRUNE_MERGED).
 // ============================================================================
 
 /** Post path -> the page that replaces it (301). */
@@ -38,6 +39,9 @@ export const PRUNE_MERGED: Record<string, string> = {
   '/en/blog/entrepreneur-immigration-streams-in-canada-navigating-the-2026-landscape': '/en/pnp',
   '/en/blog/ultimate-guide-to-the-ontario-workforce-priority-stream-for-permanent-residence': '/en/pnp/ontario',
   '/en/blog/mastering-canadas-express-entry-category-based-selection-evolution-2024-2025': '/en/tools/express-entry',
+  // The thin June C10 post, restored by #19 for its search demand, now has a
+  // proper guide to hand that demand to.
+  '/en/blog/understanding-the-c10-significant-benefit-work-permit-a-strategic-lmia-exempt-pathway': '/en/c10-work-permit',
 
   // Netherlands: twelve variations on one guide.
   '/en/blog/comprehensive-guide-to-facilitators-for-startups-in-the-netherlands': '/en/europe/netherlands',

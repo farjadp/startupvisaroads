@@ -289,6 +289,15 @@ export default function CanadaPage() {
                View SUV Details
             </Link>
          </div>
+         {/* The routes that are open, named, so the hub links each guide. */}
+         <nav aria-label="Open Canadian routes for founders" className="mt-10 flex flex-wrap justify-center gap-x-6 gap-y-3 font-sans text-sm">
+            <Link href="/pnp" className="underline decoration-[#1a1a1a]/30 underline-offset-4 hover:decoration-[#1a1a1a]">Entrepreneur PNP: the five provinces compared</Link>
+            <Link href="/pnp/alberta" className="underline decoration-[#1a1a1a]/30 underline-offset-4 hover:decoration-[#1a1a1a]">Alberta</Link>
+            <Link href="/pnp/manitoba" className="underline decoration-[#1a1a1a]/30 underline-offset-4 hover:decoration-[#1a1a1a]">Manitoba</Link>
+            <Link href="/pnp/nova-scotia" className="underline decoration-[#1a1a1a]/30 underline-offset-4 hover:decoration-[#1a1a1a]">Nova Scotia</Link>
+            <Link href="/pnp/new-brunswick" className="underline decoration-[#1a1a1a]/30 underline-offset-4 hover:decoration-[#1a1a1a]">New Brunswick</Link>
+            <Link href="/c10-work-permit" className="underline decoration-[#1a1a1a]/30 underline-offset-4 hover:decoration-[#1a1a1a]">C10, C11 and C60 work permits</Link>
+         </nav>
       </section>
 
     </div>
