@@ -111,7 +111,16 @@ export type FaPage = {
   facts?: FaFact[];
   /** The programme this page is about, for schema.org `about`. */
   entity?: FaEntity;
+  /**
+   * The official pages every figure on this page was checked against, as of
+   * `updated`. Rendered as a source list and emitted as schema.org
+   * `citation`, so a reader and an answer engine can both verify the numbers.
+   */
+  sources?: FaSource[];
 };
+
+/** One official page a guide's figures come from. */
+export type FaSource = { label: string; url: string };
 
 /** Breadcrumb structured data for a Persian page under the site root. */
 export function breadcrumbJsonLd(siteUrl: string, trail: { name: string; path: string }[]) {
@@ -261,6 +270,9 @@ export function faWebPageJsonLd(page: FaPage) {
     description: page.description,
     inLanguage: 'fa-IR',
     dateModified: page.updated,
+    ...(page.sources?.length
+      ? { citation: page.sources.map((s) => ({ '@type': 'WebPage', name: s.label, url: s.url })) }
+      : {}),
     isPartOf: { '@id': WEBSITE_ID },
     ...(img ? { primaryImageOfPage: { '@type': 'ImageObject', url: img } } : {}),
     ...(img || page.gallery?.length

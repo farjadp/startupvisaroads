@@ -75,6 +75,9 @@ function webPageJsonLd(page: FaPage) {
     description: page.description,
     inLanguage: 'en',
     dateModified: page.updated,
+    ...(page.sources?.length
+      ? { citation: page.sources.map((s) => ({ '@type': 'WebPage', name: s.label, url: s.url })) }
+      : {}),
     isPartOf: { '@id': WEBSITE_ID },
     publisher: { '@id': ORGANIZATION_ID },
     ...(page.entity
@@ -195,6 +198,7 @@ export default function EnGuideLayout({
                 <a key={i} href={`#s${i + 1}`} className="block text-[#1a1a1a]/65 hover:text-[#1a1a1a] leading-snug">{s.heading}</a>
               ))}
               {page.faqs.length > 0 && <a href="#faq" className="block text-[#1a1a1a]/65 hover:text-[#1a1a1a]">FAQ</a>}
+              {page.sources && page.sources.length > 0 && <a href="#sources" className="block text-[#1a1a1a]/65 hover:text-[#1a1a1a]">Official sources</a>}
             </nav>
           </aside>
 
@@ -217,6 +221,24 @@ export default function EnGuideLayout({
                     </details>
                   ))}
                 </div>
+              </section>
+            )}
+
+            {page.sources && page.sources.length > 0 && (
+              <section id="sources" className="scroll-mt-28 border-t border-[#1a1a1a]/20 pt-10">
+                <h2 className="font-serif text-2xl md:text-3xl mb-2">Official sources</h2>
+                <p className="text-sm text-[#1a1a1a]/60 mb-6">
+                  Every figure above was checked against these pages on <time dateTime={page.updated}>{longDate(page.updated)}</time>. Governments change thresholds without notice — confirm on the source before you act.
+                </p>
+                <ul className="space-y-3">
+                  {page.sources.map((s) => (
+                    <li key={s.url}>
+                      <a href={s.url} target="_blank" rel="noopener noreferrer" className="underline decoration-[#1a1a1a]/30 underline-offset-4 hover:decoration-[#1a1a1a] break-words">
+                        {s.label}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
               </section>
             )}
           </div>
