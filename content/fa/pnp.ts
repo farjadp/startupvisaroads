@@ -24,6 +24,11 @@ export type PnpProvince = {
   status: string;
   /** Whether the stream is actually taking entrepreneurs now. */
   open: boolean;
+  /** Basename under public/fa/img/, and its Persian description. */
+  image: string;
+  imageAlt: string;
+  /** One line on what makes this province different. */
+  tagline: string;
   netWorth: string;
   investment: string;
   language: string;
@@ -38,6 +43,9 @@ export const provinces: PnpProvince[] = [
     guide: 'fa',
     status: 'باز؛ ۲۴ نامزدی از سهمیه‌ی ۶۰تایی ۲۰۲۶ باقی مانده',
     open: true,
+    image: 'alberta',
+    imageAlt: 'جاده‌ای خالی در آلبرتا که به سوی کوه‌های برف‌پوش راکی می‌رود',
+    tagline: 'کمترین آستانه‌ی مالی؛ یک جامعه‌ی روستایی باید پیش از EOI از طرح شما حمایت کند.',
     netWorth: '۳۰۰٬۰۰۰ دلار',
     investment: '۱۰۰٬۰۰۰ دلار',
     language: 'CLB 4',
@@ -50,6 +58,9 @@ export const provinces: PnpProvince[] = [
     guide: 'fa',
     status: 'EOI با ایمیل، بررسی ظرف ۴ هفته؛ بدون دور دعوت',
     open: true,
+    image: 'manitoba',
+    imageAlt: 'افق شهر وینیپگ و پل راه‌آهن روی رودخانه‌ی آسینیبوین در غروب',
+    tagline: 'بدون صف دعوت: EOI با ایمیل، جواب ظرف چهار هفته.',
     netWorth: '۵۰۰٬۰۰۰ دلار',
     investment: '۲۵۰٬۰۰۰ دلار (۱۵۰٬۰۰۰ بیرون از وینیپگ)',
     language: 'CLB 5',
@@ -62,6 +73,9 @@ export const provinces: PnpProvince[] = [
     guide: 'fa',
     status: 'با دعوت؛ ۴ دور در ۲۰۲۶، کمترین امتیاز آخرین دور ۱۰۱',
     open: true,
+    image: 'nova-scotia',
+    imageAlt: 'فانوس دریایی پگیز کوو روی صخره‌های ساحل اقیانوس اطلس در نوااسکوشیا',
+    tagline: 'هلیفکس، بزرگ‌ترین شهر آتلانتیک؛ بیرون از آن آستانه‌ها پایین‌ترند.',
     netWorth: '۶۰۰٬۰۰۰ دلار (۴۰۰٬۰۰۰ بیرون از هلیفکس)',
     investment: '۱۵۰٬۰۰۰ دلار (۱۰۰٬۰۰۰ بیرون از هلیفکس)',
     language: 'CLB 5',
@@ -74,6 +88,9 @@ export const provinces: PnpProvince[] = [
     guide: 'fa',
     status: 'فعال؛ دور دعوت کسب‌وکار منتشر نشده',
     open: true,
+    image: 'new-brunswick',
+    imageAlt: 'صخره‌های هوپول در خلیج فاندی نیوبرانزویک',
+    tagline: 'کوتاه‌ترین دوره پیش از نامزدی: شش ماه اداره‌ی کسب‌وکار.',
     netWorth: '۵۰۰٬۰۰۰ دلار (۳۰۰٬۰۰۰ کشاورزی)',
     investment: '۱۵۰٬۰۰۰ دلار',
     language: 'CLB 4',
@@ -86,6 +103,9 @@ export const provinces: PnpProvince[] = [
     guide: 'en',
     status: 'در فهرست هست، اما در ۲۰۲۶ هیچ کارآفرینی دعوت نشده',
     open: false,
+    image: 'pei',
+    imageAlt: 'صخره‌های ماسه‌سنگی سرخ ساحل کوندیش در جزیره‌ی پرنس ادوارد',
+    tagline: 'روی کاغذ باز است، اما در ۲۰۲۶ هیچ کارآفرینی دعوت نشده.',
     netWorth: '۶۰۰٬۰۰۰ دلار',
     investment: '۱۵۰٬۰۰۰ دلار',
     language: 'CLB 4',
@@ -128,6 +148,20 @@ export const related: { label: string; note: string; href: string }[] = [
   { label: 'ابزار تشخیص مسیر اکسپرس انتری', note: 'برای متخصصانی که مسیر مهارتی استانی می‌خواهند (انگلیسی)', href: '/en/tools/express-entry' },
 ];
 
+/**
+ * The answer-first block under the hero. Written to be quoted whole by an
+ * answer engine asked "how does a founder immigrate to Canada now".
+ */
+export const summary = {
+  answer:
+    'برنامه‌ی کارآفرینی استانی کانادا (Entrepreneur PNP) مسیری است که در آن کارآفرین کسب‌وکاری را در یک استان می‌سازد یا می‌خرد، با مجوز کار موقت ۶ تا ۱۲ ماه آن را اداره می‌کند، و سپس استان او را برای اقامت دائم نامزد می‌کند. از ۳۰ ژوئن ۲۰۲۶ که استارتاپ ویزای فدرال متوقف شده، این مسیر اصلی‌ترین راه مهاجرت کارآفرینی به کاناداست.',
+  points: [
+    'در اکتبر ۲۰۲۶ چهار استان آلبرتا، منیتوبا، نوااسکوشیا و نیوبرانزویک کارآفرین می‌پذیرند؛ جزیره‌ی پرنس ادوارد امسال هیچ دعوتی نداشته.',
+    'کمترین آستانه‌ی مالی در آلبرتاست: دارایی خالص ۳۰۰ هزار و سرمایه‌گذاری ۱۰۰ هزار دلار کانادا.',
+    'هیچ‌کدام از این مسیرها اقامت مستقیم نمی‌دهد: اول مجوز کار، بعد اداره‌ی واقعی کسب‌وکار، بعد نامزدی.',
+  ],
+};
+
 export const page: FaPage = {
   path: '/pnp',
   title: 'برنامه‌های استانی کانادا (PNP) برای کارآفرینان — مقایسه‌ی استان‌ها',
@@ -138,6 +172,10 @@ export const page: FaPage = {
 
   image: 'pnp',
   imageAlt: 'ردیف صندلی‌های چوبی خالی کنار پنجره‌ی بلند در سالنی ساده، نماد برنامه‌های استانی کانادا',
+  gallery: [
+    { src: 'pnp-3', alt: 'خیابان شهر کوچک بنف در آلبرتا با درختان پاییزی و کوه برف‌پوش', caption: 'نامزدی استان یعنی تعهد به زندگی و کار در همان استان.' },
+    { src: 'pnp-2', alt: 'سیلوی غله‌ی چوبی در دشت ساسکاچوان در برابر آسمان نارنجی غروب', caption: 'هر استان نیاز اقتصادی خودش را دارد — و همان نیاز، مسیر شما را تعیین می‌کند.' },
+  ],
   entity: { name: 'Provincial Nominee Program (PNP) — Entrepreneur streams', provider: 'Provinces of Canada', country: 'Canada' },
   facts: [
     { label: 'استان‌های تخصص ما', value: 'آلبرتا، منیتوبا، نوااسکوشیا، نیوبرانزویک، جزیره‌ی پرنس ادوارد' },
@@ -158,6 +196,10 @@ export const page: FaPage = {
 
   faqs: [
     {
+      q: 'بهترین استان کانادا برای مهاجرت کارآفرینی کدام است؟',
+      a: 'استان «بهترین» وجود ندارد؛ استانی بهتر است که آستانه‌هایش را رد می‌کنید و دعوت فعال دارد. آلبرتا کمترین آستانه‌ی مالی را دارد اما حمایت یک جامعه‌ی روستایی می‌خواهد. منیتوبا دور دعوت ندارد و EOI را ظرف چهار هفته بررسی می‌کند. نیوبرانزویک کوتاه‌ترین دوره‌ی پیش از نامزدی را دارد. نوااسکوشیا با دعوت انتخاب می‌کند. جزیره‌ی پرنس ادوارد در ۲۰۲۶ کسی را دعوت نکرده.',
+    },
+    {
       q: 'PNP کارآفرینی با استارتاپ ویزا چه فرقی دارد؟',
       a: 'استارتاپ ویزا سرمایه‌گذاری الزامی نداشت و به نامه‌ی حمایت یک سازمان تأییدشده تکیه می‌کرد؛ اکنون متوقف است. مسیرهای کارآفرینی استانی حداقل دارایی خالص و سرمایه‌گذاری مشخص دارند، کسب‌وکار سنتی و سودآور را هم می‌پذیرند، و از شما می‌خواهند در همان استان زندگی و کار کنید.',
     },
@@ -177,6 +219,16 @@ export const page: FaPage = {
       q: 'شما پرونده را ثبت می‌کنید؟',
       a: 'خیر. ما وکیل یا مشاور رسمی مهاجرت نیستیم و پرونده‌ی استانی یا فدرال ثبت نمی‌کنیم. کار ما پیش از آن است: انتخاب استان، ساختن بیزینس‌پلن و مدل مالی، و آمادگی مصاحبه. ثبت پرونده را خودتان یا مشاور رسمی دارای مجوز انجام می‌دهد.',
     },
+  ],
+
+  sources: [
+    { label: 'IRCC — Start-up Visa Program (pause notice)', url: 'https://www.canada.ca/en/immigration-refugees-citizenship/services/immigrate-canada/start-visa.html' },
+    { label: 'Alberta.ca — AAIP Rural Entrepreneur Stream: eligibility', url: 'https://www.alberta.ca/aaip-rural-entrepreneur-stream-eligibility' },
+    { label: 'Alberta.ca — AAIP processing information', url: 'https://www.alberta.ca/aaip-processing-information' },
+    { label: 'Immigrate Manitoba — Entrepreneur Pathway: eligibility', url: 'https://immigratemanitoba.com/mpnp/bis/ep/eligibility/' },
+    { label: 'Live in Nova Scotia — Entrepreneur stream', url: 'https://liveinnovascotia.com/entrepreneur' },
+    { label: 'Government of New Brunswick — Business Immigration Stream', url: 'https://www.gnb.ca/en/topic/family-home-community/immigration/provincial-nominee-program/business-immigration-stream.html' },
+    { label: 'Government of PEI — Expression of Interest draws (2026)', url: 'https://www.princeedwardisland.ca/en/information/office-of-immigration/expression-of-interest-draws' },
   ],
 
   closing: [

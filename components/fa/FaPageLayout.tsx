@@ -119,11 +119,17 @@ export default function FaPageLayout({
   page,
   trail,
   extra,
+  afterHero,
+  beforeClosing,
 }: {
   page: FaPage;
   trail: { name: string; path: string }[];
   /** Rendered after the sections, before the FAQ — a form, a link grid. */
   extra?: React.ReactNode;
+  /** Full-width band directly under the hero — e.g. a sibling-page switcher. */
+  afterHero?: React.ReactNode;
+  /** Full-width block between the body and the closing call to action. */
+  beforeClosing?: React.ReactNode;
 }) {
   const img = page.image ? `/fa/img/${page.image}.webp` : null;
   const gallery = page.gallery ?? [];
@@ -205,6 +211,8 @@ export default function FaPageLayout({
           </div>
         </div>
       </header>
+
+      {afterHero}
 
       <div className="px-4 md:px-8 max-w-[1400px] mx-auto border-x border-[#1a1a1a]/10">
         {page.status && <StatusBanner status={page.status} />}
@@ -321,6 +329,8 @@ export default function FaPageLayout({
           <VideoRail videos={videosById(page.videos)} intro="توضیح ویدیویی همین مسیر، از زبان فرجاد — با جزئیاتی که در متن جا نمی‌گیرد." />
         )}
       </div>
+
+      {beforeClosing}
 
       {/* CLOSING */}
       <section className="py-24 border-t border-[#1a1a1a] bg-[#1a1a1a] text-[#F2F0E9]">

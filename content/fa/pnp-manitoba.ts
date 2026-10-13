@@ -15,6 +15,12 @@ export const page: FaPage = {
   keywords: ['مهاجرت کارآفرینی منیتوبا', 'PNP منیتوبا', 'Manitoba Business Investor Stream', 'مسیر کارآفرینی منیتوبا', 'سرمایه گذاری منیتوبا'],
   updated: '2026-10-12',
 
+  image: 'manitoba',
+  imageAlt: 'افق شهر وینیپگ و پل فلزی قدیمی راه‌آهن روی رودخانه‌ی آسینیبوین در غروب',
+  gallery: [
+    { src: 'manitoba-2', alt: 'نمای سنگی ساختمانی تاریخی چندطبقه در خیابانی از مرکز وینیپگ', caption: 'بیرون از منطقه‌ی شهری وینیپگ، حداقل سرمایه‌گذاری به ۱۵۰ هزار دلار پایین می‌آید.' },
+    { src: 'manitoba-3', alt: 'خیابان برفی میان ساختمان‌های آجری تاریخی وینیپگ در زمستان', caption: 'منیتوبا EOI را با ایمیل می‌گیرد و ظرف چهار هفته بررسی می‌کند.' },
+  ],
   entity: { name: 'Manitoba Provincial Nominee Program — Business Investor Stream, Entrepreneur Pathway', provider: 'Government of Manitoba', country: 'Canada' },
   facts: [
     { label: 'حداقل دارایی خالص', value: '۵۰۰٬۰۰۰ دلار کانادا' },

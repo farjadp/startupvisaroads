@@ -97,6 +97,25 @@ const SLOTS: Record<string, string> = {
   australia: 'Sydney Opera House harbour Australia',
   'australia-2': 'Sydney central business district skyscrapers Australia',
   'australia-3': 'Melbourne Australia city street tram',
+
+  // Canada's Entrepreneur PNP. The hub and the province guides used generated
+  // anonymous scenes; Farjad asked for a Canadian feel, so each province gets
+  // its own identifying places. The hub hero is the country, not a province.
+  pnp: 'Canada autumn forest lake',
+  'pnp-2': 'Canadian prairie grain elevator',
+  'pnp-3': 'Banff town Canada autumn',
+  alberta: 'Alberta Canada rural road mountains',
+  'alberta-2': 'Alberta small town',
+  'alberta-3': 'Alberta prairie farmland',
+  manitoba: 'Winnipeg Manitoba skyline',
+  'manitoba-2': 'Winnipeg Exchange District',
+  'manitoba-3': 'Winnipeg winter street',
+  'nova-scotia': 'Peggys Cove lighthouse Nova Scotia',
+  'nova-scotia-2': 'Halifax waterfront Nova Scotia',
+  'nova-scotia-3': 'Lunenburg Nova Scotia',
+  'new-brunswick': 'Hopewell Rocks Bay of Fundy New Brunswick',
+  'new-brunswick-2': 'Fredericton New Brunswick',
+  pei: 'Prince Edward Island red cliffs',
 };
 
 type Photo = {
@@ -141,7 +160,11 @@ async function main() {
     const m = a.match(/^--pick=?(.+)=(\d+)$/) || a.match(/^(.+)=(\d+)$/);
     if (m) picks.set(m[1].replace(/^--pick/, ''), Number(m[2]));
   }
-  const only = args.filter((a) => !a.startsWith('--') && !a.includes('='));
+  // With explicit picks and no names, touch only the picked slots — otherwise
+  // every other slot is silently rewritten with its top result.
+  const named = args.filter((a) => !a.startsWith('--') && !a.includes('='));
+  const only = named.length ? named : [...picks.keys()];
+  const exact = !named.length && picks.size > 0;
   const outDir = path.join('public', 'fa', 'img');
   fs.mkdirSync(outDir, { recursive: true });
 
@@ -151,7 +174,7 @@ async function main() {
     : {};
 
   for (const [name, query] of Object.entries(SLOTS)) {
-    if (only.length && !only.some((o) => name === o || name.startsWith(`${o}-`))) continue;
+    if (only.length && !only.some((o) => name === o || (!exact && name.startsWith(`${o}-`)))) continue;
     let photos: Photo[];
     try {
       photos = await search(query);
@@ -165,6 +188,7 @@ async function main() {
       console.log(`\n${name}  ← "${query}"`);
       for (const p of photos) {
         console.log(`  ${String(p.id).padEnd(9)} ${String(p.width).padStart(5)}x${String(p.height).padEnd(5)} ${p.photographer.slice(0, 22).padEnd(24)} ${p.url}`);
+        if (p.alt) console.log(`            ${p.alt}`);
       }
       continue;
     }
