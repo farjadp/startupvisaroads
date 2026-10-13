@@ -103,6 +103,7 @@ export const FA_SITE_PAGES: FaPage[] = [
   { path: '/pnp/manitoba', label: 'مسیر کارآفرینی منیتوبا (MPNP)', kind: 'program' },
   { path: '/pnp/new-brunswick', label: 'مسیر کارآفرینی نیوبرانزویک (NBBIS)', kind: 'program' },
   { path: '/pnp/nova-scotia', label: 'مسیر کارآفرینی نوااسکوشیا', kind: 'program' },
+  { path: '/pnp/pei', label: 'مسیر کارآفرینی جزیره پرنس ادوارد (PEI، بدون دعوت در ۲۰۲۶)', kind: 'program' },
   { path: '/europe/finland', label: 'ویزای استارتاپ فنلاند', kind: 'program' },
   { path: '/europe/denmark', label: 'ویزای استارتاپ دانمارک (Start-up Denmark)', kind: 'program' },
   { path: '/europe/netherlands', label: 'ویزای استارتاپ هلند', kind: 'program' },
