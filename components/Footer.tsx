@@ -54,6 +54,7 @@ const FA_LINKS = {
     { href: '/europe/italy', label: 'ایتالیا' },
     { href: '/turkey-tech-visa', label: 'تک‌ویزای ترکیه' },
     { href: '/usa', label: 'آمریکا برای فاندرها' },
+    { href: '/uk/innovator-founder', label: 'استارتاپ ویزای انگلیس' },
   ],
   strategy: [
     { href: '/which-path', label: 'ارزیابی رایگان مسیر' },

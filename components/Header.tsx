@@ -146,6 +146,7 @@ export default function Header() {
         { header: 'مقصدهای دیگر' },
         { href: '/turkey-tech-visa', label: 'تک‌ویزای ترکیه' },
         { href: '/australia', label: 'ویزای نوآوری ملی استرالیا' },
+        { href: '/uk/innovator-founder', label: 'ویزای استارتاپ انگلیس' },
         { href: '/usa', label: 'آمریکا: مسیرهای فاندر' },
         { href: '/usa-eb2-niw', label: 'EB-2 NIW آمریکا' },
         { href: '/israel', label: 'اسرائیل — چرا باز نیست' },
