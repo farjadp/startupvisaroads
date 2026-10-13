@@ -24,8 +24,9 @@ ENV NEXT_TELEMETRY_DISABLED=1
 #  such as sitemap.xml and article canonicals without rebuilding.)
 ARG NEXT_PUBLIC_SITE_URL=https://visaroads.com
 ENV NEXT_PUBLIC_SITE_URL=$NEXT_PUBLIC_SITE_URL
-# GA4 measurement ID (public, baked into the client bundle). Empty = no tag.
-ARG NEXT_PUBLIC_GA_ID=
+# GA4 measurement ID (public, baked into the client bundle): the "VisaRoads"
+# property. Empty = no tag.
+ARG NEXT_PUBLIC_GA_ID=G-SZ34QLY2ZV
 ENV NEXT_PUBLIC_GA_ID=$NEXT_PUBLIC_GA_ID
 # OpenAI Ads pixel id (public; also read server-side by the Conversions API).
 ARG NEXT_PUBLIC_OPENAI_PIXEL_ID=CNvC3s4VfqPbmcicTxeQ9q
