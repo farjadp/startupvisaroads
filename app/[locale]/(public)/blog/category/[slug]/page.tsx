@@ -6,7 +6,7 @@ import { Link } from '@/navigation';
 import { Clock, ArrowLeft, ArrowRight } from 'lucide-react';
 import JsonLd from '@/components/JsonLd';
 import { buildMetadata, breadcrumbJsonLd, collectionPageJsonLd, isDataImageUrl, localizedArchiveAlternates, SITE_URL } from '@/lib/seo';
-import { computeReadingTime, getCategoryArchiveData } from '@/lib/blog';
+import { MIN_INDEXABLE_CATEGORY_ARTICLES, computeReadingTime, getCategoryArchiveData } from '@/lib/blog';
 import { faCategoryGuide, faCategoryLabel } from '@/lib/fa/categories';
 
 export const revalidate = 600;
@@ -17,7 +17,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   if (!data) {
     return { title: 'Not Found', robots: { index: false, follow: false } };
   }
-  const { category, availableLocales } = data;
+  const { category, availableLocales, articles } = data;
   const isRtl = locale === 'fa';
   const categoryName = isRtl ? faCategoryLabel(category.slug, category.name) : category.name;
   const path = `/blog/category/${slug}`;
@@ -31,6 +31,8 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
       (isRtl
         ? `جدیدترین راهنماها و تحلیل‌های دسته‌ی «${categoryName}» در راه‌های ویزای استارتاپ.`
         : `The latest guides and analysis in the "${categoryName}" collection from Startup Visa Roads.`),
+    noindex: articles.length < MIN_INDEXABLE_CATEGORY_ARTICLES,
+    nofollow: false,
   });
   return { ...metadata, alternates: localizedArchiveAlternates(path, locale, availableLocales) };
 }

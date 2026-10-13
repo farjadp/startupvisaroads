@@ -49,16 +49,19 @@ describe('sitemap', () => {
   it('publishes category archives only for locales with published articles', async () => {
     const enUpdated = new Date('2026-01-03T00:00:00.000Z');
     const faUpdated = new Date('2026-01-04T00:00:00.000Z');
+    // Five per locale: below that a category archive is thin and left out.
+    const five = (locale: string, updatedAt: Date) => Array.from({ length: 5 }, () => ({ locale, updatedAt }));
     mocks.categoryFindMany.mockResolvedValue([
       {
         slug: 'startup-guides',
-        articles: [
-          { locale: 'en', updatedAt: enUpdated },
-          { locale: 'fa', updatedAt: faUpdated },
-        ],
+        articles: [...five('en', enUpdated), ...five('fa', faUpdated)],
       },
       {
         slug: 'canada-news',
+        articles: [...five('en', enUpdated), { locale: 'fa', updatedAt: faUpdated }],
+      },
+      {
+        slug: 'thin',
         articles: [{ locale: 'en', updatedAt: enUpdated }],
       },
     ]);

@@ -141,7 +141,7 @@ export function getRecommendedService(title: string, categoryName: string, local
   if (matches(['work permit', 'startup work permit', 'مجوز کار', 'ورک پرمیت'])) {
     return isFa
       ? { path: '/which-path', title: 'راهنمای انتخاب مسیر', desc: 'مسیرهای موجود را بر اساس شرایط و هدف خود مقایسه کنید.' }
-      : { path: '/startupworkpermit', title: 'Canada Startup Work Permit Guide', desc: 'Read the current eligibility and process information for the startup work permit route.' };
+      : { path: '/startup-visa-canada', title: 'Canada Start-up Visa: status and the open work permit', desc: 'What the pause means for applications already filed, and who can still apply for an open work permit.' };
   }
   if (matches(['finland', 'finnish', 'فنلاند'])) {
     return { path: isFa ? '/europe/finland' : '/country/finland', title: isFa ? 'راهنمای ویزای استارتاپ فنلاند' : 'Finland Startup Visa Guide', desc: isFa ? 'شرایط و مراحل مسیر استارتاپ فنلاند را مرور کنید.' : 'Review the requirements and process for Finland’s startup route.' };
@@ -506,6 +506,12 @@ export async function getRelatedArticle(article: {
   }
 }
 
+/**
+ * A category with fewer live articles than this in a locale is a thin page:
+ * noindexed (links still followed) and left out of the sitemap until it fills.
+ */
+export const MIN_INDEXABLE_CATEGORY_ARTICLES = 5;
+
 export async function getCategoryArchiveData(locale: string, slug: string) {
   try {
     const category = await prisma.category.findUnique({
@@ -519,12 +525,13 @@ export async function getCategoryArchiveData(locale: string, slug: string) {
         status: 'PUBLISHED',
         locale,
         categoryId: category.id,
+        AND: [NOT_WITHDRAWN],
       },
       orderBy: { createdAt: 'desc' },
       include: { category: true, tags: true },
     });
     const localeRows = await prisma.article.findMany({
-      where: { status: 'PUBLISHED', categoryId: category.id },
+      where: { status: 'PUBLISHED', categoryId: category.id, AND: [NOT_WITHDRAWN] },
       distinct: ['locale'],
       select: { locale: true },
     });
