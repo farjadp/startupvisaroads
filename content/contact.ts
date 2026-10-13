@@ -28,6 +28,23 @@ export const MAIN_CONTACT = {
  * which is what lets an answer engine tie "Farjad" on this site to the same
  * person on LinkedIn and YouTube.
  */
+/**
+ * The person who reviews articles after publication. Name and background as
+ * given by the founder on 13 Oct 2026, who confirmed she is a real reviewer.
+ * Nothing beyond what he stated: no photo, no profile links, no titles.
+ */
+export const REVIEWER = {
+  name: 'Roya Jahanbin',
+  nameFa: 'رویا جهان‌بین',
+  role: 'Immigration specialist',
+  roleFa: 'کارشناس مهاجرت',
+  bio: 'Immigration specialist with more than 15 years at immigration firms, across most countries and routes.',
+  bioFa: 'کارشناس مهاجرت با بیش از ۱۵ سال سابقه در مؤسسات مهاجرتی و آشنا با بیشتر کشورها و مسیرها.',
+};
+
+/** Articles are reviewed after publication; the credit appears once this much time has passed. */
+export const REVIEW_LAG_DAYS = 7;
+
 export const FOUNDER = {
   name: 'Farjad Pourmohammad',
   /** As the team page shows it. */
