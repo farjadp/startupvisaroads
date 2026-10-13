@@ -121,6 +121,7 @@ export const FA_SITE_PAGES: FaPage[] = [
   // writer cites it as background rather than recommending it as a path.
   { path: '/israel', label: 'ویزای نوآوری اسرائیل — و چرا برای متقاضی ایرانی باز نیست', kind: 'page' },
   { path: '/australia', label: 'ویزای نوآوری ملی استرالیا (ساب‌کلاس ۸۵۸)', kind: 'program' },
+  { path: '/uk/innovator-founder', label: 'ویزای استارتاپ انگلیس (Innovator Founder)', kind: 'program' },
   { path: '/which-path', label: 'کدام مسیر مهاجرت برای شما مناسب است؟ (ارزیابی رایگان)', kind: 'tool' },
   { path: '/mentorship', label: 'برنامه منتورشیپ و آماده‌سازی بنیان‌گذاران', kind: 'page' },
   { path: '/faq', label: 'سؤالات متداول مهاجرت استارتاپی', kind: 'page' },
