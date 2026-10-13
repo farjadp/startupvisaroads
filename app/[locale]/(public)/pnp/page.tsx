@@ -21,7 +21,7 @@ import PNPMasterAssessment from '@/components/PNPMasterAssessment'; // Import
 import { metaFor } from '@/lib/pageMeta';
 import { buildMetadata } from '@/lib/seo';
 import { setRequestLocale } from 'next-intl/server';
-import FaPageLayout from '@/components/fa/FaPageLayout';
+import FaPnpHub from '@/components/fa/FaPnpHub';
 import GuideJsonLd from '@/components/GuideJsonLd';
 import EntrepreneurComparison from '@/components/pnp/EntrepreneurComparison';
 import { page as faPage } from '@/content/fa/pnp';
@@ -39,9 +39,10 @@ export default async function PNPPage({ params }: { params: Promise<{ locale: st
   const { locale } = await params;
   setRequestLocale(locale);
 
-  // /fa/pnp is one Persian hub, not a translation of the nine-province English page.
+  // /fa/pnp is the Persian Entrepreneur PNP product page, not a translation
+  // of the English page: provinces at a glance, what we do, links onward.
   if (locale === 'fa') {
-    return <FaPageLayout page={faPage} trail={[{ name: 'برنامه‌های استانی', path: faPage.path }]} />;
+    return <FaPnpHub />;
   }
 
   return (
