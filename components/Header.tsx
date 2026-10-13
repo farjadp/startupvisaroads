@@ -35,6 +35,13 @@ function groupSubLinks(subLinks: SubLink[]): { header: string; items: SubLink[] 
   return groups;
 }
 
+/** The one flag every link in a group shares, or null when they differ. */
+function sharedFlag(items: SubLink[]) {
+  if (items.length < 2) return null;
+  const first = flagFor(items[0].href ?? '');
+  return first && items.every((i) => flagFor(i.href ?? '') === first) ? first : null;
+}
+
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -125,31 +132,34 @@ export default function Header() {
     {
       label: 'مسیرها',
       key: 'jurisdictions',
-      // Four groups of roughly equal weight, not seven with singletons in
-      // them. Türkiye, Israel and Australia each had a heading of their own
-      // for one link, which is most of why this panel used to scroll. The
-      // flags carry the geography the headings were carrying.
+      // Four groups of roughly equal weight. Canada leads: Entrepreneur PNP
+      // is the specialty, and every province now has a Persian guide. A group
+      // whose links share one flag shows it once, on its heading, instead of
+      // repeating it on every row.
       subLinks: [
+        { header: 'کانادا · کارآفرینی استانی' },
+        { href: '/pnp', label: 'مقایسه‌ی همه‌ی استان‌ها' },
+        { href: '/pnp/alberta', label: 'آلبرتا' },
+        { href: '/pnp/manitoba', label: 'منیتوبا' },
+        { href: '/pnp/nova-scotia', label: 'نوااسکوشیا' },
+        { href: '/pnp/new-brunswick', label: 'نیوبرانزویک' },
+        { href: '/pnp/pei', label: 'جزیره‌ی پرنس ادوارد' },
+        { href: '/canada-startup-visa', label: 'استارتاپ ویزا (متوقف)' },
+
         { header: 'اروپا' },
         { href: '/europe/denmark', label: 'دانمارک' },
         { href: '/europe/netherlands', label: 'هلند' },
         { href: '/europe/finland', label: 'فنلاند' },
-        { href: '/europe/estonia', label: 'استونی' },
         { href: '/europe/italy', label: 'ایتالیا' },
+        { href: '/europe/estonia', label: 'استونی' },
+        { href: '/uk/innovator-founder', label: 'انگلیس' },
 
-        { header: 'کانادا' },
-        { href: '/pnp/new-brunswick', label: 'نیوبرانزویک (کارآفرینی)' },
-        { href: '/pnp/nova-scotia', label: 'نوااسکوشیا (کارآفرینی)' },
-        { href: '/pnp', label: 'همه‌ی برنامه‌های استانی' },
-        { href: '/canada-startup-visa', label: 'ویزای استارتاپ — وضعیت فعلی' },
-
-        { header: 'مقصدهای دیگر' },
-        { href: '/turkey-tech-visa', label: 'تک‌ویزای ترکیه' },
-        { href: '/australia', label: 'ویزای نوآوری ملی استرالیا' },
-        { href: '/uk/innovator-founder', label: 'ویزای استارتاپ انگلیس' },
+        { header: 'آمریکا و مقصدهای دیگر' },
         { href: '/usa', label: 'آمریکا: مسیرهای فاندر' },
-        { href: '/usa-eb2-niw', label: 'EB-2 NIW آمریکا' },
-        { href: '/israel', label: 'اسرائیل — چرا باز نیست' },
+        { href: '/usa-eb2-niw', label: 'آمریکا: EB-2 NIW' },
+        { href: '/australia', label: 'استرالیا' },
+        { href: '/turkey-tech-visa', label: 'ترکیه' },
+        { href: '/israel', label: 'اسرائیل (باز نیست)' },
 
         { header: 'از کجا شروع کنم' },
         { href: '/which-path', label: 'کدام مسیر برای من؟' },
@@ -313,7 +323,8 @@ export default function Header() {
                         {groupSubLinks(link.subLinks).map((group, gi) => (
                           <div key={gi} className="min-w-[150px]">
                             {group.header && (
-                              <span className={`${navMicro} text-[#CCFF00] block select-none pb-2 mb-3 border-b border-[#F2F0E9]/10`}>
+                              <span className={`${navMicro} text-[#CCFF00] flex items-center gap-2 select-none pb-2 mb-3 border-b border-[#F2F0E9]/10`}>
+                                {isFa && sharedFlag(group.items) && <Flag code={sharedFlag(group.items)!} className="h-3 w-auto shrink-0 text-[#F2F0E9]" />}
                                 {group.header}
                               </span>
                             )}
@@ -327,7 +338,7 @@ export default function Header() {
                                   {/* The menu is the densest list of routes on
                                       the site, so the flag does the work the
                                       label needs three words for. */}
-                                  {isFa && flagFor(sub.href!) && <Flag code={flagFor(sub.href!)!} className="h-4 w-auto shrink-0 mt-[0.2em] text-[#F2F0E9]" />}
+                                  {isFa && !sharedFlag(group.items) && flagFor(sub.href!) && <Flag code={flagFor(sub.href!)!} className="h-4 w-auto shrink-0 mt-[0.2em] text-[#F2F0E9]" />}
                                   {sub.label}
                                 </Link>
                               ))}
@@ -447,7 +458,8 @@ export default function Header() {
                         {groupSubLinks(link.subLinks).map((group, gi) => (
                           <div key={gi}>
                             {group.header && (
-                              <span className={`${navMicro} text-[#CCFF00]/70 block mb-2.5`}>
+                              <span className={`${navMicro} text-[#CCFF00]/70 flex items-center gap-2 mb-2.5`}>
+                                {isFa && sharedFlag(group.items) && <Flag code={sharedFlag(group.items)!} className="h-3 w-auto shrink-0 text-[#F2F0E9]" />}
                                 {group.header}
                               </span>
                             )}
@@ -458,7 +470,7 @@ export default function Header() {
                                   href={sub.href!}
                                   className={`${isFa ? 'font-vazir text-[15px]' : 'font-serif text-base'} text-[#F2F0E9] hover:text-[#CCFF00] transition-colors flex items-center gap-2`}
                                 >
-                                  {isFa && flagFor(sub.href!) && <Flag code={flagFor(sub.href!)!} className="h-4 w-auto shrink-0 text-[#F2F0E9]" />}
+                                  {isFa && !sharedFlag(group.items) && flagFor(sub.href!) && <Flag code={flagFor(sub.href!)!} className="h-4 w-auto shrink-0 text-[#F2F0E9]" />}
                                   {sub.label}
                                 </Link>
                               ))}
