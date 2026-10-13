@@ -214,5 +214,140 @@
     "photographerUrl": "https://www.pexels.com/@marivaldo-vivan-2152600813",
     "description": "A vibrant sunny day in the urban streets of Turin, Italy, showcasing classic architecture.",
     "fetched": "2026-09-24"
+  },
+  "pnp": {
+    "source": "Pexels",
+    "id": 29379495,
+    "page": "https://www.pexels.com/photo/serene-lake-in-banff-national-park-alberta-29379495/",
+    "photographer": "Nunzio Guerrera",
+    "photographerUrl": "https://www.pexels.com/@nunzg",
+    "description": "Tranquil view of a misty lake in Banff National Park with lush trees and mountain backdrop.",
+    "fetched": "2026-10-13"
+  },
+  "pnp-2": {
+    "source": "Pexels",
+    "id": 11839783,
+    "page": "https://www.pexels.com/photo/an-old-factory-under-red-sky-11839783/",
+    "photographer": "Bryan Smith",
+    "photographerUrl": "https://www.pexels.com/@bryan-smith-480077",
+    "description": "Grain elevator in Bengough, Saskatchewan silhouetted against a vibrant sunset.",
+    "fetched": "2026-10-13"
+  },
+  "pnp-3": {
+    "source": "Pexels",
+    "id": 12905877,
+    "page": "https://www.pexels.com/photo/scenic-view-of-the-snowy-mountain-near-a-town-12905877/",
+    "photographer": "Alizain Hirani",
+    "photographerUrl": "https://www.pexels.com/@alizain-hirani-274856182",
+    "description": "Picturesque Banff, Canada with mountains and autumn trees lining the road.",
+    "fetched": "2026-10-13"
+  },
+  "alberta": {
+    "source": "Pexels",
+    "id": 12597491,
+    "page": "https://www.pexels.com/photo/clouds-over-empty-road-near-mountains-12597491/",
+    "photographer": "John De Leon",
+    "photographerUrl": "https://www.pexels.com/@john-de-leon-142955220",
+    "description": "Beautiful scenic road leading to snow-capped mountains in Alberta, Canada under a clear sky.",
+    "fetched": "2026-10-13"
+  },
+  "alberta-2": {
+    "source": "Pexels",
+    "id": 31591320,
+    "page": "https://www.pexels.com/photo/charming-banff-streetscape-with-mountain-view-31591320/",
+    "photographer": "Claudia  Solano",
+    "photographerUrl": "https://www.pexels.com/@imagenesclau",
+    "description": "A scenic street view in Banff with shops, showing mountains in the backdrop. Ideal for travel enthusiasts.",
+    "fetched": "2026-10-13"
+  },
+  "alberta-3": {
+    "source": "Pexels",
+    "id": 5922033,
+    "page": "https://www.pexels.com/photo/green-trees-in-the-middle-of-the-field-5922033/",
+    "photographer": "Nishant Vyas",
+    "photographerUrl": "https://www.pexels.com/@nishantvy",
+    "description": "Expansive fields under a blue sky in Drumheller, Alberta, Canada.",
+    "fetched": "2026-10-13"
+  },
+  "manitoba": {
+    "source": "Pexels",
+    "id": 39613831,
+    "page": "https://www.pexels.com/photo/winnipeg-skyline-with-historic-railway-bridge-at-sunset-39613831/",
+    "photographer": "Tom Kowalsky",
+    "photographerUrl": "https://www.pexels.com/@tkaudio",
+    "description": "Stunning view of Winnipeg skyline with a historic railway bridge over shimmering waters at sunset.",
+    "fetched": "2026-10-13"
+  },
+  "manitoba-2": {
+    "source": "Pexels",
+    "id": 31721754,
+    "page": "https://www.pexels.com/photo/historic-stone-building-facade-in-winnipeg-31721754/",
+    "photographer": "Tom Kowalsky",
+    "photographerUrl": "https://www.pexels.com/@tkaudio",
+    "description": "A historic multi-story stone building facade on a city street in Winnipeg, Canada.",
+    "fetched": "2026-10-13"
+  },
+  "manitoba-3": {
+    "source": "Pexels",
+    "id": 19898165,
+    "page": "https://www.pexels.com/photo/snow-on-street-in-city-in-usa-19898165/",
+    "photographer": "dilbar sandhu",
+    "photographerUrl": "https://www.pexels.com/@dilbar-sandhu-903018228",
+    "description": "A tranquil urban scene of a snow-covered street in Winnipeg during winter, showcasing historic architecture.",
+    "fetched": "2026-10-13"
+  },
+  "nova-scotia": {
+    "source": "Pexels",
+    "id": 7623719,
+    "page": "https://www.pexels.com/photo/a-white-lighthouse-on-the-hill-near-the-sea-7623719/",
+    "photographer": "Lori LaBo",
+    "photographerUrl": "https://www.pexels.com/@lori-labo-22211106",
+    "description": "A stunning day view of the iconic Peggy's Cove Lighthouse surrounded by rocky terrain and ocean waves.",
+    "fetched": "2026-10-13"
+  },
+  "nova-scotia-2": {
+    "source": "Pexels",
+    "id": 39467104,
+    "page": "https://www.pexels.com/photo/halifax-waterfront-with-georges-island-lighthouse-39467104/",
+    "photographer": "Mayank M",
+    "photographerUrl": "https://www.pexels.com/@mayank-m-956633",
+    "description": "A scenic view of Georges Island and lighthouse from Halifax Harbour, Nova Scotia.",
+    "fetched": "2026-10-13"
+  },
+  "nova-scotia-3": {
+    "source": "Pexels",
+    "id": 31743396,
+    "page": "https://www.pexels.com/photo/picturesque-waterfront-of-lunenburg-nova-scotia-31743396/",
+    "photographer": "Francois Marinier",
+    "photographerUrl": "https://www.pexels.com/@francoisperspective",
+    "description": "Historic waterfront view featuring red buildings in Lunenburg, Nova Scotia.",
+    "fetched": "2026-10-13"
+  },
+  "new-brunswick": {
+    "source": "Pexels",
+    "id": 11150624,
+    "page": "https://www.pexels.com/photo/green-trees-on-top-of-brown-rock-formations-11150624/",
+    "photographer": "Laura Stanley",
+    "photographerUrl": "https://www.pexels.com/@lstan",
+    "description": "Stunning view of Hopewell Rocks at the Bay of Fundy, showcasing majestic rock formations and vibrant green trees under a clear sky.",
+    "fetched": "2026-10-13"
+  },
+  "new-brunswick-2": {
+    "source": "Pexels",
+    "id": 11150630,
+    "page": "https://www.pexels.com/photo/photograph-of-fishing-boats-on-a-dock-11150630/",
+    "photographer": "Laura Stanley",
+    "photographerUrl": "https://www.pexels.com/@lstan",
+    "description": "Colorful fishing boats docked in a tranquil harbor in New Brunswick, Canada, on a sunny day.",
+    "fetched": "2026-10-13"
+  },
+  "pei": {
+    "source": "Pexels",
+    "id": 33730022,
+    "page": "https://www.pexels.com/photo/scenic-red-cliffs-of-cavendish-pei-33730022/",
+    "photographer": "Lorna Cameron",
+    "photographerUrl": "https://www.pexels.com/@lorna-cameron-19163854",
+    "description": "Explore the striking red sandstone cliffs along the shoreline of Cavendish, Prince Edward Island.",
+    "fetched": "2026-10-13"
   }
 }

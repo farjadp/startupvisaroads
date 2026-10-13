@@ -13,6 +13,8 @@ import { buildMetadata } from '@/lib/seo';
 import { faMeta, type FaPage } from '@/lib/fa/content';
 import FaPageLayout from '@/components/fa/FaPageLayout';
 import EnGuideLayout from '@/components/guide/EnGuideLayout';
+import ProvinceRail from '@/components/fa/pnp/ProvinceRail';
+import ProvinceCards from '@/components/fa/pnp/ProvinceCards';
 
 type Props = { params: Promise<{ locale: string }> };
 
@@ -50,7 +52,20 @@ export function pnpRoute(opts: {
     const lang = locale as 'fa' | 'en';
     const trail = [HUB[lang], { name: opts.name[lang], path: page.path }];
     return lang === 'fa'
-      ? <FaPageLayout page={page} trail={trail} />
+      ? (
+        <FaPageLayout
+          page={page}
+          trail={trail}
+          afterHero={<ProvinceRail current={page.path} />}
+          beforeClosing={
+            <section aria-labelledby="other-provinces" className="px-4 md:px-8 max-w-[1400px] mx-auto py-20 md:py-28 border-t border-[#1a1a1a]/10">
+              <h2 id="other-provinces" className="font-estedad font-black text-3xl md:text-5xl leading-tight mb-4">استان‌های دیگر را هم ببینید</h2>
+              <p className="text-lg leading-[1.9] text-[#1a1a1a]/70 max-w-[60ch] mb-10">آستانه‌ها، وضعیت دعوت و دوره‌ی پیش از نامزدی در هر استان فرق دارد. پیش از انتخاب، دست‌کم دو استان را کنار هم بگذارید.</p>
+              <ProvinceCards exclude={page.path} compact />
+            </section>
+          }
+        />
+      )
       : <EnGuideLayout page={page} trail={trail} />;
   }
 

@@ -16,6 +16,12 @@ export const page: FaPage = {
   keywords: ['برنامه کارآفرینی آلبرتا', 'مهاجرت کارآفرینی آلبرتا', 'AAIP Rural Entrepreneur', 'PNP آلبرتا کارآفرینی', 'سهمیه آلبرتا ۲۰۲۶'],
   updated: '2026-10-12',
 
+  image: 'alberta',
+  imageAlt: 'جاده‌ای خالی در آلبرتا که میان جنگل کاج به سوی کوه‌های برف‌پوش راکی می‌رود',
+  gallery: [
+    { src: 'alberta-2', alt: 'خیابان اصلی شهر کوچک بنف در آلبرتا با مغازه‌های چوبی و کوه در پس‌زمینه', caption: 'مسیر روستایی آلبرتا برای شهرهای زیر صد هزار نفر است، بیرون از کلگری و ادمونتون.' },
+    { src: 'alberta-3', alt: 'دشت باز و مزرعه‌ی هموار در درامهلر آلبرتا زیر آسمان صاف', caption: 'پیش از EOI، یک جامعه‌ی روستایی باید کتباً از طرح شما حمایت کند.' },
+  ],
   entity: { name: 'Alberta Advantage Immigration Program — Rural Entrepreneur Stream', provider: 'Government of Alberta', country: 'Canada' },
   facts: [
     { label: 'حداقل دارایی خالص', value: '۳۰۰٬۰۰۰ دلار کانادا' },
