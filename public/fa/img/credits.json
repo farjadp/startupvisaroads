@@ -349,5 +349,23 @@
     "photographerUrl": "https://www.pexels.com/@lorna-cameron-19163854",
     "description": "Explore the striking red sandstone cliffs along the shoreline of Cavendish, Prince Edward Island.",
     "fetched": "2026-10-13"
+  },
+  "pei-2": {
+    "source": "Pexels",
+    "id": 29144984,
+    "page": "https://www.pexels.com/photo/wood-islands-lighthouse-on-clear-day-29144984/",
+    "photographer": "Stephen Taylor",
+    "photographerUrl": "https://www.pexels.com/@stephen-taylor-2767989",
+    "description": "Scenic view of the historic Wood Islands Lighthouse on Prince Edward Island.",
+    "fetched": "2026-10-13"
+  },
+  "pei-3": {
+    "source": "Pexels",
+    "id": 11671770,
+    "page": "https://www.pexels.com/photo/covehead-harbour-lighthouse-11671770/",
+    "photographer": "Sebastian Velandia",
+    "photographerUrl": "https://www.pexels.com/@sebastian-velandia-183845690",
+    "description": "Charming Covehead Harbour Lighthouse surrounded by nature at sunset in Prince Edward Island, Canada.",
+    "fetched": "2026-10-13"
   }
 }

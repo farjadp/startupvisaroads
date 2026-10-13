@@ -46,6 +46,7 @@ const BY_PATH: Record<string, FlagCode> = {
   '/pnp/manitoba': 'ca',
   '/pnp/new-brunswick': 'ca',
   '/pnp/nova-scotia': 'ca',
+  '/pnp/pei': 'ca',
   '/canada-startup-visa': 'ca',
 };
 

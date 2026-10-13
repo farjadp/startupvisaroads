@@ -116,6 +116,8 @@ const SLOTS: Record<string, string> = {
   'new-brunswick': 'Hopewell Rocks Bay of Fundy New Brunswick',
   'new-brunswick-2': 'Fredericton New Brunswick',
   pei: 'Prince Edward Island red cliffs',
+  'pei-2': 'Charlottetown Prince Edward Island',
+  'pei-3': 'Prince Edward Island lighthouse',
 };
 
 type Photo = {

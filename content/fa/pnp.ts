@@ -99,8 +99,8 @@ export const provinces: PnpProvince[] = [
   {
     name: 'جزیره‌ی پرنس ادوارد',
     stream: 'PEI PNP Business Work Permit',
-    href: '/en/pnp/pei',
-    guide: 'en',
+    href: '/pnp/pei',
+    guide: 'fa',
     status: 'در فهرست هست، اما در ۲۰۲۶ هیچ کارآفرینی دعوت نشده',
     open: false,
     image: 'pei',
