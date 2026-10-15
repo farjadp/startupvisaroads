@@ -22,6 +22,8 @@ export type AppState = {
   sourcesOpened: RouteKey[];
   newsRead: boolean;
   fundsUsed: boolean;
+  /** Funds tool: also show an indicative US dollar amount. */
+  fundsUsd: boolean;
   /** Roads the user chose to follow (onboarding 3B). Orders Roads and filters News; never scored. */
   following: RouteKey[];
   /** The opening motion plays once; later launches fade. */
@@ -42,6 +44,7 @@ export const INITIAL: AppState = {
   sourcesOpened: [],
   newsRead: false,
   fundsUsed: false,
+  fundsUsd: false,
   following: [],
   introSeen: false,
 };

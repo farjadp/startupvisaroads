@@ -4,10 +4,12 @@
 // is counted (per month, per year, one-off), what the money must show, and
 // where the figure comes from; showing it never means approval (trust rules).
 import { router } from 'expo-router';
-import { useEffect, useState } from 'react';
-import { AccessibilityInfo, Platform, Pressable, View } from 'react-native';
+import { createContext, useContext, useEffect, useState } from 'react';
+import { AccessibilityInfo, Platform, Pressable, Switch, View } from 'react-native';
 import { SUV_SETTLEMENT_FUNDS, SUV_SETTLEMENT_FUNDS_EXTRA_PER_PERSON, SUV_SETTLEMENT_FUNDS_UPDATED, SUV_SOURCES, SUV_VERIFIED, settlementFundsFor } from '@shared/canada-suv';
 import { FUNDS, type FundsCountry, type FundsLine } from '@shared/funds';
+import { FX, toUsd, type FxCurrency } from '@shared/fx';
+import { parseIsoDate } from '@/i18n/format';
 import { COUNTRY_NAMES, COUNTRY_ORDER, ROUTES } from '@/content/routes';
 import { useI18n } from '@/i18n/I18nProvider';
 import { useStore } from '@/state/store';
@@ -20,8 +22,56 @@ import { T } from '@/ui/T';
 
 const MAX = 12;
 
+// "Also show in US dollars" (Farjad, 15 Oct 2026). The official figure stays first and unchanged;
+// the dollar line is small, muted, rounded, says "about" and names the ECB rate date.
+const FX_AGE_DAYS = Math.floor((Date.now() - parseIsoDate(FX.date).getTime()) / 86_400_000);
+const FX_OLD = FX_AGE_DAYS > 30;
+const FX_TOO_OLD = FX_AGE_DAYS > 90;
+const UsdCtx = createContext(false);
+
+/** The "about USD …" line for an amount, or null when the dollar view is off. */
+function useUsdLine(short = false): (amount: number, currency: FxCurrency) => string | null {
+  const on = useContext(UsdCtx);
+  const { t, money, date } = useI18n();
+  // Table rows say only "about USD …": the rate and its date are on the figure above them.
+  return (amount, currency) => {
+    if (!on) return null;
+    const usd = money(toUsd(amount, currency), 'USD');
+    return short ? t('funds.about', { amount: usd }) : t('funds.usdLine', { amount: usd, date: date(FX.date) });
+  };
+}
+
+function UsdSwitch({ on, onChange }: { on: boolean; onChange: (v: boolean) => void }) {
+  const { t } = useI18n();
+  const { c } = useTheme();
+  return (
+    <View style={{ gap: space.s2 }}>
+      <Pressable
+        onPress={() => onChange(!on)}
+        accessibilityRole="switch"
+        accessibilityState={{ checked: on }}
+        accessibilityLabel={t('funds.usdSwitch')}
+        style={{ flexDirection: 'row', alignItems: 'center', gap: space.s3, minHeight: Platform.OS === 'android' ? size.touchMinAndroid : size.touchMin }}
+      >
+        <T variant="row" style={{ flex: 1 }} importantForAccessibility="no">
+          {t('funds.usdSwitch')}
+        </T>
+        <Switch value={on} onValueChange={onChange} trackColor={{ true: c.indicator, false: c.fgMuted }} ios_backgroundColor={c.fgMuted} thumbColor={Platform.OS === 'android' ? c.bg : undefined} accessible={false} importantForAccessibility="no-hide-descendants" />
+      </Pressable>
+      {/* Read before the figures: the dollar amounts are a guide, never the requirement. */}
+      {on ? (
+        <T variant="caption" tone="fgMuted">
+          {FX_OLD ? `${t('funds.usdNote')} ${t('funds.usdOld')}` : t('funds.usdNote')}
+        </T>
+      ) : null}
+    </View>
+  );
+}
+
 function CanadaFunds() {
   const { t, money, count, date, meta } = useI18n();
+  const usd = useUsdLine();
+  const usdShort = useUsdLine(true);
   const { c } = useTheme();
   const [n, setN] = useState(3);
   const amount = settlementFundsFor(n);
@@ -92,6 +142,11 @@ function CanadaFunds() {
           <T variant="caption" tone="fgMuted">
             {t('funds.unit')}
           </T>
+          {usd(amount, 'CAD') ? (
+            <T variant="caption" tone="fgMuted">
+              {usd(amount, 'CAD')}
+            </T>
+          ) : null}
           <T variant="caption" tone="fgMuted">
             {t('funds.notApproval')}
           </T>
@@ -102,13 +157,24 @@ function CanadaFunds() {
             const size_ = Number(k);
             const mine = size_ === n;
             return (
-              <View key={k} style={{ flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 6, borderBottomWidth: 1, borderBottomColor: c.rule }}>
+              <View
+                key={k}
+                accessible
+                accessibilityLabel={[`${size_ === 1 ? t('funds.person', { n: count(1) }) : t('funds.people', { n: count(size_) })}: ${money(v, 'CAD')}`, usdShort(v, 'CAD')].filter(Boolean).join(', ')}
+                style={{ flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 6, borderBottomWidth: 1, borderBottomColor: c.rule }}>
                 <T variant="row" weight={mine ? 'bold' : 'regular'} tone={mine ? 'fg' : 'fgMuted'}>
                   {size_ === 1 ? t('funds.person', { n: count(1) }) : t('funds.people', { n: count(size_) })}
                 </T>
-                <T variant="row" weight={mine ? 'bold' : 'regular'}>
-                  {money(v, 'CAD')}
-                </T>
+                <View style={{ alignItems: 'flex-end' }}>
+                  <T variant="row" weight={mine ? 'bold' : 'regular'}>
+                    {money(v, 'CAD')}
+                  </T>
+                  {usdShort(v, 'CAD') ? (
+                    <T variant="caption" tone="fgMuted">
+                      {usdShort(v, 'CAD')}
+                    </T>
+                  ) : null}
+                </View>
               </View>
             );
           })}
@@ -131,11 +197,12 @@ function CanadaFunds() {
 function Figure({ line }: { line: FundsLine }) {
   const { t, money, meta } = useI18n();
   const { c } = useTheme();
+  const usd = useUsdLine()(line.amount, line.currency);
   const amount = money(line.amount, line.currency);
   const shown = line.approx ? t('funds.about', { amount }) : amount;
-  // Label, figure and unit in one element, so a screen reader says them together.
+  // Label, figure, unit and the dollar guide in one element, read in that order.
   return (
-    <View accessible accessibilityLabel={`${t(`funds.lines.${line.key}`)}: ${shown}, ${t(`funds.basis.${line.basis}`)}`} style={{ gap: space.s2, paddingVertical: space.s4, borderBottomWidth: 1, borderColor: c.fg }}>
+    <View accessible accessibilityLabel={[`${t(`funds.lines.${line.key}`)}: ${shown}`, t(`funds.basis.${line.basis}`), usd].filter(Boolean).join(', ')} style={{ gap: space.s2, paddingVertical: space.s4, borderBottomWidth: 1, borderColor: c.fg }}>
       <T variant="row" tone="fgMuted">
         {t(`funds.lines.${line.key}`)}
       </T>
@@ -147,6 +214,11 @@ function Figure({ line }: { line: FundsLine }) {
       <T variant="caption" tone="fgMuted">
         {t(`funds.basis.${line.basis}`)}
       </T>
+      {usd ? (
+        <T variant="caption" tone="fgMuted">
+          {usd}
+        </T>
+      ) : null}
     </View>
   );
 }
@@ -154,19 +226,27 @@ function Figure({ line }: { line: FundsLine }) {
 function TierRow({ line }: { line: FundsLine }) {
   const { t, money } = useI18n();
   const { c } = useTheme();
+  const usd = useUsdLine(true)(line.amount, line.currency);
   const amount = money(line.amount, line.currency);
   return (
     <View
       accessible
-      accessibilityLabel={`${t(`funds.lines.${line.key}`)}: ${line.approx ? t('funds.about', { amount }) : amount}, ${t(`funds.basis.${line.basis}`)}`}
+      accessibilityLabel={[`${t(`funds.lines.${line.key}`)}: ${line.approx ? t('funds.about', { amount }) : amount}`, t(`funds.basis.${line.basis}`), usd].filter(Boolean).join(', ')}
       style={{ flexDirection: 'row', justifyContent: 'space-between', gap: space.s3, paddingVertical: space.s3, borderBottomWidth: 1, borderBottomColor: c.rule }}
     >
       <T variant="row" tone="fgMuted" style={{ flexShrink: 1 }}>
         {t(`funds.lines.${line.key}`)}
       </T>
-      <T variant="row" weight="bold">
-        {line.approx ? t('funds.about', { amount }) : amount}
-      </T>
+      <View style={{ alignItems: 'flex-end' }}>
+        <T variant="row" weight="bold">
+          {line.approx ? t('funds.about', { amount }) : amount}
+        </T>
+        {usd ? (
+          <T variant="caption" tone="fgMuted">
+            {usd}
+          </T>
+        ) : null}
+      </View>
     </View>
   );
 }
@@ -274,6 +354,7 @@ export default function Funds() {
   const initial: FundsCountry =
     (state.following[0] && ROUTES[state.following[0]].country) || (state.outcome && state.outcome !== 'too-early' ? ROUTES[state.outcome].country : null) || 'CA';
   const [country, setCountry] = useState<FundsCountry>(initial);
+  const usdOn = state.fundsUsd && !FX_TOO_OLD;
 
   useEffect(() => {
     if (!state.fundsUsed) set({ fundsUsed: true });
@@ -289,8 +370,10 @@ export default function Funds() {
     <View style={{ flex: 1, backgroundColor: c.bg }}>
       <Screen edges={[]}>
         <CountryChips value={country} onChange={choose} />
+        {/* Rates over 90 days old are not offered at all rather than shown stale. */}
+        {FX_TOO_OLD ? null : <UsdSwitch on={usdOn} onChange={(v) => set({ fundsUsd: v })} />}
         <Heading role="display-m">{country === 'CA' ? `${pick(COUNTRY_NAMES.CA).text} · ${t('funds.caRoute')}` : pick(COUNTRY_NAMES[country]).text}</Heading>
-        {country === 'CA' ? <CanadaFunds /> : <CountryFunds country={country} />}
+        <UsdCtx.Provider value={usdOn}>{country === 'CA' ? <CanadaFunds /> : <CountryFunds country={country} />}</UsdCtx.Provider>
         <Disclaimer onAbout={() => router.navigate('/(tabs)/me/about')} />
       </Screen>
     </View>
