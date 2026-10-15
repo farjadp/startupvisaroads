@@ -33,4 +33,6 @@ eas update:rollback
 
 ## When an update is not enough
 
+**`eas.json` and `app.json` are part of the fingerprint.** Any edit to them, even the submit profile, changes the runtime version, so updates stop reaching the builds already on phones. Change them only when a new store build follows. (On 15 Oct 2026 adding `ascAppId` to the submit profile cut builds 1.0.0 (3)/(4) off from updates; it was reverted. Re-add it with the next native build.)
+
 `runtimeVersion` uses the `fingerprint` policy. Any native change (a new native package, an `app.json` plugin, icon or permission change, an Expo SDK upgrade) changes the fingerprint. Builds with the old fingerprint ignore updates for the new one. Those changes need a new store build.
