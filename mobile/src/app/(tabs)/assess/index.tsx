@@ -11,8 +11,8 @@ export default function Assess() {
     <Screen>
       <Heading>{t('assess.title')}</Heading>
       <Ruled>
-        <LinkRow icon="compass" label={t('assess.start')} sub={t('assess.startSub')} onPress={() => router.push('/pathfinder')} />
-        {state.outcome ? <LinkRow icon="route" label={t('assess.result')} onPress={() => router.push('/(tabs)/assess/result')} /> : null}
+        <LinkRow icon="compass" label={t('assess.start')} sub={t('assess.startSub')} onPress={() => router.push('/assessment')} />
+        {state.assessAt ? <LinkRow icon="route" label={t('assess.result')} onPress={() => router.push('/(tabs)/assess/results')} /> : null}
       </Ruled>
       <Label>{t('assess.tools')}</Label>
       <Ruled>

@@ -310,7 +310,7 @@ export function RadioRow({ label, selected, onPress, muted }: { label: string; s
       <T variant="body" weight={selected ? 'bold' : 'medium'} tone={selected ? 'buttonFg' : muted ? 'fgMuted' : 'fg'} style={{ flex: 1 }}>
         {label}
       </T>
-      <View style={{ width: 20, height: 20, borderRadius: 999, borderWidth: selected ? 0 : 1.5, borderColor: c.fg, backgroundColor: selected ? c.accent : 'transparent' }} />
+      <View style={{ width: 20, height: 20, borderRadius: 999, borderWidth: 1.5, borderColor: selected ? c.bg : c.fg, backgroundColor: selected ? c.accent : 'transparent' }} />
     </Pressable>
   );
 }

@@ -8,8 +8,12 @@
 // runtime imports and runs the same on the site, in the app and in tests.
 import type { Criterion, ProfileField, RouteV2, Test, V2Currency } from './types';
 
-/** The assessment's answers. Money fields are in US dollars. Absent = skipped. */
-export type Profile = Partial<Record<ProfileField, number | string | boolean>>;
+/**
+ * The assessment's answers. Money fields are in US dollars. A band answer is
+ * a range [lo, hi] (hi may be Infinity): a threshold inside the range is
+ * "close", never "met". Absent = skipped.
+ */
+export type Profile = Partial<Record<ProfileField, number | [number, number] | string | boolean>>;
 
 export type CriterionState = 'met' | 'close' | 'not-yet' | 'unscored';
 
@@ -19,7 +23,7 @@ export type MatchResult = {
   route: string;
   /** 0–100, or null when no criterion could be scored (or the route is paused/closed). */
   pct: number | null;
-  /** Scoreable criteria the profile answered, out of all scoreable criteria. */
+  /** Criteria the profile scored, out of ALL the route's criteria (authority-decided included). */
   coverage: { scored: number; of: number };
   /**
    * Weight the profile could score, out of the weight of every criterion
@@ -29,8 +33,10 @@ export type MatchResult = {
   weight: { scored: number; of: number };
   thin: boolean;
   results: CriterionResult[];
-  /** Paused or closed routes are listed, never ranked. */
+  /** Paused or closed routes, and routes closed to the user's passport, are listed, never ranked. */
   runnable: boolean;
+  /** Closed to the user's citizenship: show the route's reason, no % and no offer. */
+  blocked: boolean;
 };
 
 export type ToUsd = (amount: number, currency: V2Currency) => number;
@@ -67,28 +73,41 @@ function evaluateTest(t: Test, closeAtIn: number | undefined, p: Profile, toUsd:
     case 'in':
       return t.value.includes(String(v)) ? 'met' : 'not-yet';
     case 'between': {
-      const n = Number(v);
-      const [lo, hi] = t.value;
-      if (n >= lo && n <= hi) return 'met';
-      const band = (hi - lo) * 0.1 || 1;
-      return n >= lo - band && n <= hi + band ? 'close' : 'not-yet';
+      const [a, b] = t.value;
+      const [lo, hi] = range(v);
+      if (Number.isNaN(lo)) return 'unscored';
+      if (lo >= a && hi <= b) return 'met';
+      if (hi >= a && lo <= b) return 'close'; // the band overlaps the range
+      const band = (b - a) * 0.1 || 1;
+      return hi >= a - band && lo <= b + band ? 'close' : 'not-yet';
     }
     case 'gte':
     case 'lte': {
-      const n = Number(v);
-      if (Number.isNaN(n)) return 'unscored';
+      const [lo, hi] = range(v);
+      if (Number.isNaN(lo)) return 'unscored';
       const thr = MONEY.includes(t.field) ? toUsd(t.value, t.currency ?? 'USD') : t.value;
-      if (t.op === 'gte') return n >= thr ? 'met' : n >= thr * closeAt ? 'close' : 'not-yet';
+      if (t.op === 'gte') {
+        if (lo >= thr) return 'met';
+        return hi >= thr || hi >= thr * closeAt ? 'close' : 'not-yet';
+      }
       // An upper limit (age): close within half the gap closeAt leaves, e.g. 10% over.
-      return n <= thr ? 'met' : n <= thr * (1 + (1 - closeAt) / 2) ? 'close' : 'not-yet';
+      if (hi <= thr) return 'met';
+      return lo <= thr || lo <= thr * (1 + (1 - closeAt) / 2) ? 'close' : 'not-yet';
     }
   }
 }
 
+/** A number or a band as [lo, hi]. */
+function range(v: number | [number, number] | string | boolean): [number, number] {
+  if (Array.isArray(v)) return v;
+  const n = Number(v);
+  return [n, n];
+}
+
 export function match(route: RouteV2, p: Profile, toUsd: ToUsd): MatchResult {
-  const runnable = route.status === 'open' || route.status === 'limited';
+  const blocked = typeof p.citizenship === 'string' && !!route.blockedCitizenships?.codes.includes(p.citizenship);
+  const runnable = (route.status === 'open' || route.status === 'limited') && !blocked;
   const results = route.criteria.map((c) => ({ key: c.key, state: evaluate(c, p, toUsd), weight: c.weight }));
-  const scoreable = route.criteria.filter((c) => c.scoreable && (c.test || c.anyOf?.length)).length;
   const scored = results.filter((r) => r.state !== 'unscored');
   const total = scored.reduce((s, r) => s + r.weight, 0);
   const got = scored.reduce((s, r) => s + r.weight * WEIGHT_OF[r.state], 0);
@@ -96,11 +115,12 @@ export function match(route: RouteV2, p: Profile, toUsd: ToUsd): MatchResult {
   return {
     route: route.key,
     pct: runnable && total > 0 ? Math.round((got / total) * 100) : null,
-    coverage: { scored: scored.length, of: scoreable },
+    coverage: { scored: scored.length, of: route.criteria.length },
     weight: { scored: total, of: allWeight },
     thin: total * 2 < allWeight,
     results,
     runnable,
+    blocked,
   };
 }
 

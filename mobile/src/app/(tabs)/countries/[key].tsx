@@ -121,7 +121,7 @@ export default function RouteGuide() {
             void WebBrowser.openBrowserAsync(`${SITE}${guidePath}`);
           }}
         />
-        {!hasAnswers ? <Button kind="link" label={t('roads.start')} onPress={() => router.push('/pathfinder')} /> : null}
+        {!hasAnswers ? <Button kind="link" label={t('roads.start')} onPress={() => router.push('/assessment')} /> : null}
         <Disclaimer onAbout={() => router.navigate('/(tabs)/me/about')} />
         <T variant="caption" tone="fgMuted">
           {t('route.photoCredit', { credit: route.photo.credit })}
