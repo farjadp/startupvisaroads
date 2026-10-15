@@ -26,7 +26,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 }
 
 export default function PrivacyPage() {
-  const lastUpdated = "October 14, 2026";
+  const lastUpdated = "October 15, 2026";
 
   return (
     <div className="w-full px-4 md:px-8 border-x border-[#1a1a1a]/10 max-w-[1400px] mx-auto bg-[#F2F0E9] text-[#1a1a1a]">
@@ -178,7 +178,8 @@ export default function PrivacyPage() {
                   <div className="prose prose-lg font-sans text-[#1a1a1a]/80 leading-relaxed max-w-none space-y-4">
                      <p>This section applies to the VisaRoads app for iPhone and Android.</p>
                      <p>
-                        <strong>What the app collects:</strong> nothing. The app has no account, sign-up or sign-in, and it does not
+                        <strong>What the app collects:</strong> only the random install identifier described under &ldquo;App updates&rdquo;
+                        below. The app has no account, sign-up or sign-in, and it does not
                         include analytics, advertising or crash-reporting software. What you enter (your pathfinder answers, the
                         steps you mark done, your language and appearance settings) is stored only on your phone and is never sent
                         to us or to anyone else.
@@ -188,6 +189,13 @@ export default function PrivacyPage() {
                         visaroads.com. The request carries no personal information. Like any web server, ours may record the technical
                         details of a request, such as an IP address, in standard server logs; these are not linked to you and are not
                         used to identify you.
+                     </p>
+                     <p>
+                        <strong>App updates:</strong> when it opens, the app asks Expo, the service we use to deliver app updates,
+                        whether a newer version of its content is available. The request carries the app&rsquo;s version details and a
+                        random identifier created when the app is installed. That identifier is not linked to you, your answers or
+                        any advertising identifier, and uninstalling the app deletes it from your phone. Like any server, Expo receives the
+                        request&rsquo;s IP address; Expo&rsquo;s own privacy policy covers what it does with it.
                      </p>
                      <p>
                         <strong>Links that leave the app:</strong> official sources, articles, photo credits and &ldquo;Book a call&rdquo;
@@ -205,7 +213,7 @@ export default function PrivacyPage() {
                         children.
                      </p>
                      <p>
-                        <strong>Changes:</strong> if a future version of the app starts collecting any data, we will update this section,
+                        <strong>Changes:</strong> if a future version of the app starts collecting any other data, we will update this section,
                         and the store listings, before that version is released.
                      </p>
                   </div>

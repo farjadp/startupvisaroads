@@ -4,6 +4,10 @@
     "slug": "visaroads",
     "scheme": "visaroads",
     "version": "1.0.0",
+    "platforms": [
+      "ios",
+      "android"
+    ],
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
@@ -14,10 +18,24 @@
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
         "CFBundleAllowMixedLocalizations": true
+      },
+      "privacyManifests": {
+        "NSPrivacyTracking": false,
+        "NSPrivacyCollectedDataTypes": [
+          {
+            "NSPrivacyCollectedDataType": "NSPrivacyCollectedDataTypeDeviceID",
+            "NSPrivacyCollectedDataTypeLinked": false,
+            "NSPrivacyCollectedDataTypeTracking": false,
+            "NSPrivacyCollectedDataTypePurposes": [
+              "NSPrivacyCollectedDataTypePurposeAppFunctionality"
+            ]
+          }
+        ]
       }
     },
     "android": {
       "package": "com.ashavid.visaroads",
+      "allowBackup": false,
       "adaptiveIcon": {
         "backgroundColor": "#1A1A1A",
         "foregroundImage": "./assets/android-icon-foreground.png",
@@ -82,6 +100,19 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "owner": "ashavid",
+    "runtimeVersion": {
+      "policy": "fingerprint"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/2dff448f-8ebe-4479-8c1e-f2b4f5870dd7"
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "2dff448f-8ebe-4479-8c1e-f2b4f5870dd7"
+      }
     }
   }
 }
