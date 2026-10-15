@@ -8,6 +8,7 @@ import type { Outcome } from '@/engine/road';
 import type { QuizKey, StoredAnswers } from '@/engine/readiness';
 import type { Locale } from '@/i18n/locales';
 import type { AssessAnswers } from '@/content/assessment';
+import type { FxCurrency } from '@shared/fx';
 
 export type ModePref = 'system' | 'paper' | 'night';
 
@@ -23,8 +24,11 @@ export type AppState = {
   sourcesOpened: RouteKey[];
   newsRead: boolean;
   fundsUsed: boolean;
-  /** Funds tool: also show an indicative US dollar amount. */
+  /** Funds tool: also show an indicative US dollar amount (v1 switch; read once into fundsCurrencies). */
   fundsUsd: boolean;
+  /** Funds tool: family size last set, and the currency to show figures in besides the official one ('none'; null = not chosen yet). */
+  fundsPeople: number;
+  fundsCurrency: FxCurrency | 'none' | null;
   /** v2 assessment answers (phone only), the screen reached (-1 = intro), and when it was finished. */
   assess: AssessAnswers;
   assessStep: number;
@@ -50,6 +54,8 @@ export const INITIAL: AppState = {
   newsRead: false,
   fundsUsed: false,
   fundsUsd: false,
+  fundsPeople: 3,
+  fundsCurrency: null,
   assess: {},
   assessStep: -1,
   assessAt: null,

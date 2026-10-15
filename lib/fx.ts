@@ -25,6 +25,12 @@ export function toUsdExact(amount: number, currency: FxCurrency): number {
   return (amount / FX.perEur[currency]) * FX.perEur.USD;
 }
 
+/** An amount in another currency, rounded to the nearest 10 so it never reads as exact. */
+export function convert(amount: number, from: FxCurrency, to: FxCurrency): number {
+  const out = (amount / FX.perEur[from]) * FX.perEur[to];
+  return Math.round(out / 10) * 10;
+}
+
 /** An amount in US dollars, rounded to the nearest 10 so it never reads as exact. */
 export function toUsd(amount: number, currency: FxCurrency): number {
   const usd = (amount / FX.perEur[currency]) * FX.perEur.USD;
