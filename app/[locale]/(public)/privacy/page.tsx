@@ -193,7 +193,8 @@ export default function PrivacyPage() {
                         <strong>App updates:</strong> when it opens, the app asks Expo, the service we use to deliver app updates,
                         whether a newer version of its content is available. The request carries the app&rsquo;s version details and a
                         random identifier created when the app is installed. That identifier is not linked to you, your answers or
-                        any advertising identifier, and it is deleted when you uninstall the app.
+                        any advertising identifier, and it is deleted when you uninstall the app. Like any server, Expo receives the
+                        request&rsquo;s IP address; Expo&rsquo;s own privacy policy covers what it does with it.
                      </p>
                      <p>
                         <strong>Links that leave the app:</strong> official sources, articles, photo credits and &ldquo;Book a call&rdquo;
