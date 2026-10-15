@@ -18,6 +18,12 @@ Builds on the v1 spec (2026-10-14-visa-roads-app.md) and what shipped in #38/#39
 - **Imagery:** real, credited photos for places; Gemini illustrations for tools and empty states, marked as illustration.
 - No account needed; everything is kept on the phone. A magic link is optional (Phase 3).
 
+### Decided after the auditor review (Farjad, 15 Oct 2026)
+
+- **Photos in lists:** small real-photo thumbnails are allowed in lists (the Countries grid, result cards). A page still has at most one large photo.
+- **Results:** the primary button is "See what to close first", and the mentor review is the second button.
+- **v1 readiness score and levels are retired.** Match % is the only number in the app. Checklist progress is shown as progress, never as a score.
+
 ## 1. Launch and first run
 
 ```
