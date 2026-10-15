@@ -23,5 +23,9 @@ Rules the tokens encode, in one place so nobody has to remember them:
 7. Text colours pass WCAG AA in both modes; `fg-faint` is for large text and
    non-text marks only. Ratios are recorded next to each role.
 
-Known drift this file does not yet fix: `#D4AF37` gold on legacy pages and the
+8. `color.logo.*` (navy, crimson, gold) belong to the logo and print only;
+   they never colour UI.
+
+Known drift this file does not yet fix: `#D4AF37` gold on legacy pages (the
+logo's gold is `#C99700`, and neither belongs in UI) and the
 unused IRANSansX files under `public/fonts`.
