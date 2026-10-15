@@ -5,7 +5,8 @@
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { Pressable, View, useWindowDimensions } from 'react-native';
-import { COUNTRY_NAMES, COUNTRY_ORDER, FAMILY_ORDER, ROUTE_FAMILY, roadsOf, type Country, type RouteFamily } from '@/content/routes';
+import { routesOf } from '@shared/routes-v2';
+import { COUNTRY_NAMES, COUNTRY_ORDER, FAMILY_ORDER, type Country, type RouteFamily } from '@/content/routes';
 import { useI18n } from '@/i18n/I18nProvider';
 import { useTheme } from '@/theme/ThemeProvider';
 import { space } from '@/theme/tokens';
@@ -20,7 +21,7 @@ function CountryCard({ country, width }: { country: Country; width: number }) {
   const { t, pick, count } = useI18n();
   const { c } = useTheme();
   const name = pick(COUNTRY_NAMES[country]);
-  const n = roadsOf(country).length;
+  const n = routesOf(country).length;
   const sub = n === 0 ? t('countries.researching') : n === 1 ? t('countries.road') : t('countries.roads', { n: count(n) });
   return (
     <Pressable
@@ -49,8 +50,8 @@ export default function Countries() {
   const { width, fontScale } = useWindowDimensions();
   const [family, setFamily] = useState<RouteFamily | 'all'>('all');
   // Only families the app has roads for, so a chip never leads to an empty grid.
-  const families = FAMILY_ORDER.filter((f) => COUNTRY_ORDER.some((k) => roadsOf(k).some((r) => ROUTE_FAMILY[r] === f)));
-  const shown = family === 'all' ? COUNTRY_ORDER : COUNTRY_ORDER.filter((k) => roadsOf(k).some((r) => ROUTE_FAMILY[r] === family));
+  const families = FAMILY_ORDER.filter((f) => COUNTRY_ORDER.some((k) => routesOf(k, f).length > 0));
+  const shown = family === 'all' ? COUNTRY_ORDER : COUNTRY_ORDER.filter((k) => routesOf(k, family).length > 0);
   // At accessibility text sizes two columns break names mid-word ("Canad/a"): one column then (HIG Dynamic Type).
   const columns = fontScale >= 1.35 ? 1 : 2;
   const cardW = Math.floor((width - space.s6 * 2 - GAP * (columns - 1)) / columns);

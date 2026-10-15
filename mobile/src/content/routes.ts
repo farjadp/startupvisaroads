@@ -213,6 +213,8 @@ export const COUNTRY_ORDER: Country[] = ['CA', 'US', 'DK', 'FI', 'EE', 'NL', 'IT
 /** v2 route families (spec 2026-10-15). Study and Express Entry have no roads in the app yet. */
 export type RouteFamily = 'startup' | 'entrepreneur' | 'study' | 'talent' | 'express';
 export const FAMILY_ORDER: RouteFamily[] = ['startup', 'entrepreneur', 'study', 'talent', 'express'];
+/** One icon per family (4A line icons). */
+export const FAMILY_ICON: Record<RouteFamily, 'startup' | 'pnp' | 'study' | 'niw' | 'compass'> = { startup: 'startup', entrepreneur: 'pnp', study: 'study', talent: 'niw', express: 'compass' };
 export const ROUTE_FAMILY: Record<RouteKey, RouteFamily> = {
   denmark: 'startup',
   finland: 'startup',

@@ -3,7 +3,8 @@
 import { Stack, router, useLocalSearchParams } from 'expo-router';
 import { View } from 'react-native';
 import { FUNDS } from '@shared/funds';
-import { COUNTRY_HERO, COUNTRY_NAMES, COUNTRY_ORDER, FAMILY_ORDER, ROUTE_FAMILY, ROUTE_TYPE, ROUTES, roadsOf, type Country } from '@/content/routes';
+import { routesOf } from '@shared/routes-v2';
+import { COUNTRY_HERO, COUNTRY_NAMES, COUNTRY_ORDER, FAMILY_ICON, FAMILY_ORDER, type Country } from '@/content/routes';
 import { useI18n } from '@/i18n/I18nProvider';
 import { space } from '@/theme/tokens';
 import { CountryPicture } from '@/ui/CountryPicture';
@@ -15,7 +16,7 @@ export default function CountryPage() {
   const { t, pick } = useI18n();
   const country = (COUNTRY_ORDER.includes(code as Country) ? code : 'CA') as Country;
   const name = pick(COUNTRY_NAMES[country]);
-  const roads = roadsOf(country);
+  const roads = routesOf(country);
   const photo = COUNTRY_HERO[country];
 
   return (
@@ -35,14 +36,20 @@ export default function CountryPage() {
           {t('countries.researchingLong')}
         </T>
       ) : (
-        FAMILY_ORDER.filter((f) => roads.some((r) => ROUTE_FAMILY[r] === f)).map((f) => (
+        FAMILY_ORDER.filter((f) => roads.some((r) => r.family === f)).map((f) => (
           <View key={f}>
             <Label>{t(`families.${f}`)}</Label>
             <Ruled>
               {roads
-                .filter((r) => ROUTE_FAMILY[r] === f)
+                .filter((r) => r.family === f)
                 .map((r) => (
-                  <LinkRow key={r} icon={ROUTE_TYPE[r]} label={pick(ROUTES[r].name).text} onPress={() => router.push(`/(tabs)/countries/${r}`)} />
+                  <LinkRow
+                    key={r.key}
+                    icon={FAMILY_ICON[f]}
+                    label={pick(r.name).text}
+                    sub={r.status !== 'open' ? t(`route2.statusShort.${r.status}`) : undefined}
+                    onPress={() => router.push(`/(tabs)/countries/route/${r.key}`)}
+                  />
                 ))}
             </Ruled>
           </View>

@@ -13,6 +13,7 @@ export default function CountriesStack() {
     <Stack screenOptions={stackOptions(c, meta.script)}>
       <Stack.Screen name="index" options={{ headerShown: false, title: t('tabs.countries') }} />
       <Stack.Screen name="country/[code]" options={{ title: '' }} />
+      <Stack.Screen name="route/[key]" options={{ title: '' }} />
       <Stack.Screen name="[key]" options={{ title: '' }} />
     </Stack>
   );

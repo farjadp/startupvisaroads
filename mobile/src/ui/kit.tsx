@@ -75,11 +75,22 @@ export function AcidRule() {
   return <View accessible={false} style={{ width: 48, height: size.ruleAccent, backgroundColor: c.accent }} />;
 }
 
-export function Heading({ children, role = 'display-l', italicTail }: { children: string; role?: 'display-xl' | 'display-l' | 'display-m'; italicTail?: string }) {
+export function Heading({
+  children,
+  role = 'display-l',
+  italicTail,
+  lang,
+}: {
+  children: string;
+  role?: 'display-xl' | 'display-l' | 'display-m';
+  italicTail?: string;
+  /** The text's language when it is not the UI's (English fallback): picks the face by script. */
+  lang?: Locale;
+}) {
   const { meta } = useI18n();
   return (
     <View style={{ gap: space.s3 }}>
-      <T variant={role} accessibilityRole="header">
+      <T variant={role} accessibilityRole="header" lang={lang}>
         {children}
         {italicTail ? (
           <T variant={role} tone="fgFaint" italic={meta.script === 'latin'}>
