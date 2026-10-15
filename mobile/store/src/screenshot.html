@@ -1,0 +1,42 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<!-- Store screenshot frame. Rendered headless by store/src/render.py:
+     ?img=<abs path>&cap=<caption>&dir=ltr|rtl&script=latin|arabic|han&dark=0|1&w=&h= -->
+<style>
+@font-face { font-family: 'DMSerif'; src: url('fonts/DMSerifDisplay_400Regular.ttf'); }
+@font-face { font-family: 'Estedad'; src: url('fonts/Estedad-Black.ttf'); font-weight: 900; }
+html, body { margin: 0; padding: 0; }
+body { width: var(--w); height: var(--h); overflow: hidden; background: #F2F0E9; color: #1A1A1A; }
+body.dark { background: #121417; color: #F2F0E9; }
+.frame { box-sizing: border-box; width: 100%; height: 100%; padding: calc(var(--w) * 0.075) calc(var(--w) * 0.075) 0; display: flex; flex-direction: column; }
+.cap { margin: 0; font-weight: 400; line-height: 1.05; letter-spacing: -0.01em; font-size: calc(var(--w) * 0.085); }
+.latin .cap { font-family: 'DMSerif', Georgia, serif; }
+.arabic .cap { font-family: 'Estedad', sans-serif; font-weight: 900; line-height: 1.35; letter-spacing: 0; font-size: calc(var(--w) * 0.075); }
+.han .cap { font-family: 'PingFang SC', 'Hiragino Sans GB', sans-serif; font-weight: 600; line-height: 1.3; letter-spacing: 0; font-size: calc(var(--w) * 0.072); }
+.rule { width: calc(var(--w) * 0.12); height: calc(var(--w) * 0.009); background: #CCFF00; margin: calc(var(--w) * 0.045) 0 calc(var(--w) * 0.06); }
+.shot { flex: 1; min-height: 0; display: flex; justify-content: center; align-items: flex-start; }
+.shot img { width: 82%; border: calc(var(--w) * 0.003) solid #1A1A1A; border-bottom: 0; display: block; }
+body.dark .shot img { border-color: #F2F0E9; }
+</style>
+</head>
+<body>
+<div class="frame">
+  <h1 class="cap" id="cap"></h1>
+  <div class="rule"></div>
+  <div class="shot"><img id="img" alt=""></div>
+</div>
+<script>
+const q = new URLSearchParams(location.search);
+document.documentElement.style.setProperty('--w', q.get('w') + 'px');
+document.documentElement.style.setProperty('--h', q.get('h') + 'px');
+document.documentElement.dir = q.get('dir') || 'ltr';
+document.documentElement.lang = q.get('lang') || 'en';
+document.body.classList.add(q.get('script') || 'latin');
+if (q.get('dark') === '1') document.body.classList.add('dark');
+document.getElementById('cap').textContent = q.get('cap');
+document.getElementById('img').src = 'file://' + q.get('img');
+</script>
+</body>
+</html>

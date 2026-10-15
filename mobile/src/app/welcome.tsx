@@ -33,7 +33,9 @@ export default function Welcome() {
   };
 
   return (
+    // Not sticky: on short phones a fixed footer covered the language chips.
     <Screen
+      stickyFooter={false}
       footer={
         <>
           <Button label={t('welcome.start')} onPress={() => enter('pathfinder')} />

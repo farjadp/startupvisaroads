@@ -2,7 +2,7 @@ import type { Messages } from './en';
 
 // Machine-assisted draft; needs review by a native Chinese speaker before release.
 const zh: Messages = {
-  app: { name: 'Visa Roads', by: 'Ashavid 出品' },
+  app: { name: 'VisaRoads', by: 'Ashavid 出品' },
   common: {
     disclaimer: '我们不是移民律师。我们准备申请材料，但不代为递交。',
     readiness: '准备度衡量的是您的准备程度，而不是成功机会。',
@@ -159,7 +159,7 @@ const zh: Messages = {
     showAll: '查看全部资讯',
     error: '资讯加载失败。',
     englishFeed: '资讯以英文和波斯文发布；您正在阅读英文资讯。',
-    analysis: 'Visa Roads 分析',
+    analysis: 'VisaRoads 分析',
   },
   me: {
     title: '我的',
@@ -205,7 +205,7 @@ const zh: Messages = {
   },
   about: {
     title: '关于',
-    p1: 'Visa Roads 是总部位于多伦多的 Ashavid 旗下产品。我们是成功退出的创始人、投资银行家和资助评审委员，负责构建申请中的商业部分：商业计划、财务模型、路演材料和创始人辅导。',
+    p1: 'VisaRoads 是总部位于多伦多的 Ashavid 旗下产品。我们是成功退出的创始人、投资银行家和资助评审委员，负责构建申请中的商业部分：商业计划、财务模型、路演材料和创始人辅导。',
     p2: '我们不是移民律师，也不是持牌移民顾问。我们准备申请材料，但不代为递交。移民事务由您委托的持牌专业人士办理。',
     p3: '本应用中的准备度衡量的是您的准备程度，而不是成功机会。没有人能为机会打分，任何承诺结果的人都在推销某样东西。',
     p4: '每个数字都标明官方来源和我们最后核实的日期。规则会变化；行动前请阅读来源。',

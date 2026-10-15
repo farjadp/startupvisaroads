@@ -15,7 +15,7 @@ import { T } from '@/ui/T';
 const MAX = 12;
 
 export default function Funds() {
-  const { t, money, count, date } = useI18n();
+  const { t, money, count, date, meta } = useI18n();
   const { c } = useTheme();
   const { state, set } = useStore();
   const [n, setN] = useState(3);
@@ -83,8 +83,9 @@ export default function Funds() {
           <T variant="row" tone="fgMuted">
             {t('funds.need')}
           </T>
-          <View style={{ alignSelf: 'flex-start', backgroundColor: c.accent, paddingHorizontal: space.s2 }}>
-            <T variant="figure" tone="onAccent">
+          <View style={{ alignSelf: 'flex-start', backgroundColor: c.accent, paddingHorizontal: space.s2, paddingTop: space.s2 }}>
+            {/* Estedad's wide digits wrap the amount in fa/ar; shrink to fit there. Latin keeps its natural size (fitting clips DM Serif tops on iOS). */}
+            <T variant="figure" tone="onAccent" {...(meta.script === 'arabic' ? { numberOfLines: 1, adjustsFontSizeToFit: true, minimumFontScale: 0.6 } : null)}>
               {money(amount, 'CAD')}
             </T>
           </View>
