@@ -42,15 +42,15 @@ evidence column before re-using an answer.
 7. Additional: no override (no account, no minimum age in Terms for the app)
 
 **App Privacy**
-- Privacy Policy URL: `https://visaroads.com/en/privacy` — **only after** the app section in `privacy-app-section.md` is published there. Today the page does not mention the app.
-- Data collection: **"No, we do not collect data from this app."** Basis: nothing the user enters leaves the phone. The RSS request carries no personal data. If the server keeps standard access logs (IP), Apple does not treat them as collection unless they are used to identify, track or link the user.
+- Privacy Policy URL: `https://visaroads.com/en/privacy` — the app section is live at `#mobile-app` (PR #33, verified 15 Oct 2026).
+- Data collection: **"No, we do not collect data from this app."** Basis: nothing the user enters leaves the phone. The RSS request carries no personal data. visaroads.com keeps standard Cloud Run access logs (IP); Farjad confirmed on 15 Oct 2026 that they are used only for operations and security and never to identify, track or link visitors, so Apple does not treat them as collection.
 
 **Pricing and availability:** Free · all countries **except China mainland** (needs an ICP filing) · Mac (Apple Silicon) and Vision Pro **off** · Release: **Manual**
 
 **Version page**
 - Promotional text, Description, Keywords: `listing/<locale>/`
 - Support URL: `https://visaroads.com/en/contact` · Marketing URL: `https://visaroads.com`
-- Copyright: `2026 Ashavid Inc.` — confirm the legal entity (the site footer still names the closed "Visa Roads Inc.")
+- Copyright: `2026 Ashavid Inc.` (legal entity confirmed by Farjad, 15 Oct 2026)
 - Screenshots: `app-store/screenshots/<locale>/` — 1206×2622, the 6.3" iPhone slot. No iPad.
 
 **App Review Information**
@@ -105,7 +105,5 @@ VisaRoads (Ashavid Inc.) gives business preparation, not legal or immigration ad
 
 ## Before submitting — owed
 
-1. Publish the app section of the privacy policy (`privacy-app-section.md`), then check both URLs answer 200 when signed out.
-2. A native review of the fr, zh and ar copy, both store listings and in-app.
-3. Confirm the legal entity for the copyright line.
-4. Production builds on EAS (you run them): `eas build -p ios --profile production` and `eas build -p android --profile production`.
+1. A native review of the fr, zh and ar copy, both store listings and in-app.
+2. Production builds on EAS (you run them): `eas build -p ios --profile production` and `eas build -p android --profile production`.
