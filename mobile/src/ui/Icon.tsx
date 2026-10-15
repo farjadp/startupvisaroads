@@ -29,7 +29,8 @@ export type IconName =
   | 'startup'
   | 'pnp'
   | 'tech'
-  | 'niw';
+  | 'niw'
+  | 'study';
 
 /** Directional icons mirror in right-to-left layouts; everything else never does. */
 const DIRECTIONAL: IconName[] = ['arrow', 'chevron'];
@@ -121,6 +122,7 @@ export function Icon({ name, size = tokenSize.icon, tone = 'fg', color }: { name
           <Path d="M9 3v3M15 3v3M9 18v3M15 18v3M3 9h3M3 15h3M18 9h3M18 15h3" {...p} />
         </>
       )}
+      {name === 'study' && <Path d="M2 9l10-5 10 5-10 5zM6 11v5c3 2 9 2 12 0v-5M22 9v6" {...p} />}
       {name === 'niw' && (
         <>
           <Circle cx={10} cy={8} r={3.5} {...p} />
