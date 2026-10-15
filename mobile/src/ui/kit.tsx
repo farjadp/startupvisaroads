@@ -6,6 +6,7 @@ import type { ReactNode } from 'react';
 import { Platform, Pressable, ScrollView, View, useWindowDimensions, type ImageSourcePropType, type ViewStyle } from 'react-native';
 import { useSafeAreaInsets, type Edge } from 'react-native-safe-area-context';
 import { useI18n } from '@/i18n/I18nProvider';
+import type { Locale } from '@/i18n/locales';
 import { useTheme } from '@/theme/ThemeProvider';
 import { size, space } from '@/theme/tokens';
 import { Icon, type IconName } from './Icon';
@@ -21,8 +22,11 @@ export function Screen({
   contentStyle,
   scrim = edges.includes('top'),
   stickyFooter = true,
+  background,
 }: {
   children: ReactNode;
+  /** Drawn behind the content, under the scroll (the onboarding flags). */
+  background?: ReactNode;
   edges?: Edge[];
   footer?: ReactNode;
   contentStyle?: ViewStyle;
@@ -38,6 +42,7 @@ export function Screen({
   const sticky = footer && stickyFooter && fontScale <= 1.3;
   return (
     <View style={{ flex: 1, backgroundColor: c.bg }}>
+      {background}
       <ScrollView
         // Screens without a native header pad for the safe area themselves; screens with one let iOS inset under it.
         contentInsetAdjustmentBehavior={edges.includes('top') ? 'never' : 'automatic'}
@@ -105,6 +110,7 @@ export function Button({
   icon = 'arrow',
   disabled,
   hint,
+  lang,
 }: {
   label: string;
   onPress: () => void;
@@ -112,13 +118,15 @@ export function Button({
   icon?: IconName | null;
   disabled?: boolean;
   hint?: string;
+  /** The label's language when it is not the UI's (the language picker). */
+  lang?: Locale;
 }) {
   const { c } = useTheme();
   if (kind === 'link') {
     return (
       <Pressable onPress={onPress} accessibilityRole="link" accessibilityHint={hint} hitSlop={8} style={{ minHeight: HIT, justifyContent: 'center' }}>
         {({ pressed }) => (
-          <T variant="row" weight="bold" style={{ textDecorationLine: 'underline', opacity: pressed ? 0.6 : 1 }}>
+          <T variant="row" weight="bold" lang={lang} style={{ textDecorationLine: 'underline', opacity: pressed ? 0.6 : 1 }}>
             {label}
           </T>
         )}
@@ -146,7 +154,7 @@ export function Button({
         borderColor: c.fg,
       })}
     >
-      <T variant="row" weight="bold" tone={disabled ? 'disabledFg' : primary ? 'buttonFg' : 'fg'} style={{ flexShrink: 1 }}>
+      <T variant="row" weight="bold" lang={lang} tone={disabled ? 'disabledFg' : primary ? 'buttonFg' : 'fg'} style={{ flexShrink: 1 }}>
         {label}
       </T>
       {icon ? <Icon name={icon} tone={disabled ? 'disabledFg' : primary ? 'buttonFg' : 'fg'} /> : null}

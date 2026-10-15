@@ -24,7 +24,12 @@ export type IconName =
   | 'calculator'
   | 'route'
   | 'alert'
-  | 'cake';
+  | 'cake'
+  // Route types (4A): one glyph per kind of road, never per country.
+  | 'startup'
+  | 'pnp'
+  | 'tech'
+  | 'niw';
 
 /** Directional icons mirror in right-to-left layouts; everything else never does. */
 const DIRECTIONAL: IconName[] = ['arrow', 'chevron'];
@@ -107,6 +112,21 @@ export function Icon({ name, size = tokenSize.icon, tone = 'fg', color }: { name
         </>
       )}
       {name === 'cake' && <Path d="M4 21h16v-8H4zM4 16c2 1.5 4 1.5 6 0s4-1.5 6 0 3 1 4 0M12 13V9M12 6v.5" {...p} />}
+      {name === 'startup' && <Path d="M12 21V11M12 11c0-4 3-7 8-7 0 4-3 7-8 7zM12 14c0-3-2.5-5-7-5 0 3 2.5 5 7 5z" {...p} />}
+      {name === 'pnp' && <Path d="M4 10v10h16V10M3 10l2-6h14l2 6zM10 20v-6h4v6" {...p} />}
+      {name === 'tech' && (
+        <>
+          <Rect x={6} y={6} width={12} height={12} {...p} />
+          <Rect x={10} y={10} width={4} height={4} {...p} />
+          <Path d="M9 3v3M15 3v3M9 18v3M15 18v3M3 9h3M3 15h3M18 9h3M18 15h3" {...p} />
+        </>
+      )}
+      {name === 'niw' && (
+        <>
+          <Circle cx={10} cy={8} r={3.5} {...p} />
+          <Path d="M3 20c0-3.5 3-6 7-6s7 2.5 7 6M18.5 3l1 2.1 2.3.3-1.7 1.6.4 2.3-2-1.1-2 1.1.4-2.3-1.7-1.6 2.3-.3z" {...p} />
+        </>
+      )}
     </Svg>
   );
 }

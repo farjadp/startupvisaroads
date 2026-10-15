@@ -23,12 +23,15 @@ export default function News() {
   const { state, set } = useStore();
   const insets = useSafeAreaInsets();
   const lang = meta.siteLocale;
-  const myCountry = state.outcome && state.outcome !== 'too-early' ? ROUTES[state.outcome].country : null;
+  // "My roads": the pathfinder's road and the roads the user follows (3B), by country.
+  const outcomeCountry = state.outcome && state.outcome !== 'too-early' ? ROUTES[state.outcome].country : null;
+  const myCountries = [...new Set([...(outcomeCountry ? [outcomeCountry] : []), ...state.following.map((k) => ROUTES[k].country)])];
+  const mine = myCountries.length > 0;
 
   const [feed, setFeed] = useState<Feed | null>(null);
   const [status, setStatus] = useState<'loading' | 'ok' | 'offline' | 'error'>('loading');
   const [refreshing, setRefreshing] = useState(false);
-  const [filter, setFilter] = useState<Filter>(myCountry ? 'mine' : 'all');
+  const [filter, setFilter] = useState<Filter>(mine ? 'mine' : 'all');
 
   const load = useCallback(
     async (pull = false) => {
@@ -51,8 +54,8 @@ export default function News() {
     void load();
   }, [load]);
 
-  const country = filter === 'mine' ? myCountry : filter === 'all' ? null : filter;
-  const items = (feed?.items ?? []).filter((i) => !country || i.countries.includes(country));
+  const countries = filter === 'mine' ? myCountries : filter === 'all' ? null : [filter];
+  const items = (feed?.items ?? []).filter((i) => !countries || i.countries.some((k) => countries.includes(k)));
 
   const open = (item: NewsItem) => {
     if (!state.newsRead) set({ newsRead: true });
@@ -64,7 +67,7 @@ export default function News() {
       <Heading>{t('news.title')}</Heading>
       <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: space.s2, paddingVertical: 4 }} style={{ marginHorizontal: -space.s6 }}>
         <View style={{ width: space.s6 - space.s2 }} />
-        {myCountry ? <Chip label={t('news.myRoads')} selected={filter === 'mine'} onPress={() => setFilter('mine')} /> : null}
+        {mine ? <Chip label={t('news.myRoads')} selected={filter === 'mine'} onPress={() => setFilter('mine')} /> : null}
         <Chip label={t('news.all')} selected={filter === 'all'} onPress={() => setFilter('all')} />
         {FILTERS.map((f) => (
           <Chip key={f} label={pick(COUNTRY_NAMES[f]).text} selected={filter === f} onPress={() => setFilter(f)} />

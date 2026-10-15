@@ -65,7 +65,8 @@ export const RULES: Rule[] = [
     name: 'ویزای استارتاپ دانمارک',
     href: '/europe/denmark',
     founders: { max: 3 },
-    yearlyFunds: { amount: 153240, currency: 'DKK', perFounder: true, note: 'مجرد؛ ۳۰۶٬۴۸۰ با همسر و ۳۵۶٬۹۰۴ با همسر و فرزند' },
+    // Must equal lib/funds.ts (checked by mobile/src/content/funds.test.ts).
+    yearlyFunds: { amount: 153240, currency: 'DKK', perFounder: true, note: 'مجرد؛ ۳۰۶٬۴۸۰ با همسر، ۳۵۶٬۹۰۴ با همسر و فرزند و ۲۰۳٬۶۶۴ با فرزند و بدون همسر' },
     unscored: ['تأیید پنل کارشناسان Start-up Denmark', 'سهمیه‌ی سالانه ۷۵ نفر، بر اساس نفر نه تیم'],
     updated: '2026-09-08',
     source: 'https://www.nyidanmark.dk/en-GB/You-want-to-apply/Work/Start-up-Denmark',
@@ -78,18 +79,20 @@ export const RULES: Rule[] = [
     yearlyFunds: { amount: 12360, currency: 'EUR', perFounder: true, note: '۱٬۰۳۰ تا ۱٬۲۱۰ یورو در ماه، بسته به شهر' },
     unscored: ['گواهی واجد شرایط بودن از Business Finland'],
     updated: '2026-09-06',
-    source: 'https://www.businessfinland.fi/en/for-finnish-customers/services/startup-permit',
+    // The funds rule is Migri's, not Business Finland's.
+    source: 'https://migri.fi/en/start-up-entrepreneur',
   },
   {
     key: 'estonia',
     name: 'ویزای استارتاپ استونی',
     href: '/europe/estonia',
     founders: { min: 1 },
+    // Must equal 12 × lib/funds.ts (checked by mobile/src/content/funds.test.ts).
     yearlyFunds: { amount: 10560, currency: 'EUR', perFounder: true, note: '۸۸۰ یورو در ماه — چهار برابر سطح معیشت ۲۲۰ یورو' },
     venture: 'mvp',
     unscored: ['تأیید کمیته‌ی کارشناسی وزارت کشور، ظرف ۱۰ روز کاری'],
     updated: '2026-09-08',
-    source: 'https://www.politsei.ee/en/instructions/residence-permit-for-start-up-business',
+    source: 'https://www.politsei.ee/en/instructions/residence-permit-for-business/for-start-up-entrepreneurs',
   },
   {
     key: 'netherlands',
@@ -101,7 +104,7 @@ export const RULES: Rule[] = [
       // Deliberately unscored: the Dutch amount tracks the statutory minimum
       // wage and changes on 1 January AND 1 July, so a figure in this
       // quarterly-reviewed table would be wrong half the year.
-      'تمکن مالی یک سال کامل — حدود ۲۱٬۲۰۰ یورو برای یک نفر و ۲۹٬۷۰۰ برای خانواده، اما هر شش ماه تغییر می‌کند',
+      'تمکن مالی یک سال کامل — حدود ۲۱٬۲۰۰ یورو برای یک نفر و ۳۰٬۳۰۰ برای خانواده (از ۱ ژوئیه‌ی ۲۰۲۶)، اما هر شش ماه تغییر می‌کند',
       'اقامت اولیه حداکثر یک سال است و تمدید نمی‌شود',
       'محصول باید برای بازار هلند واقعاً جدید باشد',
     ],
@@ -121,13 +124,13 @@ export const RULES: Rule[] = [
     // guidelines call the figure "purely indicative" for teams, with the
     // Committee free to demand considerably more. Scored as the floor it is.
     investment: { amount: 50000, currency: 'EUR' },
-    // Deliberately NOT expressed as yearlyFunds. Italy's €8,400 is the
+    // Deliberately NOT expressed as yearlyFunds. Italy's ~€8,500 is the
     // applicant's INCOME in the previous year, not settlement funds they must
     // hold, and the comparison table's «تمکن مالی سالانه» column would tell a
     // reader with savings but no declared income that they clear a bar they
     // do not. Named below instead, where it is read rather than scored.
     unscored: [
-      'درآمد سال گذشته‌ی هر متقاضی بالای حدود ۸٬۴۰۰ یورو — یک آزمون درآمد است، نه پس‌انداز',
+      'درآمد سال گذشته‌ی هر متقاضی بالای حدود ۸٬۵۰۰ یورو — یک آزمون درآمد است، نه پس‌انداز',
       'تأیید کمیته‌ی فنی MIMIT با رأی اکثریت ساده',
       'احراز دست‌کم یکی از سه شاخص نوآوری ماده‌ی ۲۵ قانون ۱۷۹/۲۰۱۲',
       // Named because the guidelines name it: a file with no prior connection
