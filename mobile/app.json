@@ -33,14 +33,41 @@
         {
           "backgroundColor": "#F2F0E9",
           "image": "./assets/splash-icon.png",
-          "imageWidth": 120,
-          "dark": { "backgroundColor": "#121417" }
+          "imageWidth": 220,
+          "dark": {
+            "backgroundColor": "#121417",
+            "image": "./assets/splash-icon-dark.png"
+          },
+          "android": {
+            "image": "./assets/splash-icon-android.png",
+            "imageWidth": 220,
+            "backgroundColor": "#F2F0E9",
+            "dark": {
+              "image": "./assets/splash-icon-android-dark.png",
+              "backgroundColor": "#121417"
+            }
+          }
         }
       ],
       [
         "expo-localization",
         {
-          "supportedLocales": { "ios": ["en", "fa", "fr", "zh", "ar"], "android": ["en", "fa", "fr", "zh", "ar"] }
+          "supportedLocales": {
+            "ios": [
+              "en",
+              "fa",
+              "fr",
+              "zh",
+              "ar"
+            ],
+            "android": [
+              "en",
+              "fa",
+              "fr",
+              "zh",
+              "ar"
+            ]
+          }
         }
       ],
       "expo-font",

@@ -1,15 +1,21 @@
+import { Image } from 'expo-image';
 import { router } from 'expo-router';
 import { ScrollView, View } from 'react-native';
 import { PATH_PHOTO } from '@/content/routes';
 import { deviceLocale, useI18n } from '@/i18n/I18nProvider';
 import { LOCALES, LOCALE_ORDER, type Locale } from '@/i18n/locales';
 import { useStore } from '@/state/store';
+import { useTheme } from '@/theme/ThemeProvider';
 import { space } from '@/theme/tokens';
 import { Icon } from '@/ui/Icon';
 import { Button, Chip, Disclaimer, Hero, Screen } from '@/ui/kit';
 import { T } from '@/ui/T';
 
+const LOGO_PAPER = require('../../assets/brand/logo-paper.png');
+const LOGO_NIGHT = require('../../assets/brand/logo-night.png');
+
 export default function Welcome() {
+  const { mode } = useTheme();
   const { state, set } = useStore();
   const { t, meta } = useI18n();
   const current = state.locale ?? deviceLocale();
@@ -37,9 +43,15 @@ export default function Welcome() {
       }
     >
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-        <T variant="headline" accessibilityRole="header">
-          {t('app.name')}
-        </T>
+        {/* The official logo in its own colours (Brand Book: the logo keeps navy, crimson and gold). */}
+        <Image
+          source={mode === 'night' ? LOGO_NIGHT : LOGO_PAPER}
+          style={{ width: 132, height: 40 }}
+          contentFit="contain"
+          accessible
+          accessibilityRole="header"
+          accessibilityLabel={t('app.name')}
+        />
         <T variant="label" tone="fgMuted">
           {t('app.by')}
         </T>
