@@ -26,7 +26,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 }
 
 export default function PrivacyPage() {
-  const lastUpdated = "December 27, 2025";
+  const lastUpdated = "October 14, 2026";
 
   return (
     <div className="w-full px-4 md:px-8 border-x border-[#1a1a1a]/10 max-w-[1400px] mx-auto bg-[#F2F0E9] text-[#1a1a1a]">
@@ -71,7 +71,8 @@ export default function PrivacyPage() {
                      <li><a href="#usage" className="hover:text-[#CCFF00] hover:bg-[#1a1a1a] px-2 -ml-2 transition-all">2. Usage & Strategy</a></li>
                      <li><a href="#disclosure" className="hover:text-[#CCFF00] hover:bg-[#1a1a1a] px-2 -ml-2 transition-all">3. Third-Party Disclosure</a></li>
                      <li><a href="#security" className="hover:text-[#CCFF00] hover:bg-[#1a1a1a] px-2 -ml-2 transition-all">4. Security Measures</a></li>
-                     <li><a href="#disclaimer" className="hover:text-[#CCFF00] hover:bg-[#1a1a1a] px-2 -ml-2 transition-all">5. Legal Disclaimer</a></li>
+                     <li><a href="#mobile-app" className="hover:text-[#CCFF00] hover:bg-[#1a1a1a] px-2 -ml-2 transition-all">5. The VisaRoads App</a></li>
+                     <li><a href="#disclaimer" className="hover:text-[#CCFF00] hover:bg-[#1a1a1a] px-2 -ml-2 transition-all">6. Legal Disclaimer</a></li>
                   </ul>
                </div>
 
@@ -168,7 +169,49 @@ export default function PrivacyPage() {
                   </div>
                </div>
 
-               {/* 5. DISCLAIMER (CRITICAL) */}
+               {/* 5. THE MOBILE APP — linked from the App Store and Google Play listings. Keep it true for the shipped app. */}
+               <div id="mobile-app" className="group">
+                  <div className="flex items-center gap-4 mb-6">
+                     <span className="font-sans text-xs font-bold bg-[#CCFF00] text-[#1a1a1a] px-2 py-1">05</span>
+                     <h3 className="font-serif text-3xl">The VisaRoads App</h3>
+                  </div>
+                  <div className="prose prose-lg font-sans text-[#1a1a1a]/80 leading-relaxed max-w-none space-y-4">
+                     <p>This section applies to the VisaRoads app for iPhone and Android.</p>
+                     <p>
+                        <strong>What the app collects:</strong> nothing. The app has no account, sign-up or sign-in, and it does not
+                        include analytics, advertising or crash-reporting software. What you enter (your pathfinder answers, the
+                        steps you mark done, your language and appearance settings) is stored only on your phone and is never sent
+                        to us or to anyone else.
+                     </p>
+                     <p>
+                        <strong>What the app downloads:</strong> to show the News tab, the app requests the public article feeds of
+                        visaroads.com. The request carries no personal information. Like any web server, ours may record the technical
+                        details of a request, such as an IP address, in standard server logs; these are not linked to you and are not
+                        used to identify you.
+                     </p>
+                     <p>
+                        <strong>Links that leave the app:</strong> official sources, articles, photo credits and &ldquo;Book a call&rdquo;
+                        open web pages in your phone&rsquo;s browser view, and &ldquo;Message on Telegram&rdquo; opens Telegram. Those pages
+                        and services have their own privacy policies. If you contact us through them, the rest of this policy covers what
+                        you send.
+                     </p>
+                     <p>
+                        <strong>Deleting your data:</strong> in the app, go to Me &rsaquo; Settings &rsaquo; Delete my data to erase your
+                        answers, steps and progress (your language and appearance choices are kept). Uninstalling the app removes
+                        everything it stored.
+                     </p>
+                     <p>
+                        <strong>Children:</strong> the app is intended for adults planning business immigration and is not directed to
+                        children.
+                     </p>
+                     <p>
+                        <strong>Changes:</strong> if a future version of the app starts collecting any data, we will update this section,
+                        and the store listings, before that version is released.
+                     </p>
+                  </div>
+               </div>
+
+               {/* 6. DISCLAIMER (CRITICAL) */}
                <div id="disclaimer" className="group">
                   <div className="flex items-center gap-4 mb-6">
                      <span className="font-sans text-xs font-bold bg-[#b91c1c] text-white px-2 py-1">CRITICAL</span>
