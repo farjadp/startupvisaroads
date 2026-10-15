@@ -38,5 +38,8 @@
     "lint": "expo lint",
     "test": "node --test --experimental-strip-types src/**/*.test.ts"
   },
-  "private": true
+  "private": true,
+  "overrides": {
+    "react-dom": "19.2.3"
+  }
 }
