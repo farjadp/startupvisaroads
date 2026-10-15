@@ -36,6 +36,7 @@ const EN_LINKS = {
   strategy: [
     { href: '/services', label: 'Advisory' },
     { href: '/mentorship', label: 'Mentorship' },
+    { href: '/app', label: 'The App' },
     { href: '/country', label: 'Jurisdictions' },
     { href: '/blog', label: 'Blog' },
     { href: '/about', label: 'The Firm' },
@@ -59,6 +60,7 @@ const FA_LINKS = {
   strategy: [
     { href: '/which-path', label: 'ارزیابی رایگان مسیر' },
     { href: '/mentorship', label: 'منتورشیپ' },
+    { href: '/app', label: 'اپلیکیشن' },
     { href: '/faq', label: 'سؤالات متداول' },
     { href: '/blog', label: 'مجله' },
     { href: '/about', label: 'درباره ما' },
