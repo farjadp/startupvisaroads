@@ -22,6 +22,10 @@ export type AppState = {
   sourcesOpened: RouteKey[];
   newsRead: boolean;
   fundsUsed: boolean;
+  /** Roads the user chose to follow (onboarding 3B). Orders Roads and filters News; never scored. */
+  following: RouteKey[];
+  /** The opening motion plays once; later launches fade. */
+  introSeen: boolean;
 };
 
 const KEY = 'vr.state.v1';
@@ -38,6 +42,8 @@ export const INITIAL: AppState = {
   sourcesOpened: [],
   newsRead: false,
   fundsUsed: false,
+  following: [],
+  introSeen: false,
 };
 
 type Actions = {
@@ -50,11 +56,13 @@ type Actions = {
   persistNow: () => Promise<void>;
 };
 
-const Ctx = createContext<{ state: AppState; hydrated: boolean } & Actions>(null as never);
+const Ctx = createContext<{ state: AppState; hydrated: boolean; introSeenAtLaunch: boolean } & Actions>(null as never);
 
 export function StoreProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<AppState>(INITIAL);
   const [hydrated, setHydrated] = useState(false);
+  // Read once from storage: the opening motion plays only when this launch had not seen it.
+  const [introSeenAtLaunch, setIntroSeenAtLaunch] = useState(false);
   const latest = useRef(state);
   latest.current = state;
   const persistNow = useCallback(() => AsyncStorage.setItem(KEY, JSON.stringify(latest.current)).catch(() => {}), []);
@@ -64,7 +72,10 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       .then((raw) => {
         if (!raw) return;
         const parsed = JSON.parse(raw) as AppState;
-        if (parsed?.v === 1) setState({ ...INITIAL, ...parsed });
+        if (parsed?.v === 1) {
+          setState({ ...INITIAL, ...parsed });
+          setIntroSeenAtLaunch(!!parsed.introSeen);
+        }
       })
       .catch(() => {
         // Unreadable storage starts the app fresh rather than crashing it.
@@ -94,10 +105,10 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   );
   const reset = useCallback(async () => {
     await AsyncStorage.removeItem(KEY).catch(() => {});
-    setState((s) => ({ ...INITIAL, locale: s.locale, onboarded: true, mode: s.mode }));
+    setState((s) => ({ ...INITIAL, locale: s.locale, onboarded: true, mode: s.mode, introSeen: s.introSeen }));
   }, []);
 
-  const value = useMemo(() => ({ state, hydrated, set, answer, toggleStep, openedSource, reset, persistNow }), [state, hydrated, set, answer, toggleStep, openedSource, reset, persistNow]);
+  const value = useMemo(() => ({ state, hydrated, introSeenAtLaunch, set, answer, toggleStep, openedSource, reset, persistNow }), [state, hydrated, introSeenAtLaunch, set, answer, toggleStep, openedSource, reset, persistNow]);
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }
 

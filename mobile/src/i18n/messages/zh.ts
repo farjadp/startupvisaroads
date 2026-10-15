@@ -21,6 +21,17 @@ const zh: Messages = {
   status: { met: '已满足', close: '接近', 'not-yet': '尚未', 'not-started': '未开始', done: '已完成' },
   levels: { explorer: '探索者', planner: '规划者', ready: '就绪', applicant: '申请者' },
   tabs: { roads: '路径', tools: '工具', news: '资讯', me: '我的' },
+  language: { label: '语言', continue: '继续', restartNote: '应用将以此语言重新启动。' },
+  follow: {
+    title: '关注的路径',
+    lead: '勾选你想关注的路径。这不是匹配或推荐；那个答案由路径测评给出。',
+    skip: '跳过',
+    cta: '关注 {n} 条路径',
+    ctaOne: '关注 1 条路径',
+    ctaNone: '暂不选择，继续',
+    save: '保存',
+    types: { startup: '创业签证', pnp: '省提名企业家类别', tech: '科技签证', niw: '自我申请' },
+  },
   welcome: {
     title1: '哪条路',
     title2: '属于您？',
@@ -99,6 +110,7 @@ const zh: Messages = {
     venture: { idea: '一个想法', mvp: '可运行的产品（MVP）', revenue: '已有收入' },
   },
   roads: {
+    following: '关注的路径',
     title: '路径',
     emptyLead: '回答七个问题，我们会显示离您最近的路径，以及它的要求和您还缺什么。',
     start: '开始路径测评',
@@ -183,6 +195,7 @@ const zh: Messages = {
     promise: '第一次交流是了解是否合适。没有人能承诺移民结果，我们也不会。',
   },
   settings: {
+    following: '关注的路径',
     title: '设置',
     language: '语言',
     appearance: '外观',
@@ -205,12 +218,12 @@ const zh: Messages = {
   },
   about: {
     title: '关于',
-    p1: 'VisaRoads 是总部位于多伦多的 Ashavid 旗下产品。我们是成功退出的创始人、投资银行家和资助评审委员，负责构建申请中的商业部分：商业计划、财务模型、路演材料和创始人辅导。',
+    p1: 'VisaRoads 是总部位于加拿大安大略省的 Ashavid 旗下产品。我们是成功退出的创始人、投资银行家和资助评审委员，负责构建申请中的商业部分：商业计划、财务模型、路演材料和创始人辅导。',
     p2: '我们不是移民律师，也不是持牌移民顾问。我们准备申请材料，但不代为递交。移民事务由您委托的持牌专业人士办理。',
     p3: '本应用中的准备度衡量的是您的准备程度，而不是成功机会。没有人能为机会打分，任何承诺结果的人都在推销某样东西。',
     p4: '每个数字都标明官方来源和我们最后核实的日期。规则会变化；行动前请阅读来源。',
   },
-  credits: { title: '照片来源' },
+  credits: { title: '照片来源', flags: '旗帜', flagsCredit: 'flag-icons，作者 Panayiotis Lipiridis，MIT 许可' },
 };
 
 export default zh;

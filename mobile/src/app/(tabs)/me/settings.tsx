@@ -14,7 +14,7 @@ import { T } from '@/ui/T';
 
 export default function Settings() {
   const { state, set, reset } = useStore();
-  const { t, locale, meta } = useI18n();
+  const { t, locale, meta, count } = useI18n();
   const [notice, setNotice] = useState<string | null>(null);
 
   const chooseLanguage = (l: Locale) => {
@@ -67,6 +67,7 @@ export default function Settings() {
         </Ruled>
       </View>
       <Ruled>
+        <LinkRow icon="route" label={t('settings.following')} sub={state.following.length ? count(state.following.length) : undefined} onPress={() => router.push({ pathname: '/follow', params: { next: 'back' } })} />
         <LinkRow icon="shield" label={t('settings.about')} onPress={() => router.push('/(tabs)/me/about')} />
         <LinkRow icon="doc" external label={t('settings.privacy')} onPress={() => void WebBrowser.openBrowserAsync(`https://visaroads.com/${meta.siteLocale}/privacy`)} />
         <LinkRow icon="globe" label={t('settings.credits')} onPress={() => router.push('/(tabs)/me/credits')} />

@@ -33,6 +33,11 @@ function lookup(cat: Messages, path: string): string | undefined {
   return typeof v === 'string' ? v : undefined;
 }
 
+/** A message in a given locale, for text shown in a language not yet applied (the language picker). */
+export function translate(locale: Locale, path: string): string {
+  return lookup(CATALOGUES[locale], path) ?? lookup(en, path) ?? path;
+}
+
 export function deviceLocale(): Locale {
   return pickDeviceLocale(getLocales().map((l) => l.languageTag));
 }

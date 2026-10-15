@@ -3,5 +3,6 @@ import { useStore } from '@/state/store';
 
 export default function Index() {
   const { state } = useStore();
-  return <Redirect href={state.onboarded ? '/(tabs)/roads' : '/welcome'} />;
+  // A new install chooses its language first (2A), then sees Welcome.
+  return <Redirect href={state.onboarded ? '/(tabs)/roads' : state.locale ? '/welcome' : '/language'} />;
 }

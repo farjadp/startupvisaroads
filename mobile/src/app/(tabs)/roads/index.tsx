@@ -2,7 +2,7 @@
 // with the pathfinder entry (spec 3, empty state 26).
 import { router } from 'expo-router';
 import { View } from 'react-native';
-import { ROUTE_ORDER, ROUTES, PATH_PHOTO, ruleFor, sourceFor, type RouteKey } from '@/content/routes';
+import { ROUTE_ORDER, ROUTE_TYPE, ROUTES, PATH_PHOTO, ruleFor, sourceFor, type RouteKey } from '@/content/routes';
 import { otherRoads, roadView } from '@/engine/road';
 import { useI18n } from '@/i18n/I18nProvider';
 import { useStore } from '@/state/store';
@@ -17,14 +17,23 @@ import { completeAnswers } from '@/engine/readiness';
 
 function AllRoads() {
   const { t, pick } = useI18n();
+  const { state } = useStore();
+  // Roads the user follows come first (3B); the rest keep the app's order. Nothing here is ranked by fit.
+  const followed = ROUTE_ORDER.filter((k) => state.following.includes(k));
+  const rest = ROUTE_ORDER.filter((k) => !state.following.includes(k));
+  const row = (k: RouteKey) => <LinkRow key={k} label={pick(ROUTES[k].name).text} icon={ROUTE_TYPE[k]} onPress={() => router.push(`/(tabs)/roads/${k}`)} />;
   return (
-    <View>
-      <Label>{t('roads.all')}</Label>
-      <Ruled>
-        {ROUTE_ORDER.map((k) => (
-          <LinkRow key={k} label={pick(ROUTES[k].name).text} icon="route" onPress={() => router.push(`/(tabs)/roads/${k}`)} />
-        ))}
-      </Ruled>
+    <View style={{ gap: space.s5 }}>
+      {followed.length ? (
+        <View>
+          <Label>{t('roads.following')}</Label>
+          <Ruled>{followed.map(row)}</Ruled>
+        </View>
+      ) : null}
+      <View>
+        <Label>{t('roads.all')}</Label>
+        <Ruled>{rest.map(row)}</Ruled>
+      </View>
     </View>
   );
 }

@@ -21,6 +21,17 @@ const fr: Messages = {
   status: { met: 'rempli', close: 'proche', 'not-yet': 'pas encore', 'not-started': 'pas commencé', done: 'fait' },
   levels: { explorer: 'Explorateur', planner: 'Planificateur', ready: 'Prêt', applicant: 'Candidat' },
   tabs: { roads: 'Parcours', tools: 'Outils', news: 'Actualités', me: 'Moi' },
+  language: { label: 'Langue', continue: 'Continuer', restartNote: 'L’app va redémarrer dans cette langue.' },
+  follow: {
+    title: 'Parcours à suivre',
+    lead: 'Cochez les parcours que vous voulez suivre. Ce n’est ni une correspondance ni une recommandation : c’est l’orientation qui donne cette réponse.',
+    skip: 'Passer',
+    cta: 'Suivre {n} parcours',
+    ctaOne: 'Suivre 1 parcours',
+    ctaNone: 'Continuer sans',
+    save: 'Enregistrer',
+    types: { startup: 'Visa start-up', pnp: 'Volet entrepreneurs', tech: 'Visa tech', niw: 'Auto-pétition' },
+  },
   welcome: {
     title1: 'Quel parcours',
     title2: 'est le vôtre ?',
@@ -99,6 +110,7 @@ const fr: Messages = {
     venture: { idea: 'Une idée', mvp: 'Un produit qui fonctionne (MVP)', revenue: 'Des revenus' },
   },
   roads: {
+    following: 'Parcours suivis',
     title: 'Parcours',
     emptyLead: 'Répondez à sept questions et nous vous montrerons le parcours le plus proche, avec ce qu’il demande et ce qui manque.',
     start: 'Lancer l’orientation',
@@ -183,6 +195,7 @@ const fr: Messages = {
     promise: 'Le premier échange porte sur l’adéquation. Personne ne peut promettre un résultat en immigration, et nous ne le ferons pas.',
   },
   settings: {
+    following: 'Parcours suivis',
     title: 'Réglages',
     language: 'Langue',
     appearance: 'Apparence',
@@ -205,12 +218,12 @@ const fr: Messages = {
   },
   about: {
     title: 'À propos',
-    p1: 'VisaRoads est un produit d’Ashavid, basé à Toronto. Nous sommes des fondateurs ayant revendu leur entreprise, des banquiers d’affaires et des membres de comités de subventions qui construisent le volet entreprise d’un dossier : plans d’affaires, modèles financiers, pitch decks et mentorat.',
+    p1: 'VisaRoads est un produit d’Ashavid, basé en Ontario (Canada). Nous sommes des fondateurs ayant revendu leur entreprise, des banquiers d’affaires et des membres de comités de subventions qui construisent le volet entreprise d’un dossier : plans d’affaires, modèles financiers, pitch decks et mentorat.',
     p2: 'Nous ne sommes ni avocats en immigration ni consultants réglementés. Nous préparons le dossier ; nous ne le déposons pas. Les démarches d’immigration relèvent de professionnels agréés que vous mandatez.',
     p3: 'Dans cette app, la préparation mesure votre travail, pas vos chances. Personne ne peut les chiffrer, et quiconque promet un résultat vend quelque chose.',
     p4: 'Chaque chiffre indique sa source officielle et la date de notre dernière vérification. Les règles changent ; lisez la source avant d’agir.',
   },
-  credits: { title: 'Crédits photo' },
+  credits: { title: 'Crédits photo', flags: 'Drapeaux', flagsCredit: 'flag-icons, par Panayiotis Lipiridis, licence MIT' },
 };
 
 export default fr;

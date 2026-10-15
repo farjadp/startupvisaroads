@@ -3,7 +3,7 @@ import { LocaleProvider, Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import * as SystemUI from 'expo-system-ui';
-import { useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { I18nManager, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { I18nProvider, applyDirectionAndRestart, deviceLocale, directionRestartJustTried, syncAppLanguage } from '@/i18n/I18nProvider';
@@ -11,11 +11,12 @@ import { LOCALES } from '@/i18n/locales';
 import { StoreProvider, useStore } from '@/state/store';
 import { FONT_ASSETS } from '@/theme/fonts';
 import { ThemeProvider, useTheme } from '@/theme/ThemeProvider';
+import { Intro } from '@/ui/Intro';
 
 SplashScreen.preventAutoHideAsync().catch(() => {});
 
 function Shell() {
-  const { state, hydrated, persistNow } = useStore();
+  const { state, hydrated, introSeenAtLaunch, persistNow, set } = useStore();
   const { mode, c } = useTheme();
   const [fontsLoaded, fontError] = useFonts(FONT_ASSETS);
 
@@ -40,31 +41,43 @@ function Shell() {
   }, [hydrated, locale]);
 
   const ready = hydrated && (fontsLoaded || !!fontError) && !restarting;
-  useEffect(() => {
-    if (ready) SplashScreen.hideAsync().catch(() => {});
-  }, [ready]);
+  // The ink intro covers the launch: it hides the native splash once it is on screen and
+  // opens onto the app when the app is ready. The full motion plays once (1A); a restart
+  // into a new direction never plays it again, because it is marked seen before that.
+  const [introOn, setIntroOn] = useState(true);
+  const introDone = useCallback(() => {
+    setIntroOn(false);
+    if (!state.introSeen) set({ introSeen: true });
+  }, [state.introSeen, set]);
   useEffect(() => {
     SystemUI.setBackgroundColorAsync(c.bg).catch(() => {});
   }, [c.bg]);
 
-  if (!ready) return null;
+  // Until storage is read the native splash stays up: whether the intro plays depends on it.
+  if (!hydrated || restarting) return null;
   return (
-    <View style={{ flex: 1, direction: rtl ? 'rtl' : 'ltr' }}>
+    <View style={{ flex: 1, direction: rtl ? 'rtl' : 'ltr', backgroundColor: c.bg }}>
       <StatusBar style={mode === 'night' ? 'light' : 'dark'} />
-      {/* Native headers take the chosen direction too, not only the one iOS launched with. */}
-      <LocaleProvider direction={rtl ? 'rtl' : 'ltr'}>
-        <Stack
-          screenOptions={{
-            headerShown: false,
-            contentStyle: { backgroundColor: c.bg },
-          }}
-        >
-          <Stack.Screen name="index" />
-          <Stack.Screen name="welcome" options={{ gestureEnabled: false }} />
-          <Stack.Screen name="(tabs)" />
-          <Stack.Screen name="pathfinder" options={{ presentation: 'fullScreenModal', gestureEnabled: false }} />
-        </Stack>
-      </LocaleProvider>
+      {/* Screens mount once fonts are in, under the ink, so no text ever swaps face on screen.
+          Native headers take the chosen direction too, not only the one iOS launched with. */}
+      {ready ? (
+        <LocaleProvider direction={rtl ? 'rtl' : 'ltr'}>
+          <Stack
+            screenOptions={{
+              headerShown: false,
+              contentStyle: { backgroundColor: c.bg },
+            }}
+          >
+            <Stack.Screen name="index" />
+            <Stack.Screen name="language" options={{ gestureEnabled: false }} />
+            <Stack.Screen name="welcome" options={{ gestureEnabled: false }} />
+            <Stack.Screen name="follow" />
+            <Stack.Screen name="(tabs)" />
+            <Stack.Screen name="pathfinder" options={{ presentation: 'fullScreenModal', gestureEnabled: false }} />
+          </Stack>
+        </LocaleProvider>
+      ) : null}
+      {introOn ? <Intro full={!introSeenAtLaunch} ready={ready} onDone={introDone} /> : null}
     </View>
   );
 }

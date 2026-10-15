@@ -20,6 +20,17 @@ const en = {
   status: { met: 'met', close: 'close', 'not-yet': 'not yet', 'not-started': 'not started', done: 'done' },
   levels: { explorer: 'Explorer', planner: 'Planner', ready: 'Ready', applicant: 'Applicant' },
   tabs: { roads: 'Roads', tools: 'Tools', news: 'News', me: 'Me' },
+  language: { label: 'Language', continue: 'Continue', restartNote: 'The app will restart in this language.' },
+  follow: {
+    title: 'Roads to follow',
+    lead: 'Tick the roads you want to keep an eye on. This is not a match or a recommendation: the pathfinder gives that answer.',
+    skip: 'Skip',
+    cta: 'Follow {n} roads',
+    ctaOne: 'Follow 1 road',
+    ctaNone: 'Continue without',
+    save: 'Save',
+    types: { startup: 'Startup visa', pnp: 'Entrepreneur stream', tech: 'Tech visa', niw: 'Self-petition' },
+  },
   welcome: {
     title1: 'Which road',
     title2: 'is yours?',
@@ -98,6 +109,7 @@ const en = {
     venture: { idea: 'An idea', mvp: 'A working product (MVP)', revenue: 'Revenue' },
   },
   roads: {
+    following: 'Roads you follow',
     title: 'Roads',
     emptyLead: 'Answer seven questions and we will show the road closest to you, with what it asks and what is missing.',
     start: 'Start the pathfinder',
@@ -182,6 +194,7 @@ const en = {
     promise: 'The first conversation is about fit. Nobody can promise an immigration outcome, and we will not.',
   },
   settings: {
+    following: 'Roads you follow',
     title: 'Settings',
     language: 'Language',
     appearance: 'Appearance',
@@ -204,12 +217,12 @@ const en = {
   },
   about: {
     title: 'About',
-    p1: 'VisaRoads is a product of Ashavid, based in Toronto. We are exited founders, investment bankers and grant-committee members who build the business side of a case: business plans, financial models, pitch decks and founder mentorship.',
+    p1: 'VisaRoads is a product of Ashavid, based in Ontario, Canada. We are exited founders, investment bankers and grant-committee members who build the business side of a case: business plans, financial models, pitch decks and founder mentorship.',
     p2: 'We are not immigration lawyers or licensed immigration consultants. We prepare the case; we do not file it. Immigration matters are handled by licensed professionals you engage.',
     p3: 'Readiness in this app measures your preparation, not your chances. No one can score those, and anyone who promises an outcome is selling something.',
     p4: 'Every figure shows its official source and the date we last checked it. Rules change; read the source before you act.',
   },
-  credits: { title: 'Photo credits' },
+  credits: { title: 'Photo credits', flags: 'Flags', flagsCredit: 'flag-icons by Panayiotis Lipiridis, MIT licence' },
 } as const;
 
 type Widen<T> = { [K in keyof T]: T[K] extends string ? string : Widen<T[K]> };

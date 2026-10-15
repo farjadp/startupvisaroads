@@ -192,6 +192,23 @@ export const ROUTES: Record<RouteKey, RouteContent> = {
   },
 };
 
+/** Kind of road (4A icons). Picked by how the route works, never by country. */
+export type RouteType = 'startup' | 'pnp' | 'tech' | 'niw';
+
+export const ROUTE_TYPE: Record<RouteKey, RouteType> = {
+  denmark: 'startup',
+  finland: 'startup',
+  estonia: 'startup',
+  netherlands: 'startup',
+  italy: 'startup',
+  turkey: 'tech',
+  'new-brunswick': 'pnp',
+  'nova-scotia': 'pnp',
+  eb2niw: 'niw',
+};
+
+export const COUNTRY_ORDER: Country[] = ['CA', 'DK', 'FI', 'EE', 'NL', 'IT', 'TR', 'US'];
+
 export const ROUTE_ORDER: RouteKey[] = ['nova-scotia', 'new-brunswick', 'denmark', 'finland', 'estonia', 'netherlands', 'italy', 'turkey', 'eb2niw'];
 
 export function ruleFor(key: RouteKey): Rule | undefined {

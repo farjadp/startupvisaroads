@@ -1,14 +1,10 @@
 import { Image } from 'expo-image';
 import { router } from 'expo-router';
-import { ScrollView, View } from 'react-native';
+import { View } from 'react-native';
 import { PATH_PHOTO } from '@/content/routes';
-import { deviceLocale, useI18n } from '@/i18n/I18nProvider';
-import { LOCALES, LOCALE_ORDER, type Locale } from '@/i18n/locales';
-import { useStore } from '@/state/store';
+import { useI18n } from '@/i18n/I18nProvider';
 import { useTheme } from '@/theme/ThemeProvider';
-import { space } from '@/theme/tokens';
-import { Icon } from '@/ui/Icon';
-import { Button, Chip, Disclaimer, Hero, Screen } from '@/ui/kit';
+import { Button, Disclaimer, Hero, Screen } from '@/ui/kit';
 import { T } from '@/ui/T';
 
 const LOGO_PAPER = require('../../assets/brand/logo-paper.png');
@@ -16,26 +12,14 @@ const LOGO_NIGHT = require('../../assets/brand/logo-night.png');
 
 export default function Welcome() {
   const { mode } = useTheme();
-  const { state, set } = useStore();
   const { t, meta } = useI18n();
-  const current = state.locale ?? deviceLocale();
 
-  // Choosing a language of the other direction applies it before anything
-  // else renders (spec 13): store it, then restart into the new layout.
-  // Choosing a language of the other direction restarts the app into it;
-  // the root layout saves the choice and restarts (spec 13).
-  const choose = (l: Locale) => set({ locale: l });
-
-  const enter = (to: 'pathfinder' | 'browse') => {
-    set({ onboarded: true, locale: current });
-    router.replace('/(tabs)/roads');
-    if (to === 'pathfinder') router.push('/pathfinder');
-  };
+  // The language was chosen on the screen before (2A). Both ways in pass through
+  // "Roads to follow" (3B), which is optional, then land where the user asked.
+  const enter = (to: 'pathfinder' | 'browse') => router.push({ pathname: '/follow', params: { next: to } });
 
   return (
-    // Not sticky: on short phones a fixed footer covered the language chips.
     <Screen
-      stickyFooter={false}
       footer={
         <>
           <Button label={t('welcome.start')} onPress={() => enter('pathfinder')} />
@@ -69,19 +53,6 @@ export default function Welcome() {
       <T variant="body" tone="fgMuted">
         {t('welcome.lead')}
       </T>
-      <View style={{ gap: space.s2 }}>
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.s2 }}>
-          <Icon name="globe" size={16} tone="fgMuted" />
-          <T variant="label" tone="fgMuted" accessibilityRole="header">
-            {t('welcome.language')}
-          </T>
-        </View>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginHorizontal: -space.s6 }} contentContainerStyle={{ gap: space.s2, paddingVertical: 4, paddingHorizontal: space.s6 }} accessibilityRole="radiogroup">
-          {LOCALE_ORDER.map((l) => (
-            <Chip key={l} label={LOCALES[l].endonym} lang={l} selected={l === current} onPress={() => choose(l)} />
-          ))}
-        </ScrollView>
-      </View>
     </Screen>
   );
 }
