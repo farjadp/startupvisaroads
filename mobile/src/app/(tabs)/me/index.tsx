@@ -144,7 +144,7 @@ export default function Me() {
               <CheckRow key={s} label={pick(STEPS[s]).text} checked={false} onToggle={() => toggleStep(outcome, s)} trailing={t('me.points', { n: count(per) })} />
             ))}
           </Ruled>
-          <Button kind="link" label={t('me.allSteps')} onPress={() => router.navigate(`/(tabs)/roads/${outcome}`)} />
+          <Button kind="link" label={t('me.allSteps')} onPress={() => router.navigate(`/(tabs)/countries/${outcome}`)} />
         </View>
       ) : null}
 

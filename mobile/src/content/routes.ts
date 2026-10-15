@@ -17,7 +17,7 @@ export type RouteKey =
   | 'nova-scotia'
   | 'eb2niw';
 
-export type Country = 'CA' | 'DK' | 'FI' | 'EE' | 'NL' | 'IT' | 'TR' | 'US';
+export type Country = 'CA' | 'DK' | 'FI' | 'EE' | 'NL' | 'IT' | 'TR' | 'US' | 'IL' | 'AE';
 
 export type Photo = { source: ImageSourcePropType; alt: Text; credit: string; page: string };
 
@@ -207,7 +207,40 @@ export const ROUTE_TYPE: Record<RouteKey, RouteType> = {
   eb2niw: 'niw',
 };
 
-export const COUNTRY_ORDER: Country[] = ['CA', 'DK', 'FI', 'EE', 'NL', 'IT', 'TR', 'US'];
+/** The ten countries of v2 (Farjad, 15 Oct 2026), in the order the Countries tab shows them. */
+export const COUNTRY_ORDER: Country[] = ['CA', 'US', 'DK', 'FI', 'EE', 'NL', 'IT', 'TR', 'IL', 'AE'];
+
+/** v2 route families (spec 2026-10-15). Study and Express Entry have no roads in the app yet. */
+export type RouteFamily = 'startup' | 'entrepreneur' | 'study' | 'talent' | 'express';
+export const FAMILY_ORDER: RouteFamily[] = ['startup', 'entrepreneur', 'study', 'talent', 'express'];
+export const ROUTE_FAMILY: Record<RouteKey, RouteFamily> = {
+  denmark: 'startup',
+  finland: 'startup',
+  estonia: 'startup',
+  netherlands: 'startup',
+  italy: 'startup',
+  turkey: 'startup',
+  'new-brunswick': 'entrepreneur',
+  'nova-scotia': 'entrepreneur',
+  eb2niw: 'talent',
+};
+
+/** A country's main photo (real, credited): its first road's. Null until one is sourced (US, Israel, UAE). */
+export const COUNTRY_HERO: Record<Country, Photo | null> = {
+  CA: null,
+  US: null,
+  DK: null,
+  FI: null,
+  EE: null,
+  NL: null,
+  IT: null,
+  TR: null,
+  IL: null,
+  AE: null,
+};
+
+/** The roads the app has for a country, in the app's order. */
+export const roadsOf = (country: Country): RouteKey[] => ROUTE_ORDER.filter((k) => ROUTES[k].country === country);
 
 export const ROUTE_ORDER: RouteKey[] = ['nova-scotia', 'new-brunswick', 'denmark', 'finland', 'estonia', 'netherlands', 'italy', 'turkey', 'eb2niw'];
 
@@ -230,4 +263,14 @@ export const COUNTRY_NAMES: Record<Country, Text> = {
   IT: { en: 'Italy', fa: 'ایتالیا', fr: 'Italie', zh: '意大利', ar: 'إيطاليا' },
   TR: { en: 'Türkiye', fa: 'ترکیه', fr: 'Türkiye', zh: '土耳其', ar: 'تركيا' },
   US: { en: 'United States', fa: 'آمریکا', fr: 'États-Unis', zh: '美国', ar: 'الولايات المتحدة' },
+  IL: { en: 'Israel', fa: 'اسرائیل', fr: 'Israël', zh: '以色列', ar: 'إسرائيل' },
+  AE: { en: 'United Arab Emirates', fa: 'امارات', fr: 'Émirats arabes unis', zh: '阿联酋', ar: 'الإمارات' },
 };
+
+// Filled after ROUTES exists: Canada shows Nova Scotia's Peggy's Cove.
+for (const k of COUNTRY_ORDER) {
+  const first = ROUTE_ORDER.find((r) => ROUTES[r].country === k);
+  const photo = k === 'CA' ? ROUTES['nova-scotia'].photo : first ? ROUTES[first].photo : null;
+  // The generic road photo is not a picture of any country: those countries get their flag instead.
+  COUNTRY_HERO[k] = photo && photo.source !== PATH_PHOTO ? photo : null;
+}

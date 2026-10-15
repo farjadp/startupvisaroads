@@ -167,8 +167,8 @@ export function Chip({ label, selected, onPress, lang }: { label: string; select
   return (
     <Pressable
       onPress={onPress}
-      accessibilityRole="button"
-      accessibilityState={{ selected }}
+      accessibilityRole="radio"
+      accessibilityState={{ checked: selected }}
       {...(lang ? { accessibilityLanguage: lang } : null)}
       hitSlop={(HIT - size.chip) / 2}
       style={({ pressed }) => ({
@@ -305,7 +305,7 @@ export function RadioRow({ label, selected, onPress, muted }: { label: string; s
 }
 
 /** A navigation row with a chevron. */
-export function LinkRow({ label, sub, icon, onPress, external }: { label: string; sub?: string; icon?: IconName; onPress: () => void; external?: boolean }) {
+export function LinkRow({ label, sub, icon, onPress, external, lang }: { label: string; sub?: string; icon?: IconName; onPress: () => void; external?: boolean; lang?: Locale }) {
   const { c } = useTheme();
   const { t } = useI18n();
   return (
@@ -326,7 +326,7 @@ export function LinkRow({ label, sub, icon, onPress, external }: { label: string
     >
       {icon ? <Icon name={icon} /> : null}
       <View style={{ flex: 1, gap: 2 }}>
-        <T variant="row" weight="bold">
+        <T variant="row" weight="bold" lang={lang}>
           {label}
         </T>
         {sub ? (

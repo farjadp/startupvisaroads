@@ -44,7 +44,7 @@ export default function Pathfinder() {
   }, [step]);
 
   // Opened from a link there may be nothing under the modal: close to Roads then.
-  const close = () => (router.canGoBack() ? router.back() : router.replace('/(tabs)/roads'));
+  const close = () => (router.canGoBack() ? router.back() : router.replace('/(tabs)/home'));
   const back = () => (step === 0 ? close() : set({ step: step - 1 }));
 
   // Android Back steps to the previous question, then closes (spec 2).
@@ -62,7 +62,7 @@ export default function Pathfinder() {
     const { outcome } = outcomeFor(state.answers);
     set({ outcome, step: 0 });
     if (router.canGoBack()) router.back();
-    router.navigate('/(tabs)/roads');
+    router.navigate('/(tabs)/home');
   };
 
   const hint = t(`pathfinder.hint.${key}`);

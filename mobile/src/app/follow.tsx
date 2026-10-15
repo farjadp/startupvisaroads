@@ -10,7 +10,7 @@ import { StatusBar } from 'expo-status-bar';
 import { useState } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { SvgXml } from 'react-native-svg';
-import { COUNTRY_NAMES, COUNTRY_ORDER, ROUTE_ORDER, ROUTE_TYPE, ROUTES, type Country, type RouteKey } from '@/content/routes';
+import { COUNTRY_NAMES, COUNTRY_ORDER, ROUTE_ORDER, ROUTE_TYPE, ROUTES, roadsOf, type Country, type RouteKey } from '@/content/routes';
 import { useI18n } from '@/i18n/I18nProvider';
 import { useStore } from '@/state/store';
 import { ThemeProvider, useTheme } from '@/theme/ThemeProvider';
@@ -88,7 +88,7 @@ function FollowScreen() {
       return;
     }
     set({ following, onboarded: true });
-    router.replace('/(tabs)/roads');
+    router.replace('/(tabs)/home');
     if (next === 'pathfinder') router.push('/pathfinder');
   };
 
@@ -109,7 +109,7 @@ function FollowScreen() {
       <T variant="body" tone="fgMuted">
         {t('follow.lead')}
       </T>
-      {COUNTRY_ORDER.map((country) => {
+      {COUNTRY_ORDER.filter((k) => roadsOf(k).length).map((country) => {
         const roads = ROUTE_ORDER.filter((k) => ROUTES[k].country === country);
         const name = pick(COUNTRY_NAMES[country]);
         return (
