@@ -13,7 +13,10 @@ export const ROUTES_EUROPE: RouteV2[] = [
     country: 'DK',
     family: 'startup',
     name: { en: 'Start-up Denmark', fa: 'استارتاپ دانمارک (Start-up Denmark)' },
-    agency: 'Danish Business Authority (expert panel); SIRI (permit)',
+    agency: {
+      en: 'Danish Business Authority (expert panel); SIRI (permit)',
+      fa: 'اداره‌ی کسب‌وکار دانمارک (Danish Business Authority) با هیئت کارشناسان؛ SIRI برای اجازه‌ی اقامت',
+    },
     status: 'limited',
     fact: {
       en: 'The expert panel must give your business plan an average score of at least 3.5 out of 5. Without panel approval you cannot apply to SIRI.',
@@ -113,7 +116,10 @@ export const ROUTES_EUROPE: RouteV2[] = [
     country: 'DK',
     family: 'study',
     name: { en: 'Residence permit for higher education', fa: 'اقامت تحصیلی آموزش عالی دانمارک' },
-    agency: 'SIRI',
+    agency: {
+      en: 'SIRI',
+      fa: 'آژانس استخدام بین‌المللی و یکپارچگی دانمارک (SIRI)',
+    },
     status: 'open',
     fact: {
       en: 'For applications filed on or after 1 Oct 2026, the post-study job-seeking period is 6 months or 1 year (3 years for PhDs), down from up to 3 years.',
@@ -195,7 +201,10 @@ export const ROUTES_EUROPE: RouteV2[] = [
     country: 'FI',
     family: 'startup',
     name: { en: 'Residence permit for a start-up entrepreneur', fa: 'اقامت کارآفرین استارتاپی فنلاند' },
-    agency: 'Migri (permit), after an Eligibility Statement from Business Finland',
+    agency: {
+      en: 'Migri (permit), after an Eligibility Statement from Business Finland',
+      fa: 'اداره‌ی مهاجرت فنلاند (Migri) برای اجازه‌ی اقامت، پس از تأییدیه‌ی صلاحیت (Eligibility Statement) از Business Finland',
+    },
     status: 'open',
     fact: {
       en: 'You need a positive Eligibility Statement from Business Finland first, no more than 4 months old when you apply. If it is negative, only the slower entrepreneur permit is left.',
@@ -304,7 +313,10 @@ export const ROUTES_EUROPE: RouteV2[] = [
     country: 'FI',
     family: 'entrepreneur',
     name: { en: 'Residence permit for an entrepreneur', fa: 'اقامت کارآفرینی (خوداشتغالی) فنلاند' },
-    agency: 'ELY Centre (partial decision); Migri (permit)',
+    agency: {
+      en: 'ELY Centre (partial decision); Migri (permit)',
+      fa: 'مرکز ELY (تصمیم جزئی)؛ اداره‌ی مهاجرت فنلاند، Migri (اجازه‌ی اقامت)',
+    },
     status: 'open',
     fact: {
       en: 'The ELY Centre must find the business profitable enough to support you. A negative ELY decision means a negative Migri decision; most refusals are on this ground.',
@@ -396,7 +408,10 @@ export const ROUTES_EUROPE: RouteV2[] = [
     country: 'FI',
     family: 'study',
     name: { en: 'Residence permit for studies', fa: 'اقامت تحصیلی فنلاند' },
-    agency: 'Migri',
+    agency: {
+      en: 'Migri',
+      fa: 'اداره‌ی مهاجرت فنلاند (Migri)',
+    },
     status: 'open',
     fact: {
       en: 'EUR 9,600 plus first-year tuition must be in your own account when you apply. Doubt about funds is the most common cause of delay.',
@@ -475,7 +490,10 @@ export const ROUTES_EUROPE: RouteV2[] = [
     country: 'EE',
     family: 'startup',
     name: { en: 'Temporary residence permit for a start-up entrepreneur', fa: 'اقامت موقت کارآفرین استارتاپی استونی' },
-    agency: 'Police and Border Guard Board (PPA); Startup Estonia’s Startup Committee evaluates the company',
+    agency: {
+      en: 'Police and Border Guard Board (PPA); Startup Estonia’s Startup Committee evaluates the company',
+      fa: 'اداره‌ی پلیس و مرزبانی استونی (PPA)؛ کمیته‌ی استارتاپ Startup Estonia شرکت را ارزیابی می‌کند',
+    },
     status: 'open',
     fact: {
       en: 'The Startup Committee’s approval decides it. Personal funds are only self-declared when you sign the application.',
@@ -571,7 +589,10 @@ export const ROUTES_EUROPE: RouteV2[] = [
     country: 'EE',
     family: 'entrepreneur',
     name: { en: 'Temporary residence permit for business (shareholder or sole proprietor)', fa: 'اقامت موقت کسب‌وکار استونی (سهام‌دار یا مالک انفرادی)' },
-    agency: 'Police and Border Guard Board (PPA)',
+    agency: {
+      en: 'Police and Border Guard Board (PPA)',
+      fa: 'اداره‌ی پلیس و مرزبانی استونی (PPA)',
+    },
     status: 'open',
     fact: {
       en: 'As a shareholder you need EUR 65,000 actually invested in the company’s activities in Estonia, not just held as share capital.',
@@ -670,7 +691,10 @@ export const ROUTES_EUROPE: RouteV2[] = [
     country: 'EE',
     family: 'study',
     name: { en: 'Temporary residence permit for study', fa: 'اقامت موقت تحصیلی استونی' },
-    agency: 'Police and Border Guard Board (PPA)',
+    agency: {
+      en: 'Police and Border Guard Board (PPA)',
+      fa: 'اداره‌ی پلیس و مرزبانی استونی (PPA)',
+    },
     status: 'open',
     fact: {
       en: 'You need the school’s admission and invitation, plus a declared income of EUR 880 a month.',
@@ -740,7 +764,10 @@ export const ROUTES_EUROPE: RouteV2[] = [
     country: 'NL',
     family: 'startup',
     name: { en: 'Residence permit for a start-up', fa: 'اقامت استارتاپی هلند' },
-    agency: 'IND, on the advice of RVO',
+    agency: {
+      en: 'IND, on the advice of RVO',
+      fa: 'اداره‌ی مهاجرت و تابعیت هلند (IND)، با نظر RVO',
+    },
     status: 'open',
     fact: {
       en: 'You need a signed contract with an RVO-listed facilitator. The permit lasts 1 year and cannot be extended; then you switch to the self-employed permit.',
@@ -836,7 +863,10 @@ export const ROUTES_EUROPE: RouteV2[] = [
     country: 'NL',
     family: 'entrepreneur',
     name: { en: 'Residence permit for a self-employed person (points system)', fa: 'اقامت خوداشتغالی هلند (نظام امتیازی)' },
-    agency: 'IND; RVO scores the essential interest to the Dutch economy',
+    agency: {
+      en: 'IND; RVO scores the essential interest to the Dutch economy',
+      fa: 'اداره‌ی مهاجرت و تابعیت هلند (IND)؛ RVO «منفعت اساسی برای اقتصاد هلند» را امتیاز می‌دهد',
+    },
     status: 'open',
     fact: {
       en: 'You need at least 30 points in each of three areas (personal experience, business plan, added value), or 45 + 45 in the first two. US nationals can use DAFT with an investment of at least EUR 4,500 instead.',
@@ -944,7 +974,10 @@ export const ROUTES_EUROPE: RouteV2[] = [
     country: 'NL',
     family: 'study',
     name: { en: 'Student residence permit (university or higher professional education)', fa: 'اقامت تحصیلی هلند (دانشگاه یا آموزش عالی حرفه‌ای)' },
-    agency: 'IND; the recognised institution applies as sponsor',
+    agency: {
+      en: 'IND; the recognised institution applies as sponsor',
+      fa: 'اداره‌ی مهاجرت و تابعیت هلند (IND)؛ مؤسسه‌ی آموزشی شناخته‌شده به‌عنوان حامی درخواست می‌دهد',
+    },
     status: 'open',
     fact: {
       en: 'EUR 1,130.77 a month, in practice EUR 13,569.24 for the first year, must be available before the institution files your application.',
@@ -1014,7 +1047,10 @@ export const ROUTES_EUROPE: RouteV2[] = [
     country: 'IT',
     family: 'startup',
     name: { en: 'Italia Startup Visa', fa: 'ویزای استارتاپی ایتالیا (Italia Startup Visa)' },
-    agency: 'ISV Technical Committee at MIMIT (nulla osta); consulate (visa); Questura (permit)',
+    agency: {
+      en: 'ISV Technical Committee at MIMIT (nulla osta); consulate (visa); Questura (permit)',
+      fa: 'کمیته‌ی فنی ISV در وزارت MIMIT (مجوز nulla osta)؛ کنسولگری (ویزا)؛ Questura (اجازه‌ی اقامت)',
+    },
     status: 'open',
     fact: {
       en: 'The Committee’s nulla osta decides it. Within it, certified project funds of EUR 50,000 and previous-year income above about EUR 8,500 are hard floors.',
@@ -1139,7 +1175,10 @@ export const ROUTES_EUROPE: RouteV2[] = [
     country: 'IT',
     family: 'entrepreneur',
     name: { en: 'Self-employment visa (lavoro autonomo)', fa: 'ویزای کار مستقل ایتالیا (lavoro autonomo)' },
-    agency: 'Questura (nulla osta); consulate (visa); quotas set by the DPCM flussi',
+    agency: {
+      en: 'Questura (nulla osta); consulate (visa); quotas set by the DPCM flussi',
+      fa: 'Questura (مجوز nulla osta)؛ کنسولگری (ویزا)؛ سهمیه‌ها را فرمان DPCM flussi تعیین می‌کند',
+    },
     status: 'limited',
     fact: {
       en: 'Entries are capped at 650 a year for 2026–2028. What decides it is whether quota is left when the Questura issues the nulla osta.',
@@ -1244,7 +1283,10 @@ export const ROUTES_EUROPE: RouteV2[] = [
     country: 'IT',
     family: 'study',
     name: { en: 'Study visa (university enrolment)', fa: 'ویزای تحصیلی ایتالیا (ثبت‌نام دانشگاهی)' },
-    agency: 'Italian consulate (visa); pre-enrolment through Universitaly (MUR)',
+    agency: {
+      en: 'Italian consulate (visa); pre-enrolment through Universitaly (MUR)',
+      fa: 'کنسولگری ایتالیا (ویزا)؛ پیش‌ثبت‌نام از طریق Universitaly (وزارت MUR)',
+    },
     status: 'open',
     fact: {
       en: 'You need EUR 10,179.85 of traceable funds for the year plus a pre-enrolment validated on Universitaly. Apply by 30 Nov 2026 for 2026/27.',

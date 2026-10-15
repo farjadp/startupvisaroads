@@ -145,7 +145,10 @@ export const ROUTES_CANADA_US: RouteV2[] = [
     country: 'CA',
     family: 'startup',
     name: { en: 'Start-up Visa Program', fa: 'برنامهٔ ویزای استارتاپ' },
-    agency: 'IRCC',
+    agency: {
+      en: 'IRCC',
+      fa: 'اداره‌ی مهاجرت کانادا (IRCC)',
+    },
     status: 'paused',
     fact: {
       en: 'Closed to new applicants since 30 June 2026; canada.ca names no successor programme. Files accepted before the pause are still processed.',
@@ -237,7 +240,10 @@ export const ROUTES_CANADA_US: RouteV2[] = [
       en: 'Express Entry (Federal Skilled Worker, Canadian Experience Class, Federal Skilled Trades)',
       fa: 'اکسپرس انتری (کارگران ماهر فدرال، تجربهٔ کانادایی، مشاغل فنی فدرال)',
     },
-    agency: 'IRCC',
+    agency: {
+      en: 'IRCC',
+      fa: 'اداره‌ی مهاجرت کانادا (IRCC)',
+    },
     status: 'open',
     fact: {
       en: 'Your CRS score against the cut-off of the round you are eligible for. The latest CEC round (15 Oct 2026) needed 519; a provincial nomination adds 600.',
@@ -389,7 +395,10 @@ export const ROUTES_CANADA_US: RouteV2[] = [
     country: 'CA',
     family: 'entrepreneur',
     name: { en: 'Nova Scotia Entrepreneur', fa: 'کارآفرینی نوا اسکوشیا' },
-    agency: 'Nova Scotia Nominee Program (NSNP), then IRCC',
+    agency: {
+      en: 'Nova Scotia Nominee Program (NSNP), then IRCC',
+      fa: 'برنامه‌ی معرفی استانی نوا اسکوشیا (NSNP)، سپس IRCC',
+    },
     status: 'open',
     fact: {
       en: 'Choosing a location outside Halifax (HRM) lowers both money thresholds and adds 10 points. 2026 draws: 9 Apr (18 invited, lowest 88), 19 May (9, 100), 24 Jun (8, 99), 23 Jul (9, 101); none listed after July as of 12 Oct.',
@@ -505,7 +514,10 @@ export const ROUTES_CANADA_US: RouteV2[] = [
     country: 'CA',
     family: 'entrepreneur',
     name: { en: 'New Brunswick Business Immigration Stream', fa: 'مسیر مهاجرت تجاری نیوبرانزویک' },
-    agency: 'New Brunswick Provincial Nominee Program, then IRCC',
+    agency: {
+      en: 'New Brunswick Provincial Nominee Program, then IRCC',
+      fa: 'برنامه‌ی معرفی استانی نیوبرانزویک (New Brunswick Provincial Nominee Program)، سپس IRCC',
+    },
     status: 'open',
     fact: {
       en: 'Assessed outside a draw system: the 65/100 points grid is the gate. No business draws are published.',
@@ -629,7 +641,10 @@ export const ROUTES_CANADA_US: RouteV2[] = [
     country: 'CA',
     family: 'entrepreneur',
     name: { en: 'Alberta Rural Entrepreneur Stream', fa: 'مسیر کارآفرینی روستایی آلبرتا' },
-    agency: 'Alberta Advantage Immigration Program (AAIP), then IRCC',
+    agency: {
+      en: 'Alberta Advantage Immigration Program (AAIP), then IRCC',
+      fa: 'برنامه‌ی مهاجرتی آلبرتا (AAIP)، سپس IRCC',
+    },
     status: 'open',
     fact: {
       en: 'You need a rural community endorsement before you can enter the pool. The 2026 entrepreneur allocation is 60 nominations; 36 were issued by 7 Oct.',
@@ -752,7 +767,10 @@ export const ROUTES_CANADA_US: RouteV2[] = [
     country: 'CA',
     family: 'entrepreneur',
     name: { en: 'Manitoba Business Investor Stream: Entrepreneur Pathway', fa: 'مسیر کارآفرینی جریان سرمایه‌گذار تجاری مانیتوبا' },
-    agency: 'Manitoba Provincial Nominee Program (MPNP), then IRCC',
+    agency: {
+      en: 'Manitoba Provincial Nominee Program (MPNP), then IRCC',
+      fa: 'برنامه‌ی معرفی استانی منیتوبا (MPNP)، سپس IRCC',
+    },
     status: 'open',
     fact: {
       en: 'There are no BIS draws: a paper EOI is emailed and reviewed within 4 weeks. Investment is CAD 250,000 in Winnipeg Metro and CAD 150,000 outside it.',
@@ -867,7 +885,10 @@ export const ROUTES_CANADA_US: RouteV2[] = [
     country: 'CA',
     family: 'entrepreneur',
     name: { en: 'Prince Edward Island Work Permit Stream (Entrepreneur)', fa: 'مسیر مجوز کار جزیرهٔ پرنس ادوارد (کارآفرینی)' },
-    agency: 'PEI Office of Immigration, then IRCC',
+    agency: {
+      en: 'PEI Office of Immigration, then IRCC',
+      fa: 'دفتر مهاجرت جزیره‌ی پرنس ادوارد (PEI Office of Immigration)، سپس IRCC',
+    },
     status: 'limited',
     fact: {
       en: 'Zero entrepreneur invitations in all ten 2026 draws (15 Jan to 7 Oct), against 1,319 worker invitations. Treat it as closed.',
@@ -996,7 +1017,10 @@ export const ROUTES_CANADA_US: RouteV2[] = [
     country: 'CA',
     family: 'study',
     name: { en: 'Study permit (with PGWP as the bridge to PR)', fa: 'مجوز تحصیل (با PGWP به‌عنوان پل اقامت دائم)' },
-    agency: 'IRCC (Quebec: MIFI issues the CAQ)',
+    agency: {
+      en: 'IRCC (Quebec: MIFI issues the CAQ)',
+      fa: 'اداره‌ی مهاجرت کانادا (IRCC)؛ در کبک، گواهی CAQ را وزارت مهاجرت کبک (MIFI) صادر می‌کند',
+    },
     status: 'open',
     fact: {
       en: 'Whether you need a provincial attestation letter (PAL) and can get one. A master’s or PhD student at a public DLI skips the PAL and the cap entirely.',
@@ -1125,7 +1149,10 @@ export const ROUTES_CANADA_US: RouteV2[] = [
     country: 'US',
     family: 'talent',
     name: { en: 'EB-2 National Interest Waiver (NIW)', fa: 'EB-2 NIW (معافیت منافع ملی)' },
-    agency: 'USCIS (I-140), then DOS or USCIS',
+    agency: {
+      en: 'USCIS (I-140), then DOS or USCIS',
+      fa: 'اداره‌ی خدمات شهروندی و مهاجرت آمریکا (USCIS) با فرم I-140، سپس وزارت خارجه (DOS) یا USCIS',
+    },
     status: 'open',
     fact: {
       en: 'Degree gate first (a master’s, or a bachelor’s plus 5 years), then whether the national importance of your work can be shown beyond one employer. No job offer needed. For Iranian nationals, the visa ban decides it before any of this.',
@@ -1203,7 +1230,10 @@ export const ROUTES_CANADA_US: RouteV2[] = [
     country: 'US',
     family: 'talent',
     name: { en: 'EB-1A Extraordinary Ability', fa: 'EB-1A (توانایی فوق‌العاده)' },
-    agency: 'USCIS (I-140)',
+    agency: {
+      en: 'USCIS (I-140)',
+      fa: 'اداره‌ی خدمات شهروندی و مهاجرت آمریکا (USCIS) با فرم I-140',
+    },
     status: 'open',
     fact: {
       en: 'How many of the 10 criteria you can document (at least 3), then the final-merits test. Self-petition; no job offer or labor certification.',
@@ -1269,7 +1299,10 @@ export const ROUTES_CANADA_US: RouteV2[] = [
     country: 'US',
     family: 'talent',
     name: { en: 'EB-2 Advanced Degree or Exceptional Ability (with a job offer)', fa: 'EB-2 مدرک پیشرفته یا توانایی استثنایی (با پیشنهاد کار)' },
-    agency: 'DOL (PERM), then USCIS (I-140), then DOS or USCIS',
+    agency: {
+      en: 'DOL (PERM), then USCIS (I-140), then DOS or USCIS',
+      fa: 'وزارت کار آمریکا (DOL) برای PERM، سپس USCIS با فرم I-140، سپس وزارت خارجه (DOS) یا USCIS',
+    },
     status: 'open',
     fact: {
       en: 'You need a US employer willing to sponsor you through PERM labor certification.',
@@ -1356,7 +1389,10 @@ export const ROUTES_CANADA_US: RouteV2[] = [
     country: 'US',
     family: 'talent',
     name: { en: 'O-1A Extraordinary Ability (temporary)', fa: 'O-1A (توانایی فوق‌العاده، موقت)' },
-    agency: 'USCIS (I-129), visa at a US consulate',
+    agency: {
+      en: 'USCIS (I-129), visa at a US consulate',
+      fa: 'اداره‌ی خدمات شهروندی و مهاجرت آمریکا (USCIS) با فرم I-129؛ ویزا در کنسولگری آمریکا',
+    },
     status: 'open',
     fact: {
       en: 'At least 3 of 8 criteria and a US petitioner or agent. You cannot self-petition.',
@@ -1441,7 +1477,10 @@ export const ROUTES_CANADA_US: RouteV2[] = [
     country: 'US',
     family: 'study',
     name: { en: 'F-1 student visa', fa: 'ویزای دانشجویی F-1' },
-    agency: 'SEVP/ICE, the school (I-20), DOS (visa), CBP (admission)',
+    agency: {
+      en: 'SEVP/ICE, the school (I-20), DOS (visa), CBP (admission)',
+      fa: 'SEVP/ICE؛ دانشگاه یا مدرسه (فرم I-20)؛ وزارت خارجه (DOS) برای ویزا؛ گمرک و حفاظت مرزی (CBP) برای ورود',
+    },
     status: 'open',
     fact: {
       en: 'Funds covering the full amount on your I-20, plus a credible intent to return home. For Iranian nationals, the visa ban applies.',
@@ -1516,7 +1555,10 @@ export const ROUTES_CANADA_US: RouteV2[] = [
     country: 'US',
     family: 'startup',
     name: { en: 'International Entrepreneur Parole (International Entrepreneur Rule)', fa: 'پارول کارآفرین بین‌المللی (قانون کارآفرین بین‌المللی)' },
-    agency: 'USCIS (I-941); CBP grants parole at the port of entry',
+    agency: {
+      en: 'USCIS (I-941); CBP grants parole at the port of entry',
+      fa: 'USCIS با فرم I-941؛ گمرک و حفاظت مرزی (CBP) پارول را در محل ورود می‌دهد',
+    },
     status: 'limited',
     fact: {
       en: 'The US has no startup visa. This parole needs USD 311,071 from qualified US investors within 18 months (or USD 124,429 in government grants). Without it the route does not exist. Approvals are discretionary and few.',

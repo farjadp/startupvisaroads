@@ -5,7 +5,7 @@ import { toUsdExact } from '../../../lib/fx.ts';
 import { match, rank, type Profile } from '../../../lib/routes-v2/match.ts';
 import type { RouteV2 } from '../../../lib/routes-v2/types.ts';
 
-const base = { country: 'CA', family: 'entrepreneur', name: { en: 'Test' }, agency: 'Test', fact: { en: '' }, money: [], pr: { en: '' }, sources: [{ url: 'https://example.gov', checked: '2026-10-15' }], verified: true } as const;
+const base = { country: 'CA', family: 'entrepreneur', name: { en: 'Test' }, agency: { en: 'Test' }, fact: { en: '' }, money: [], pr: { en: '' }, sources: [{ url: 'https://example.gov', checked: '2026-10-15' }], verified: true } as const;
 
 const route = (key: string, status: RouteV2['status'] = 'open'): RouteV2 => ({
   ...base,
