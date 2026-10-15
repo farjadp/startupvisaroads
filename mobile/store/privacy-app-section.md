@@ -2,7 +2,7 @@
 
 Status: DRAFT for Farjad's approval. It describes VisaRoads 1.0.0 as built on
 14 Oct 2026. Both stores need a privacy policy that names the app. It must be
-published before submission, and kept true if the app ever starts sending data.
+published before submission, and kept true if the app ever sends more than the install identifier.
 
 ---
 
@@ -11,9 +11,9 @@ published before submission, and kept true if the app ever starts sending data.
 This section applies to the VisaRoads app for iPhone and Android, published by
 Ashavid Inc.
 
-**What the app collects:** nothing. The app has no account, and no sign-up or
-sign-in. It does not include analytics, advertising or crash-reporting
-software. What you enter — your pathfinder answers, the steps you mark done,
+**What the app collects:** only the random install identifier described under
+"App updates" below. The app has no account, and no sign-up or sign-in. It
+does not include analytics, advertising or crash-reporting software. What you enter — your pathfinder answers, the steps you mark done,
 your language and appearance settings — is stored only on your phone and
 never sent to us or to anyone else.
 
@@ -27,7 +27,7 @@ are not used to identify you.
 deliver app updates, whether a newer version of its content is available. The
 request carries the app's version details and a random identifier created when
 the app is installed. That identifier is not linked to you, your answers or
-any advertising identifier, and it is deleted when you uninstall the app.
+any advertising identifier, and uninstalling the app deletes it from your phone.
 Like any server, Expo receives the request's IP address; Expo's own privacy
 policy covers what it does with it.
 
@@ -44,5 +44,5 @@ are kept). Uninstalling the app removes everything it stored.
 **Children:** the app is intended for adults planning business immigration and
 is not directed to children.
 
-**Changes:** if a future version of the app starts collecting any data, we will
+**Changes:** if a future version of the app starts collecting any other data, we will
 update this section, and the store listings, before that version is released.
