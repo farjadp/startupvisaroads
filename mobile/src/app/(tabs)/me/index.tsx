@@ -84,7 +84,7 @@ export default function Me() {
         <T variant="body" tone="fgMuted">
           {outcome === 'too-early' ? t('result.tooEarlyBody') : t('me.emptyLead')}
         </T>
-        <Button label={t('me.start')} onPress={() => router.push('/pathfinder')} />
+        <Button label={t('me.start')} onPress={() => router.push('/assessment')} />
         <View>
           <Label>{t('me.earned')}</Label>
           <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: space.s3, marginTop: space.s2 }}>

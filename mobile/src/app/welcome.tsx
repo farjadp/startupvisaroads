@@ -25,7 +25,7 @@ export default function Start() {
     set({ onboarded: true });
     if (to === 'countries') return router.replace('/(tabs)/countries');
     router.replace('/(tabs)/home');
-    if (to === 'assess') router.push('/pathfinder');
+    if (to === 'assess') router.push('/assessment');
   };
 
   return (

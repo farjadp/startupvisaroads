@@ -4,6 +4,7 @@
 // build it changes nothing and goes home.
 import { Redirect, useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
+import type { AssessAnswers } from '@/content/assessment';
 import type { StoredAnswers } from '@/engine/readiness';
 import { outcomeFor } from '@/engine/road';
 import { LOCALES, type Locale } from '@/i18n/locales';
@@ -15,8 +16,15 @@ const PRESETS: Record<string, StoredAnswers> = {
   early: { goal: 'growth', team: 'solo', business: 'idea', language: 'low', capital: 'under50', background: 'none', horizon: 'urgent' },
 };
 
+// v2 assessment samples (&assess=founder): a finished assessment, so the results
+// and Home can be reviewed without tapping through ten screens.
+const ASSESS: Record<string, AssessAnswers> = {
+  founder: { goal: 'startup', residence: 'IR', citizenship: 'IR', age: '30', degree: 'master', work: '5', english: 'good', french: 'none', liquid: '3', netWorth: '3', income: '3', investment: '2', businessStage: 'mvp', admission: 'no', jobOffer: 'no', endorsement: 'no' },
+  talent: { goal: 'talent', residence: 'CA', citizenship: 'IN', age: '35', degree: 'phd', work: '10', english: 'veryGood', french: 'basic', liquid: '4', netWorth: '5', income: '5', investment: '3', businessStage: 'none', admission: 'skip', jobOffer: 'yes', endorsement: 'no', talent: ['publications', 'citations', 'judging'] },
+};
+
 export default function DevSeed() {
-  const p = useLocalSearchParams<{ preset?: string; locale?: string; mode?: string; to?: string; steps?: string }>();
+  const p = useLocalSearchParams<{ assess?: string; preset?: string; locale?: string; mode?: string; to?: string; steps?: string }>();
   const { set, reset } = useStore();
   const [done, setDone] = useState(false);
 
@@ -34,6 +42,11 @@ export default function DevSeed() {
         patch.outcome = outcome;
         patch.step = 0;
         if (p.steps && outcome !== 'too-early') patch.done = { [outcome]: p.steps.split(',') as never };
+      }
+      if (p.assess && ASSESS[p.assess]) {
+        patch.assess = ASSESS[p.assess];
+        patch.assessAt = new Date().toISOString();
+        patch.assessStep = -1;
       }
       set(patch);
       setDone(true);

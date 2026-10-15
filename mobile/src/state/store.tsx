@@ -7,6 +7,7 @@ import type { RouteKey } from '@/content/routes';
 import type { Outcome } from '@/engine/road';
 import type { QuizKey, StoredAnswers } from '@/engine/readiness';
 import type { Locale } from '@/i18n/locales';
+import type { AssessAnswers } from '@/content/assessment';
 
 export type ModePref = 'system' | 'paper' | 'night';
 
@@ -24,6 +25,10 @@ export type AppState = {
   fundsUsed: boolean;
   /** Funds tool: also show an indicative US dollar amount. */
   fundsUsd: boolean;
+  /** v2 assessment answers (phone only), the screen reached (-1 = intro), and when it was finished. */
+  assess: AssessAnswers;
+  assessStep: number;
+  assessAt: string | null;
   /** Roads the user chose to follow (onboarding 3B). Orders Roads and filters News; never scored. */
   following: RouteKey[];
   /** The opening motion plays once; later launches fade. */
@@ -45,6 +50,9 @@ export const INITIAL: AppState = {
   newsRead: false,
   fundsUsed: false,
   fundsUsd: false,
+  assess: {},
+  assessStep: -1,
+  assessAt: null,
   following: [],
   introSeen: false,
 };

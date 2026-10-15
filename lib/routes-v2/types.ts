@@ -36,7 +36,8 @@ export type ProfileField =
   | 'talentSignals' // count of: publications, citations, patents, awards, press, judging, high salary, memberships
   | 'admission' // boolean: has an admission / acceptance letter
   | 'jobOffer' // boolean
-  | 'endorsement'; // boolean: has an endorsement / support letter from a designated body
+  | 'endorsement' // boolean: has an endorsement / support letter from a designated body
+  | 'citizenship'; // ISO 3166 alpha-2 of the passport held, or 'other'
 
 export type Test =
   | { field: ProfileField; op: 'gte' | 'lte'; value: number; currency?: V2Currency }
@@ -104,6 +105,12 @@ export type RouteV2 = {
   sources: Source[];
   /** False when a key figure could not be read on its official page. */
   verified: boolean;
+  /**
+   * Passports this route is closed to (e.g. US Proclamation 10998 for Iranian
+   * nationals). For those users the route gets no %, no rank and no offer,
+   * only this reason.
+   */
+  blockedCitizenships?: { codes: string[]; reason: L10n };
   /** Internal: conflicts and things to re-check, never shown. */
   review?: string;
 };

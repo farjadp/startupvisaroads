@@ -89,7 +89,7 @@ function FollowScreen() {
     }
     set({ following, onboarded: true });
     router.replace('/(tabs)/home');
-    if (next === 'pathfinder') router.push('/pathfinder');
+    if (next === 'pathfinder') router.push('/assessment');
   };
 
   const n = selected.length;

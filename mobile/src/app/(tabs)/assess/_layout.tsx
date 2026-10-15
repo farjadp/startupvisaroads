@@ -13,6 +13,7 @@ export default function AssessStack() {
     <Stack screenOptions={stackOptions(c, meta.script)}>
       <Stack.Screen name="index" options={{ headerShown: false, title: t('tabs.assess') }} />
       <Stack.Screen name="result" options={{ title: t('assess.result') }} />
+      <Stack.Screen name="results" options={{ title: t('assess.result') }} />
       <Stack.Screen name="funds" options={{ title: t('funds.title') }} />
       <Stack.Screen name="check" options={{ title: t('check.title') }} />
     </Stack>

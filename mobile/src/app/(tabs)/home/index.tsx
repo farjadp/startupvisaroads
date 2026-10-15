@@ -8,6 +8,10 @@ import { Image } from 'expo-image';
 import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Pressable, View } from 'react-native';
+import { toUsdExact } from '@shared/fx';
+import { ROUTES_V2, routeV2 } from '@shared/routes-v2';
+import { rank } from '@shared/routes-v2/match';
+import { metCount, preferredFamily, toProfile, topGaps } from '@/content/assessment';
 import { cachedFeed, fetchFeed, type Feed } from '@/content/news';
 import { COUNTRY_NAMES, ROUTE_TYPE, ROUTES, type Country } from '@/content/routes';
 import { roadView } from '@/engine/road';
@@ -15,11 +19,59 @@ import { useI18n } from '@/i18n/I18nProvider';
 import { useStore } from '@/state/store';
 import { useTheme } from '@/theme/ThemeProvider';
 import { space } from '@/theme/tokens';
+import { CountryPicture } from '@/ui/CountryPicture';
 import { Doors } from '@/ui/Doors';
 import { Flag } from '@/ui/Flag';
 import { Button, Disclaimer, Heading, Label, LinkRow, Ruled, Screen } from '@/ui/kit';
 import { checkLabel } from '@/ui/phrases';
 import { T } from '@/ui/T';
+
+/** The v2 result: best match with its %, coverage and first gap (spec §4, Home 3A). */
+function MatchCard() {
+  const { t, pick, count } = useI18n();
+  const { c } = useTheme();
+  const { state } = useStore();
+  const ranked = rank(ROUTES_V2, toProfile(state.assess), toUsdExact, preferredFamily(state.assess));
+  const best = ranked[0];
+  if (!best) return null;
+  const route = routeV2(best.route)!;
+  const gap = topGaps(best, 1)[0];
+  const gapLabel = gap ? pick(route.criteria.find((cr) => cr.key === gap)!.label).text : null;
+  const pct = `${count(best.pct ?? 0)}${t('assess2.pctSign')}`;
+  // Every % carries its coverage; a thin result shows what is met instead of a %.
+  const coverage = t('assess2.coverage', { n: count(best.coverage.scored), total: count(best.coverage.of) });
+  const figure = best.thin ? t('assess2.thinMet', { met: count(metCount(best)), n: count(best.coverage.scored) }) : pct;
+  const figureA11y = best.thin ? `${figure}, ${t('assess2.notChance')}` : t('assess2.matchA11y', { pct });
+  return (
+    <Pressable
+      onPress={() => router.push('/(tabs)/assess/results')}
+      accessibilityRole="button"
+      accessibilityLabel={[pick(route.name).text, figureA11y, coverage, gapLabel ? t('home.closeFirst', { item: gapLabel }) : ''].filter(Boolean).join('. ')}
+      style={({ pressed }) => ({ borderWidth: 1.5, borderColor: c.fg, opacity: pressed ? 0.85 : 1 })}
+    >
+      <CountryPicture country={route.country as Country} height={120} />
+      <View style={{ padding: space.s4, gap: space.s2 }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.s2 }}>
+          <Flag country={route.country as Country} width={18} />
+          <T variant="row" weight="bold" lang={pick(route.name).lang} style={{ flexShrink: 1 }}>
+            {pick(route.name).text}
+          </T>
+        </View>
+        <T variant={best.thin ? 'headline' : 'figure'}>{figure}</T>
+        <T variant="caption" tone="fgMuted">
+          {best.thin ? t('assess2.notChance') : t('assess2.matchLine')}
+        </T>
+        <T variant="caption" tone="fgMuted">
+          {best.thin ? `${coverage} · ${t('assess2.thin')}` : coverage}
+        </T>
+        {gapLabel ? <T variant="body">{t('home.closeFirst', { item: gapLabel })}</T> : null}
+        <T variant="row" weight="bold" style={{ textDecorationLine: 'underline' }}>
+          {t('home.seeResult')}
+        </T>
+      </View>
+    </Pressable>
+  );
+}
 
 function ResultCard() {
   const i18n = useI18n();
@@ -100,7 +152,7 @@ export default function Home() {
   const { state } = useStore();
   const outcomeCountry = state.outcome && state.outcome !== 'too-early' ? ROUTES[state.outcome].country : null;
   const myCountries = [...new Set([...(outcomeCountry ? [outcomeCountry] : []), ...state.following.map((k) => ROUTES[k].country)])];
-  const fresh = !state.outcome && state.following.length === 0;
+  const fresh = !state.assessAt && !state.outcome && state.following.length === 0;
 
   return (
     <Screen>
@@ -110,13 +162,14 @@ export default function Home() {
           <T variant="body" tone="fgMuted">
             {t('home.emptyLead')}
           </T>
-          <Doors onRoad={() => router.navigate('/(tabs)/countries')} onAssess={() => router.push('/pathfinder')} />
+          <Doors onRoad={() => router.navigate('/(tabs)/countries')} onAssess={() => router.push('/assessment')} />
         </>
       ) : (
         <>
-          {state.outcome ? <Label>{t('home.lastResult')}</Label> : null}
-          <ResultCard />
-          {!state.outcome ? <Button label={t('start.assessTitle')} onPress={() => router.push('/pathfinder')} /> : null}
+          {state.assessAt || state.outcome ? <Label>{t('home.lastResult')}</Label> : null}
+          {/* The v2 result replaces the v1 pathfinder's once there is one. */}
+          {state.assessAt ? <MatchCard /> : <ResultCard />}
+          {!state.assessAt && !state.outcome ? <Button label={t('start.assessTitle')} onPress={() => router.push('/assessment')} /> : null}
           {state.following.length ? (
             <View>
               <Label>{t('home.followed')}</Label>

@@ -1192,6 +1192,7 @@ export const ROUTES_CANADA_US: RouteV2[] = [
       { url: 'https://travel.state.gov/content/travel/en/legal/visa-law0/visa-bulletin/2026/visa-bulletin-for-october-2026.html', checked: '2026-10-15', label: 'Visa Bulletin October 2026 (returned 403; figures from secondary sources)' },
     ],
     verified: false,
+    blockedCitizenships: { codes: ['IR'], reason: US_TRAVEL_BAN.note! },
     review:
       `Visa Bulletin (EB-2 ROW FAD retrogressed from Current to 1 Jan 2025; DFF 15 Mar 2026) is secondary: travel.state.gov returned 403, read in a browser. ${USCIS_FEE_REVIEW} Degree test covers master/PhD only; bachelor + 5 years and exceptional ability are notes.`,
   },
@@ -1258,6 +1259,7 @@ export const ROUTES_CANADA_US: RouteV2[] = [
       { url: USCIS_PREMIUM_SOURCE, checked: '2026-10-15', label: 'USCIS premium processing' },
     ],
     verified: false,
+    blockedCitizenships: { codes: ['IR'], reason: US_TRAVEL_BAN.note! },
     review: `Visa Bulletin EB-1 (ROW current or near; India 1 Feb 2023, China 1 Jul 2023) is secondary: travel.state.gov returned 403. ${USCIS_FEE_REVIEW}`,
   },
 
@@ -1344,6 +1346,7 @@ export const ROUTES_CANADA_US: RouteV2[] = [
       { url: USCIS_PREMIUM_SOURCE, checked: '2026-10-15', label: 'USCIS premium processing' },
     ],
     verified: false,
+    blockedCitizenships: { codes: ['IR'], reason: US_TRAVEL_BAN.note! },
     review: `Visa Bulletin EB-2 ROW figure is secondary (travel.state.gov 403). PERM times not captured. The rule that the worker may not pay PERM costs is a DOL rule not on the cited page. ${USCIS_FEE_REVIEW}`,
   },
 
@@ -1428,6 +1431,7 @@ export const ROUTES_CANADA_US: RouteV2[] = [
       { url: USCIS_PREMIUM_SOURCE, checked: '2026-10-15', label: 'USCIS premium processing' },
     ],
     verified: true,
+    blockedCitizenships: { codes: ['IR'], reason: US_TRAVEL_BAN.note! },
     review: `DOS visa (MRV) fee not captured (travel.state.gov 403), so not listed. ${USCIS_FEE_REVIEW}`,
   },
 
@@ -1501,6 +1505,7 @@ export const ROUTES_CANADA_US: RouteV2[] = [
       { url: 'https://www.ice.gov/sevis/i901', checked: '2026-10-15', label: 'ICE SEVIS I-901 fee (updated 12/10/2024)' },
     ],
     verified: true,
+    blockedCitizenships: { codes: ['IR'], reason: US_TRAVEL_BAN.note! },
     review:
       'No money line: the amount is whatever the I-20 says (no fixed figure). DOS MRV fee (185) and the H.R. 1 USD 250 Visa Integrity Fee could not be read on travel.state.gov (403); not listed. eCFR now says F-1 students are "admitted for a fixed period" (up to the I-20 programme, 4-year maximum, plus 30 days): confirm the Federal Register effective date before publishing.',
   },
@@ -1616,6 +1621,7 @@ export const ROUTES_CANADA_US: RouteV2[] = [
       USCIS_FEES_SOURCE,
     ],
     verified: false,
+    blockedCitizenships: { codes: ['IR'], reason: US_TRAVEL_BAN.note! },
     review:
       `Household income >400% FPL is marked [verify in 8 CFR 212.19]. I-941 Immigration Parole Fee amount is ambiguous in the G-1055 extract ("Online: $1,020, if USCIS notifies you of conditional approval"): verify on the fee calculator; not listed. Company-age rule (5 years) is from the regulation, not the summary page. ${USCIS_FEE_REVIEW} No criterion is scoreable: no profile field covers company-raised investment or ownership share.`,
   },

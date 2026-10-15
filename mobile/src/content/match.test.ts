@@ -25,7 +25,7 @@ test('all scoreable criteria met → 100%, unscoreable never counted', () => {
   const p: Profile = { netWorth: cadToUsd(700_000), englishClb: 7, age: 40 };
   const m = match(route('a'), p, toUsdExact);
   assert.equal(m.pct, 100);
-  assert.deepEqual(m.coverage, { scored: 3, of: 3 });
+  assert.deepEqual(m.coverage, { scored: 3, of: 4 });
   assert.equal(m.results.find((r) => r.key === 'panel')?.state, 'unscored');
 });
 
@@ -38,7 +38,7 @@ test('close counts half, not yet counts nothing, weights apply', () => {
 test('skipped answers are unscored, not "not yet", and coverage says so', () => {
   const m = match(route('a'), { englishClb: 7 }, toUsdExact);
   assert.equal(m.pct, 100);
-  assert.deepEqual(m.coverage, { scored: 1, of: 3 });
+  assert.deepEqual(m.coverage, { scored: 1, of: 4 });
 });
 
 test('money compares across currencies through USD', () => {
@@ -117,4 +117,14 @@ test('coverage is weighed against every criterion, unscoreable included', () => 
   assert.equal(m.thin, true);
   // 'a' scores 6 of 9 weight at 75%: it still ranks above the thin 100%.
   assert.deepEqual(rank([heavy, route('a')], p, toUsdExact).map((x) => x.route), ['a', 'heavy']);
+});
+
+test('a band that straddles the threshold is close, never met', () => {
+  const r = route('a');
+  // net worth band CAD 500k–700k around a CAD 600k bar
+  const res = match(r, { netWorth: [cadToUsd(500_000), cadToUsd(700_000)] }, toUsdExact).results[0];
+  assert.equal(res.state, 'close');
+  assert.equal(match(r, { netWorth: [cadToUsd(600_000), cadToUsd(900_000)] }, toUsdExact).results[0].state, 'met');
+  // age band 45–54 against "50 or under": close
+  assert.equal(match(r, { age: [45, 54] }, toUsdExact).results[2].state, 'close');
 });
