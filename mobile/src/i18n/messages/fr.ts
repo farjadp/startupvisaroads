@@ -285,7 +285,7 @@ const fr: Messages = {
     topLevel: 'Niveau maximal',
     rules: 'Ce que demandent les règles',
     notScored: 'Non évalué ici',
-    gapNetWorth: 'Valeur nette — l’orientation ne la demande pas ; utilisez Outils › Vérifier un parcours',
+    gapNetWorth: 'Valeur nette — l’orientation ne la demande pas ; quand un programme publie un montant, la page du parcours l’affiche avec sa source',
     gapAge: 'Limites d’âge — l’orientation ne les demande pas',
     noThresholds: 'Ce parcours ne publie aucun seuil évaluable ; la préparation vient ici de vos étapes.',
     skipped: 'Vous avez passé {n} questions. Chacune a été évaluée avec la réponse la plus prudente.',
@@ -325,7 +325,7 @@ const fr: Messages = {
   tools: {
     title: 'Outils',
     funds: 'Fonds d’établissement',
-    fundsDesc: 'Ce qu’une famille doit prouver pour s’établir au Canada',
+    fundsDesc: 'Ce que chaque pays vous demande de prouver, et comment il le compte',
     check: 'Vérifier un parcours',
     checkDesc: 'Vos chiffres face aux règles publiées de chaque parcours',
     crs: 'Score Entrée express (SCG)',

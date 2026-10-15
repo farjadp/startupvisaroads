@@ -101,6 +101,7 @@ export default function RoutePage() {
 
   const name = pick(route.name);
   const fact = pick(route.fact);
+  const agency = pick(route.agency);
   const checkable = route.criteria.filter((c) => c.scoreable);
   const authority = route.criteria.filter((c) => !c.scoreable);
   // Every source keeps its own line and date: several figures can come from different pages of one site (Migri).
@@ -123,8 +124,8 @@ export default function RoutePage() {
         {name.text}
       </Heading>
       {/* The deciding authority, in plain text: some names are long (UAE: ICP or GDRFA, with a DFF nomination). */}
-      <T variant="caption" tone="fgMuted">
-        {route.agency}
+      <T variant="caption" tone="fgMuted" lang={agency.lang}>
+        {agency.text}
       </T>
       {/* Unverified before any figure (the fact can hold one); the status banner follows the fact it refers to. */}
       {!route.verified ? <Banner text={t('route2.unverified')} /> : null}

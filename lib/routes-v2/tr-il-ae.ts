@@ -12,8 +12,10 @@ export const ROUTES_TR_IL_AE: RouteV2[] = [
     country: 'TR',
     family: 'startup',
     name: { en: 'Türkiye Tech Visa', fa: 'ویزای فناوری ترکیه (Türkiye Tech Visa)' },
-    agency:
-      'Ministry of Industry and Technology (programme; a technopark evaluates); Ministry of Labour and Social Security (work permit); Presidency of Migration Management (family residence)',
+    agency: {
+      en: 'Ministry of Industry and Technology (programme; a technopark evaluates); Ministry of Labour and Social Security (work permit); Presidency of Migration Management (family residence)',
+      fa: 'وزارت صنعت و فناوری (Ministry of Industry and Technology) برای برنامه، با ارزیابی یک پارک فناوری؛ وزارت کار و تأمین اجتماعی (Ministry of Labour and Social Security) برای مجوز کار؛ ریاست مدیریت مهاجرت (Presidency of Migration Management) برای اقامت خانواده',
+    },
     status: 'open',
     fact: {
       en: 'The deciding step is whether a technopark (technology development zone) committee accepts the venture.',
@@ -175,7 +177,10 @@ export const ROUTES_TR_IL_AE: RouteV2[] = [
     country: 'TR',
     family: 'startup',
     name: { en: 'Turquoise Card (Turkuaz Kart)', fa: 'کارت فیروزه‌ای (Turkuaz Kart)' },
-    agency: 'Ministry of Labour and Social Security, General Directorate of International Labour Force',
+    agency: {
+      en: 'Ministry of Labour and Social Security, General Directorate of International Labour Force',
+      fa: 'وزارت کار و تأمین اجتماعی (Ministry of Labour and Social Security)، اداره‌ی کل نیروی کار بین‌المللی',
+    },
     status: 'open',
     fact: {
       en: 'The ministry decides by a points score whose criteria it does not publish.',
@@ -249,8 +254,10 @@ export const ROUTES_TR_IL_AE: RouteV2[] = [
       en: 'Company formation: short-term residence and work permit',
       fa: 'تأسیس شرکت: اقامت کوتاه‌مدت و اجازه‌ی کار',
     },
-    agency:
-      'Presidency of Migration Management (residence, Law 6458 Art. 31(1)(c)); Ministry of Labour and Social Security (work permit)',
+    agency: {
+      en: 'Presidency of Migration Management (residence, Law 6458 Art. 31(1)(c)); Ministry of Labour and Social Security (work permit)',
+      fa: 'ریاست مدیریت مهاجرت (Presidency of Migration Management) برای اقامت، قانون ۶۴۵۸ ماده‌ی ۳۱(۱)(c)؛ وزارت کار و تأمین اجتماعی (Ministry of Labour and Social Security) برای مجوز کار',
+    },
     status: 'open',
     fact: {
       en: 'The residence permit alone does not allow work; a managing foreign partner needs a work permit, which turns on TRY 500,000 of partner capital or the USD 100,000 alternative.',
@@ -424,7 +431,10 @@ export const ROUTES_TR_IL_AE: RouteV2[] = [
     country: 'TR',
     family: 'study',
     name: { en: 'Student residence permit (Öğrenci İkamet İzni)', fa: 'اجازه‌ی اقامت تحصیلی (Öğrenci İkamet İzni)' },
-    agency: 'Presidency of Migration Management (Law 6458, Art. 38–39)',
+    agency: {
+      en: 'Presidency of Migration Management (Law 6458, Art. 38–39)',
+      fa: 'ریاست مدیریت مهاجرت (Presidency of Migration Management)، قانون ۶۴۵۸، مواد ۳۸ و ۳۹',
+    },
     status: 'open',
     fact: {
       en: 'You need admission to a degree programme at a Turkish higher-education institution; a Turkish language course alone does not qualify.',
@@ -508,8 +518,10 @@ export const ROUTES_TR_IL_AE: RouteV2[] = [
       en: 'Innovation Visa for a Foreign Technology Entrepreneur',
       fa: 'ویزای نوآوری برای کارآفرین خارجی فناوری',
     },
-    agency:
-      'Israel Innovation Authority (recommends); Population and Immigration Authority, PIBA (grants the B/2 stay permit)',
+    agency: {
+      en: 'Israel Innovation Authority (recommends); Population and Immigration Authority, PIBA (grants the B/2 stay permit)',
+      fa: 'سازمان نوآوری اسرائیل (Israel Innovation Authority) توصیه می‌کند؛ سازمان جمعیت و مهاجرت (PIBA) اجازه‌ی اقامت B/2 را می‌دهد',
+    },
     status: 'open',
     fact: {
       en: "The Israel Innovation Authority CEO's recommendation decides, after an examiner reviews the founder and the supporting framework.",
@@ -614,7 +626,10 @@ export const ROUTES_TR_IL_AE: RouteV2[] = [
       en: 'B/1 Foreign High-Tech Expert visa',
       fa: 'ویزای متخصص خارجی فناوری پیشرفته (B/1)',
     },
-    agency: 'Israel Innovation Authority with the Population and Immigration Authority (procedure 5.3.0041)',
+    agency: {
+      en: 'Israel Innovation Authority with the Population and Immigration Authority (procedure 5.3.0041)',
+      fa: 'سازمان نوآوری اسرائیل (Israel Innovation Authority) همراه با سازمان جمعیت و مهاجرت، PIBA (رویه‌ی 5.3.0041)',
+    },
     status: 'open',
     fact: {
       en: 'The employer applies, not you: you need an IIA-authorised high-tech employer paying at least twice the average wage.',
@@ -710,7 +725,10 @@ export const ROUTES_TR_IL_AE: RouteV2[] = [
     country: 'IL',
     family: 'study',
     name: { en: 'Student visa (A/2)', fa: 'ویزای دانشجویی (A/2)' },
-    agency: 'Population and Immigration Authority (PIBA)',
+    agency: {
+      en: 'Population and Immigration Authority (PIBA)',
+      fa: 'سازمان جمعیت و مهاجرت (PIBA)',
+    },
     status: 'open',
     fact: {
       en: 'You need an admission letter from an Israeli higher-education institution or yeshiva, with tuition paid.',
@@ -784,8 +802,10 @@ export const ROUTES_TR_IL_AE: RouteV2[] = [
     country: 'AE',
     family: 'entrepreneur',
     name: { en: 'Golden Visa: Investor', fa: 'ویزای طلایی: سرمایه‌گذار' },
-    agency:
-      'Federal Authority for Identity, Citizenship, Customs & Port Security (ICP); in Dubai, GDRFA Dubai (GDRFAD)',
+    agency: {
+      en: 'Federal Authority for Identity, Citizenship, Customs & Port Security (ICP); in Dubai, GDRFA Dubai (GDRFAD)',
+      fa: 'اداره‌ی فدرال هویت، تابعیت، گمرک و امنیت بنادر (ICP)؛ در دبی، اداره‌ی کل اقامت و امور اتباع دبی (GDRFAD)',
+    },
     status: 'open',
     fact: {
       en: 'AED 2 million placed in one qualifying asset (bank deposit or fund, company capital, or property) is enough on its own.',
@@ -908,8 +928,10 @@ export const ROUTES_TR_IL_AE: RouteV2[] = [
     country: 'AE',
     family: 'startup',
     name: { en: 'Golden Visa: Entrepreneur', fa: 'ویزای طلایی: کارآفرین' },
-    agency:
-      'ICP or GDRFA Dubai; in Dubai, nomination by Dubai Future Foundation (DFF) is required',
+    agency: {
+      en: 'ICP or GDRFA Dubai; in Dubai, nomination by Dubai Future Foundation (DFF) is required',
+      fa: 'ICP یا GDRFA دبی؛ در دبی، معرفی از سوی بنیاد آینده‌ی دبی (DFF) لازم است',
+    },
     status: 'open',
     fact: {
       en: 'The two main ways in are an endorsement from an accredited incubator or authority, or AED 1 million in yearly revenue, and official sources disagree on whether the endorsement alone is enough.',
@@ -1024,7 +1046,10 @@ export const ROUTES_TR_IL_AE: RouteV2[] = [
       en: 'Golden Visa: Specialists and Outstanding Talent',
       fa: 'ویزای طلایی: متخصصان و استعدادهای برجسته',
     },
-    agency: 'ICP or GDRFA Dubai',
+    agency: {
+      en: 'ICP or GDRFA Dubai',
+      fa: 'ICP یا GDRFA دبی',
+    },
     status: 'open',
     fact: {
       en: 'You need a recommendation from a ministry or authority, or, as a specialist, a UAE job paying AED 30,000 a month at MOHRE level 1 or 2.',
@@ -1169,7 +1194,10 @@ export const ROUTES_TR_IL_AE: RouteV2[] = [
       en: 'Green Visa: Freelancer / Self-employed',
       fa: 'ویزای سبز: فریلنسر / خوداشتغال',
     },
-    agency: 'ICP or GDRFA Dubai; a MOHRE freelance or self-employment permit is a prerequisite',
+    agency: {
+      en: 'ICP or GDRFA Dubai; a MOHRE freelance or self-employment permit is a prerequisite',
+      fa: 'ICP یا GDRFA دبی؛ پیش‌شرط، مجوز فریلنس یا خوداشتغالی از وزارت منابع انسانی (MOHRE) است',
+    },
     status: 'open',
     fact: {
       en: 'You need AED 360,000 of freelance income and a degree; whether that income is per year or over two years combined is unclear.',
@@ -1294,7 +1322,10 @@ export const ROUTES_TR_IL_AE: RouteV2[] = [
       en: 'Study: Golden Visa for outstanding students, and the standard student residence',
       fa: 'تحصیل: ویزای طلایی دانشجویان برجسته و اقامت تحصیلی عادی',
     },
-    agency: 'ICP or GDRFA Dubai; for the standard permit, GDRFAD with the institution as sponsor',
+    agency: {
+      en: 'ICP or GDRFA Dubai; for the standard permit, GDRFAD with the institution as sponsor',
+      fa: 'ICP یا GDRFA دبی؛ برای مجوز استاندارد، GDRFAD با مؤسسه‌ی آموزشی به‌عنوان حامی',
+    },
     status: 'open',
     fact: {
       en: 'The Golden route needs 95% at school, or a GPA of at least 3.5 from a top-100 or UAE Category A university, within 2 years of graduating; the standard permit needs enrolment at an accredited institution.',

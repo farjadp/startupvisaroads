@@ -284,7 +284,7 @@ const en = {
     topLevel: 'Top level',
     rules: 'What the rules ask',
     notScored: 'Not scored here',
-    gapNetWorth: 'Net worth — the pathfinder does not ask it; use Tools › Route check',
+    gapNetWorth: 'Net worth — the pathfinder does not ask it; where a programme publishes a figure, its route page shows it with the source',
     gapAge: 'Age limits — the pathfinder does not ask it',
     noThresholds: 'This road publishes no threshold we can score; readiness here comes from your steps.',
     skipped: 'You skipped {n} questions. Each was scored as the most cautious answer.',
@@ -324,7 +324,7 @@ const en = {
   tools: {
     title: 'Tools',
     funds: 'Settlement funds',
-    fundsDesc: 'What a family must show to settle in Canada',
+    fundsDesc: 'What each country asks you to show, and how it is counted',
     check: 'Route check',
     checkDesc: 'Your numbers against each road’s published rules',
     crs: 'Express Entry score (CRS)',

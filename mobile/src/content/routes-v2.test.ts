@@ -35,6 +35,7 @@ test('every route is sourced, dated and written in English and Persian', () => {
       assert.match(s.checked, ISO, `${r.key}: source date`);
     }
     both(r.name, `${r.key}.name`);
+    both(r.agency, `${r.key}.agency`);
     both(r.fact, `${r.key}.fact`);
     both(r.pr, `${r.key}.pr`);
     assert.ok(r.criteria.length > 0, `${r.key}: no criteria`);

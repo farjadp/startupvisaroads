@@ -91,8 +91,8 @@ export type RouteV2 = {
   country: V2Country;
   family: V2Family;
   name: L10n;
-  /** The authority that decides. */
-  agency: string;
+  /** The authority that decides. Official acronyms stay in Latin inside the Persian. */
+  agency: L10n;
   status: RouteStatus;
   /** The one fact that changes a decision; leads the route page. */
   fact: L10n;

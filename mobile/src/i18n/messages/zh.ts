@@ -285,7 +285,7 @@ const zh: Messages = {
     topLevel: '最高等级',
     rules: '规则要求',
     notScored: '此处未评分',
-    gapNetWorth: '净资产——路径测评不询问此项；请使用 工具 › 路径核查',
+    gapNetWorth: '净资产——路径测评不询问此项；若项目公布了金额，路径页面会连同来源一并显示',
     gapAge: '年龄限制——路径测评不询问此项',
     noThresholds: '该路径未公布可评分的门槛；此处的准备度来自您的步骤。',
     skipped: '您跳过了 {n} 个问题，每个都按最保守的答案计算。',
@@ -325,7 +325,7 @@ const zh: Messages = {
   tools: {
     title: '工具',
     funds: '安家资金',
-    fundsDesc: '一个家庭在加拿大安家需要证明的资金',
+    fundsDesc: '各国要求您证明多少资金，以及如何计算',
     check: '路径核查',
     checkDesc: '用您的数字对照各路径公布的规则',
     crs: '快速通道分数（CRS）',

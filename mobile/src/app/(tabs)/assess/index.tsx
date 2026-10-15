@@ -4,6 +4,9 @@ import { useI18n } from '@/i18n/I18nProvider';
 import { useStore } from '@/state/store';
 import { Disclaimer, Heading, Label, LinkRow, Ruled, Screen } from '@/ui/kit';
 
+// Route check (assess/check.tsx, v1 rules over the nine v1 roads in CAD) is no
+// longer listed: the v2 assessment scores the published criteria of every
+// route. The screen stays so an old link still opens (15 Oct 2026).
 export default function Assess() {
   const { t, meta } = useI18n();
   const { state } = useStore();
@@ -16,8 +19,7 @@ export default function Assess() {
       </Ruled>
       <Label>{t('assess.tools')}</Label>
       <Ruled>
-        <LinkRow icon="people" label={t('tools.funds')} sub={t('tools.fundsDesc')} onPress={() => router.push('/(tabs)/assess/funds')} />
-        <LinkRow icon="calculator" label={t('tools.check')} sub={t('tools.checkDesc')} onPress={() => router.push('/(tabs)/assess/check')} />
+        <LinkRow icon="people" label={t('funds.title')} sub={t('tools.fundsDesc')} onPress={() => router.push('/(tabs)/assess/funds')} />
         <LinkRow
           icon="speech"
           external
