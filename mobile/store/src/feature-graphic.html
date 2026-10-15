@@ -1,0 +1,39 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<!-- Google Play feature graphic, 1024x500. Rendered by store/src/render.py with
+     ?logo=<abs path>&shot=<abs path>. Brand: ink canvas, acid rule, the official
+     logo in white, a real app screenshot. No illustration. -->
+<style>
+@font-face { font-family: 'DMSerif'; src: url('fonts/DMSerifDisplay_400Regular.ttf'); }
+@font-face { font-family: 'Grotesk'; src: url('fonts/SpaceGrotesk_700Bold.ttf'); font-weight: 700; }
+html, body { margin: 0; width: 1024px; height: 500px; overflow: hidden; background: #1A1A1A; color: #F2F0E9; }
+.wrap { position: relative; width: 1024px; height: 500px; }
+.left { position: absolute; left: 64px; top: 70px; width: 560px; }
+.logo { width: 250px; display: block; }
+h1 { font-family: 'DMSerif', serif; font-weight: 400; font-size: 64px; line-height: 0.98; letter-spacing: -0.02em; margin: 44px 0 0; }
+h1 em { font-style: italic; color: #9D9C99; }
+.rule { width: 72px; height: 5px; background: #CCFF00; margin: 26px 0 20px; }
+p { font-family: 'Grotesk', sans-serif; font-weight: 700; font-size: 17px; letter-spacing: 0.12em; text-transform: uppercase; color: #9D9C99; margin: 0; }
+.phone { position: absolute; right: 70px; top: 42px; width: 250px; border: 3px solid #F2F0E9; border-radius: 30px; overflow: hidden; }
+.phone img { width: 100%; display: block; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="left">
+    <img class="logo" id="logo" alt="">
+    <h1>Which road<br><em>is yours?</em></h1>
+    <div class="rule"></div>
+    <p>Startup visa routes · official sources</p>
+  </div>
+  <div class="phone"><img id="shot" alt=""></div>
+</div>
+<script>
+const q = new URLSearchParams(location.search);
+document.getElementById('logo').src = 'file://' + q.get('logo');
+document.getElementById('shot').src = 'file://' + q.get('shot');
+</script>
+</body>
+</html>

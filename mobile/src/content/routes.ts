@@ -186,7 +186,7 @@ export const ROUTES: Record<RouteKey, RouteContent> = {
     },
     unscoredEn: ['The three Dhanasar criteria, judged by USCIS on your evidence', 'US entry restrictions that apply to some nationalities'],
     guide: { en: '/usa/eb2-niw', fa: '/fa/usa-eb2-niw' },
-    photo: { source: P.path, alt: { en: 'A gravel path between stone walls', fa: 'راهی شنی میان دیوارهای سنگی' }, credit: 'Visa Roads', page: 'https://visaroads.com' },
+    photo: { source: P.path, alt: { en: 'A gravel path between stone walls', fa: 'راهی شنی میان دیوارهای سنگی' }, credit: 'VisaRoads', page: 'https://visaroads.com' },
     // Same source and checked date as the website's Persian NIW guide (content/fa/usa-eb2-niw.ts).
     sourceOverride: { url: 'https://www.uscis.gov/', updated: '2026-09-05' },
   },

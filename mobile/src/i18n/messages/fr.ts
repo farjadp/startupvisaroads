@@ -2,7 +2,7 @@ import type { Messages } from './en';
 
 // Machine-assisted draft; needs review by a native French speaker before release.
 const fr: Messages = {
-  app: { name: 'Visa Roads', by: 'par Ashavid' },
+  app: { name: 'VisaRoads', by: 'par Ashavid' },
   common: {
     disclaimer: 'Nous ne sommes pas avocats en immigration. Nous préparons le dossier ; nous ne le déposons pas.',
     readiness: 'La préparation mesure votre travail, pas vos chances.',
@@ -159,7 +159,7 @@ const fr: Messages = {
     showAll: 'Voir toutes les actualités',
     error: 'Les actualités n’ont pas pu se charger.',
     englishFeed: 'Les actualités sont publiées en anglais et en persan ; vous lisez le fil anglais.',
-    analysis: 'Analyse Visa Roads',
+    analysis: 'Analyse VisaRoads',
   },
   me: {
     title: 'Moi',
@@ -205,7 +205,7 @@ const fr: Messages = {
   },
   about: {
     title: 'À propos',
-    p1: 'Visa Roads est un produit d’Ashavid, basé à Toronto. Nous sommes des fondateurs ayant revendu leur entreprise, des banquiers d’affaires et des membres de comités de subventions qui construisent le volet entreprise d’un dossier : plans d’affaires, modèles financiers, pitch decks et mentorat.',
+    p1: 'VisaRoads est un produit d’Ashavid, basé à Toronto. Nous sommes des fondateurs ayant revendu leur entreprise, des banquiers d’affaires et des membres de comités de subventions qui construisent le volet entreprise d’un dossier : plans d’affaires, modèles financiers, pitch decks et mentorat.',
     p2: 'Nous ne sommes ni avocats en immigration ni consultants réglementés. Nous préparons le dossier ; nous ne le déposons pas. Les démarches d’immigration relèvent de professionnels agréés que vous mandatez.',
     p3: 'Dans cette app, la préparation mesure votre travail, pas vos chances. Personne ne peut les chiffrer, et quiconque promet un résultat vend quelque chose.',
     p4: 'Chaque chiffre indique sa source officielle et la date de notre dernière vérification. Les règles changent ; lisez la source avant d’agir.',

@@ -20,6 +20,7 @@ export function Screen({
   footer,
   contentStyle,
   scrim = edges.includes('top'),
+  stickyFooter = true,
 }: {
   children: ReactNode;
   edges?: Edge[];
@@ -27,12 +28,14 @@ export function Screen({
   contentStyle?: ViewStyle;
   /** Paints the status-bar area so scrolled content never runs under the clock (screens without a native header). */
   scrim?: boolean;
+  /** False keeps the footer in the scroll flow (Welcome: a fixed footer hid the language chips on short phones). */
+  stickyFooter?: boolean;
 }) {
   const { c } = useTheme();
   const insets = useSafeAreaInsets();
   const { fontScale } = useWindowDimensions();
   // A sticky footer only while text is near default size; above that it follows the content (spec 15).
-  const sticky = footer && fontScale <= 1.3;
+  const sticky = footer && stickyFooter && fontScale <= 1.3;
   return (
     <View style={{ flex: 1, backgroundColor: c.bg }}>
       <ScrollView

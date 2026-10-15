@@ -1,7 +1,7 @@
 // The base catalogue. Every other locale must have exactly these keys
 // (enforced by the Messages type). Sentence case only; uppercase is a style.
 const en = {
-  app: { name: 'Visa Roads', by: 'by Ashavid' },
+  app: { name: 'VisaRoads', by: 'by Ashavid' },
   common: {
     disclaimer: 'We are not immigration lawyers. We prepare the case; we do not file it.',
     readiness: 'Readiness measures your preparation, not your chances.',
@@ -158,7 +158,7 @@ const en = {
     showAll: 'Show all news',
     error: 'The news could not load.',
     englishFeed: 'News is published in English and Persian; you are reading the English feed.',
-    analysis: 'Visa Roads analysis',
+    analysis: 'VisaRoads analysis',
   },
   me: {
     title: 'Me',
@@ -204,7 +204,7 @@ const en = {
   },
   about: {
     title: 'About',
-    p1: 'Visa Roads is a product of Ashavid, based in Toronto. We are exited founders, investment bankers and grant-committee members who build the business side of a case: business plans, financial models, pitch decks and founder mentorship.',
+    p1: 'VisaRoads is a product of Ashavid, based in Toronto. We are exited founders, investment bankers and grant-committee members who build the business side of a case: business plans, financial models, pitch decks and founder mentorship.',
     p2: 'We are not immigration lawyers or licensed immigration consultants. We prepare the case; we do not file it. Immigration matters are handled by licensed professionals you engage.',
     p3: 'Readiness in this app measures your preparation, not your chances. No one can score those, and anyone who promises an outcome is selling something.',
     p4: 'Every figure shows its official source and the date we last checked it. Rules change; read the source before you act.',
