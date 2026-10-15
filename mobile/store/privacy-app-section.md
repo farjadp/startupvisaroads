@@ -23,6 +23,12 @@ Like any web server, ours may record the technical details of a request (such
 as an IP address) in standard server logs. These are not linked to you and
 are not used to identify you.
 
+**App updates:** when it opens, the app asks Expo, the service we use to
+deliver app updates, whether a newer version of its content is available. The
+request carries the app's version details and a random identifier created when
+the app is installed. That identifier is not linked to you, your answers or
+any advertising identifier, and it is deleted when you uninstall the app.
+
 **Links that leave the app:** official sources, articles, photo credits and
 "Book a call" open web pages in your phone's browser view. "Message on
 Telegram" opens Telegram. Those pages and services have their own privacy

@@ -26,7 +26,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 }
 
 export default function PrivacyPage() {
-  const lastUpdated = "October 14, 2026";
+  const lastUpdated = "October 15, 2026";
 
   return (
     <div className="w-full px-4 md:px-8 border-x border-[#1a1a1a]/10 max-w-[1400px] mx-auto bg-[#F2F0E9] text-[#1a1a1a]">
@@ -188,6 +188,12 @@ export default function PrivacyPage() {
                         visaroads.com. The request carries no personal information. Like any web server, ours may record the technical
                         details of a request, such as an IP address, in standard server logs; these are not linked to you and are not
                         used to identify you.
+                     </p>
+                     <p>
+                        <strong>App updates:</strong> when it opens, the app asks Expo, the service we use to deliver app updates,
+                        whether a newer version of its content is available. The request carries the app&rsquo;s version details and a
+                        random identifier created when the app is installed. That identifier is not linked to you, your answers or
+                        any advertising identifier, and it is deleted when you uninstall the app.
                      </p>
                      <p>
                         <strong>Links that leave the app:</strong> official sources, articles, photo credits and &ldquo;Book a call&rdquo;
