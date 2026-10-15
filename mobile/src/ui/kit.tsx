@@ -22,8 +22,11 @@ export function Screen({
   contentStyle,
   scrim = edges.includes('top'),
   stickyFooter = true,
+  background,
 }: {
   children: ReactNode;
+  /** Drawn behind the content, under the scroll (the onboarding flags). */
+  background?: ReactNode;
   edges?: Edge[];
   footer?: ReactNode;
   contentStyle?: ViewStyle;
@@ -39,6 +42,7 @@ export function Screen({
   const sticky = footer && stickyFooter && fontScale <= 1.3;
   return (
     <View style={{ flex: 1, backgroundColor: c.bg }}>
+      {background}
       <ScrollView
         // Screens without a native header pad for the safe area themselves; screens with one let iOS inset under it.
         contentInsetAdjustmentBehavior={edges.includes('top') ? 'never' : 'automatic'}

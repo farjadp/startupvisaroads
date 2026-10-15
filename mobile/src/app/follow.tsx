@@ -1,18 +1,22 @@
-// Roads to follow (onboarding 3B): every road on one screen, grouped by
-// country under its flag, each with its route-type icon. Optional and
+// Roads to follow (onboarding 3B, on ink like the language step): every road
+// on one screen, one card per country with its flag faded behind it, each
+// road with its route-type icon. Optional and
 // skippable. Followed roads lead the Roads tab and the News "My roads"
 // filter; they are never a match, never ranked, never scored (trust rules).
 // `next` says where to go after: into the app (pathfinder or browse), or
 // back to Settings.
 import { Stack, router, useLocalSearchParams } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
 import { useState } from 'react';
-import { Pressable, View } from 'react-native';
-import { COUNTRY_NAMES, COUNTRY_ORDER, ROUTE_ORDER, ROUTE_TYPE, ROUTES, type RouteKey } from '@/content/routes';
+import { Pressable, StyleSheet, View } from 'react-native';
+import { SvgXml } from 'react-native-svg';
+import { COUNTRY_NAMES, COUNTRY_ORDER, ROUTE_ORDER, ROUTE_TYPE, ROUTES, type Country, type RouteKey } from '@/content/routes';
 import { useI18n } from '@/i18n/I18nProvider';
 import { useStore } from '@/state/store';
-import { useTheme } from '@/theme/ThemeProvider';
+import { ThemeProvider, useTheme } from '@/theme/ThemeProvider';
 import { space } from '@/theme/tokens';
 import { Flag } from '@/ui/Flag';
+import { FLAG_SVG } from '@/ui/flags';
 import { Icon } from '@/ui/Icon';
 import { Button, Heading, Screen } from '@/ui/kit';
 import { stackOptions } from '@/ui/stackOptions';
@@ -56,7 +60,16 @@ function FollowRow({ route, checked, onToggle }: { route: RouteKey; checked: boo
   );
 }
 
-export default function Follow() {
+/** A country's flag, full-bleed and faded, behind its card (mood only; the name is always in text). */
+function FlagWash({ country }: { country: Country }) {
+  return (
+    <View pointerEvents="none" accessible={false} importantForAccessibility="no-hide-descendants" style={[StyleSheet.absoluteFill, { opacity: 0.15 }]}>
+      <SvgXml xml={FLAG_SVG[country]} width="100%" height="100%" preserveAspectRatio="xMidYMid slice" />
+    </View>
+  );
+}
+
+function FollowScreen() {
   const { next = 'browse' } = useLocalSearchParams<{ next?: Next }>();
   const { state, set } = useStore();
   const { t, pick, count, meta } = useI18n();
@@ -84,6 +97,7 @@ export default function Follow() {
 
   return (
     <Screen edges={editing ? [] : ['top']} footer={<Button label={cta} onPress={() => finish(selected)} />}>
+      <StatusBar style="light" />
       {/* From Settings this is a pushed page: it needs the native header and its Back (HIG navigation stack). */}
       <Stack.Screen options={editing ? { ...stackOptions(c, meta.script), headerShown: true, title: t('settings.following') } : { headerShown: false }} />
       {editing ? null : (
@@ -99,10 +113,11 @@ export default function Follow() {
         const roads = ROUTE_ORDER.filter((k) => ROUTES[k].country === country);
         const name = pick(COUNTRY_NAMES[country]);
         return (
-          <View key={country}>
-            <View accessible style={{ flexDirection: 'row', alignItems: 'center', gap: space.s2, paddingBottom: space.s2 }} accessibilityRole="header">
+          <View key={country} style={{ overflow: 'hidden', borderWidth: 1, borderColor: c.rule, paddingHorizontal: space.s4, paddingTop: space.s4 }}>
+            <FlagWash country={country} />
+            <View accessible style={{ flexDirection: 'row', alignItems: 'center', gap: space.s3, paddingBottom: space.s2 }} accessibilityRole="header">
               <Flag country={country} />
-              <T variant="label" tone="fgMuted" lang={name.lang}>
+              <T variant="headline" lang={name.lang}>
                 {name.text}
               </T>
             </View>
@@ -113,5 +128,13 @@ export default function Follow() {
         );
       })}
     </Screen>
+  );
+}
+
+export default function Follow() {
+  return (
+    <ThemeProvider force="night">
+      <FollowScreen />
+    </ThemeProvider>
   );
 }
