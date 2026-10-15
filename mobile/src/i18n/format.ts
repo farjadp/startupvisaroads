@@ -14,7 +14,7 @@ export function fmtCount(n: number, locale: Locale): string {
 
 /** Money is always Latin digits with the ISO code (Brand Book: currency stays Latin). */
 export function fmtMoney(n: number, currency: string, locale: Locale): string {
-  const grouped = new Intl.NumberFormat(locale === 'fr' ? 'fr-CA' : 'en-US', { maximumFractionDigits: 0 }).format(n);
+  const grouped = new Intl.NumberFormat(locale === 'fr' ? 'fr-CA' : 'en-US', { maximumFractionDigits: Number.isInteger(n) ? 0 : 2, minimumFractionDigits: Number.isInteger(n) ? 0 : 2 }).format(n);
   return locale === 'fr' ? `${grouped} ${currency}` : `${currency} ${grouped}`;
 }
 

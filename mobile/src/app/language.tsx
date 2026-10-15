@@ -28,6 +28,8 @@ const FLAG: Record<Locale, number> = {
 };
 
 const CYCLE_MS = 1800;
+// 0.12, not 0.15: over a flag's white, fg-muted (#9D9C99) drops to 4.34:1 at 0.15 and holds 4.82:1 at 0.12 (WCAG 1.4.3).
+const WASH = 0.12;
 const ease = Easing.bezier(...motion.ease);
 
 /** The five flags stacked full-bleed; only the shown language's is visible, faded into the ink. */
@@ -43,7 +45,7 @@ function FlagBackdrop({ shown }: { shown: Locale }) {
           key={l}
           source={FLAG[l]}
           resizeMode="cover"
-          style={[StyleSheet.absoluteFill, { width: undefined, height: undefined, opacity: Animated.multiply(levels[l], 0.15) }]}
+          style={[StyleSheet.absoluteFill, { width: undefined, height: undefined, opacity: Animated.multiply(levels[l], WASH) }]}
         />
       ))}
     </View>

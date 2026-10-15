@@ -60,10 +60,10 @@ function FollowRow({ route, checked, onToggle }: { route: RouteKey; checked: boo
   );
 }
 
-/** A country's flag, full-bleed and faded, behind its card (mood only; the name is always in text). */
+/** A country's flag, full-bleed and faded, behind its card (mood only; the name is always in text). 0.12 keeps fg-muted at 4.82:1 over white (0.15 gave 4.34:1, WCAG 1.4.3). */
 function FlagWash({ country }: { country: Country }) {
   return (
-    <View pointerEvents="none" accessible={false} importantForAccessibility="no-hide-descendants" style={[StyleSheet.absoluteFill, { opacity: 0.15 }]}>
+    <View pointerEvents="none" accessible={false} importantForAccessibility="no-hide-descendants" style={[StyleSheet.absoluteFill, { opacity: 0.12 }]}>
       <SvgXml xml={FLAG_SVG[country]} width="100%" height="100%" preserveAspectRatio="xMidYMid slice" />
     </View>
   );
