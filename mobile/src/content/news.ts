@@ -18,6 +18,8 @@ const KEYWORDS: Record<Country, RegExp> = {
   IT: /\bital(y|ian)|milan|ایتالیا/i,
   TR: /t(ü|u)rkiye|turkey|turkish|istanbul|ترکیه/i,
   US: /\busa?\b|united states|\bu\.s\.|eb-?[125]|\bniw\b|o-1|uscis|آمریکا/i,
+  IL: /israel|tel aviv|jerusalem|اسرائیل/i,
+  AE: /\buae\b|emirates|dubai|abu dhabi|golden visa|امارات|دبی|ابوظبی/i,
 };
 
 const decode = (s: string) =>

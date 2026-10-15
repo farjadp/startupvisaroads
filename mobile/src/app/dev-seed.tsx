@@ -41,5 +41,5 @@ export default function DevSeed() {
   }, []);
 
   if (!done) return null;
-  return <Redirect href={(__DEV__ && p.to ? p.to : '/(tabs)/roads') as never} />;
+  return <Redirect href={(__DEV__ && p.to ? p.to : '/(tabs)/home') as never} />;
 }

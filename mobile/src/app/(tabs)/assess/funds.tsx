@@ -3,11 +3,12 @@
 // website prints, never copied into the app. Each country says how its figure
 // is counted (per month, per year, one-off), what the money must show, and
 // where the figure comes from; showing it never means approval (trust rules).
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { createContext, useContext, useEffect, useState } from 'react';
 import { AccessibilityInfo, Platform, Pressable, Switch, View } from 'react-native';
 import { SUV_SETTLEMENT_FUNDS, SUV_SETTLEMENT_FUNDS_EXTRA_PER_PERSON, SUV_SETTLEMENT_FUNDS_UPDATED, SUV_SOURCES, SUV_VERIFIED, settlementFundsFor } from '@shared/canada-suv';
 import { FUNDS, type FundsCountry, type FundsLine } from '@shared/funds';
+
 import { FX, toUsd, type FxCurrency } from '@shared/fx';
 import { parseIsoDate } from '@/i18n/format';
 import { COUNTRY_NAMES, COUNTRY_ORDER, ROUTES } from '@/content/routes';
@@ -19,6 +20,9 @@ import { Flag } from '@/ui/Flag';
 import { Icon } from '@/ui/Icon';
 import { Banner, Disclaimer, Heading, SourceLine, Screen } from '@/ui/kit';
 import { T } from '@/ui/T';
+
+/** Countries with a funds entry, in the app's country order. */
+const FUNDS_ORDER = COUNTRY_ORDER.filter((k): k is FundsCountry => k in FUNDS);
 
 const MAX = 12;
 
@@ -315,7 +319,7 @@ function CountryChips({ value, onChange }: { value: FundsCountry; onChange: (c: 
   const { c } = useTheme();
   return (
     <View accessibilityRole="radiogroup" style={{ flexDirection: 'row', flexWrap: 'wrap', gap: space.s2 }}>
-      {COUNTRY_ORDER.map((k) => {
+      {FUNDS_ORDER.map((k) => {
         const selected = k === value;
         const name = pick(COUNTRY_NAMES[k]);
         return (
@@ -351,8 +355,10 @@ export default function Funds() {
   const { c } = useTheme();
   const { state, set } = useStore();
   // Opens on a road the user follows, else the pathfinder's road, else Canada.
-  const initial: FundsCountry =
-    (state.following[0] && ROUTES[state.following[0]].country) || (state.outcome && state.outcome !== 'too-early' ? ROUTES[state.outcome].country : null) || 'CA';
+  // A country page links here with ?country=; otherwise a road the user follows, the pathfinder's, or Canada.
+  const { country: asked } = useLocalSearchParams<{ country?: string }>();
+  const preferred = asked || (state.following[0] && ROUTES[state.following[0]].country) || (state.outcome && state.outcome !== 'too-early' ? ROUTES[state.outcome].country : null);
+  const initial: FundsCountry = preferred && preferred in FUNDS ? (preferred as FundsCountry) : 'CA';
   const [country, setCountry] = useState<FundsCountry>(initial);
   const usdOn = state.fundsUsd && !FX_TOO_OLD;
 

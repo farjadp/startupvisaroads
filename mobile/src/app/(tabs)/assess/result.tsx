@@ -10,7 +10,6 @@ import { space } from '@/theme/tokens';
 import { Button, Disclaimer, Heading, Hero, Label, LinkRow, Ruled, Screen, SourceLine, StatusRow } from '@/ui/kit';
 import { NotScored } from '@/ui/NotScored';
 import { CHECK_ICON, checkLabel } from '@/ui/phrases';
-import { ScoreBlock } from '@/ui/ScoreBlock';
 import { T } from '@/ui/T';
 import { mentorIsPrimary } from '@/engine/readiness';
 import { completeAnswers } from '@/engine/readiness';
@@ -21,7 +20,7 @@ function AllRoads() {
   // Roads the user follows come first (3B); the rest keep the app's order. Nothing here is ranked by fit.
   const followed = ROUTE_ORDER.filter((k) => state.following.includes(k));
   const rest = ROUTE_ORDER.filter((k) => !state.following.includes(k));
-  const row = (k: RouteKey) => <LinkRow key={k} label={pick(ROUTES[k].name).text} icon={ROUTE_TYPE[k]} onPress={() => router.push(`/(tabs)/roads/${k}`)} />;
+  const row = (k: RouteKey) => <LinkRow key={k} label={pick(ROUTES[k].name).text} icon={ROUTE_TYPE[k]} onPress={() => router.push(`/(tabs)/countries/${k}`)} />;
   return (
     <View style={{ gap: space.s5 }}>
       {followed.length ? (
@@ -38,7 +37,7 @@ function AllRoads() {
   );
 }
 
-export default function Roads() {
+export default function Result() {
   const { state, openedSource } = useStore();
   const i18n = useI18n();
   const { t, pick, count } = i18n;
@@ -96,7 +95,6 @@ export default function Roads() {
       <Heading role="display-m" italicTail={t('result.closest')}>
         {pick(route.name).text}
       </Heading>
-      <ScoreBlock score={v.score} level={v.level.level} next={v.level.next} pointsToNext={v.level.pointsToNext} />
 
       <View>
         <Label>{t('result.rules')}</Label>
@@ -122,7 +120,7 @@ export default function Roads() {
       </View>
 
       <View style={{ gap: space.s3 }}>
-        <Button label={t('result.checklist')} onPress={() => router.push(`/(tabs)/roads/${key}`)} />
+        <Button label={t('result.checklist')} onPress={() => router.push(`/(tabs)/countries/${key}`)} />
         {primaryMentor ? (
           <Button kind="secondary" label={t('me.mentor')} onPress={() => router.navigate('/(tabs)/me/mentor')} />
         ) : (
@@ -153,7 +151,7 @@ function OtherRoads({ list }: { list: { key: RouteKey; notYet: number; close: nu
             key={r.key}
             label={pick(ROUTES[r.key].name).text}
             sub={r.notYet + r.close === 0 ? t('result.gapClear') : [r.notYet ? `${count(r.notYet)} ${t('status.not-yet')}` : '', r.close ? `${count(r.close)} ${t('status.close')}` : ''].filter(Boolean).join(' · ')}
-            onPress={() => router.push(`/(tabs)/roads/${r.key}`)}
+            onPress={() => router.push(`/(tabs)/countries/${r.key}`)}
           />
         ))}
       </Ruled>

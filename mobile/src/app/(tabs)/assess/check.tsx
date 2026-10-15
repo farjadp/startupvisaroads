@@ -120,7 +120,7 @@ export default function RouteCheck() {
           <Label>{t('check.results')}</Label>
           <Ruled>
             {results.map((r) => (
-              <LinkRow key={r.key} label={pick(ROUTES[r.key].name).text} sub={t(`check.verdict.${r.verdict}`)} onPress={() => router.push(`/(tabs)/roads/${r.key}`)} />
+              <LinkRow key={r.key} label={pick(ROUTES[r.key].name).text} sub={t(`check.verdict.${r.verdict}`)} onPress={() => router.push(`/(tabs)/countries/${r.key}`)} />
             ))}
           </Ruled>
           <T variant="caption" tone="fgMuted" style={{ marginTop: space.s2 }}>
