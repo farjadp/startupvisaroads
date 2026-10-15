@@ -1,0 +1,14 @@
+{
+  "extends": "expo/tsconfig.base",
+  "compilerOptions": {
+    "strict": true,
+    "resolveJsonModule": true,
+    "paths": {
+      "@/*": ["./src/*"],
+      "@shared/*": ["../lib/*"],
+      "@design/*": ["../design/*"]
+    }
+  },
+  "exclude": ["**/*.test.ts", "node_modules"],
+  "include": ["**/*.ts", "**/*.tsx", ".expo/types/**/*.ts", "expo-env.d.ts", "../lib/fa/programmes.ts", "../lib/canada-suv.ts", "../lib/fa/path-quiz.ts"]
+}

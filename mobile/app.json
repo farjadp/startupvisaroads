@@ -1,0 +1,55 @@
+{
+  "expo": {
+    "name": "Visa Roads",
+    "slug": "visaroads",
+    "scheme": "visaroads",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "backgroundColor": "#F2F0E9",
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.ashavid.visaroads",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false,
+        "CFBundleAllowMixedLocalizations": true
+      }
+    },
+    "android": {
+      "package": "com.ashavid.visaroads",
+      "adaptiveIcon": {
+        "backgroundColor": "#1A1A1A",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": true
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#F2F0E9",
+          "image": "./assets/splash-icon.png",
+          "imageWidth": 120,
+          "dark": { "backgroundColor": "#121417" }
+        }
+      ],
+      [
+        "expo-localization",
+        {
+          "supportedLocales": { "ios": ["en", "fa", "fr", "zh", "ar"], "android": ["en", "fa", "fr", "zh", "ar"] }
+        }
+      ],
+      "expo-font",
+      "expo-image",
+      "expo-web-browser",
+      "expo-status-bar"
+    ],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}
