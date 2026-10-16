@@ -35,6 +35,13 @@ export function unprefixedTarget(pathname: string): string | null {
 const RETIRED_ARTICLES: Record<string, string> = {
   '/fa/blog/startup-visa-settlement-funds-proof-from-iranian-account': '/fa/europe/finland',
   '/fa/blog/startup-visa-settlement-funds-iranian-bank-account-1': '/fa/europe/finland',
+  // The other two versions of the same article (6 and 9 Sep 2026), withdrawn
+  // on 13 Oct 2026 for the same reason: both present "three to six months of
+  // statements" and a holding period as the rule ("officers' practice is at
+  // least three months"), and both share one title, so they also competed
+  // for the same query.
+  '/fa/blog/startup-visa-settlement-funds-iranian-bank-account': '/fa/europe/finland',
+  '/fa/blog/startup-visa-settlement-funds-proof-iranian-bank-account': '/fa/europe/finland',
   // A June 2026 guide that describes the Start-Up Visa as open, with an
   // application walkthrough. The programme was paused on 30 June 2026; the
   // status page owns the query now.

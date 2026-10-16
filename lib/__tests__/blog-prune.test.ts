@@ -28,7 +28,9 @@ describe('the October 2026 blog prune', () => {
   });
 
   it('keeps every withdrawn post out of public queries', () => {
-    expect(RETIRED_ARTICLE_PATHS.size).toBe(Object.keys(PRUNE_MERGED).length + PRUNE_GONE.size + 3);
+    // + the 5 articles withdrawn for being wrong (four settlement-funds
+    // versions, one pre-pause SUV guide) in lib/legacy-redirects.ts.
+    expect(RETIRED_ARTICLE_PATHS.size).toBe(Object.keys(PRUNE_MERGED).length + PRUNE_GONE.size + 5);
     const or = (NOT_WITHDRAWN.NOT as { OR: { locale: string; slug: { in: string[] } }[] }).OR;
     const en = or.find((c) => c.locale === 'en')!.slug.in;
     const fa = or.find((c) => c.locale === 'fa')!.slug.in;
