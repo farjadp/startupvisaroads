@@ -164,6 +164,7 @@
         "col_strategy": "Strategy",
         "col_hq": "Headquarters",
         "entity": "Ashavid Inc.",
+        "subsidiary": "VisaRoads Inc. is an Ashavid company.",
         "address_1": "Financial District",
         "address_2": "Toronto, ON, Canada",
         "schedule_audit": "Schedule Audit",
