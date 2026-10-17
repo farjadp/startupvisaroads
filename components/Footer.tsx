@@ -150,6 +150,7 @@ export default async function Footer() {
                  <h4 className="font-sans text-xs font-bold text-[#CCFF00] mb-8 uppercase tracking-widest">{t('col_hq')}</h4>
                  <address className="not-italic font-sans text-[#F2F0E9]/60 space-y-2 mb-8 text-sm leading-relaxed">
                     <strong>{t('entity')}</strong><br/>
+                    <span className="text-xs text-[#F2F0E9]/50">{t('subsidiary')}</span><br/>
                     {t('address_1')}<br/>
                     {t('address_2')}<br/>
                     <a href={MAIN_CONTACT.tel} className="hover:text-white transition-colors" dir="ltr">{MAIN_CONTACT.phone}</a>
