@@ -1,7 +1,7 @@
 // ============================================================================
 // Page: app/terms/page.tsx
 // Style: Modernist Editorial / "The Contract"
-// Context: VisaRoads Inc. Terms of Service & Liability Shield
+// Context: VisaRoads (a brand of Ashavid Inc.) Terms of Service & Liability Shield
 // ============================================================================
 
 import React from 'react';
@@ -96,8 +96,8 @@ export default function TermsPage() {
                      <h3 className="font-serif text-3xl">Acceptance of Terms</h3>
                   </div>
                   <p className="font-sans text-[#1a1a1a]/80 leading-relaxed">
-                     By visiting <strong>VisaRoads.com</strong> (the "Site") or purchasing any advisory packages, you ("the Client") agree to be bound by these Terms of Service. 
-                     If you do not agree, you must immediately discontinue use of our services. VisaRoads Inc. reserves the right to modify these terms at any time without prior notice.
+                     By visiting <strong>VisaRoads.com</strong> (the "Site") or purchasing any advisory packages, you ("the Client") agree to be bound by these Terms of Service. VisaRoads is a brand of Ashavid Inc., an Ontario company; "we," "us" and "our" mean Ashavid Inc. 
+                     If you do not agree, you must immediately discontinue use of our services. Ashavid Inc. reserves the right to modify these terms at any time without prior notice.
                   </p>
                </div>
 
@@ -112,7 +112,7 @@ export default function TermsPage() {
                      <div className="flex gap-4 items-start">
                         <AlertOctagon className="w-6 h-6 text-[#b91c1c] shrink-0 mt-1" />
                         <p className="font-sans text-sm font-bold text-[#1a1a1a]">
-                           VisaRoads Inc. is a Management Consultancy, NOT a Law Firm.
+                           VisaRoads is a Management Consultancy, NOT a Law Firm.
                         </p>
                      </div>
                      <p className="font-sans text-sm text-[#1a1a1a]/80 leading-relaxed text-justify">
@@ -157,7 +157,7 @@ export default function TermsPage() {
                      Visa issuance, Letter of Support (LOS) issuance, and Nomination Certificates are the sole prerogative of the respective third-party organizations (Incubators, Angel Groups) and Government Authorities (IRCC, USCIS, Home Office).
                   </p>
                   <ul className="space-y-3 font-sans text-sm text-[#1a1a1a]/70 list-disc pl-5">
-                     <li>VisaRoads Inc. has no control over government processing times or policy changes.</li>
+                     <li>VisaRoads has no control over government processing times or policy changes.</li>
                      <li>We do not guarantee approval of any application.</li>
                      <li>Success rates mentioned in marketing materials refer to historical data and do not predict future results for your specific case.</li>
                   </ul>
@@ -172,7 +172,7 @@ export default function TermsPage() {
                   <div className="flex gap-4 items-start">
                      <FileSignature className="w-6 h-6 text-[#1a1a1a]/40 shrink-0" />
                      <p className="font-sans text-[#1a1a1a]/80 leading-relaxed">
-                        All methodologies, frameworks, business plan templates, and strategic roadmaps provided to you remain the exclusive intellectual property of VisaRoads Inc. 
+                        All methodologies, frameworks, business plan templates, and strategic roadmaps provided to you remain the exclusive intellectual property of Ashavid Inc. 
                         You are granted a limited license to use these materials solely for your personal immigration application. You may not resell, distribute, or publish our proprietary materials.
                      </p>
                   </div>
@@ -185,7 +185,7 @@ export default function TermsPage() {
                      <h3 className="font-serif text-3xl">Limitation of Liability</h3>
                   </div>
                   <p className="font-sans text-[#1a1a1a]/80 leading-relaxed text-justify mb-6">
-                     To the maximum extent permitted by law, VisaRoads Inc., its directors, employees, and partners shall not be liable for any direct, indirect, incidental, special, or consequential damages resulting from:
+                     To the maximum extent permitted by law, Ashavid Inc., its directors, employees, and partners shall not be liable for any direct, indirect, incidental, special, or consequential damages resulting from:
                   </p>
                   <div className="bg-white border border-[#1a1a1a]/10 p-6 text-sm opacity-70 space-y-2">
                      <p>1. Denial of any visa or immigration benefit.</p>
@@ -194,7 +194,7 @@ export default function TermsPage() {
                      <p>4. Errors or omissions in third-party services (lawyers, accountants, translators).</p>
                   </div>
                   <p className="mt-6 font-sans text-xs font-bold uppercase tracking-widest">
-                     Liability Cap: In no event shall our total liability exceed the actual amount paid by you to VisaRoads Inc.
+                     Liability Cap: In no event shall our total liability exceed the actual amount paid by you to Ashavid Inc.
                   </p>
                </div>
 
