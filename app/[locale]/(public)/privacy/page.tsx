@@ -1,7 +1,7 @@
 // ============================================================================
 // Page: app/privacy/page.tsx
 // Style: Modernist Editorial / Legal Dossier
-// Context: VisaRoads Inc. Privacy Protocol & Data Governance
+// Context: VisaRoads (a brand of Ashavid Inc.) Privacy Protocol & Data Governance
 // ============================================================================
 
 import React from 'react';
@@ -99,7 +99,7 @@ export default function PrivacyPage() {
                   </div>
                   <div className="prose prose-lg font-sans text-[#1a1a1a]/80 leading-relaxed max-w-none">
                      <p>
-                        VisaRoads Inc. ("we," "us," or "our") collects information necessary to assess your eligibility for global business immigration programs. This includes:
+                        VisaRoads, a brand of Ashavid Inc. ("we," "us," or "our"), collects information necessary to assess your eligibility for global business immigration programs. This includes:
                      </p>
                      <ul className="list-disc pl-6 space-y-2 mt-4 text-sm">
                         <li><strong>Identity Data:</strong> Name, citizenship, date of birth, and passport details.</li>
@@ -232,7 +232,7 @@ export default function PrivacyPage() {
                         <div>
                            <h4 className="font-bold text-sm uppercase mb-2">No Legal Advice</h4>
                            <p className="text-sm opacity-80 leading-relaxed text-justify">
-                              VisaRoads Inc. is a strategic business consultancy. <strong>We are NOT a law firm</strong>, and our employees are not acting as your attorneys. 
+                              VisaRoads is a strategic business consultancy. <strong>We are NOT a law firm</strong>, and our employees are not acting as your attorneys. 
                               The information provided on this website and during consultations is for general informational and strategic purposes only. 
                               It does not constitute legal advice or an attorney-client relationship.
                            </p>
@@ -245,7 +245,7 @@ export default function PrivacyPage() {
                            <h4 className="font-bold text-sm uppercase mb-2">No Guarantees</h4>
                            <p className="text-sm opacity-80 leading-relaxed text-justify">
                               Visa issuance is the sole prerogative of the respective government authorities (IRCC, USCIS, Home Office, etc.). 
-                              VisaRoads Inc. cannot and does not guarantee the outcome of any application. 
+                              VisaRoads cannot and does not guarantee the outcome of any application. 
                               Any mention of "Success Rates" refers to historical performance and does not predict future results.
                            </p>
                         </div>
@@ -256,7 +256,7 @@ export default function PrivacyPage() {
                         <div>
                            <h4 className="font-bold text-sm uppercase mb-2">Limitation of Liability</h4>
                            <p className="text-sm opacity-80 leading-relaxed text-justify">
-                              VisaRoads Inc. shall not be liable for any direct, indirect, incidental, or consequential damages resulting from the use or inability to use our services or website. 
+                              Ashavid Inc. shall not be liable for any direct, indirect, incidental, or consequential damages resulting from the use or inability to use our services or website. 
                               By using our platform, you acknowledge that immigration laws are subject to change without notice.
                            </p>
                         </div>
