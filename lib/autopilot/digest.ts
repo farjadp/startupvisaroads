@@ -35,10 +35,17 @@ export type RunRow = {
   notes: string | null;
 };
 
+/**
+ * An article the autopilot saved, narrowed to what the count needs. A run's
+ * `created` cannot say this: it counts DRAFT rows too, which is how the digest
+ * reported "3 published" on days one article went live (Oct 2026).
+ */
+export type ArticleRow = { locale: string; status: string; createdAt: Date };
+
 export type LaneState =
-  /** Ran and produced articles. */
+  /** Ran and published articles. */
   | 'healthy'
-  /** Ran and produced nothing — the gate, the model or the feeds refused. */
+  /** Ran and published nothing — the gate, the model or the feeds refused, or every piece was held as a DRAFT. */
   | 'degraded'
   /** Did not run at all inside the window. */
   | 'silent'
@@ -49,7 +56,12 @@ export type LaneSummary = {
   locale: string;
   state: LaneState;
   runs: number;
+  /** Rows the runs wrote, drafts included. */
   created: number;
+  /** Of those, live on the site. Equals `created` when no article rows were supplied. */
+  published: number;
+  /** Held as a DRAFT for a person to fix or publish. */
+  drafted: number;
   /** Distinct, human-readable causes — never the same sentence twice. */
   reasons: string[];
 };
@@ -62,6 +74,12 @@ export type SummariseOptions = {
   windowHours?: number;
   stuckMinutes?: number;
   locales?: readonly string[];
+  /**
+   * The autopilot's articles from the window. When given, `published` and
+   * `drafted` are read from them; when not, `created` stands in for
+   * `published`, as before.
+   */
+  articles?: ArticleRow[];
 };
 
 /** Parse a JSON column without letting a malformed row break the digest. */
@@ -101,6 +119,9 @@ export function summarise(runs: RunRow[], now: Date, opts: SummariseOptions = {}
     const isDry = (r: RunRow) => /dry[- ]?run/i.test(r.notes ?? '');
     const real = mine.filter((r) => !isDry(r));
     const created = real.reduce((n, r) => n + (r.created ?? 0), 0);
+    const saved = opts.articles?.filter((a) => a.locale === locale && a.createdAt >= since);
+    const published = saved ? saved.filter((a) => a.status === 'PUBLISHED').length : created;
+    const drafted = saved ? saved.filter((a) => a.status === 'DRAFT').length : 0;
 
     const reasons: string[] = [];
     const push = (s: string) => {
@@ -117,8 +138,10 @@ export function summarise(runs: RunRow[], now: Date, opts: SummariseOptions = {}
     let state: LaneState;
     if (!real.length) state = 'silent';
     else if (stuck) state = 'stuck';
-    else if (created === 0) state = 'degraded';
+    else if (published === 0) state = 'degraded';
     else state = 'healthy';
+
+    if (drafted && !published) push(`${drafted} written, all held as DRAFT — nothing went live. They wait in the admin.`);
 
     if (state === 'silent') {
       push(
@@ -129,7 +152,7 @@ export function summarise(runs: RunRow[], now: Date, opts: SummariseOptions = {}
     }
     if (state === 'stuck') push('A run started and never finished.');
 
-    return { locale, state, runs: real.length, created, reasons };
+    return { locale, state, runs: real.length, created, published, drafted, reasons };
   });
 }
 
@@ -168,12 +191,14 @@ const clip = (s: string, n: number) => (s.length > n ? `${s.slice(0, n - 1)}…`
 export type QueueSummary = { suggestions?: number; reviews?: number };
 
 export function buildDigest(lanes: LaneSummary[], now: Date, social: SocialSummary[] = [], queues: QueueSummary = {}): string {
-  const created = lanes.reduce((n, l) => n + l.created, 0);
+  const published = lanes.reduce((n, l) => n + l.published, 0);
+  const drafted = lanes.reduce((n, l) => n + l.drafted, 0);
   const worst = lanes.some((l) => l.state !== 'healthy');
+  const held = (n: number) => (n ? `, ${n} held as draft` : '');
 
-  const head = `${worst ? '⚠️' : '✅'} Autopilot · ${now.toISOString().slice(0, 16).replace('T', ' ')} UTC · ${created} published`;
+  const head = `${worst ? '⚠️' : '✅'} Autopilot · ${now.toISOString().slice(0, 16).replace('T', ' ')} UTC · ${published} published${held(drafted)}`;
 
-  const lines = lanes.map((l) => `${ICON[l.state]} ${l.locale}: ${l.state} — ${l.runs} run(s), ${l.created} published`);
+  const lines = lanes.map((l) => `${ICON[l.state]} ${l.locale}: ${l.state} — ${l.runs} run(s), ${l.published} published${held(l.drafted)}`);
 
   const detail = lanes
     .filter((l) => l.state !== 'healthy' && l.reasons.length)

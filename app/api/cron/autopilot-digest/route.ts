@@ -64,7 +64,15 @@ export async function GET(req: NextRequest) {
     take: 500,
   });
 
-  const lanes = summarise(runs, now, { windowHours: hours });
+  // What the runs actually left on the site. A topicSeed is set by both
+  // writers and by nothing a person creates in the admin.
+  const articles = await prisma.article.findMany({
+    where: { createdAt: { gte: new Date(now.getTime() - hours * 3_600_000) }, topicSeed: { not: null } },
+    select: { locale: true, status: true, createdAt: true },
+    take: 500,
+  });
+
+  const lanes = summarise(runs, now, { windowHours: hours, articles });
   const social = summariseSocial(socialRows, now, hours);
   // Neither queue is an error, so neither belongs in a lane's reasons. They
   // are things waiting for Farjad, and the digest is the one place he reads

@@ -20,11 +20,21 @@ export const WRITER_MODEL = process.env.AUTOPILOT_MODEL ?? 'gpt-4.1';
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY || 'dummy-key-for-build' });
 
 export type GenerateResult = {
-  created: { id: string; slug: string; title: string }[];
+  /** `status` is what the row was saved as; a dry run records what it would have been. */
+  created: { id: string; slug: string; title: string; status?: 'DRAFT' | 'PUBLISHED' }[];
   errors: { title?: string; error: string }[];
   skipped: { title: string; reason: string }[];
   warnings: { title?: string; warning: string }[];
 };
+
+/**
+ * What counts toward a run's quota. On a publishing run a piece held back as
+ * a DRAFT does not: counting it is how a lane that drafted every morning for
+ * two weeks (Oct 2026) stopped after one article and never tried its spare.
+ */
+export function quotaCount(r: GenerateResult, publish: boolean): number {
+  return publish ? r.created.filter((c) => c.status !== 'DRAFT').length : r.created.length;
+}
 
 // ---------------------------------------------------------------------------
 // Rules

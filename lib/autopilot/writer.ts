@@ -12,7 +12,7 @@ import { generateBrandImage, imagesBlocked } from './images';
 import { createArticleFromPayload } from '@/lib/articles';
 import type { Locale } from '@/lib/seo';
 import { BRAND_FACTS, buildInventory, linkBlock, type Inventory } from './inventory';
-import { AIO_RULES, FACT_RULES, WRITER_MODEL, chatJson, chatText, expand, houseStyle, humanise, type GenerateResult } from './pipeline';
+import { AIO_RULES, FACT_RULES, WRITER_MODEL, chatJson, chatText, expand, houseStyle, humanise, quotaCount, type GenerateResult } from './pipeline';
 import { planBriefs, type Brief } from './planner';
 import { officialSourcePromptForBrief } from './official-sources';
 import { decidePlannedPublication, enforceLinks, sameSubject, wordCountHtml } from './text';
@@ -157,7 +157,7 @@ export async function placeVisuals(html: string, visuals: Visual[], dryRun: bool
 
 type RunOpts = { publish?: boolean; dryRun?: boolean };
 
-/** How many extra briefs to plan, so a refused one does not empty the day. */
+/** How many extra briefs to plan, so a refused or drafted one does not empty the day. */
 const SPARES = 2;
 
 /** Bodies written earlier in the same run, so a run cannot repeat itself. */
@@ -259,7 +259,7 @@ async function writeOne(brief: Brief, inv: Inventory, opts: RunOpts, result: Gen
     const coverImage = opts.dryRun ? null : await generateBrandImage(d.coverImagePrompt, 'cover');
 
     if (opts.dryRun) {
-      result.created.push({ id: 'dry-run', slug: d.slugEn || 'dry-run', title: d.title });
+      result.created.push({ id: 'dry-run', slug: d.slugEn || 'dry-run', title: d.title, status });
       console.log(`autopilot/writer (dry): "${d.title}" — ${wordCountHtml(body)} words, links ${linked.links.join(', ') || 'none'}`);
       return;
     }
@@ -288,7 +288,7 @@ async function writeOne(brief: Brief, inv: Inventory, opts: RunOpts, result: Gen
       { locale: inv.locale, status },
     );
     await recordEvidenceUse(article.id, evidence.pack, cited.used);
-    result.created.push({ id: article.id, slug: article.slug, title: article.title });
+    result.created.push({ id: article.id, slug: article.slug, title: article.title, status });
   } catch (e) {
     result.errors.push({ title: brief.workingTitle, error: e instanceof Error ? e.message : String(e) });
   }
@@ -320,11 +320,14 @@ export async function runPlanned(n: number, locale: Locale, opts: RunOpts = {}):
 
   // The day's quota concurrently, as before — a batch has to fit in one
   // invocation. The spares come after, one at a time and only while the quota
-  // is short, so they cost nothing on a normal day.
+  // is short, so they cost nothing on a normal day. A piece held as a DRAFT
+  // leaves the quota short too: it is kept for a person, but it is not the
+  // day's article.
+  const publish = !!opts.publish;
   await Promise.all(briefs.slice(0, n).map((b) => writeOne(b, inv, opts, result)));
   for (const brief of briefs.slice(n)) {
-    if (result.created.length >= n) break;
-    console.log(`autopilot/writer: ${result.created.length}/${n} written — trying the spare "${brief.workingTitle}"`);
+    if (quotaCount(result, publish) >= n) break;
+    console.log(`autopilot/writer: ${quotaCount(result, publish)}/${n} ${publish ? 'published' : 'written'} — trying the spare "${brief.workingTitle}"`);
     await writeOne(brief, inv, opts, result);
   }
   await finish(run.id, result, opts);
