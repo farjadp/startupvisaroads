@@ -24,7 +24,7 @@ export type Inventory = {
   locale: Locale;
   targets: LinkTarget[];
   recentTitles: string[];
-  /** Backlog topic ids already written, read back off the articles themselves. */
+  /** Backlog topic ids already published, or held as a DRAFT in the last 30 days, read back off the articles themselves. */
   recentTopicSlugs: string[];
   /** Keywords already spent, so the planner is never handed one twice. */
   usedKeywords: string[];
@@ -136,9 +136,12 @@ export const FA_SITE_PAGES: FaPage[] = [
 /** Facts about us the writer may state. Nothing else about us may be claimed. */
 export const BRAND_FACTS = `Startup Visa Roads (visaroads.com) is a product of Ashavid, based in Toronto, Ontario. We are not lawyers or licensed immigration consultants; we are exited founders, investment bankers and grant-committee members who build the business side of a case: business plans, financial models, pitch decks, founder mentorship, and a free Express Entry diagnostic tool. We serve founders and skilled professionals, many of them Persian-speaking.`;
 
+/** How long a backlog topic that ended up as a DRAFT stays out of the planner's hands. */
+const HELD_TOPIC_DAYS = 30;
+
 export async function buildInventory(locale: Locale): Promise<Inventory> {
   await ensureDefaultCategories();
-  const [cats, recent] = await Promise.all([
+  const [cats, recent, held] = await Promise.all([
     prisma.category.findMany({ select: { name: true, slug: true }, orderBy: { name: 'asc' } }),
     prisma.article.findMany({
       where: { status: 'PUBLISHED', locale, AND: [NOT_WITHDRAWN] },
@@ -149,7 +152,17 @@ export async function buildInventory(locale: Locale): Promise<Inventory> {
       // used to need.
       take: 400,
     }),
+    // Backlog topics written lately but held as a DRAFT. Not spent — a person
+    // may still publish them — but not to be picked again tomorrow either:
+    // the Persian lane drafted the same military-service topic nine mornings
+    // running (8–16 Oct 2026) because only PUBLISHED rows marked it written.
+    prisma.article.findMany({
+      where: { status: 'DRAFT', locale, topicSeed: { contains: '[topic:' }, createdAt: { gte: new Date(Date.now() - HELD_TOPIC_DAYS * 86_400_000) } },
+      select: { topicSeed: true },
+      take: 100,
+    }),
   ]);
+  const topicSlug = (a: { topicSeed: string | null }) => /\[topic:([a-z0-9-]+)\]/.exec(a.topicSeed ?? '')?.[1];
 
   const targets: LinkTarget[] =
     locale === 'fa'
@@ -161,9 +174,7 @@ export async function buildInventory(locale: Locale): Promise<Inventory> {
     locale,
     targets,
     recentTitles: recent.slice(0, 60).map((a) => a.title),
-    recentTopicSlugs: recent
-      .map((a) => /\[topic:([a-z0-9-]+)\]/.exec(a.topicSeed ?? '')?.[1])
-      .filter((s): s is string => Boolean(s)),
+    recentTopicSlugs: [...recent, ...held].map(topicSlug).filter((s): s is string => Boolean(s)),
     usedKeywords: recent
       .map((a) => /\[kw:([^\]]+)\]/.exec(a.topicSeed ?? '')?.[1])
       .filter((s): s is string => Boolean(s)),

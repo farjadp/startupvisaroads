@@ -219,3 +219,30 @@ describe('queues that need a person', () => {
     expect(buildDigest(lanes, now, [])).toBe(buildDigest(lanes, now, [], {}));
   });
 });
+
+// A run's `created` counts DRAFT rows too. Read off the articles instead, the
+// digest said "3 published" on days one article went live (Oct 2026).
+describe('published versus held as draft', () => {
+  const article = (locale: string, status: string, h = 2) => ({ locale, status, createdAt: hoursAgo(h) });
+
+  it('counts only PUBLISHED rows as published', () => {
+    const runs = [run({ created: 2 }), run({ locale: 'fa', created: 1 })];
+    const articles = [article('en', 'PUBLISHED'), article('en', 'DRAFT'), article('fa', 'PUBLISHED')];
+    const out = summarise(runs, NOW, { articles });
+    expect(lane(out, 'en')).toMatchObject({ created: 2, published: 1, drafted: 1, state: 'healthy' });
+    expect(buildDigest(out, NOW)).toContain('2 published, 1 held as draft');
+  });
+
+  it('calls a lane that only drafted degraded, and says nothing went live', () => {
+    const out = summarise([run({ created: 1 })], NOW, { articles: [article('en', 'DRAFT')] });
+    const en = lane(out, 'en');
+    expect(en.state).toBe('degraded');
+    expect(en.published).toBe(0);
+    expect(en.reasons.join(' ')).toContain('held as DRAFT');
+  });
+
+  it('ignores articles from outside the window', () => {
+    const out = summarise([run({ created: 1 })], NOW, { articles: [article('en', 'PUBLISHED', 40)] });
+    expect(lane(out, 'en').published).toBe(0);
+  });
+});
