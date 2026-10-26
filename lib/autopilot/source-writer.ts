@@ -6,7 +6,7 @@
 //   1. HARVEST (sources.ts) hands us articles we have not used before.
 //   2. READ turns one source article into a FACT SHEET plus a visaroads
 //      angle. The model is asked for discrete claims ("IRCC issued 3,500
-//      ITAs on 4 Sep 2026") and for why a founder should care — not for a
+//      ITAs on 4 Sep 2026") and for why its reader should care — not for a
 //      summary. It may refuse (`usable: false`); refusals go into the ledger
 //      so the same article is never re-read.
 //   3. WRITE drafts an original piece from the fact sheet, our brand facts
@@ -33,6 +33,7 @@ import { closestOwnArticle, qualityVerdict, type OwnArticle } from './quality';
 import { ownCorpus } from './own-corpus';
 import { draftMeta, placeVisuals, wordTarget } from './writer';
 import { officialCitationUrl, officialSourcePromptForBrief } from './official-sources';
+import { pillarTag } from './pillars';
 import type { Brief } from './planner';
 
 // ---------------------------------------------------------------------------
@@ -63,7 +64,7 @@ async function readSource(article: WritableDocument, inv: Inventory): Promise<So
   const raw = await chatJson<Record<string, unknown>>(
     `You are the content editor of Startup Visa Roads (visaroads.com). ${BRAND_FACTS}
 
-Below is an article published by ${article.sourceName}. Your job is NOT to summarise or rewrite it. Your job is to (a) pull out the checkable facts it reports, and (b) decide what visaroads would write about the same subject that is genuinely ours: what it means for a founder or skilled professional choosing a pathway, and what they should do about it.
+Below is an article published by ${article.sourceName}. Your job is NOT to summarise or rewrite it. Your job is to (a) pull out the checkable facts it reports, and (b) decide what visaroads would write about the same subject that is genuinely ours: what it means for the people it actually affects — workers, students, families or business owners, whichever this news is about — and what they should do about it. Never add a founder or startup angle to news that is not about a business route.
 
 Mark usable: false — and say why in one sentence — when any of these is true:
 - it is an advertisement, a paid placement or a product promotion;
@@ -404,7 +405,7 @@ export async function runFromSources(n: number, locale: Locale, opts: RunOpts = 
           summaryEn: d.summaryEn,
           faq: d.faq,
           aiModel: WRITER_MODEL,
-          topicSeed: `${seedTags(classify(`${d.title} ${brief.primaryKeyword}`))}${brief.primaryKeyword ? `[kw:${brief.primaryKeyword}] ` : ''}${article.sourceName}: ${article.title} — ${brief.angle}`,
+          topicSeed: `${pillarTag('news')}${seedTags(classify(`${d.title} ${brief.primaryKeyword}`))}${brief.primaryKeyword ? `[kw:${brief.primaryKeyword}] ` : ''}${article.sourceName}: ${article.title} — ${brief.angle}`,
           internalLinks: linked.links,
         },
         // Same gate as the planned writer: a piece whose only sourcing is a

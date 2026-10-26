@@ -12,6 +12,7 @@ import { diverseKeywordsForToday } from '@/content/keywords';
 import { classify, diversityPrompt, isDestination, isFamily, pickDiverse, planDiversity, violates, type Destination, type Family } from './diversity';
 import { chatJson, WRITER_MODEL } from './pipeline';
 import { pinnedDigests } from '@/lib/knowledge/retrieve';
+import { PILLAR_CATEGORY, PILLAR_READER, classifyPillar, isPillar, linksForPillar, pillarForToday, type Pillar } from './pillars';
 
 export type Brief = {
   category: string; // one of inventory.categories[].name
@@ -33,19 +34,21 @@ export type Brief = {
   /** Subject family and destination, for the variety rules in diversity.ts. */
   family?: Family;
   destination?: Destination;
+  /** Whose article this is — see lib/autopilot/pillars.ts. */
+  pillar?: Pillar;
 };
 
-/** What is on a founder's or skilled worker's mind this month. */
+/** What is on a mover's mind this month — whichever pillar they are in. */
 export function seasonalHooks(now = new Date()): string[] {
   const m = now.getMonth() + 1;
   const hooks: string[] = ['Express Entry candidates should verify recent draw types and results with IRCC before acting'];
-  if (m >= 1 && m <= 2) hooks.push('Verify current federal immigration levels and provincial nomination availability with the responsible authority', 'Founders comparing H-1B with EB-2 NIW should verify current USCIS instructions and dates');
+  if (m >= 1 && m <= 2) hooks.push('Verify current federal immigration levels and provincial nomination availability with the responsible authority', 'Professionals comparing H-1B with EB-2 NIW should verify current USCIS instructions and dates');
   if (m >= 2 && m <= 4) hooks.push('First-year Canadian filers can verify current tax deadlines and registered-account rules with the responsible authority');
-  if (m >= 3 && m <= 5) hooks.push('Founders considering a designated organisation should verify its current status directly with IRCC');
+  if (m >= 3 && m <= 5) hooks.push('Students planning to study in Canada should verify study-permit and provincial attestation rules with IRCC');
   if (m >= 6 && m <= 8) hooks.push('Families planning a move should verify current school registration and provincial immigration information');
   if (m >= 8 && m <= 10) hooks.push('Students and graduates should verify current study-permit and PGWP rules with IRCC');
   if (m >= 10 && m <= 12) hooks.push('Applicants planning next year should verify published federal, provincial and US programme updates with the responsible authorities');
-  if (m === 3) hooks.push('Nowruz — Persian founders planning the year');
+  if (m === 3) hooks.push('Nowruz — Persian-speaking families planning the year');
   return hooks;
 }
 
@@ -59,9 +62,10 @@ function coerce(raw: RawBrief, inv: Inventory): Brief | null {
   const known = new Set(inv.targets.map((t) => t.path));
   const catNames = inv.categories.map((c) => c.name);
   const category = catNames.find((c) => c.toLowerCase() === String(raw.category ?? '').toLowerCase()) ?? catNames[0];
-  const mustLink = asStringArray(raw.mustLink).filter((p) => known.has(p));
   const scenes = asStringArray(raw.imageScenes);
   const workingTitle = String(raw.workingTitle ?? '').trim();
+  const pillar = isPillar(raw.pillar) && raw.pillar !== 'news' ? raw.pillar : classifyPillar(`${workingTitle} ${String(raw.primaryKeyword ?? '')}`);
+  const mustLink = linksForPillar(pillar, asStringArray(raw.mustLink).filter((p) => known.has(p)));
   if (!workingTitle || !category || mustLink.length === 0 || scenes.length < 2) return null;
   return {
     category,
@@ -81,6 +85,7 @@ function coerce(raw: RawBrief, inv: Inventory): Brief | null {
       return {
         family: isFamily(raw.family) ? raw.family : guessed.family,
         destination: isDestination(raw.destination) ? raw.destination : guessed.destination,
+        pillar,
       };
     })(),
   };
@@ -94,22 +99,24 @@ export async function planBriefs(n: number, inv: Inventory): Promise<Brief[]> {
   // the ones no English article here will ever answer. When the backlog is
   // exhausted the model plans the remainder as before, so the lane never
   // stops for want of a topic.
+  const pillar = pillarForToday(inv.recentPillars);
+  console.log(`autopilot/planner: today's pillar is ${pillar}`);
   if (inv.locale === 'fa') {
-    const picked = pickTopics(n, inv.recentTitles, inv.recentTopicSlugs, inv.recentTags).map(topicToBrief);
+    const picked = pickTopics(n, inv.recentTitles, inv.recentTopicSlugs, inv.recentTags, pillar).map(topicToBrief);
     if (picked.length >= n) {
       console.log(`autopilot/planner: ${picked.length}/${n} briefs from the Persian backlog`);
       return picked.slice(0, n);
     }
     if (picked.length) {
       console.log(`autopilot/planner: ${picked.length} from the Persian backlog, ${n - picked.length} to plan`);
-      const rest = await planBriefsWithModel(n - picked.length, inv);
+      const rest = await planBriefsWithModel(n - picked.length, inv, pillar);
       return [...picked, ...rest].slice(0, n);
     }
   }
-  return planBriefsWithModel(n, inv);
+  return planBriefsWithModel(n, inv, pillar);
 }
 
-async function planBriefsWithModel(n: number, inv: Inventory): Promise<Brief[]> {
+async function planBriefsWithModel(n: number, inv: Inventory, pillar: Pillar): Promise<Brief[]> {
   const counts = new Map<string, number>();
   for (const c of inv.categories) counts.set(c.name, 0);
   for (const c of inv.recentCategories) if (counts.has(c)) counts.set(c, (counts.get(c) ?? 0) + 1);
@@ -120,11 +127,11 @@ async function planBriefsWithModel(n: number, inv: Inventory): Promise<Brief[]> 
   // write a real article to without being handed the same head of the list
   // every morning.
   const variety = planDiversity(inv.recentTags);
-  const keywords = diverseKeywordsForToday(inv.locale, inv.usedKeywords, n * 3, inv.recentTags);
+  const keywords = diverseKeywordsForToday(inv.locale, inv.usedKeywords, n * 3, inv.recentTags, new Date(), pillar);
   const keywordRule = keywords.length
     ? `TARGET KEYWORDS — this is the queue. Choose ${n} of these, one per brief, and set primaryKeyword to the chosen keyword EXACTLY as written here. If every keyword left would break the VARIETY rules below, variety wins: choose your own keyword in a family and destination the rules allow. Build the brief around what someone searching it actually wants; if a keyword is too thin for an article on its own, widen it into the decision behind it rather than swapping it for a different subject. Never reuse one across two briefs.
 ${keywords.map((k) => `- ${k}`).join('\n')}`
-    : 'The keyword queue is empty, so choose the keyword yourself: one specific search a founder or skilled professional would actually type.';
+    : `The keyword queue is empty, so choose the keyword yourself: one specific search that today's reader (below) would actually type.`;
   // What state the programmes are actually in, from the sources the editor
   // pinned. Without this the planner cheerfully commissions a how-to-apply
   // guide for a programme that stopped accepting applications.
@@ -153,13 +160,16 @@ ${statusBlock}
 
 ${diversityPrompt(variety)}
 
-Editorial line: useful, specific, grounded in a decision a founder or skilled professional actually faces — which programme, which province, which document, in what order, what gets cases refused. Never generic listicles ("10 tips…"). Each brief answers one real question and links to real pages on the site.
-Prefer these categories today (least recently covered): ${wanted.join(', ')}.
+TODAY'S PILLAR: ${pillar}. Every brief is for ONE reader: ${PILLAR_READER[pillar]}. Set "pillar" to "${pillar}" on every brief.
+Write for that reader and nobody else. Never add a founder, startup or "for entrepreneurs" angle to a subject that is not about a business route — a student, a worker or a family is not a founder, and "…for startup founders" bolted onto a work-permit, study or housing subject is exactly the failure this rule exists to stop. Never address two kinds of reader at once ("founders and skilled workers").
+
+Editorial line: useful, specific, grounded in a decision that reader actually faces — which programme, which province, which document, in what order, what gets an application refused. Never generic listicles ("10 tips…"). Each brief answers one real question and links to real pages on the site.
+${PILLAR_CATEGORY[pillar] ? `Category: "${PILLAR_CATEGORY[pillar]}" for every brief today.` : `Prefer these categories today (least recently covered): ${wanted.join(', ')}.`}
 
 ${keywordRule}
 Today: ${new Date().toISOString().slice(0, 10)}. Calendar hooks: ${seasonalHooks().join('; ')}.
 
-INVENTORY of linkable paths (mustLink only from here; at least two per brief, one of them a programme page):
+INVENTORY of linkable paths (mustLink only from here; at least two per brief. Link what this reader would actually click next: a programme page only when the article is about that programme, a tool such as /tools/express-entry when it fits, and earlier articles (the /blog/ paths) freely. A business-route page is never a filler link on a work, study or life article):
 ${linkBlock(inv)}
 
 Already written in ${lang} (do not repeat, do not paraphrase, do not write the same topic from a slightly different angle):
@@ -173,7 +183,7 @@ Rules:
 - imageScenes: two sentences for an editorial photograph, cover then inline — a concrete object, workspace or place, no people's faces, no text, no flags.
 - category: exactly one of ${JSON.stringify(inv.categories.map((c) => c.name))}.
 
-Return JSON: {"briefs":[{"category","workingTitle","angle","whyNow","primaryKeyword","secondaryKeywords":[],"searchQueryEn","mustLink":[],"imageScenes":["",""],"depth","family","destination"}]}`,
+Return JSON: {"briefs":[{"category","workingTitle","angle","whyNow","primaryKeyword","secondaryKeywords":[],"searchQueryEn","mustLink":[],"imageScenes":["",""],"depth","family","destination","pillar"}]}`,
     0.8,
   );
 
@@ -187,7 +197,11 @@ Return JSON: {"briefs":[{"category","workingTitle","angle","whyNow","primaryKeyw
   // variety so a brief that breaks them only survives when nothing better was
   // planned — a slightly repetitive article beats an empty day — and say so.
   const tagged = out.map((b) => ({ ...b, family: b.family ?? 'route-mechanics', destination: b.destination ?? 'general', startupVisaHeadline: classify(b.workingTitle).startupVisaHeadline }));
-  const ordered = pickDiverse(tagged, inv.recentTags, tagged.length);
+  // The pillar outranks variety: a brief for another reader goes to the back,
+  // where it is written only if every on-pillar brief fails.
+  const diverse = pickDiverse(tagged, inv.recentTags, tagged.length);
+  const ordered = [...diverse.filter((b) => b.pillar === pillar), ...diverse.filter((b) => b.pillar !== pillar)];
+  for (const b of ordered) if (b.pillar !== pillar) console.warn(`autopilot/planner: off-pillar (${b.pillar}, wanted ${pillar}), ranked last: "${b.workingTitle}"`);
   // The caller plans spares beyond the day's quota, so a rule-breaking brief
   // ranked last usually never gets written. Say where it landed rather than
   // implying it shipped.

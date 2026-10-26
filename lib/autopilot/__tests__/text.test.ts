@@ -14,6 +14,7 @@ const inv: Inventory = {
   usedKeywords: [],
   recentCategories: [],
   recentTags: [],
+  recentPillars: [],
   categories: [],
 };
 

@@ -15,7 +15,7 @@
 //
 // The scale is deliberately coarse, because a model cannot tell 3 from 4
 // reliably and pretending otherwise builds a threshold on noise:
-//   5  a programme change a founder or skilled worker must act on
+//   5  a programme change an applicant must act on
 //   4  clearly about a route we cover, worth an article
 //   3  related, but the article would be thin
 //   2  adjacent; only useful as background
@@ -57,7 +57,7 @@ export async function triageText(input: { title: string; text: string; sourceNam
   const excerpt = input.text.slice(0, MAX_INPUT_CHARS);
 
   const raw = await chatJson<Record<string, unknown>>(
-    `You are the research editor of Startup Visa Roads (visaroads.com), a site about start-up and skilled-immigration routes to Canada, the USA, Europe, Australia and the UAE, written for founders and skilled professionals, many of them Iranian.
+    `You are the research editor of Startup Visa Roads (visaroads.com), a site about immigration routes to Canada, the USA, the UK, Europe, Australia and the UAE — work, study, business and family — written for people planning a move, many of them Persian-speaking.
 
 Score ONE item a source published, for whether our writers should build an article on it.
 
@@ -65,7 +65,7 @@ OUR SUBJECTS — the keyword queue the site writes to:
 ${keywords.map((k) => `- ${k}`).join('\n')}
 
 SCORE, 0 to 5:
-5 = a programme change a founder or skilled worker must act on (eligibility, thresholds, fees, deadlines, quotas, a programme opening or closing, a draw result)
+5 = a programme change an applicant — worker, student, family or business owner — must act on (eligibility, thresholds, fees, deadlines, quotas, a programme opening or closing, a draw result)
 4 = clearly about a route we cover and there is a real article in it
 3 = related, but the article would be thin
 2 = adjacent; useful only as background

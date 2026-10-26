@@ -15,6 +15,9 @@ const LABELS: Record<string, string> = {
   'uae-golden-visa': 'ویزای طلایی امارات',
   'mentorship-and-business-planning': 'منتورشیپ و بیزینس‌پلن',
   'global-talent-and-compliance': 'استعداد جهانی و انطباق',
+  'work-and-skilled-immigration': 'مهاجرت کاری',
+  'study-abroad': 'مهاجرت تحصیلی',
+  'life-and-family-abroad': 'زندگی و خانواده در مهاجرت',
   // Country categories the autopilot creates on the fly.
   canada: 'کانادا',
   finland: 'فنلاند',

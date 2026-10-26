@@ -11,6 +11,7 @@ const faInv: Inventory = {
   usedKeywords: [],
   recentCategories: [],
   recentTags: [],
+  recentPillars: [],
   categories: [],
 };
 

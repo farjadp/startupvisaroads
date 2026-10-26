@@ -15,6 +15,7 @@ import { BRAND_FACTS, buildInventory, linkBlock, type Inventory } from './invent
 import { AIO_RULES, FACT_RULES, WRITER_MODEL, chatJson, chatText, expand, houseStyle, humanise, logErrors, quotaCount, type GenerateResult } from './pipeline';
 import { planBriefs, type Brief } from './planner';
 import { officialSourcePromptForBrief } from './official-sources';
+import { PILLAR_READER, classifyPillar, pillarTag } from './pillars';
 import { decidePlannedPublication, enforceLinks, sameSubject, wordCountHtml } from './text';
 import { applyCitations, buildEvidence, gateFigures, recordEvidenceUse, type Evidence } from './evidence';
 import { classify, seedTags } from './diversity';
@@ -65,6 +66,8 @@ async function draftBody(brief: Brief, inv: Inventory, evidence: Evidence): Prom
 
 BRIEF: ${JSON.stringify(brief, null, 2)}
 
+READER: ${PILLAR_READER[brief.pillar ?? classifyPillar(brief.workingTitle)]}. Write for that one reader throughout. Do not turn the piece toward founders, startups or entrepreneurs unless the brief is about a business route; do not address "founders and skilled workers" together. On an article that is not about a business route, do not link startup-visa, entrepreneur-stream, investor or mentorship pages; link programme, tool and earlier article pages this reader would actually open.
+
 BRAND FACTS (the only things you may say about us): ${BRAND_FACTS}
 
 Linkable paths (use ONLY these for internal links, as <a href="/path">natural anchor</a> with locale-agnostic paths; every path in brief.mustLink must appear at least once; link 3–6 times in total, spread through the body, never two links in one sentence, never the path as the visible text):
@@ -111,7 +114,7 @@ Return JSON with ALL keys (article-language fields in ${lang}; summaryEn and slu
   "summaryEn": "2–3 English sentences an answer engine can quote; name the programme and the authority; no site paths",
   "faq": [{"q":"question a person would type","a":"2–3 sentence direct answer, from the article"}] (4–6 items),
   "tags": ["3–6 tags"],
-  "quickFacts": {"suitableFor":"e.g. Tech founders","requirements":"include only when grounded in the cited article body"},
+  "quickFacts": {"suitableFor":"who this is for, in a few words — e.g. Software developers with a job offer","requirements":"include only when grounded in the cited article body"},
   "coverImagePrompt": "editorial photo prompt for the cover, built from brief.imageScenes[0]",
   "inTextVisuals": [{"type":"PHOTO","prompt":"…","caption":"…"},{"type":"DIAGRAM","svgCode":"<svg …>…</svg>","caption":"…"}]
 }
@@ -282,7 +285,7 @@ async function writeOne(brief: Brief, inv: Inventory, opts: RunOpts, result: Gen
         // rewriting the same backlog topic every morning.
         // Family and destination go on the row so the next run's variety rules
         // read what was published, not a guess from the title it ended up with.
-        topicSeed: `${seedTags(brief.family && brief.destination ? { family: brief.family, destination: brief.destination } : classify(`${brief.workingTitle} ${brief.primaryKeyword}`))}${brief.topicSlug ? `[topic:${brief.topicSlug}] ` : ''}${brief.primaryKeyword ? `[kw:${brief.primaryKeyword}] ` : ''}${brief.whyNow} — ${brief.angle}`,
+        topicSeed: `${pillarTag(brief.pillar ?? classifyPillar(`${brief.workingTitle} ${brief.primaryKeyword}`))}${seedTags(brief.family && brief.destination ? { family: brief.family, destination: brief.destination } : classify(`${brief.workingTitle} ${brief.primaryKeyword}`))}${brief.topicSlug ? `[topic:${brief.topicSlug}] ` : ''}${brief.primaryKeyword ? `[kw:${brief.primaryKeyword}] ` : ''}${brief.whyNow} — ${brief.angle}`,
         internalLinks: linked.links,
       },
       { locale: inv.locale, status },

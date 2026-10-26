@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { FA_TOPICS, topicToBrief, pickTopics } from '@/content/fa/topics';
+import { FA_TOPICS, topicToBrief, pickTopics, topicPillar } from '@/content/fa/topics';
 import { FA_SITE_PAGES } from '@/lib/autopilot/inventory';
 import { DEFAULT_CATEGORIES } from '@/lib/categories';
 
@@ -12,10 +12,15 @@ describe('the Persian topic backlog', () => {
     }
   });
 
-  // The planner's own rule, which the backlog has to honour too: a brief with
-  // one link is a dead end, and one with no programme page is an essay.
-  it('gives every topic at least two links, one of them a programme page', () => {
+  // A business-route topic still needs two links, one a programme page: a
+  // brief with one link is a dead end, and one with no programme page is an
+  // essay. A work, study or life topic does not: the Persian site has no
+  // guide pages for those readers yet, and forcing a startup programme page
+  // into them is what made the blog read as a startup blog (26 Oct 2026).
+  it('gives every topic a link, and every business topic two with a programme page', () => {
     for (const t of FA_TOPICS) {
+      expect(t.mustLink.length, t.slug).toBeGreaterThanOrEqual(1);
+      if (topicPillar(t) !== 'business') continue;
       expect(t.mustLink.length, t.slug).toBeGreaterThanOrEqual(2);
       // /australia and /turkey-tech-visa are programme guides too; they were
       // added on 9 Sep, after this rule was written. /israel is deliberately
@@ -62,6 +67,28 @@ describe('the Persian topic backlog', () => {
       for (const s of t.imageScenes) {
         expect(affirmative(s), `${t.slug}: ${s}`).not.toMatch(/\b(flags?|faces?|people|persons?|signage)\b/);
       }
+    }
+  });
+});
+
+// The reader-first mix (lib/autopilot/pillars.ts): the backlog must be able
+// to serve every planned pillar, or the Persian lane falls back to business
+// topics whenever another pillar is due.
+describe('pillars', () => {
+  it('holds topics for every planned pillar', () => {
+    for (const p of ['work', 'business', 'study', 'life'] as const) {
+      expect(FA_TOPICS.filter((t) => topicPillar(t) === p).length, p).toBeGreaterThanOrEqual(5);
+    }
+  });
+
+  it('serves today\'s pillar first', () => {
+    const picked = pickTopics(3, [], [], [], 'study');
+    expect(picked.every((t) => topicPillar(t) === 'study')).toBe(true);
+  });
+
+  it('never gives a work, study or life topic a founder headline', () => {
+    for (const t of FA_TOPICS.filter((t) => topicPillar(t) !== 'business')) {
+      expect(t.workingTitle, t.slug).not.toMatch(/بنیان‌گذار|استارتاپ|فاندر|کارآفرین/);
     }
   });
 });

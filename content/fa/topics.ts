@@ -21,6 +21,7 @@
 import type { Brief } from '@/lib/autopilot/planner';
 import { sameSubject } from '@/lib/autopilot/text';
 import { classify, pickDiverse, type Destination, type Family, type Tagged } from '@/lib/autopilot/diversity';
+import { classifyPillar, type Pillar } from '@/lib/autopilot/pillars';
 
 export type FaTopic = Brief & {
   /** Stable id, so a topic can be tracked across runs. */
@@ -537,6 +538,7 @@ export const FA_TOPICS: FaTopic[] = [
   },
   {
     slug: 'real-cost-estonia',
+    pillar: 'business',
     family: 'money-and-tax',
     destination: 'estonia',
     category: 'European Visas',
@@ -617,6 +619,7 @@ export const FA_TOPICS: FaTopic[] = [
   },
   {
     slug: 'credential-recognition-finland',
+    pillar: 'work',
     family: 'career-and-work',
     destination: 'finland',
     category: 'Global Talent & Compliance',
@@ -717,6 +720,7 @@ export const FA_TOPICS: FaTopic[] = [
   },
   {
     slug: 'dutch-market-test',
+    pillar: 'business',
     family: 'ecosystem-and-market',
     destination: 'netherlands',
     category: 'European Visas',
@@ -757,6 +761,7 @@ export const FA_TOPICS: FaTopic[] = [
   },
   {
     slug: 'turkiye-tech-visa-limits',
+    pillar: 'business',
     family: 'route-mechanics',
     destination: 'turkiye',
     category: 'Global Talent & Compliance',
@@ -862,6 +867,370 @@ export const FA_TOPICS: FaTopic[] = [
     depth: 'standard',
     audience: 'An applicant with no existing link to Italy who has been told an incubator will make the file easier and does not know how to approach one.',
   },
+  // ── Study, work and life (26 Oct 2026) ──────────────────────────────────
+  // Farjad: the blog had become «خیلی استارتاپی». These topics come from
+  // Persian Google Autocomplete on 26 Oct 2026 (مهاجرت کاری به کانادا،
+  // تحصیل در فنلاند، ویزای کاری هلند، مهاجرت با خانواده …) and are written
+  // for the reader the pillar names, never for a founder. Most link to
+  // /which-path because the Persian site has no work, study or family guide
+  // pages yet; the writer adds earlier articles from the inventory.
+  {
+    slug: 'study-finland-english',
+    pillar: 'study',
+    family: 'study-and-graduates',
+    destination: 'finland',
+    category: 'Study Abroad',
+    workingTitle: 'تحصیل در فنلاند به زبان انگلیسی: پذیرش، شهریه و اقامت',
+    angle:
+      'Walk an Iranian applicant through studying in Finland in English: how admission works through the joint application rounds, which degrees charge tuition for non-EU students and how scholarships offset it, and what the student residence permit asks for. Every rule, fee and funds requirement is cited to Migri or Study in Finland; say plainly that figures change each academic year.',
+    whyNow: 'تحصیل در فنلاند is one of the most searched Persian study queries, and most answers online mix up tuition, scholarships and the permit.',
+    primaryKeyword: 'تحصیل در فنلاند',
+    secondaryKeywords: ['تحصیل در فنلاند به زبان انگلیسی', 'هزینه تحصیل در فنلاند', 'مهاجرت تحصیلی به فنلاند'],
+    searchQueryEn: 'study in Finland in English international students admission tuition residence permit',
+    mustLink: ['/which-path'],
+    imageScenes: [
+      'A long university library reading room with empty wooden desks and tall windows onto snow',
+      'A bicycle parked beside a red-brick campus building in pale winter light',
+    ],
+    depth: 'standard',
+    audience: 'A student in Iran, or a parent planning for one, comparing Finland with other European study options.',
+  },
+  {
+    slug: 'study-netherlands',
+    pillar: 'study',
+    family: 'study-and-graduates',
+    destination: 'netherlands',
+    category: 'Study Abroad',
+    workingTitle: 'تحصیل در هلند: از انتخاب رشته تا اجازه‌ی اقامت تحصیلی',
+    angle:
+      'Explain the order of steps for studying in the Netherlands: research university or university of applied sciences, application deadlines, how the institution applies for the residence permit on the student\'s behalf through the IND, and the funds the IND expects. Cite IND and Study in NL for every requirement and amount.',
+    whyNow: 'Persian searches for تحصیل در هلند are frequent, and the step people miss is that the university, not the student, files the permit.',
+    primaryKeyword: 'تحصیل در هلند',
+    secondaryKeywords: ['تحصیل در هلند کارشناسی ارشد', 'هزینه تحصیل در هلند', 'مهاجرت تحصیلی به هلند'],
+    searchQueryEn: 'study in the Netherlands international students residence permit IND university applies',
+    mustLink: ['/which-path'],
+    imageScenes: [
+      'Rows of bicycles outside a modern glass faculty building on a grey morning',
+      'An empty lecture hall with tiered seats and a blank projection screen',
+    ],
+    depth: 'standard',
+    audience: 'A bachelor\'s graduate in Iran weighing a master\'s degree in the Netherlands.',
+  },
+  {
+    slug: 'study-italy-english',
+    pillar: 'study',
+    family: 'study-and-graduates',
+    destination: 'italy',
+    category: 'Study Abroad',
+    workingTitle: 'تحصیل در ایتالیا به زبان انگلیسی: پذیرش، ویزا و بورسیه',
+    angle:
+      'Lay out how an Iranian student reaches an English-taught degree in Italy: pre-enrolment through the Universitaly portal, the study visa from the consulate, and the regional scholarships that depend on family income. Cite Universitaly and the relevant regional body for every rule; do not state scholarship amounts without a source.',
+    whyNow: 'تحصیل در ایتالیا and بورسیه استانی ایتالیا are both live Persian searches, usually answered by agencies selling the service.',
+    primaryKeyword: 'تحصیل در ایتالیا',
+    secondaryKeywords: ['ویزای تحصیلی ایتالیا', 'بورسیه استانی ایتالیا', 'مهاجرت تحصیلی به ایتالیا'],
+    searchQueryEn: 'study in Italy English taught degree Universitaly pre-enrolment regional scholarship',
+    mustLink: ['/which-path'],
+    imageScenes: [
+      'An arcaded university courtyard in Bologna in late afternoon, stone columns and empty benches',
+      'A desk by a window with a closed laptop and a cup of espresso, shutters half open',
+    ],
+    depth: 'standard',
+    audience: 'A student in Iran attracted by lower tuition in Italy who does not know where the process starts.',
+  },
+  {
+    slug: 'study-canada-admission-permit',
+    pillar: 'study',
+    family: 'study-and-graduates',
+    destination: 'canada',
+    category: 'Study Abroad',
+    workingTitle: 'پذیرش تحصیلی کانادا و مجوز تحصیل: ترتیب درست کارها',
+    angle:
+      'Put the Canadian study route in order: choosing a designated learning institution, the letter of acceptance, the provincial attestation letter, then the study permit and proof of funds. Explain why the order matters since the study-permit cap, citing IRCC for each requirement and amount.',
+    whyNow: 'Since the cap, an admission letter alone no longer gets a study permit, and Persian searches still treat پذیرش as the finish line.',
+    primaryKeyword: 'پذیرش تحصیلی کانادا',
+    secondaryKeywords: ['ویزای تحصیلی کانادا', 'شرایط پذیرش تحصیلی کانادا'],
+    searchQueryEn: 'Canada study permit after letter of acceptance provincial attestation letter proof of funds',
+    mustLink: ['/which-path', '/pnp'],
+    imageScenes: [
+      'A quiet campus walkway lined with maples in autumn, leaves on the path',
+      'An empty study carrel with a desk lamp switched on in a dark library',
+    ],
+    depth: 'standard',
+    audience: 'A student who has, or is about to get, a Canadian admission and needs to know what comes next.',
+  },
+  {
+    slug: 'study-to-pr-canada',
+    pillar: 'study',
+    family: 'study-and-graduates',
+    destination: 'canada',
+    category: 'Study Abroad',
+    workingTitle: 'از تحصیل تا اقامت دائم کانادا: PGWP و برنامه‌های استانی',
+    angle:
+      'Explain the route from a Canadian degree to permanent residence: who qualifies for a post-graduation work permit, how Canadian work experience counts in Express Entry, and which provincial graduate streams exist. Every eligibility rule is cited to IRCC or the province; say which programmes have changed recently and to check before relying on them.',
+    whyNow: 'Most Persian study-in-Canada searches are really about staying afterwards, and PGWP eligibility changed in 2024.',
+    primaryKeyword: 'مهاجرت تحصیلی به کانادا',
+    secondaryKeywords: ['PGWP', 'اقامت بعد از تحصیل در کانادا', 'کار بعد از تحصیل در کانادا'],
+    searchQueryEn: 'Canada post graduation work permit eligibility Express Entry provincial graduate stream',
+    mustLink: ['/pnp', '/which-path'],
+    imageScenes: [
+      'A graduation gown hanging on a door in a small rented room, morning light',
+      'A city bus stop in Halifax at dawn with an empty bench and wet pavement',
+    ],
+    depth: 'standard',
+    audience: 'A student choosing Canada mainly because of what the degree leads to afterwards.',
+  },
+  {
+    slug: 'study-australia-visa',
+    pillar: 'study',
+    family: 'study-and-graduates',
+    destination: 'australia',
+    category: 'Study Abroad',
+    workingTitle: 'ویزای تحصیلی استرالیا: شرایط، هزینه و کار حین تحصیل',
+    angle:
+      'Explain the Australian student visa (subclass 500) for an Iranian applicant: the Genuine Student requirement, English and financial evidence, health cover, and the work-hour limit while studying. Cite Home Affairs for every condition and amount; note that the rules were tightened recently.',
+    whyNow: 'ویزای تحصیلی استرالیا is a steady Persian search, and the Genuine Student test is what refuses most weak files.',
+    primaryKeyword: 'ویزای تحصیلی استرالیا',
+    secondaryKeywords: ['مهاجرت تحصیلی به استرالیا', 'کار دانشجویی در استرالیا'],
+    searchQueryEn: 'Australia student visa subclass 500 genuine student requirement work hours',
+    mustLink: ['/which-path'],
+    imageScenes: [
+      'A sunlit university lawn in Melbourne with empty benches under eucalyptus trees',
+      'A backpack resting on a chair beside a window overlooking a tram line',
+    ],
+    depth: 'standard',
+    audience: 'A student in Iran choosing between Australia and Canada for a master\'s degree.',
+  },
+  {
+    slug: 'work-canada-express-entry',
+    pillar: 'work',
+    family: 'career-and-work',
+    destination: 'canada',
+    category: 'Work & Skilled Immigration',
+    workingTitle: 'مهاجرت کاری به کانادا: اکسپرس انتری از پروفایل تا دعوت‌نامه',
+    angle:
+      'Take a skilled worker through Express Entry in order: language tests, educational credential assessment, the profile, how the CRS score is built, category-based draws, and what happens after an invitation. Cite IRCC for every rule; point to the site\'s CRS calculator rather than quoting cut-off scores.',
+    whyNow: 'مهاجرت کاری به کانادا is among the largest Persian immigration searches, and most readers start without knowing what a profile is.',
+    primaryKeyword: 'مهاجرت کاری به کانادا',
+    secondaryKeywords: ['اکسپرس انتری کانادا', 'شرایط مهاجرت کاری کانادا', 'اکسپرس انتری چیست'],
+    searchQueryEn: 'Canada Express Entry step by step skilled worker profile CRS invitation',
+    mustLink: ['/pnp', '/which-path'],
+    imageScenes: [
+      'A tidy home office desk at night with a desk lamp and a glass of water',
+      'A snow-covered residential street in Toronto at dusk, porch lights on',
+    ],
+    depth: 'deep',
+    audience: 'A university-educated professional in Iran with a few years of experience who wants to move to Canada through work.',
+  },
+  {
+    slug: 'work-netherlands-hsm',
+    pillar: 'work',
+    family: 'career-and-work',
+    destination: 'netherlands',
+    category: 'Work & Skilled Immigration',
+    workingTitle: 'ویزای کاری هلند برای متخصصان: کارفرمای مجاز و حداقل حقوق',
+    angle:
+      'Explain the Dutch highly skilled migrant route: why the employer must be an IND-recognised sponsor, how the salary threshold works by age, what the employer files and what the employee brings. Cite the IND for the thresholds and the recognised-sponsor register; never state a salary figure without the source and year.',
+    whyNow: 'ویزای کاری هلند and its شرایط are frequent Persian searches, and the recognised-sponsor rule decides which job offers are usable at all.',
+    primaryKeyword: 'ویزای کاری هلند',
+    secondaryKeywords: ['شرایط ویزای کاری هلند', 'مدارک لازم برای ویزای کاری هلند', 'مهاجرت کاری به هلند'],
+    searchQueryEn: 'Netherlands highly skilled migrant visa recognised sponsor salary threshold IND',
+    mustLink: ['/which-path'],
+    imageScenes: [
+      'An open-plan office floor in Amsterdam before work hours, empty desks and plants',
+      'A canal-side street at morning with bicycles locked to railings',
+    ],
+    depth: 'standard',
+    audience: 'A software or engineering professional in Iran applying to Dutch employers.',
+  },
+  {
+    slug: 'work-finland-permit',
+    pillar: 'work',
+    family: 'career-and-work',
+    destination: 'finland',
+    category: 'Work & Skilled Immigration',
+    workingTitle: 'ویزای کاری فنلاند: شرایط، مدارک و زمان رسیدگی',
+    angle:
+      'Explain the Finnish residence permit for an employed person and the specialist permit: the job offer and salary condition, the employer\'s part, documents, and the fast-track that applies to specialists. Cite Migri for every condition, fee and processing time; say that times vary and link the official estimate.',
+    whyNow: 'ویزای کاری فنلاند and its شرایط are among the top Persian work searches, often answered by agencies without sources.',
+    primaryKeyword: 'ویزای کاری فنلاند',
+    secondaryKeywords: ['شرایط ویزای کاری فنلاند', 'اخذ ویزای کاری فنلاند'],
+    searchQueryEn: 'Finland work residence permit specialist fast track Migri requirements processing time',
+    mustLink: ['/which-path'],
+    imageScenes: [
+      'A wooden workbench in a bright Helsinki co-working space with no one at it',
+      'A tram stop in Helsinki under light snow at early morning',
+    ],
+    depth: 'standard',
+    audience: 'A skilled professional in Iran with a Finnish job offer, or close to one.',
+  },
+  {
+    slug: 'work-uk-skilled-worker',
+    pillar: 'work',
+    family: 'career-and-work',
+    destination: 'general',
+    category: 'Work & Skilled Immigration',
+    workingTitle: 'ویزای کاری انگلیس برای ایرانیان: اسپانسر، شغل و حقوق',
+    angle:
+      'Explain the UK Skilled Worker visa for an Iranian applicant: the licensed sponsor, the certificate of sponsorship, eligible occupations and the salary rules, English, and where Iranians submit biometrics. Cite GOV.UK for every condition and threshold, with the date it applies from.',
+    whyNow: 'ویزای کاری انگلیس برای ایرانیان is a direct Persian search, and the salary thresholds changed in 2024.',
+    primaryKeyword: 'ویزای کاری انگلیس',
+    secondaryKeywords: ['ویزای کاری انگلیس برای ایرانیان', 'شرایط ویزای کاری انگلیس'],
+    searchQueryEn: 'UK Skilled Worker visa Iranian applicant sponsor licence salary threshold',
+    mustLink: ['/which-path'],
+    imageScenes: [
+      'A red-brick terraced street in Manchester after rain, empty pavement',
+      'A coat and umbrella on a hook beside a front door with frosted glass',
+    ],
+    depth: 'standard',
+    audience: 'An Iranian professional considering a UK job offer.',
+  },
+  {
+    slug: 'work-australia-skilled',
+    pillar: 'work',
+    family: 'career-and-work',
+    destination: 'australia',
+    category: 'Work & Skilled Immigration',
+    workingTitle: 'ویزای کار استرالیا برای ایرانیان: امتیازبندی و فهرست مشاغل',
+    angle:
+      'Explain Australia\'s skilled visas for an Iranian applicant: skills assessment, the occupation lists, the points test and expression of interest, and the difference between independent and state-nominated visas. Cite Home Affairs for the points table and lists; never quote an invitation score without its round and date.',
+    whyNow: 'ویزای کار استرالیا برای ایرانیان and انواع ویزای کار استرالیا are both live searches with thin, unsourced answers.',
+    primaryKeyword: 'ویزای کار استرالیا',
+    secondaryKeywords: ['ویزای کار استرالیا برای ایرانیان', 'انواع ویزای کار استرالیا', 'مهاجرت کاری به استرالیا'],
+    searchQueryEn: 'Australia skilled independent visa 189 190 points test occupation list skills assessment',
+    mustLink: ['/which-path'],
+    imageScenes: [
+      'An empty site office on a construction project at sunrise, hard hats on a shelf',
+      'A quiet suburban street in Perth with jacaranda trees in bloom',
+    ],
+    depth: 'standard',
+    audience: 'An Iranian engineer, nurse or tradesperson checking whether their occupation has a route to Australia.',
+  },
+  {
+    slug: 'credential-assessment-canada',
+    pillar: 'work',
+    family: 'career-and-work',
+    destination: 'canada',
+    category: 'Work & Skilled Immigration',
+    workingTitle: 'ارزیابی مدرک تحصیلی برای کانادا: WES و انتخاب سازمان',
+    angle:
+      'Explain the educational credential assessment for Express Entry: which organisations IRCC designates, how Iranian universities send transcripts, how long it takes, and what the result means for points. Cite IRCC for the designated list and the assessing body for its own procedure; no fee without its source.',
+    whyNow: 'ارزیابی مدرک تحصیلی wes is a frequent Persian search and the step where Iranian files lose the most time.',
+    primaryKeyword: 'ارزیابی مدرک تحصیلی برای کانادا',
+    secondaryKeywords: ['ارزیابی مدرک تحصیلی wes', 'ارزشیابی مدرک تحصیلی'],
+    searchQueryEn: 'educational credential assessment Canada WES Iranian university transcripts',
+    mustLink: ['/which-path', '/pnp'],
+    imageScenes: [
+      'A sealed padded envelope on a wooden counter beside a small parcel scale',
+      'An empty corridor of a university administration building with closed doors',
+    ],
+    depth: 'standard',
+    audience: 'A graduate in Iran starting an Express Entry file who has heard of WES and nothing else.',
+  },
+  {
+    slug: 'family-move-canada',
+    pillar: 'life',
+    family: 'life-in-destination',
+    destination: 'canada',
+    category: 'Life & Family Abroad',
+    workingTitle: 'مهاجرت با خانواده به کانادا: همسر، فرزندان و ترتیب کارها',
+    angle:
+      'Explain how a spouse and children come along on the main Canadian routes: who is included in the application, open work permits for spouses, study permits and school for children, and medical exams. Cite IRCC for each rule and note where they changed recently; write for the parent planning the whole household\'s move.',
+    whyNow: 'مهاجرت با خانواده به کانادا is one of the most searched Persian family queries, and the spouse work-permit rules changed in 2025.',
+    primaryKeyword: 'مهاجرت با خانواده به کانادا',
+    secondaryKeywords: ['مهاجرت با خانواده', 'شرایط مهاجرت با خانواده'],
+    searchQueryEn: 'immigrate to Canada with family spouse open work permit children study permit',
+    mustLink: ['/which-path', '/pnp'],
+    imageScenes: [
+      'Two suitcases and a child\'s backpack by the door of an empty apartment',
+      'A kitchen table set for four in morning light, window onto a snowy yard',
+    ],
+    depth: 'standard',
+    audience: 'A parent in Iran planning to move with a spouse and children and unsure who can work or study on arrival.',
+  },
+  {
+    slug: 'canada-tax-first-year',
+    pillar: 'life',
+    family: 'money-and-tax',
+    destination: 'canada',
+    category: 'Life & Family Abroad',
+    workingTitle: 'مالیات در کانادا برای تازه‌واردها: سال اول چه باید کرد',
+    angle:
+      'Explain a newcomer\'s first Canadian tax year: residency for tax purposes, the first return, benefits that require filing (such as the Canada Child Benefit), and reporting foreign assets. Cite the Canada Revenue Agency for every rule and threshold; say we are not tax advisers and point to CRA guidance for newcomers.',
+    whyNow: 'مالیات در کانادا and مالیات در کانادا چگونه است are large Persian searches, and missing the first return delays benefits families rely on.',
+    primaryKeyword: 'مالیات در کانادا',
+    secondaryKeywords: ['مالیات حقوق در کانادا', 'مالیات در کانادا چگونه است'],
+    searchQueryEn: 'newcomers to Canada first tax return residency Canada Child Benefit CRA',
+    mustLink: ['/which-path'],
+    imageScenes: [
+      'A calculator and a closed folder on a kitchen table beside a mug, evening lamp light',
+      'A row of mailboxes in an apartment lobby, doors shut',
+    ],
+    depth: 'standard',
+    audience: 'A family in its first year in Canada that has never filed a Canadian return.',
+  },
+  {
+    slug: 'finnish-language',
+    pillar: 'life',
+    family: 'life-in-destination',
+    destination: 'finland',
+    category: 'Life & Family Abroad',
+    workingTitle: 'زبان فنلاندی برای زندگی و کار: چقدر لازم است؟',
+    angle:
+      'Answer honestly how far English goes in Finland: in tech jobs, in daily life, for children at school, and where Finnish becomes necessary, including for permanent residence and citizenship. Cite official sources for any language requirement; describe free and municipal courses without inventing names or prices.',
+    whyNow: 'زبان فنلاندی and زبان فنلاندی سخت است are frequent Persian searches from people deciding whether Finland is realistic for them.',
+    primaryKeyword: 'زبان فنلاندی',
+    secondaryKeywords: ['آموزش زبان فنلاندی', 'زبان فنلاندی سخت است'],
+    searchQueryEn: 'how much Finnish do you need to live and work in Finland',
+    mustLink: ['/which-path'],
+    imageScenes: [
+      'A small community library table with two empty chairs and a window onto birch trees',
+      'A snowy Helsinki courtyard with a children\'s sled leaning on a wall',
+    ],
+    depth: 'standard',
+    audience: 'A professional or family considering Finland who speaks English but no Finnish.',
+  },
+  {
+    slug: 'cost-of-living-turkey',
+    pillar: 'life',
+    family: 'life-in-destination',
+    destination: 'turkiye',
+    category: 'Life & Family Abroad',
+    workingTitle: 'هزینه‌ی زندگی در ترکیه برای خانواده‌ی مهاجر',
+    angle:
+      'Explain what a family\'s budget in Türkiye is made of: rent in Istanbul against smaller cities, residence permit and health insurance costs, schooling, and how inflation makes any fixed figure age quickly. Cite official sources for permit and insurance rules; give no price without a dated source and tell the reader to check current listings.',
+    whyNow: 'هزینه زندگی در ترکیه and اجاره خانه در استانبول are among the most searched Persian cost-of-living queries.',
+    primaryKeyword: 'هزینه زندگی در ترکیه',
+    secondaryKeywords: ['اجاره خانه در استانبول', 'زندگی در ترکیه با خانواده'],
+    searchQueryEn: 'cost of living in Turkey for a family rent Istanbul residence permit health insurance',
+    mustLink: ['/which-path'],
+    imageScenes: [
+      'A residential street in Kadıköy at early evening with balconies and hanging plants',
+      'A neighbourhood market stall stacked with tomatoes and peppers, nobody in frame',
+    ],
+    depth: 'standard',
+    audience: 'An Iranian family considering Türkiye as a first or intermediate move.',
+  },
+  {
+    slug: 'health-insurance-canada-newcomers',
+    pillar: 'life',
+    family: 'life-in-destination',
+    destination: 'canada',
+    category: 'Life & Family Abroad',
+    workingTitle: 'بیمه‌ی درمانی تازه‌واردها در کانادا: ماه‌های اول',
+    angle:
+      'Explain how public health coverage works for newcomers to Canada: which provinces have a waiting period, how to apply for the provincial card, what private cover is for in the gap, and what is not covered. Cite each province\'s health ministry for its rule; do not generalise one province to all.',
+    whyNow: 'Health insurance for new immigrants is a top newcomer search in English and Persian, and the waiting-period rules differ by province.',
+    primaryKeyword: 'بیمه درمانی در کانادا',
+    secondaryKeywords: ['بیمه درمانی تازه‌واردها در کانادا', 'بیمه درمانی برای مهاجران'],
+    searchQueryEn: 'health insurance for new immigrants Canada provincial waiting period',
+    mustLink: ['/which-path', '/pnp'],
+    imageScenes: [
+      'An empty clinic waiting room with rows of chairs and a closed reception window',
+      'A first-aid kit and a thermometer on a bathroom shelf, soft morning light',
+    ],
+    depth: 'standard',
+    audience: 'A newly landed family in Canada, or one about to land, worried about the first months without cover.',
+  },
 ];
 
 /** Strip the backlog-only fields so the writer receives a plain Brief. */
@@ -877,7 +1246,12 @@ export function topicToBrief(topic: FaTopic): Brief {
  * the article, so a rewritten title cannot hide it. The title comparison is
  * the backstop, and covers the articles published before ids were recorded.
  */
-export function pickTopics(n: number, writtenTitles: string[], writtenSlugs: string[] = [], recent: Tagged[] = []): FaTopic[] {
+/** A topic's pillar: its own when set, read off its title and keyword when not. */
+export function topicPillar(t: FaTopic): Pillar {
+  return t.pillar ?? classifyPillar(`${t.workingTitle} ${t.primaryKeyword}`);
+}
+
+export function pickTopics(n: number, writtenTitles: string[], writtenSlugs: string[] = [], recent: Tagged[] = [], pillar?: Pillar): FaTopic[] {
   const done = writtenTitles.map((t) => t.trim()).filter(Boolean);
   const slugs = new Set(writtenSlugs.filter(Boolean));
   const covered = (t: FaTopic) =>
@@ -890,7 +1264,10 @@ export function pickTopics(n: number, writtenTitles: string[], writtenSlugs: str
   // was actually published and refuses to repeat a family, a destination or
   // a startup-visa headline back to back while anything else is available.
   const open = FA_TOPICS.filter((t) => !covered(t)).map((t) => ({ ...t, startupVisaHeadline: classify(t.workingTitle).startupVisaHeadline }));
-  const ordered = pickDiverse(open, recent, open.length);
+  const diverse = pickDiverse(open, recent, open.length);
+  // Today's pillar first (lib/autopilot/pillars.ts); the rest stay behind it
+  // in variety order, so a pillar with nothing left never empties the day.
+  const ordered = pillar ? [...diverse.filter((t) => topicPillar(t) === pillar), ...diverse.filter((t) => topicPillar(t) !== pillar)] : diverse;
 
   const out: FaTopic[] = [];
   let deepUsed = false;
