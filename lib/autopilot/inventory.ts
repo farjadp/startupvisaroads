@@ -12,6 +12,7 @@ import prisma from '@/lib/prisma';
 import { ensureDefaultCategories } from '@/lib/categories';
 import type { Locale } from '@/lib/seo';
 import { tagsOf, type Tagged } from './diversity';
+import { pillarOf, type Pillar } from './pillars';
 import { NOT_WITHDRAWN } from '@/lib/legacy-redirects';
 
 export type LinkTarget = {
@@ -36,6 +37,8 @@ export type Inventory = {
    * what was actually published rather than from a clean slate.
    */
   recentTags: Tagged[];
+  /** Pillar of each recent article, newest first, for the quota in pillars.ts. */
+  recentPillars: Pillar[];
   categories: { name: string; slug: string }[];
 };
 
@@ -134,7 +137,7 @@ export const FA_SITE_PAGES: FaPage[] = [
 ];
 
 /** Facts about us the writer may state. Nothing else about us may be claimed. */
-export const BRAND_FACTS = `Startup Visa Roads (visaroads.com) is a product of Ashavid, based in Toronto, Ontario. We are not lawyers or licensed immigration consultants; we are exited founders, investment bankers and grant-committee members who build the business side of a case: business plans, financial models, pitch decks, founder mentorship, and a free Express Entry diagnostic tool. We serve founders and skilled professionals, many of them Persian-speaking.`;
+export const BRAND_FACTS = `Startup Visa Roads (visaroads.com) is a product of Ashavid, based in Toronto, Ontario. We are not lawyers or licensed immigration consultants; we are exited founders, investment bankers and grant-committee members who build the business side of a case: business plans, financial models, pitch decks, founder mentorship, and a free Express Entry diagnostic tool. Our journal serves anyone planning a move — professionals, students, families and business owners — many of them Persian-speaking.`;
 
 /** How long a backlog topic that ended up as a DRAFT stays out of the planner's hands. */
 const HELD_TOPIC_DAYS = 30;
@@ -180,6 +183,7 @@ export async function buildInventory(locale: Locale): Promise<Inventory> {
       .filter((s): s is string => Boolean(s)),
     recentCategories: recent.slice(0, 60).map((a) => a.category?.name ?? ''),
     recentTags: recent.slice(0, 30).map((a) => tagsOf(a)),
+    recentPillars: recent.slice(0, 30).map((a) => pillarOf(a)),
     categories: cats,
   };
 }

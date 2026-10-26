@@ -14,9 +14,15 @@
 // records it, and the planner is handed only what is left — which is what
 // turns "write something about immigration" into a queue with 80-odd distinct
 // subjects in it.
+//
+// Since 26 Oct 2026 the English pool is content/en/keywords.ts, grouped by
+// pillar and taken from real Autocomplete queries; the planner is handed the
+// slice for today's pillar first. prisma/keywords.json stays for the old
+// one-shot writer only.
 // ============================================================================
-import RAW_EN from '@/prisma/keywords.json';
+import { EN_KEYWORDS_BY_PILLAR } from '@/content/en/keywords';
 import { FA_TOPICS } from '@/content/fa/topics';
+import { classifyPillar, type Pillar } from '@/lib/autopilot/pillars';
 import type { Locale } from '@/lib/seo';
 import { classify, pickDiverse, type Tagged } from '@/lib/autopilot/diversity';
 
@@ -32,7 +38,7 @@ import { classify, pickDiverse, type Tagged } from '@/lib/autopilot/diversity';
 const NOT_AN_ARTICLE =
   /(visaroads|near me|booking|consultation|consultant cost|emergency|urgent|package|success rate|review|help$|services$|assessment free|test online|eligibility checker)/i;
 
-export const EN_KEYWORDS: string[] = (RAW_EN as string[]).filter((k) => !NOT_AN_ARTICLE.test(k));
+export const EN_KEYWORDS: string[] = [...new Set(Object.values(EN_KEYWORDS_BY_PILLAR).flat())].filter((k) => !NOT_AN_ARTICLE.test(k));
 
 /**
  * Persian draws from the backlog's own keywords — the ones Farjad named per
@@ -42,6 +48,17 @@ export const EN_KEYWORDS: string[] = (RAW_EN as string[]).filter((k) => !NOT_AN_
 export const FA_KEYWORDS: string[] = [
   ...new Set(FA_TOPICS.flatMap((t) => [t.primaryKeyword, ...t.secondaryKeywords])),
 ].filter(Boolean);
+
+/** The pillar a keyword was filed under, or read off its words when it was not filed. */
+export function keywordPillar(locale: Locale, keyword: string): Pillar {
+  if (locale === 'en') {
+    for (const [p, list] of Object.entries(EN_KEYWORDS_BY_PILLAR)) if (list.includes(keyword)) return p as Pillar;
+  } else {
+    const topic = FA_TOPICS.find((t) => t.primaryKeyword === keyword || t.secondaryKeywords.includes(keyword));
+    if (topic?.pillar) return topic.pillar;
+  }
+  return classifyPillar(keyword);
+}
 
 export function poolFor(locale: Locale): string[] {
   return locale === 'fa' ? FA_KEYWORDS : EN_KEYWORDS;
@@ -94,8 +111,13 @@ export function diverseKeywordsForToday(
   count: number,
   recent: Tagged[],
   at: Date = new Date(),
+  pillar?: Pillar,
 ): string[] {
-  const left = unusedKeywords(locale, used);
+  const all = unusedKeywords(locale, used);
+  // Today's pillar first. When it has run dry, the whole pool, rather than an
+  // empty queue: the planner is still told the pillar and keeps to it.
+  const inPillar = pillar ? all.filter((k) => keywordPillar(locale, k) === pillar) : all;
+  const left = inPillar.length ? inPillar : all;
   if (left.length <= count) return left;
   const day = Math.floor(at.getTime() / 86_400_000);
   const start = (day * count) % left.length;

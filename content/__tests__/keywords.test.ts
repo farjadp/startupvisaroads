@@ -16,15 +16,15 @@ describe('the pool', () => {
       expect(EN_KEYWORDS).not.toContain(k);
     }
     // …and keeps the ones that are a real article.
-    expect(EN_KEYWORDS).toContain('canadian startup visa requirements');
-    expect(EN_KEYWORDS).toContain('why visa application gets rejected');
+    expect(EN_KEYWORDS).toContain('pgwp eligibility');
+    expect(EN_KEYWORDS).toContain('nova scotia entrepreneur stream');
   });
 });
 
 describe('unusedKeywords', () => {
   it('spends a keyword for good, whatever case it was written in', () => {
-    const left = unusedKeywords('en', ['Canadian Startup Visa Requirements ']);
-    expect(left).not.toContain('canadian startup visa requirements');
+    const left = unusedKeywords('en', ['PGWP Eligibility ']);
+    expect(left).not.toContain('pgwp eligibility');
     expect(left.length).toBe(EN_KEYWORDS.length - 1);
   });
 });

@@ -35,6 +35,7 @@ export const FAMILIES = [
   'iranian-practicalities',
   'career-and-work',
   'ecosystem-and-market',
+  'study-and-graduates',
 ] as const;
 export type Family = (typeof FAMILIES)[number];
 
@@ -44,10 +45,11 @@ export const FAMILY_BRIEF: Record<Family, string> = {
   'route-mechanics': "one route's requirements, steps, documents or timeline",
   'life-in-destination': 'living there — housing, schools, healthcare, language, climate, cost of living, community',
   'founder-craft': 'building the company itself — validating an idea, an MVP, pitching, co-founders, equity, incorporation, first hires',
-  'money-and-tax': 'money — proof of funds, banking, taxes for founders, what the route really costs, raising a first round',
+  'money-and-tax': 'money — proof of funds, banking, first-year taxes, what the route really costs',
   'iranian-practicalities': 'what is specific to an Iranian applicant — sanctions and banking, translation, military service, passports, where to submit',
   'career-and-work': 'work — permits, skilled-worker routes, the job market, getting credentials recognised',
   'ecosystem-and-market': "the destination's startup scene — sectors that fund, investors, incubators, events, the market for a product",
+  'study-and-graduates': 'studying there — admission, study permits, tuition and funding, working while studying, staying on after graduation',
 };
 
 export const DESTINATIONS = ['denmark', 'netherlands', 'finland', 'estonia', 'italy', 'canada', 'usa', 'australia', 'turkiye', 'general'] as const;
@@ -76,6 +78,7 @@ const DEST_PATTERNS: [Destination, RegExp][] = [
 
 /** Checked in order; the first family whose pattern matches wins. */
 const FAMILY_PATTERNS: [Family, RegExp][] = [
+  ['study-and-graduates', /stud(y|ent)|universit|admission|tuition|scholarship|pgwp|graduate|تحصیل|دانشجو|دانشگاه|پذیرش تحصیلی|بورسیه|شهریه/i],
   ['iranian-practicalities', /iran|sanction|translat|military service|passport|biometric|ایران|تحریم|ترجمه|سربازی|پایان خدمت|گذرنامه|پاسپورت|بیومتریک/i],
   ['money-and-tax', /fund|bank|tax|cost|price|fee|budget|invest(or|ment)? money|تمکن|بانک|مالیات|هزینه|بودجه|پول/i],
   ['route-decision', /\bvs\.?\b|versus|compar|choos|which (route|country|path)|or .* for|مقایسه|یا |انتخاب|کدام|بهتر است/i],
