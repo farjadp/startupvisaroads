@@ -127,10 +127,11 @@ async function stepFetch(job: Job): Promise<{ documentId: string; unchanged: boo
     publishedAt,
     language: language ?? (/[؀-ۿ]/.test(text.slice(0, 2000)) ? 'fa' : 'en'),
     fetchedAt: new Date(),
-    // A document already written from stays `used`. Resetting it to `new`
-    // would put it back in the writing queue and publish the same subject
-    // twice, which is the bug that made the Persian lane repeat itself.
-    status: wasUsed?.status === 'used' ? 'used' : 'new',
+    // A document already written from stays `used`, and one the writer
+    // declined stays `declined`. Resetting either to `new` would put it back
+    // in the writing queue and publish the same subject twice, which is the
+    // bug that made the Persian lane repeat itself.
+    status: wasUsed?.status === 'used' || wasUsed?.status === 'declined' ? wasUsed.status : 'new',
     digest: null,
   };
   const doc = existing
@@ -165,10 +166,11 @@ async function stepDigest(documentId: string) {
   const digest = await writeDigest({ title: doc.title, text: doc.text, url: doc.url ?? doc.source.url, trust: doc.source.trust });
   // `ready` here is provisional for a watch item: the triage step that runs
   // next can send it to `ignored`. A document already written from keeps
-  // `used`, so a re-read never re-offers it to the writers.
+  // `used`, and one the writer declined keeps `declined`, so a re-read never
+  // re-offers it to the writers.
   await prisma.sourceDocument.update({
     where: { id: documentId },
-    data: { digest, status: doc.status === 'used' ? 'used' : 'ready' },
+    data: { digest, status: doc.status === 'used' || doc.status === 'declined' ? doc.status : 'ready' },
   });
 }
 

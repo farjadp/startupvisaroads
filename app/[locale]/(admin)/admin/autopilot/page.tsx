@@ -12,7 +12,7 @@ export default async function AutopilotPage() {
     prisma.sourceDocument.groupBy({ by: ['status'], _count: { _all: true } }),
     prisma.article.count({ where: { aiModel: { not: null }, status: 'PUBLISHED', createdAt: { gte: since7d } } }),
     prisma.sourceDocument.findMany({
-      where: { status: { in: ['ignored', 'failed'] } },
+      where: { status: { in: ['ignored', 'declined', 'failed'] } },
       orderBy: { updatedAt: 'desc' },
       take: 12,
       select: { title: true, status: true, reason: true, updatedAt: true, source: { select: { title: true, url: true } } },
@@ -46,11 +46,12 @@ export default async function AutopilotPage() {
         stats={{
           published7d,
           // SourceDocument's states: `ready` is triaged and waiting, `used`
-          // written from, `ignored`/`failed` refused. `new` is discovered but
+          // written from, `declined` passed on by the writer (still evidence),
+          // `ignored`/`failed` refused. `new` is discovered but
           // not yet read, so it counts as waiting too.
           ledgerNew: (ledgerCounts.ready ?? 0) + (ledgerCounts.new ?? 0),
           ledgerUsed: ledgerCounts.used ?? 0,
-          ledgerSkipped: (ledgerCounts.ignored ?? 0) + (ledgerCounts.failed ?? 0),
+          ledgerSkipped: (ledgerCounts.ignored ?? 0) + (ledgerCounts.declined ?? 0) + (ledgerCounts.failed ?? 0),
         }}
         recentSkips={recentSkips.map((s) => ({
           title: s.title,

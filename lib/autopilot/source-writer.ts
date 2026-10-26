@@ -23,7 +23,7 @@ import { createArticleFromPayload } from '@/lib/articles';
 import type { Locale } from '@/lib/seo';
 import { BRAND_FACTS, buildInventory, linkBlock, type Inventory } from './inventory';
 import { originality, tooClose } from './originality';
-import { AIO_RULES, FACT_RULES, WRITER_MODEL, chatJson, chatText, expand, houseStyle, humanise, quotaCount, type GenerateResult } from './pipeline';
+import { AIO_RULES, FACT_RULES, WRITER_MODEL, chatJson, chatText, expand, houseStyle, humanise, logErrors, quotaCount, type GenerateResult } from './pipeline';
 import { generateBrandImage, imagesBlocked } from './images';
 import { markDocument, pendingCount, writableDocumentById, writableDocuments, type WritableDocument } from '@/lib/knowledge/queue';
 import { decidePlannedPublication, enforceLinks, sameSubject, wordCountHtml } from './text';
@@ -259,7 +259,7 @@ export async function runFromSources(n: number, locale: Locale, opts: RunOpts = 
       const gap = brief.usable ? briefGap(brief) : null;
       if (!brief.usable || gap) {
         const reason = brief.usable ? `brief incomplete: ${gap}` : brief.rejectReason || 'rejected without a reason';
-        if (!opts.dryRun) await markDocument(article.documentId, 'ignored', reason);
+        if (!opts.dryRun) await markDocument(article.documentId, 'declined', reason);
         result.skipped.push({ title: article.title, reason });
         continue;
       }
@@ -272,7 +272,7 @@ export async function runFromSources(n: number, locale: Locale, opts: RunOpts = 
       const echo = seen.find((t) => sameSubject(t, brief.workingTitle));
       if (echo) {
         const reason = `same subject as "${echo}"`;
-        if (!opts.dryRun) await markDocument(article.documentId, 'ignored', reason);
+        if (!opts.dryRun) await markDocument(article.documentId, 'declined', reason);
         result.skipped.push({ title: brief.workingTitle, reason });
         console.warn(`autopilot/source-writer: SKIPPED as a repeat of "${echo}" — "${brief.workingTitle}"`);
         continue;
@@ -297,7 +297,7 @@ export async function runFromSources(n: number, locale: Locale, opts: RunOpts = 
       const o = originality(body, article.text);
       if (tooClose(o)) {
         const reason = `overlap with source: ${o.shared} shared ten-word runs — "${o.sample?.slice(0, 80) ?? ''}"`;
-        if (!opts.dryRun) await markDocument(article.documentId, 'ignored', reason);
+        if (!opts.dryRun) await markDocument(article.documentId, 'declined', reason);
         result.skipped.push({ title: article.title, reason });
         continue;
       }
@@ -334,7 +334,7 @@ export async function runFromSources(n: number, locale: Locale, opts: RunOpts = 
       const gate = gateFigures(body, allowed, true);
       if (!gate.ok) {
         const reason = `figures in neither the fact sheet nor the evidence: ${gate.violations.join(', ')}`;
-        if (!opts.dryRun) await markDocument(article.documentId, 'ignored', reason);
+        if (!opts.dryRun) await markDocument(article.documentId, 'declined', reason);
         result.skipped.push({ title: d.title, reason });
         console.warn(`autopilot/source-writer: REFUSED — "${d.title}" states ${gate.violations.join(', ')} with nothing behind them`);
         continue;
@@ -362,7 +362,7 @@ export async function runFromSources(n: number, locale: Locale, opts: RunOpts = 
       const repeat = seen.find((t) => sameSubject(t, d.title));
       if (repeat) {
         const reason = `already published as "${repeat}"`;
-        await markDocument(article.documentId, 'ignored', reason);
+        await markDocument(article.documentId, 'declined', reason);
         result.skipped.push({ title: d.title, reason });
         console.warn(`autopilot/source-writer: SKIPPED as a repeat of "${repeat}" — "${d.title}"`);
         continue;
@@ -376,7 +376,7 @@ export async function runFromSources(n: number, locale: Locale, opts: RunOpts = 
         closest: closestOwnArticle(body, [...(await ownCorpus(inv.locale)), ...written]),
       });
       if (verdict.skip) {
-        if (!opts.dryRun) await markDocument(article.documentId, 'ignored', verdict.skip);
+        if (!opts.dryRun) await markDocument(article.documentId, 'declined', verdict.skip);
         result.skipped.push({ title: d.title, reason: verdict.skip });
         console.warn(`autopilot/source-writer: SKIPPED — "${d.title}" ${verdict.skip}`);
         continue;
@@ -417,7 +417,9 @@ export async function runFromSources(n: number, locale: Locale, opts: RunOpts = 
       result.created.push({ id: created.id, slug: created.slug, title: created.title, status });
     } catch (e) {
       const msg = e instanceof Error ? e.message : String(e);
-      if (!opts.dryRun) await markDocument(article.documentId, 'failed', msg);
+      // The document is not at fault for a crash in the writer, so it stays
+      // evidence; `declined` keeps it from being retried every run.
+      if (!opts.dryRun) await markDocument(article.documentId, 'declined', `failed: ${msg}`);
       result.errors.push({ title: article.title, error: msg });
     }
   }
@@ -429,6 +431,7 @@ export async function runFromSources(n: number, locale: Locale, opts: RunOpts = 
 }
 
 async function finish(runId: string, r: GenerateResult & { notes: string[] }) {
+  logErrors('autopilot/source-writer', r);
   await prisma.autopilotRun.update({
     where: { id: runId },
     data: {

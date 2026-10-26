@@ -7,6 +7,7 @@
 // ============================================================================
 import prisma from '@/lib/prisma';
 import { cosine, decodeVector, embedQuery } from './embed';
+import { EVIDENCE_STATUSES } from './queue';
 
 export type EvidenceItem = {
   ref: string;
@@ -139,7 +140,7 @@ export async function retrieveEvidence(query: string, opts: RetrieveOpts = {}): 
   const terms = queryTerms(query);
 
   const docs = await prisma.sourceDocument.findMany({
-    where: { status: 'ready', source: { enabled: true } },
+    where: { status: { in: [...EVIDENCE_STATUSES] }, source: { enabled: true } },
     select: {
       id: true, title: true, url: true, publishedAt: true, fetchedAt: true, matchedTopics: true,
       source: { select: { id: true, url: true, trust: true, kind: true, topics: true, pinned: true } },
@@ -158,8 +159,8 @@ export async function retrieveEvidence(query: string, opts: RetrieveOpts = {}): 
     : [];
 
   const pinned = await prisma.source.findMany({
-    where: { pinned: true, enabled: true, documents: { some: { status: 'ready', digest: { not: null } } } },
-    select: { id: true, title: true, url: true, topics: true, documents: { where: { status: 'ready', digest: { not: null } }, select: { title: true, digest: true }, take: 1, orderBy: { fetchedAt: 'desc' } } },
+    where: { pinned: true, enabled: true, documents: { some: { status: { in: [...EVIDENCE_STATUSES] }, digest: { not: null } } } },
+    select: { id: true, title: true, url: true, topics: true, documents: { where: { status: { in: [...EVIDENCE_STATUSES] }, digest: { not: null } }, select: { title: true, digest: true }, take: 1, orderBy: { fetchedAt: 'desc' } } },
   });
   const pinnedOut = pinned
     // A pinned digest joins every prompt on its topics, so it needs the
@@ -251,11 +252,11 @@ export function render(items: EvidenceItem[], pinned: EvidencePack['pinned']): s
  */
 export async function pinnedDigests(limit = 8): Promise<{ title: string; url: string | null; digest: string }[]> {
   const rows = await prisma.source.findMany({
-    where: { pinned: true, enabled: true, documents: { some: { status: 'ready', digest: { not: null } } } },
+    where: { pinned: true, enabled: true, documents: { some: { status: { in: [...EVIDENCE_STATUSES] }, digest: { not: null } } } },
     select: {
       title: true,
       url: true,
-      documents: { where: { status: 'ready', digest: { not: null } }, select: { title: true, digest: true }, take: 1, orderBy: { fetchedAt: 'desc' } },
+      documents: { where: { status: { in: [...EVIDENCE_STATUSES] }, digest: { not: null } }, select: { title: true, digest: true }, take: 1, orderBy: { fetchedAt: 'desc' } },
     },
     take: limit,
   });

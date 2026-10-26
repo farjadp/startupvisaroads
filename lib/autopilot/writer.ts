@@ -12,7 +12,7 @@ import { generateBrandImage, imagesBlocked } from './images';
 import { createArticleFromPayload } from '@/lib/articles';
 import type { Locale } from '@/lib/seo';
 import { BRAND_FACTS, buildInventory, linkBlock, type Inventory } from './inventory';
-import { AIO_RULES, FACT_RULES, WRITER_MODEL, chatJson, chatText, expand, houseStyle, humanise, quotaCount, type GenerateResult } from './pipeline';
+import { AIO_RULES, FACT_RULES, WRITER_MODEL, chatJson, chatText, expand, houseStyle, humanise, logErrors, quotaCount, type GenerateResult } from './pipeline';
 import { planBriefs, type Brief } from './planner';
 import { officialSourcePromptForBrief } from './official-sources';
 import { decidePlannedPublication, enforceLinks, sameSubject, wordCountHtml } from './text';
@@ -335,6 +335,7 @@ export async function runPlanned(n: number, locale: Locale, opts: RunOpts = {}):
 }
 
 async function finish(runId: string, r: GenerateResult, opts: RunOpts) {
+  logErrors('autopilot/writer', r);
   const blocked = opts.dryRun ? null : imagesBlocked();
   await prisma.autopilotRun.update({
     where: { id: runId },
