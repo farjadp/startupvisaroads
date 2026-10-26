@@ -239,7 +239,7 @@ model SourceDocument {
   digest        String?   // ~300-word fact list, model-written at ingest
   relevance     Int?      // 0–5 vs our keyword list (watch docs)
   matchedTopics String    @default("[]") // JSON string[]
-  status        String    @default("new") // new | ready | ignored | used | failed
+  status        String    @default("new") // new | ready | ignored | used | declined | failed
   reason        String?
   articleIds    String    @default("[]") // JSON string[]
   chunks        SourceChunk[]

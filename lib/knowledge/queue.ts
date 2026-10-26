@@ -130,10 +130,25 @@ export async function pendingCount(locale: 'en' | 'fa'): Promise<number> {
   });
 }
 
-/** Record the outcome of a writing attempt on the document it came from. */
+/**
+ * The statuses a document can serve as EVIDENCE in. A status says where a
+ * document stands in the writing queue; it never said whether its text is
+ * still true. Retrieval read only `ready`, so every item the source writer
+ * read and passed on left the evidence store with it — and once the lane ran
+ * with mode=any (10 Oct 2026) the pool fell from ~150 passages to 6 in two
+ * weeks.
+ */
+export const EVIDENCE_STATUSES = ['ready', 'used', 'declined'] as const;
+
+/**
+ * Record the outcome of a writing attempt on the document it came from.
+ * `declined` is the writer's no — refused, repeated, or failed mid-write: out
+ * of the queue, still evidence. `ignored` stays for triage and ingest, which
+ * judge the document itself.
+ */
 export async function markDocument(
   documentId: string,
-  status: 'used' | 'ignored' | 'failed',
+  status: 'used' | 'declined',
   reason?: string,
   articleId?: string,
 ): Promise<void> {

@@ -36,6 +36,15 @@ export function quotaCount(r: GenerateResult, publish: boolean): number {
   return publish ? r.created.filter((c) => c.status !== 'DRAFT').length : r.created.length;
 }
 
+/**
+ * Put a run's errors where the logs are. They went only into the run row,
+ * which nothing reads without database access: on 23 Oct 2026 both planned
+ * runs ended in two seconds with nothing in the Cloud Run logs to say why.
+ */
+export function logErrors(lane: string, r: GenerateResult): void {
+  for (const e of r.errors) console.error(`${lane}: ERROR${e.title ? ` — "${e.title}"` : ''}: ${e.error}`);
+}
+
 // ---------------------------------------------------------------------------
 // Rules
 // ---------------------------------------------------------------------------
