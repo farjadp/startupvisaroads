@@ -102,7 +102,7 @@ const steps = [
     num: '03',
     title: 'Expert Panel Evaluation',
     icon: Users,
-    body: 'Submit on Virk.dk. The Secretariat screens first — incomplete files and ineligible business types are cut here and never reach the panel. Survivors go to three members of an independent expert panel, who each score the four criteria 1–5. You need at least a 3.5 average across all four.',
+    body: 'Submit on Virk.dk. The Secretariat screens first — incomplete files and ineligible business types are cut here and never reach the panel. Survivors go to three members of the independent expert panel appointed by the Danish Business Authority, who each score the four criteria 1–5. You need at least a 3.5 average across all four.',
     note: 'Usually up to 6 weeks — the official guide warns it runs longer over holidays and in busy periods. No interview: the panel sees only what you submitted.',
   },
   {
@@ -183,7 +183,7 @@ const sectors = [
 const faqs = [
   {
     q: 'Is a language certificate (IELTS/TOEFL) required?',
-    a: "No formal language test is required. All documents must be in English. Your 5-minute video pitch is effectively the language assessment. Danish proficiency is not required to enter the program, but classes are free once you register your CPR address. 95%+ of Danes speak fluent English.",
+    a: "No formal language test is required. All documents must be in English. Your 5-minute video pitch is effectively the language assessment. Danish proficiency is not required to enter the program, but classes are free once you register your CPR address.",
   },
   {
     q: 'What if my application is rejected?',
@@ -347,8 +347,8 @@ export default function DenmarkPage() {
               <span className="italic">Digital Nation.</span>
             </h2>
             <p className="font-sans text-[#1a1a1a]/60 text-base leading-relaxed mb-6">
-              Denmark consistently ranks #1 globally for digital government services — you can
-              register a company in minutes. The{' '}
+              Denmark ranked first in the UN E-Government Survey in 2018, 2020, 2022 and 2024, and you
+              register a company online through Virk. The{' '}
               <strong className="text-[#1a1a1a]">Startup Denmark</strong> program is a nationally
               managed pathway for non-EU entrepreneurs building innovative, scalable businesses here.
             </p>
@@ -477,8 +477,8 @@ export default function DenmarkPage() {
               </h2>
               <div className="w-10 h-0.5 bg-[#C8102E] mb-8" />
               <p className="font-sans text-[#1a1a1a]/60 text-sm leading-relaxed mb-6">
-                At least 3 independent consultants from Danish Business Hubs evaluate your pitch
-                package. Each scores all 4 criteria from 1–5. You need a combined average of{' '}
+                Three members of the independent expert panel appointed by the Danish Business Authority
+                evaluate your pitch package. Each scores all 4 criteria from 1–5. You need a combined average of{' '}
                 <strong className="text-[#1a1a1a]">at least 3.5 out of 5</strong>.
               </p>
               <p className="font-sans text-[#1a1a1a]/60 text-sm leading-relaxed">
@@ -554,8 +554,10 @@ export default function DenmarkPage() {
               Proof of Funds
             </h2>
             <p className="font-sans text-white/50 text-sm leading-relaxed mb-10">
-              Demonstrate sufficient funds for your first year in Denmark. Funds do not need to be
-              frozen — they just need to appear on a recent bank statement.
+              Show you can support yourself, and any family who come with you, for the first year. A
+              bank statement in your name, with the currency, date and account holder on it, is the usual
+              evidence. The money is not frozen or paid to anyone, but it is there to live on: SIRI can ask
+              for more documentation, and self-support is assessed again at extension.
             </p>
 
             <div className="space-y-0 border-t border-white/10">
@@ -575,8 +577,9 @@ export default function DenmarkPage() {
 
             <div className="mt-10 p-5 border border-white/10 bg-white/5">
               <p className="font-sans text-xs text-white/50 leading-relaxed">
-                <strong className="text-white">Copenhagen cost estimates:</strong> Apartment rent ~€800–€1,300/month · Food & transport for two ~€400/month ·
-                Government fee DKK 3,060 (~€410) · Danish language classes: free after CPR registration.
+                <strong className="text-white">Budget beyond the minimum:</strong> the figures above are SIRI&apos;s floor, not a
+                Copenhagen budget — rent there is the largest cost and runs well above the national average. Government fee
+                DKK 3,060 (~€410) per founder · Danish language classes: free after CPR registration.
               </p>
             </div>
           </div>
@@ -701,8 +704,8 @@ export default function DenmarkPage() {
               </h2>
               <p className="font-sans text-[#1a1a1a]/60 text-base leading-relaxed mb-10">
                 The cap applies per <em>person</em>, not per team. A 3-founder team uses 3 of the
-                75 slots. Real data: one approved team's permit numbers were 67, 68, and 69 — the
-                cap was nearly full by mid-year.
+                75 slots, and the count resets on 1 January — so a team that applies late in the year
+                is competing for what is left.
               </p>
 
               <div className="space-y-4">
