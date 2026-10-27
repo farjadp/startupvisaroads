@@ -7,6 +7,7 @@ import { router } from 'expo-router';
 import { useEffect, useRef } from 'react';
 import { AccessibilityInfo, BackHandler, Pressable, View, findNodeHandle, type Text as RNText } from 'react-native';
 import { fromUsd, type FxCurrency } from '@shared/fx';
+import { ROUTES_V2 } from '@shared/routes-v2';
 import {
   AGE_BANDS,
   ASSESS_ORDER,
@@ -260,7 +261,7 @@ export default function Assessment() {
       </T>
       {intro ? (
         <View style={{ gap: space.s3 }}>
-          <T variant="body">{t('assess2.introBody')}</T>
+          <T variant="body">{t('assess2.introBody', { routes: count(ROUTES_V2.length), countries: count(new Set(ROUTES_V2.map((r) => r.country)).size) })}</T>
           <T variant="body">{t('assess2.introPrivate')}</T>
           <T variant="caption" tone="fgMuted">
             {t('assess2.introNotApproval')}

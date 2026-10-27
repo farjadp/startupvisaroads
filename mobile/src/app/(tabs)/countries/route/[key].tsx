@@ -2,12 +2,17 @@
 // fact first, then the conditions we can check and the ones only the
 // authority decides, the money (with "about USD" when the user asked for it),
 // time, fees, the path to permanent residence and every source with its date.
-// Unverified routes say so before any figure.
+// Unverified routes say so before any figure. v3 (spec 2026-10-27, layout A):
+// the road (steps), the quiz, documents and team money, then the conditions,
+// realities, the timeline to citizenship and the country, for routes this user
+// can run; routes closed to them keep only the facts and the reason.
 import { Stack, router, useLocalSearchParams } from 'expo-router';
 import { View, useWindowDimensions } from 'react-native';
 import { toUsd, type FxCurrency } from '@shared/fx';
 import { routeV2 } from '@shared/routes-v2';
+import { extrasOf } from '@shared/routes-v2/extras';
 import type { Criterion, MoneyLine } from '@shared/routes-v2/types';
+import { HOME_CURRENCY, type Residence } from '@/content/assessment';
 import { COUNTRY_NAMES, type Country, type RouteKey } from '@/content/routes';
 import { useI18n } from '@/i18n/I18nProvider';
 import { useStore } from '@/state/store';
@@ -15,6 +20,7 @@ import { useTheme } from '@/theme/ThemeProvider';
 import { space } from '@/theme/tokens';
 import { Flag } from '@/ui/Flag';
 import { Banner, Button, Disclaimer, Heading, Label, LinkRow, Ruled, Screen, SourceLine } from '@/ui/kit';
+import { CheckWhatYouKnow, Documents, Realities, TeamMoney, ToCitizenship, YourRoad } from '@/ui/road';
 import { T } from '@/ui/T';
 
 /** Label beside amount; stacked at accessibility text sizes so the label never breaks word by word (HIG Dynamic Type). */
@@ -95,9 +101,17 @@ function MoneyRow({ m }: { m: MoneyLine }) {
 export default function RoutePage() {
   const { key } = useLocalSearchParams<{ key: string }>();
   const { t, pick, money } = useI18n();
+  const { state } = useStore();
   const row = useAmountRow();
   const route = routeV2(String(key));
   if (!route) return null;
+  const extras = extrasOf(route.key) ?? {};
+  const about = () => router.navigate('/(tabs)/me/about');
+  // The passport gate (v2 flow §3): a route closed to the user's passport carries no journey, quiz or offer.
+  const passport = state.assess.citizenship && state.assess.citizenship !== 'skip' ? state.assess.citizenship : null;
+  const blocked = passport && route.blockedCitizenships?.codes.includes(passport) ? route.blockedCitizenships : null;
+  const residence = state.assess.residence && state.assess.residence !== 'skip' ? (state.assess.residence as Residence) : null;
+  const home = residence ? HOME_CURRENCY[residence] : null;
 
   const name = pick(route.name);
   const fact = pick(route.fact);
@@ -108,8 +122,8 @@ export default function RoutePage() {
   const seen = new Set<string>();
   const sources = route.sources.filter((s) => (seen.has(s.url) ? false : (seen.add(s.url), true)));
   // A paused or closed route carries no offer: no CTA, no checklist (trust rules).
-  const runnable = route.status === 'open' || route.status === 'limited';
-  const v1 = runnable ? V1_CHECKLIST[route.key] : undefined;
+  const runnable = (route.status === 'open' || route.status === 'limited') && !blocked;
+  const v1 = runnable && !extras.steps?.length ? V1_CHECKLIST[route.key] : undefined;
 
   return (
     <Screen edges={[]}>
@@ -138,6 +152,12 @@ export default function RoutePage() {
         </T>
       ) : null}
       {route.status !== 'open' ? <Banner text={t(`route2.status.${route.status}`)} /> : null}
+      {blocked ? <Banner text={t('road.notForYou', { reason: pick(blocked.reason).text })} /> : null}
+
+      {runnable && extras.steps ? <YourRoad routeKey={route.key} steps={extras.steps} authority={route.agency} /> : null}
+      {runnable && extras.quiz ? <CheckWhatYouKnow routeKey={route.key} questions={extras.quiz.length} onQuiz={() => router.push(`/(tabs)/countries/quiz/${route.key}`)} /> : null}
+      {runnable && extras.documents ? <Documents routeKey={route.key} docs={extras.documents} /> : null}
+      {extras.funds?.length ? <TeamMoney funds={extras.funds} authority={route.agency} home={home} onAbout={about} /> : null}
 
       {checkable.length ? (
         <View>
@@ -152,7 +172,7 @@ export default function RoutePage() {
         </View>
       ) : null}
 
-      {route.money.length ? (
+      {route.money.length && !extras.funds?.length ? (
         <View>
           <Label>{t('route2.money')}</Label>
           <Ruled>{route.money.map((m) => <MoneyRow key={m.key} m={m} />)}</Ruled>
@@ -185,6 +205,12 @@ export default function RoutePage() {
           {pick(route.pr).text}
         </T>
       </View>
+
+      {extras.realities ? <Realities items={extras.realities} /> : null}
+      {extras.timeline ? <ToCitizenship timeline={extras.timeline} /> : null}
+      <Ruled>
+        <LinkRow icon="globe" label={t('road.aboutCountry', { country: pick(COUNTRY_NAMES[route.country as Country]).text })} onPress={() => router.push(`/(tabs)/countries/country/${route.country}`)} />
+      </Ruled>
 
       {v1 ? (
         <Ruled>

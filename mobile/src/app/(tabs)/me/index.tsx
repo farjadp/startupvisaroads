@@ -2,8 +2,11 @@
 // score through the bands (rule 8); badges only for real milestones (rule 4).
 import { router } from 'expo-router';
 import { Pressable, View } from 'react-native';
+import { routeV2 } from '@shared/routes-v2';
+import { extrasOf } from '@shared/routes-v2/extras';
 import { STEPS } from '@/content/checklist';
 import { ROUTES, ruleFor } from '@/content/routes';
+import { allPoints } from '@/engine/points';
 import { roadView } from '@/engine/road';
 import { mentorIsPrimary, type Level } from '@/engine/readiness';
 import { useI18n } from '@/i18n/I18nProvider';
@@ -11,7 +14,7 @@ import { useStore } from '@/state/store';
 import { useTheme } from '@/theme/ThemeProvider';
 import { space, size } from '@/theme/tokens';
 import { Icon, type IconName } from '@/ui/Icon';
-import { Button, CheckRow, Disclaimer, Heading, Label, Ruled, Screen } from '@/ui/kit';
+import { Button, CheckRow, Disclaimer, Heading, Label, LinkRow, Ruled, Screen } from '@/ui/kit';
 import { NotScored } from '@/ui/NotScored';
 import { ScoreBlock } from '@/ui/ScoreBlock';
 import { T } from '@/ui/T';
@@ -48,6 +51,40 @@ function Badge({ icon, label, earned }: { icon: IconName; label: string; earned:
       <T variant="row" weight="bold" tone={earned ? 'fg' : 'fgMuted'}>
         {label}
       </T>
+    </View>
+  );
+}
+
+/** Learning points (spec 2026-10-27): only here, never beside a match %, with the not-approval line under the total. */
+function LearningPoints() {
+  const { state } = useStore();
+  const { t, pick, count } = useI18n();
+  const { total, routes } = allPoints(state, extrasOf);
+  if (!routes.length) return null;
+  return (
+    <View style={{ gap: space.s2 }}>
+      <Label>{t('me.learning')}</Label>
+      <T variant="figure" accessibilityLabel={t('me.learningA11y', { n: count(total) })}>
+        {count(total)}
+      </T>
+      <T variant="caption" tone="fgMuted">
+        {t('me.learningNote')}
+      </T>
+      <Ruled>
+        {routes.map((r) => {
+          const route = routeV2(r.key);
+          if (!route) return null;
+          const badges = r.badges.map((b) => t(`me.roadBadges.${b}`)).join(' · ');
+          return (
+            <LinkRow
+              key={r.key}
+              label={pick(route.name).text}
+              sub={[t('me.points', { n: count(r.points) }), badges].filter(Boolean).join(' · ')}
+              onPress={() => router.navigate(`/(tabs)/countries/route/${r.key}`)}
+            />
+          );
+        })}
+      </Ruled>
     </View>
   );
 }
@@ -93,6 +130,7 @@ export default function Me() {
             ))}
           </View>
         </View>
+        <LearningPoints />
         <Button kind="link" label={t('me.mentor')} onPress={() => router.push('/(tabs)/me/mentor')} />
         <Disclaimer onAbout={() => router.push('/(tabs)/me/about')} />
       </Screen>
@@ -135,6 +173,8 @@ export default function Me() {
           ))}
         </View>
       </View>
+
+      <LearningPoints />
 
       {next.length ? (
         <View>

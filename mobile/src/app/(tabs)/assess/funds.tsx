@@ -32,7 +32,7 @@ const MAX = 12;
 /** Figures drawn in the family row: IRCC's table lists 1–7; "8+" hands over to the stepper. */
 const GLYPHS = 7;
 
-const SYMBOL: Record<FxCurrency, string> = { EUR: '€', USD: '$', CAD: 'C$', DKK: 'kr', TRY: '₺', ILS: '₪', AED: 'د.إ', GBP: '£', CNY: '¥', INR: '₹' };
+const SYMBOL: Record<FxCurrency, string> = { EUR: '€', USD: '$', CAD: 'C$', DKK: 'kr', TRY: '₺', ILS: '₪', AED: 'د.إ', GBP: '£', CNY: '¥', INR: '₹', AUD: 'A$', NOK: 'kr', SEK: 'kr' };
 /** The official currency of each country's figure (the one never offered as an extra). */
 const OFFICIAL: Record<FundsCountry, FxCurrency> = { CA: 'CAD', DK: 'DKK', FI: 'EUR', EE: 'EUR', NL: 'EUR', IT: 'EUR', TR: 'TRY', US: 'USD' } as Record<FundsCountry, FxCurrency>;
 /** Home currency when the assessment has not said where the user lives. */

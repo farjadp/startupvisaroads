@@ -1,13 +1,16 @@
 // Country page (v2): its picture, its roads grouped by family, and its funds.
 // Roads open the route page. Countries still being researched say so plainly.
+// v3: strengths, weaknesses and sourced indicators (spec 2026-10-27).
 import { Stack, router, useLocalSearchParams } from 'expo-router';
 import { View } from 'react-native';
 import { FUNDS } from '@shared/funds';
 import { routesOf } from '@shared/routes-v2';
+import { PROFILES } from '@shared/routes-v2/extras';
 import { COUNTRY_HERO, COUNTRY_NAMES, COUNTRY_ORDER, FAMILY_ICON, FAMILY_ORDER, type Country } from '@/content/routes';
 import { useI18n } from '@/i18n/I18nProvider';
 import { space } from '@/theme/tokens';
 import { CountryPicture } from '@/ui/CountryPicture';
+import { CountryProfileView } from '@/ui/road';
 import { Disclaimer, Heading, Label, LinkRow, Ruled, Screen } from '@/ui/kit';
 import { T } from '@/ui/T';
 
@@ -55,6 +58,7 @@ export default function CountryPage() {
           </View>
         ))
       )}
+      <CountryProfileView profile={PROFILES[country]} />
       {country in FUNDS ? (
         <Ruled>
           <LinkRow icon="wallet" label={t('countries.funds')} onPress={() => router.push({ pathname: '/(tabs)/assess/funds', params: { country } })} />

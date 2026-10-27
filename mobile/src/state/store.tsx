@@ -37,6 +37,12 @@ export type AppState = {
   following: RouteKey[];
   /** The opening motion plays once; later launches fade. */
   introSeen: boolean;
+  /** Route page v3 (road map): steps ticked, documents ready, best quiz attempt, per v2 route key. Points are derived, never stored. */
+  journey: Record<string, string[]>;
+  docs: Record<string, string[]>;
+  quizBest: Record<string, { right: number; of: number }>;
+  /** Who the money is counted for on team routes. */
+  team: { founders: number; spouse: boolean; children: number };
 };
 
 const KEY = 'vr.state.v1';
@@ -61,6 +67,10 @@ export const INITIAL: AppState = {
   assessAt: null,
   following: [],
   introSeen: false,
+  journey: {},
+  docs: {},
+  quizBest: {},
+  team: { founders: 1, spouse: false, children: 0 },
 };
 
 type Actions = {
@@ -68,6 +78,8 @@ type Actions = {
   answer: (key: QuizKey, value: string) => void;
   toggleStep: (route: RouteKey, step: StepId) => void;
   openedSource: (route: RouteKey) => void;
+  /** Ticks or unticks an item in a per-route list (journey stations, documents). */
+  toggleIn: (list: 'journey' | 'docs', route: string, item: string) => void;
   reset: () => Promise<void>;
   /** Writes the current state now; a restart must not race the debounced write. */
   persistNow: () => Promise<void>;
@@ -120,12 +132,21 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     (route: RouteKey) => setState((s) => (s.sourcesOpened.includes(route) ? s : { ...s, sourcesOpened: [...s.sourcesOpened, route] })),
     [],
   );
+  const toggleIn = useCallback(
+    (list: 'journey' | 'docs', route: string, item: string) =>
+      setState((s) => {
+        const cur = s[list][route] ?? [];
+        const next = cur.includes(item) ? cur.filter((x) => x !== item) : [...cur, item];
+        return { ...s, [list]: { ...s[list], [route]: next } };
+      }),
+    [],
+  );
   const reset = useCallback(async () => {
     await AsyncStorage.removeItem(KEY).catch(() => {});
     setState((s) => ({ ...INITIAL, locale: s.locale, onboarded: true, mode: s.mode, introSeen: s.introSeen }));
   }, []);
 
-  const value = useMemo(() => ({ state, hydrated, introSeenAtLaunch, set, answer, toggleStep, openedSource, reset, persistNow }), [state, hydrated, introSeenAtLaunch, set, answer, toggleStep, openedSource, reset, persistNow]);
+  const value = useMemo(() => ({ state, hydrated, introSeenAtLaunch, set, answer, toggleStep, openedSource, toggleIn, reset, persistNow }), [state, hydrated, introSeenAtLaunch, set, answer, toggleStep, openedSource, toggleIn, reset, persistNow]);
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }
 

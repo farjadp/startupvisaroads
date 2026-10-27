@@ -1,4 +1,5 @@
 import { Stack } from 'expo-router';
+import { Platform } from 'react-native';
 import { useI18n } from '@/i18n/I18nProvider';
 import { useTheme } from '@/theme/ThemeProvider';
 import { stackOptions } from '@/ui/stackOptions';
@@ -15,6 +16,8 @@ export default function CountriesStack() {
       <Stack.Screen name="country/[code]" options={{ title: '' }} />
       <Stack.Screen name="route/[key]" options={{ title: '' }} />
       <Stack.Screen name="[key]" options={{ title: '' }} />
+      {/* A self-contained task: a sheet on iOS (swipe down closes it), a full screen with Back on Android. */}
+      <Stack.Screen name="quiz/[key]" options={{ title: '', presentation: Platform.OS === 'ios' ? 'modal' : 'card' }} />
     </Stack>
   );
 }
