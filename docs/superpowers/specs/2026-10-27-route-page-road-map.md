@@ -88,3 +88,15 @@ Fixed in this spec: journey, quiz, checklist, points and mentor button gated on 
 Open for Farjad:
 - The v2 flow spec says "Match % is the only number in the app". A learning-points total is a second number. Keep points (with the guards above), or drop the total and keep badges only?
 - Weighting: a perfect quiz gives 50 points while ten ready documents give 20, so learning outweighs preparing. Rebalance (e.g. 5 per document), or accept because points never touch the match %?
+
+## Decisions after the reviews (27 Oct 2026)
+
+- **Points stay, with badges** (Farjad). The total shows only on Me, with the not-approval line under it, never beside a match %.
+- **Preparing outweighs quizzing** (Farjad): 10 per step ticked, 5 per document ready, 5 per right answer (`mobile/src/engine/points.ts`). This replaces the weights in "Points and badges" above.
+- **Quiz Close sits where iOS 26 sheets put it** (top trailing), following the platform rather than this spec.
+- **Household money** (post-build auditor, P1): `per: 'household'` counts once whatever the size, `per: 'children'` once when there is a child, and size-table rows (`householdSize`, `openEnded`) show only the row for 1 + spouse + children (`mobile/src/engine/household.ts`, tested). Lines are never summed with each other, because fee lines are often alternatives.
+
+Open:
+- `prAfterYears: 0` reads "can apply for permanent residence from arrival" (AU NIV, Canada PR routes, one Finnish degree route). Confirm the wording and the Finnish value.
+- Quiz "why" lines have no per-question source yet; `QuizItem` needs a `source`.
+- Indicator units are English-only strings; Persian decimals use "." not "٫".

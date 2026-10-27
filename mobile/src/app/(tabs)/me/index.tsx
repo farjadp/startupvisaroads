@@ -59,7 +59,14 @@ function Badge({ icon, label, earned }: { icon: IconName; label: string; earned:
 function LearningPoints() {
   const { state } = useStore();
   const { t, pick, count } = useI18n();
-  const { total, routes } = allPoints(state, extrasOf);
+  // Points and badges are never shown for a route this user cannot run (spec: paused, closed, or shut to their passport).
+  const passport = state.assess.citizenship && state.assess.citizenship !== 'skip' ? state.assess.citizenship : null;
+  const runnable = (key: string) => {
+    const r = routeV2(key);
+    return !!r && (r.status === 'open' || r.status === 'limited') && !(passport && r.blockedCitizenships?.codes.includes(passport));
+  };
+  const routes = allPoints(state, extrasOf).routes.filter((r) => runnable(r.key));
+  const total = routes.reduce((s, r) => s + r.points, 0);
   if (!routes.length) return null;
   return (
     <View style={{ gap: space.s2 }}>
@@ -79,7 +86,7 @@ function LearningPoints() {
             <LinkRow
               key={r.key}
               label={pick(route.name).text}
-              sub={[t('me.points', { n: count(r.points) }), badges].filter(Boolean).join(' · ')}
+              sub={[t('me.learningA11y', { n: count(r.points) }), badges].filter(Boolean).join(' · ')}
               onPress={() => router.navigate(`/(tabs)/countries/route/${r.key}`)}
             />
           );

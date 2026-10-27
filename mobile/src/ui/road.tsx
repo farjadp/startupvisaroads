@@ -9,6 +9,7 @@ import type { DocItem, FundLine, Reality, Step, Timeline } from '@shared/routes-
 import type { CountryProfile, Indicator } from '@shared/routes-v2/extras-types';
 import type { L10n } from '@shared/routes-v2/types';
 import { toPersianDigits } from '@/i18n/format';
+import { linesFor, type Who } from '@/engine/household';
 import { useI18n } from '@/i18n/I18nProvider';
 import { useStore } from '@/state/store';
 import { useTheme } from '@/theme/ThemeProvider';
@@ -18,6 +19,18 @@ import { Button, CheckRow, Label, Progress, Ruled, SourceLine } from './kit';
 import { T } from './T';
 
 const HIT = Platform.OS === 'android' ? size.touchMinAndroid : size.touchMin;
+
+/** The day the v3 route depth (funds, realities, timelines) was read from the official pages. Move it into the data when a file is re-checked. */
+const EXTRAS_CHECKED = '2026-10-27';
+
+/** Message key for a count of years or children: singular, Arabic dual and 11+, otherwise the regular form (no ICU in t()). */
+function countKey(base: string, n: number, locale: string): string {
+  if (n === 1 && locale !== 'zh') return `${base}One`;
+  if (locale === 'fr' && n < 2) return `${base}One`;
+  if (locale === 'ar' && n === 2) return `${base}Two`;
+  if (locale === 'ar' && Number.isInteger(n) && n >= 11) return `${base}Many`;
+  return base;
+}
 
 /** Localised text with its language, so screen readers switch voice for English fallbacks. */
 function Txt({ text, variant = 'body', tone, weight }: { text: L10n; variant?: 'body' | 'row' | 'caption'; tone?: 'fg' | 'fgMuted'; weight?: 'bold' | 'medium' }) {
@@ -115,7 +128,8 @@ export function YourRoad({ routeKey, steps, authority }: { routeKey: string; ste
             <Icon name="route" size={20} tone="fgMuted" />
           </View>
           <T variant="row" tone="fgMuted" style={{ flex: 1 }}>
-            {t('road.outcome', { authority: pick(authority).text.split(/[;؛]/)[0].trim() })}
+            {/* The whole authority line: its first part can be the wrong body (Denmark: the panel, not SIRI, which grants residence). */}
+            {t('road.outcome', { authority: pick(authority).text })}
           </T>
         </View>
       </Ruled>
@@ -186,6 +200,7 @@ export function Documents({ routeKey, docs }: { routeKey: string; docs: DocItem[
               <Pressable
                 onPress={() => setOpen((s) => new Set(s.has(g.stage) ? [...s].filter((x) => x !== g.stage) : [...s, g.stage]))}
                 accessibilityRole="button"
+                accessibilityLabel={head}
                 accessibilityState={{ expanded: isOpen }}
                 style={{ flexDirection: 'row', alignItems: 'center', minHeight: HIT, gap: space.s2 }}
               >
@@ -262,18 +277,8 @@ type Basis = 'once' | 'firstYear' | 'year' | 'month';
 // 'year' in the data is one lump sum covering the first year (Denmark); 'perYear' recurs.
 const BASIS: Record<FundLine['basis'], Basis> = { once: 'once', year: 'firstYear', perYear: 'year', prevYearIncome: 'year', month: 'month' };
 
-/** How many times a line counts for this household. Lines are never summed with each other:
- *  fee lines are often alternatives (in the country / abroad), and bases differ (auditor P0). */
-function timesFor(l: FundLine, who: { founders: number; spouse: boolean; children: number }): number {
-  if (l.per === 'founder') return who.founders;
-  if (l.per === 'spouse') return who.spouse ? 1 : 0;
-  if (l.per === 'child') return who.children;
-  if (l.per === 'family') return who.spouse || who.children ? 1 : 0;
-  return 1;
-}
-
 export function TeamMoney({ funds, authority, home, onAbout }: { funds: FundLine[]; authority: L10n; home: FxCurrency | null; onAbout: () => void }) {
-  const { t, pick, money, count } = useI18n();
+  const { t, pick, money, count, locale } = useI18n();
   const { c } = useTheme();
   const { state, set } = useStore();
   const { fontScale } = useWindowDimensions();
@@ -281,10 +286,12 @@ export function TeamMoney({ funds, authority, home, onAbout }: { funds: FundLine
   if (!funds.length) return null;
   const team = state.team;
   const has = (...per: FundLine['per'][]) => funds.some((f) => per.includes(f.per));
-  const showFounders = has('founder', 'team');
-  const showSpouse = has('spouse', 'family');
-  const showChildren = has('child', 'family');
-  const who = { founders: showFounders ? team.founders : 1, spouse: showSpouse && team.spouse, children: showChildren ? team.children : 0 };
+  const sized = funds.some((f) => f.householdSize != null);
+  // Controls appear only when a published amount depends on them (auditor P1).
+  const showFounders = has('founder');
+  const showSpouse = sized || has('spouse');
+  const showChildren = sized || has('child', 'children');
+  const who: Who = { founders: showFounders ? team.founders : 1, spouse: showSpouse && team.spouse, children: showChildren ? team.children : 0 };
   const announce = (msg: string) => {
     if (Platform.OS === 'ios') AccessibilityInfo.announceForAccessibility(msg);
   };
@@ -294,7 +301,7 @@ export function TeamMoney({ funds, authority, home, onAbout }: { funds: FundLine
     announce(t('road.recounted'));
   };
   const stacked = fontScale > 1.35;
-  const lines = funds.map((f) => ({ f, times: timesFor(f, who) })).filter((l) => l.times > 0);
+  const lines = linesFor(funds, who);
   if (!lines.length) return null;
   return (
     <View style={{ gap: space.s2 }}>
@@ -323,7 +330,7 @@ export function TeamMoney({ funds, authority, home, onAbout }: { funds: FundLine
         <Stepper
           label={t('road.children')}
           value={team.children}
-          valueText={t('road.childrenValue', { n: count(team.children) })}
+          valueText={team.children === 1 ? t('road.childrenOne') : t('road.childrenValue', { n: count(team.children) })}
           min={0}
           max={4}
           onChange={(n) => setTeam({ children: n })}
@@ -349,7 +356,7 @@ export function TeamMoney({ funds, authority, home, onAbout }: { funds: FundLine
                 const amount = f.amount * times;
                 const shown = f.approx ? t('funds.about', { amount: money(amount, f.currency) }) : money(amount, f.currency);
                 const label = pick(f.label);
-                const meta = [times > 1 ? `${count(times)} × ${money(f.amount, f.currency)}` : t(`road.per.${f.per}`), t(`road.basis.${BASIS[f.basis]}`)].join(' · ');
+                const meta = [times > 1 ? `${count(times)} × ${money(f.amount, f.currency)}` : f.householdSize != null ? null : t(`road.per.${f.per}`), t(`road.basis.${BASIS[f.basis]}`)].filter(Boolean).join(' · ');
                 const usd = f.currency !== 'USD' ? t('funds.about', { amount: money(convert(amount, f.currency, 'USD'), 'USD') }) : null;
                 const alt = home && home !== f.currency && home !== 'USD' ? t('funds.about', { amount: money(convert(amount, f.currency, home), home) }) : null;
                 return (
@@ -379,7 +386,7 @@ export function TeamMoney({ funds, authority, home, onAbout }: { funds: FundLine
               <T variant="caption" lang={pick(f.label).lang}>
                 {`${pick(f.label).text}: ${f.approx ? t('funds.about', { amount: money(f.amount, f.currency) }) : money(f.amount, f.currency)} · ${t(`road.per.${f.per}`)}`}
               </T>
-              <SourceLine url={f.source} updated="2026-10-27" />
+              <SourceLine url={f.source} updated={EXTRAS_CHECKED} />
             </View>
           ))
         : null}
@@ -417,7 +424,7 @@ export function Realities({ items }: { items: Reality[] }) {
               {pick(r.title).text}
             </T>
             <Txt text={r.detail} />
-            {r.source ? <SourceLine url={r.source} updated="2026-10-27" /> : null}
+            {r.source ? <SourceLine url={r.source} updated={EXTRAS_CHECKED} /> : null}
           </View>
         ))}
       </Ruled>
@@ -429,13 +436,16 @@ export function Realities({ items }: { items: Reality[] }) {
 // ------------------------------------------------------------ residence to citizenship
 
 export function ToCitizenship({ timeline }: { timeline: Timeline }) {
-  const { t, pick, count } = useI18n();
+  const { t, pick, count, locale } = useI18n();
   const { c } = useTheme();
   const { fontScale } = useWindowDimensions();
+  const pr = timeline.prAfterYears;
+  const cit = timeline.citizenshipAfterYears;
   const nodes = [
     t('road.arrive'),
-    timeline.prAfterYears != null ? t('road.prAfter', { n: count(timeline.prAfterYears) }) : null,
-    timeline.citizenshipAfterYears != null ? t('road.citizenAfter', { n: count(timeline.citizenshipAfterYears) }) : null,
+    // 0 years: permanent from the start (Australia's NIV, Canada's PR routes), never "after 0 years".
+    pr != null ? (pr === 0 ? t('road.prFromStart') : t(`road.${countKey('prAfter', pr, locale)}`, { n: count(pr) })) : null,
+    cit != null ? t(`road.${countKey('citizenAfter', cit, locale)}`, { n: count(cit) }) : null,
   ].filter((x): x is string => !!x);
   // Stacked at large text (auditor: French labels wrap); a list for screen readers either way.
   const stacked = fontScale > 1.3 || nodes.some((n) => n.length > 48);
@@ -453,9 +463,10 @@ export function ToCitizenship({ timeline }: { timeline: Timeline }) {
         ))}
       </View>
       <T variant="body">{t(`road.dual.${timeline.dualCitizenship}`)}</T>
-      {timeline.language ? <T variant="body" lang={pick(timeline.language).lang}>{t('road.language', { text: pick(timeline.language).text })}</T> : null}
+      {/* No lang here: the label is in the UI language, and an English fallback would flip an Arabic line's direction. */}
+      {timeline.language ? <T variant="body">{t('road.language', { text: pick(timeline.language).text })}</T> : null}
       {timeline.note ? <Txt text={timeline.note} variant="caption" tone="fgMuted" /> : null}
-      <SourceLine url={timeline.source} updated="2026-10-27" />
+      <SourceLine url={timeline.source} updated={EXTRAS_CHECKED} />
     </View>
   );
 }
@@ -463,7 +474,7 @@ export function ToCitizenship({ timeline }: { timeline: Timeline }) {
 // ------------------------------------------------------------------ country profile
 
 function IndicatorRow({ i }: { i: Indicator }) {
-  const { t, count, meta } = useI18n();
+  const { t, count, meta, money } = useI18n();
   // A year is a label, not a quantity: no thousands separator.
   const year = meta.proseDigits === 'persian' ? toPersianDigits(String(i.year)) : String(i.year);
   const { c } = useTheme();
@@ -473,7 +484,11 @@ function IndicatorRow({ i }: { i: Indicator }) {
         ? t('profile.rank', { rank: count(i.rank), of: count(i.of) })
         : t('profile.rankOnly', { rank: count(i.rank) })
       : i.value != null
-        ? `${i.value.toLocaleString('en-US')}${i.unit ? ` ${i.unit}` : ''}`
+        ? // US$ stays Latin as money; a % is already in the row's name, so the figure is a plain count
+          // (Persian digits in fa, and no "% 8.7" bidi flip). Other units are still English in the data.
+          i.unit === 'USD'
+          ? money(i.value, 'USD')
+          : `${count(i.value)}${i.unit && i.unit !== '%' ? ` ${i.unit}` : ''}`
         : '';
   return (
     <View style={{ paddingVertical: space.s2, borderBottomWidth: 1, borderBottomColor: c.rule }}>

@@ -5,8 +5,13 @@
 // Farjad's Gemini notebooks are leads, never sources.
 import type { L10n, MoneyBasis, Source, V2Currency } from './types';
 
-/** Who a money line is counted for. Team routes add one line per founder. */
-export type MoneyPer = 'person' | 'founder' | 'team' | 'spouse' | 'child' | 'family';
+/**
+ * Who a money line is counted for. 'household' counts once whatever the size
+ * (a fee covering the whole family); 'children' counts once when there is at
+ * least one child (Denmark's flat child add-on); 'child' counts per child.
+ * Lines from a size table carry `householdSize` instead (auditor, 27 Oct 2026).
+ */
+export type MoneyPer = 'person' | 'founder' | 'team' | 'spouse' | 'child' | 'children' | 'household';
 
 export type FundLine = {
   key: string;
@@ -18,6 +23,10 @@ export type FundLine = {
   /** Kept in the account (proof of funds) vs paid out (a fee, a deposit, an investment). */
   kind: 'show' | 'spend' | 'invest';
   approx?: boolean;
+  /** A row of a size table (Canada's settlement funds): shown only for a household of this size. */
+  householdSize?: number;
+  /** The table's last row also covers larger households (its label says what to add per member). */
+  openEnded?: boolean;
   source: string;
 };
 

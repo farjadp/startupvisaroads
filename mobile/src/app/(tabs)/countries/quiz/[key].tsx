@@ -4,8 +4,8 @@
 // never colour alone. No timer, no confetti. Leaving drops the attempt; the
 // best score is kept. Answers come from the route's official data only.
 import { Stack, router, useLocalSearchParams } from 'expo-router';
-import { useMemo, useState } from 'react';
-import { AccessibilityInfo, Platform, View } from 'react-native';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { AccessibilityInfo, Platform, View, findNodeHandle, type Text as RNText } from 'react-native';
 import { routeV2 } from '@shared/routes-v2';
 import { extrasOf } from '@shared/routes-v2/extras';
 import { useI18n } from '@/i18n/I18nProvider';
@@ -43,6 +43,14 @@ export default function Quiz() {
   const [attempt, setAttempt] = useState(0);
   const orders = useMemo(() => quiz.map((q) => shuffled(q.options.length)), [quiz, attempt]);
   const [i, setI] = useState(0);
+  // After Next, screen-reader focus moves to the new question (WCAG 2.4.3), not the button's old spot.
+  const questionRef = useRef<RNText>(null);
+  const moved = useRef(false);
+  useEffect(() => {
+    if (!moved.current) return;
+    const node = questionRef.current && findNodeHandle(questionRef.current);
+    if (node) AccessibilityInfo.setAccessibilityFocus(node);
+  }, [i]);
   const [chosen, setChosen] = useState<number | null>(null);
   const [checked, setChecked] = useState(false);
   const [right, setRight] = useState(0);
@@ -66,6 +74,7 @@ export default function Quiz() {
 
   const next = () => {
     if (i + 1 < quiz.length) {
+      moved.current = true;
       setI(i + 1);
       setChosen(null);
       setChecked(false);
@@ -111,7 +120,13 @@ export default function Quiz() {
         </T>
         <Button kind="secondary" label={t('quiz.again')} onPress={again} />
         <Button kind="link" label={t('quiz.back')} onPress={() => router.back()} />
-        <Disclaimer onAbout={() => router.navigate('/(tabs)/me/about')} />
+        {/* The iOS sheet covers the tabs: close it first, or the About page opens unseen underneath. */}
+        <Disclaimer
+          onAbout={() => {
+            router.back();
+            router.navigate('/(tabs)/me/about');
+          }}
+        />
       </Screen>
     );
   }
@@ -125,7 +140,7 @@ export default function Quiz() {
         {`${title} · ${t('quiz.progress', { n: count(i + 1), total: count(quiz.length) })}`}
       </T>
       <Progress value={(i / quiz.length) * 100} />
-      <T variant="headline" weight="bold" accessibilityRole="header" lang={qText.lang}>
+      <T ref={questionRef} variant="headline" weight="bold" accessibilityRole="header" lang={qText.lang}>
         {qText.text}
       </T>
       <View accessibilityRole="radiogroup">

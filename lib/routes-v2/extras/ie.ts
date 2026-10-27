@@ -55,7 +55,7 @@ export const EXTRAS_IE: Record<string, RouteExtras> = {
         amount: 350,
         currency: 'EUR',
         basis: 'once',
-        per: 'family',
+        per: 'household',
         kind: 'spend',
         source: STEP,
       },

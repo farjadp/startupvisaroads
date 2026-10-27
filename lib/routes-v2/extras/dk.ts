@@ -67,7 +67,7 @@ export const EXTRAS_DK: Record<string, RouteExtras> = {
         amount: 50_424,
         currency: 'DKK',
         basis: 'year',
-        per: 'family',
+        per: 'children',
         kind: 'show',
         source: FAMILY_FUNDS,
       },
@@ -114,8 +114,8 @@ export const EXTRAS_DK: Record<string, RouteExtras> = {
         key: 'panel',
         title: { en: 'Expert panel evaluation', fa: 'ارزیابی پنل کارشناسان' },
         detail: {
-          en: 'Three panel members grade innovation, market, scalability and team from 1 to 5. You need an average of at least 3.5 across all four. A rejection can be appealed once to the Danish Business Authority, or you can reapply with a substantially improved plan.',
-          fa: 'سه عضو پنل نوآوری، بازار، مقیاس‌پذیری و تیم را از ۱ تا ۵ نمره می‌دهند. میانگین هر چهار معیار باید دست‌کم ۳٫۵ باشد. به رد پرونده می‌توان یک‌بار نزد اداره‌ی کسب‌وکار دانمارک (Danish Business Authority) اعتراض کرد، یا با طرحی که به‌طور جدی بهتر شده دوباره درخواست داد.',
+          en: 'Three panel members grade innovation, market, scalability and team from 1 to 5. You need an average of at least 3.5 across all four. A negative assessment can be appealed once to the Danish Business Authority, or you can reapply with a substantially improved plan.',
+          fa: 'سه عضو پنل نوآوری، بازار، مقیاس‌پذیری و تیم را از ۱ تا ۵ نمره می‌دهند. میانگین هر چهار معیار باید دست‌کم ۳٫۵ باشد. به ارزیابی منفی می‌توان یک‌بار نزد اداره‌ی کسب‌وکار دانمارک (Danish Business Authority) اعتراض کرد، یا با طرحی که به‌طور جدی بهتر شده دوباره درخواست داد.',
         },
         takes: { en: 'Usually up to 6 weeks; longer in holidays or busy periods', fa: 'معمولاً تا ۶ هفته؛ در تعطیلات یا دوره‌های شلوغ بیشتر' },
         link: SUD_GUIDE,
@@ -192,7 +192,7 @@ export const EXTRAS_DK: Record<string, RouteExtras> = {
       {
         key: 'screened-out',
         kind: 'tip',
-        title: { en: 'Most rejections happen before the panel', fa: 'بسیاری از پرونده‌ها پیش از پنل رد می‌شوند' },
+        title: { en: 'Many files are screened out before the panel', fa: 'بسیاری از پرونده‌ها پیش از رسیدن به پنل کنار گذاشته می‌شوند' },
         detail: {
           en: 'A deck over 15 pages, a video over 5 minutes, a missing go-to-market strategy, an EU citizen listed as applicant or a founder without a significant share are all listed reasons for screening out.',
           fa: 'پیچ‌دک بیش از ۱۵ صفحه، ویدیوی بیش از ۵ دقیقه، نبودن استراتژی ورود به بازار، ثبت شهروند اتحادیه‌ی اروپا به‌عنوان متقاضی یا بنیان‌گذاری بدون سهم قابل‌توجه، همه از دلایل رسمی ردشدن در غربالگری‌اند.',
@@ -288,7 +288,7 @@ export const EXTRAS_DK: Record<string, RouteExtras> = {
       },
       {
         key: 'appeal',
-        q: { en: 'The panel rejects your plan. What can you do?', fa: 'پنل طرح شما را رد کرد. چه می‌توانید بکنید؟' },
+        q: { en: 'The panel does not approve your plan. What can you do?', fa: 'پنل طرح شما را تأیید نکرد. چه می‌توانید بکنید؟' },
         options: [
           { en: 'Nothing; the decision is final', fa: 'هیچ؛ تصمیم قطعی است' },
           { en: 'Appeal once, or reapply with a substantially improved plan', fa: 'یک‌بار اعتراض کنید، یا با طرحی که جدی بهتر شده دوباره درخواست دهید' },

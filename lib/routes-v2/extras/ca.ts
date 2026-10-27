@@ -69,8 +69,10 @@ const WORK_PERMIT_FEE: FundLine = {
 };
 
 /** Express Entry settlement-funds table (updated 7 Jul 2025 on the proof-of-funds page). */
-const SETTLEMENT = (per: 'family' | 'founder'): FundLine[] => {
-  const who = per === 'founder' ? { en: ' (each founder, for his or her own family)', fa: ' (هر بنیان‌گذار، برای خانوادهٔ خودش)' } : { en: '', fa: '' };
+const SETTLEMENT = (for_: 'family' | 'founder'): FundLine[] => {
+  // One row per household size; the app shows the row for the user's household (founder routes: each founder's own family).
+  const per = 'household' as const;
+  const who = for_ === 'founder' ? { en: ' (each founder, for his or her own family)', fa: ' (هر بنیان‌گذار، برای خانوادهٔ خودش)' } : { en: '', fa: '' };
   const rows: Array<[number, number, string]> = [
     [1, 15_263, '۱'],
     [2, 19_001, '۲'],
@@ -84,6 +86,7 @@ const SETTLEMENT = (per: 'family' | 'founder'): FundLine[] => {
     currency: 'CAD',
     basis: 'once',
     per,
+    householdSize: n,
     kind: 'show',
     source: S.eeFunds,
   }));
@@ -94,6 +97,8 @@ const SETTLEMENT = (per: 'family' | 'founder'): FundLine[] => {
     currency: 'CAD',
     basis: 'once',
     per,
+    householdSize: 7,
+    openEnded: true,
     kind: 'show',
     source: S.eeFunds,
   });
