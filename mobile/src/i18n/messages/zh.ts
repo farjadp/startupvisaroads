@@ -36,7 +36,7 @@ const zh: Messages = {
     title1: '你想',
     title2: '从哪里开始？',
     roadTitle: '选择路径',
-    roadSub: '10 个国家 · 创业、商业、留学、人才',
+    roadSub: '{n} 个国家 · 创业、商业、留学、人才',
     assessTitle: '开始评估',
     assessTag: '10 个问题',
     assessSub: '十个问题 → 离你最近的路径',

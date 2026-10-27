@@ -36,7 +36,8 @@ const ar: Messages = {
     title1: 'من أين',
     title2: 'تريد أن تبدأ؟',
     roadTitle: 'اختر مسارًا',
-    roadSub: '10 دول · شركات ناشئة، أعمال، دراسة، مواهب',
+    // دولة (singular) is right for 11–99 countries; revisit if the count falls to 10 or below.
+    roadSub: '{n} دولة · شركات ناشئة، أعمال، دراسة، مواهب',
     assessTitle: 'قيّم نفسك',
     assessTag: '10 أسئلة',
     assessSub: 'عشرة أسئلة ← أقرب المسارات إليك',

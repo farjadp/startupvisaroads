@@ -35,7 +35,7 @@ const en = {
     title1: 'Where do you',
     title2: 'want to start?',
     roadTitle: 'Choose a road',
-    roadSub: '10 countries · startup, business, study, talent',
+    roadSub: '{n} countries · startup, business, study, talent',
     assessTitle: 'Get assessed',
     assessTag: '10 questions',
     assessSub: 'Ten questions → the roads closest to you',

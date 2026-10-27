@@ -36,7 +36,7 @@ const fr: Messages = {
     title1: 'Par où',
     title2: 'voulez-vous commencer ?',
     roadTitle: 'Choisir un parcours',
-    roadSub: '10 pays · start-up, entreprise, études, talent',
+    roadSub: '{n} pays · start-up, entreprise, études, talent',
     assessTitle: 'Faire l’évaluation',
     assessTag: '10 questions',
     assessSub: 'Dix questions → les parcours les plus proches de vous',
