@@ -124,6 +124,7 @@ export default function RoutePage() {
   // A paused or closed route carries no offer: no CTA, no checklist (trust rules).
   const runnable = (route.status === 'open' || route.status === 'limited') && !blocked;
   const v1 = runnable && !extras.steps?.length ? V1_CHECKLIST[route.key] : undefined;
+  const calculator = !!extras.funds?.length && (route.status === 'open' || route.status === 'limited');
 
   return (
     <Screen edges={[]}>
@@ -157,7 +158,8 @@ export default function RoutePage() {
       {runnable && extras.steps ? <YourRoad routeKey={route.key} steps={extras.steps} authority={route.agency} /> : null}
       {runnable && extras.quiz ? <CheckWhatYouKnow routeKey={route.key} questions={extras.quiz.length} onQuiz={() => router.push(`/(tabs)/countries/quiz/${route.key}`)} /> : null}
       {runnable && extras.documents ? <Documents routeKey={route.key} docs={extras.documents} /> : null}
-      {extras.funds?.length ? <TeamMoney funds={extras.funds} authority={route.agency} home={home} onAbout={about} founderRange={extras.founders} /> : null}
+      {/* Paused or closed routes show the official figures only, no calculator (Farjad, 27 Oct 2026). */}
+      {calculator && extras.funds ? <TeamMoney funds={extras.funds} authority={route.agency} home={home} onAbout={about} founderRange={extras.founders} /> : null}
 
       {checkable.length ? (
         <View>
@@ -172,7 +174,7 @@ export default function RoutePage() {
         </View>
       ) : null}
 
-      {route.money.length && !extras.funds?.length ? (
+      {route.money.length && !calculator ? (
         <View>
           <Label>{t('route2.money')}</Label>
           <Ruled>{route.money.map((m) => <MoneyRow key={m.key} m={m} />)}</Ruled>
