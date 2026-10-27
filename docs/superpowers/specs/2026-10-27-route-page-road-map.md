@@ -100,3 +100,4 @@ Open:
 - `prAfterYears: 0` reads "can apply for permanent residence from arrival" (AU NIV, Canada PR routes, one Finnish degree route). Confirm the wording and the Finnish value.
 - Quiz "why" lines have no per-question source yet; `QuizItem` needs a `source`.
 - Indicator units are English-only strings; Persian decimals use "." not "٫".
+- **Paused or closed routes show the official figures only** (Farjad): no team-money calculator, as with the journey and quiz.
