@@ -137,6 +137,7 @@ const zh: Messages = {
     moreChildren: '增加子女',
     recounted: '总额已更新。',
     noFamilyAmount: '{authority} 未公布配偶或子女的额外金额。',
+    sizeMissing: '官方表格中有 {n} 人家庭的一行，我们尚未收录。请在来源页面查看您的金额。',
     total: {
       show: '留在你的账户中',
       spend: '支出：费用和押金',
@@ -151,6 +152,7 @@ const zh: Messages = {
     per: {
       person: '每人',
       founder: '每位创始人',
+      'further-founder': '每增加一位创始人',
       team: '每个团队',
       spouse: '配偶',
       child: '每个孩子',

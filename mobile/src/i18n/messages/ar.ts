@@ -137,6 +137,7 @@ const ar: Messages = {
     moreChildren: 'أطفال أكثر',
     recounted: 'تم تحديث المجاميع.',
     noFamilyAmount: 'لا تنشر {authority} مبلغًا إضافيًا للزوج أو الأطفال.',
+    sizeMissing: 'في الجدول الرسمي صفّ لأسرة من {n} أفراد لم ننشره بعد. اقرأ المبلغ الخاص بك في صفحة المصدر.',
     total: {
       show: 'يبقى في حسابك',
       spend: 'مدفوع: رسوم وودائع',
@@ -151,6 +152,7 @@ const ar: Messages = {
     per: {
       person: 'لكل شخص',
       founder: 'لكل مؤسس',
+      'further-founder': 'لكل مؤسس إضافي',
       team: 'لكل فريق',
       spouse: 'للزوج',
       child: 'لكل طفل',

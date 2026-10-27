@@ -137,6 +137,7 @@ const fr: Messages = {
     moreChildren: 'Plus d’enfants',
     recounted: 'Totaux mis à jour.',
     noFamilyAmount: '{authority} ne publie aucun montant supplémentaire pour un conjoint ou des enfants.',
+    sizeMissing: 'Le tableau officiel comporte une ligne pour un foyer de {n} personnes que nous n’avons pas encore publiée. Lisez votre montant sur la page source.',
     total: {
       show: 'Gardé sur votre compte',
       spend: 'Payé : frais et dépôts',
@@ -151,6 +152,7 @@ const fr: Messages = {
     per: {
       person: 'par personne',
       founder: 'par fondateur',
+      'further-founder': 'par fondateur supplémentaire',
       team: 'par équipe',
       spouse: 'pour un conjoint',
       child: 'par enfant',

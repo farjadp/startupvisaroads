@@ -37,6 +37,8 @@ const DK_TIMELINE: Timeline = {
 export const EXTRAS_DK: Record<string, RouteExtras> = {
   // ───────────────────────────── START-UP DENMARK ─────────────────────────────
   'dk-startup': {
+    // A team of up to 3 sharing one plan (europe.ts dk-startup `team-size`).
+    founders: { max: 3 },
     funds: [
       {
         key: 'founder',

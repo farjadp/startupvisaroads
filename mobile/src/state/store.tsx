@@ -80,6 +80,8 @@ type Actions = {
   openedSource: (route: RouteKey) => void;
   /** Ticks or unticks an item in a per-route list (journey stations, documents). */
   toggleIn: (list: 'journey' | 'docs', route: string, item: string) => void;
+  /** Merges into the latest team, so two quick taps never read a stale value. */
+  patchTeam: (patch: Partial<AppState['team']>) => void;
   reset: () => Promise<void>;
   /** Writes the current state now; a restart must not race the debounced write. */
   persistNow: () => Promise<void>;
@@ -141,12 +143,13 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       }),
     [],
   );
+  const patchTeam = useCallback((patch: Partial<AppState['team']>) => setState((s) => ({ ...s, team: { ...s.team, ...patch } })), []);
   const reset = useCallback(async () => {
     await AsyncStorage.removeItem(KEY).catch(() => {});
     setState((s) => ({ ...INITIAL, locale: s.locale, onboarded: true, mode: s.mode, introSeen: s.introSeen }));
   }, []);
 
-  const value = useMemo(() => ({ state, hydrated, introSeenAtLaunch, set, answer, toggleStep, openedSource, toggleIn, reset, persistNow }), [state, hydrated, introSeenAtLaunch, set, answer, toggleStep, openedSource, toggleIn, reset, persistNow]);
+  const value = useMemo(() => ({ state, hydrated, introSeenAtLaunch, set, answer, toggleStep, openedSource, toggleIn, patchTeam, reset, persistNow }), [state, hydrated, introSeenAtLaunch, set, answer, toggleStep, openedSource, toggleIn, patchTeam, reset, persistNow]);
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }
 

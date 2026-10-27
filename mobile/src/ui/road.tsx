@@ -9,7 +9,7 @@ import type { DocItem, FundLine, Reality, Step, Timeline } from '@shared/routes-
 import type { CountryProfile, Indicator } from '@shared/routes-v2/extras-types';
 import type { L10n } from '@shared/routes-v2/types';
 import { toPersianDigits } from '@/i18n/format';
-import { linesFor, type Who } from '@/engine/household';
+import { linesFor, sizeMissing, type Who } from '@/engine/household';
 import { useI18n } from '@/i18n/I18nProvider';
 import { useStore } from '@/state/store';
 import { useTheme } from '@/theme/ThemeProvider';
@@ -277,10 +277,10 @@ type Basis = 'once' | 'firstYear' | 'year' | 'month';
 // 'year' in the data is one lump sum covering the first year (Denmark); 'perYear' recurs.
 const BASIS: Record<FundLine['basis'], Basis> = { once: 'once', year: 'firstYear', perYear: 'year', prevYearIncome: 'year', month: 'month' };
 
-export function TeamMoney({ funds, authority, home, onAbout }: { funds: FundLine[]; authority: L10n; home: FxCurrency | null; onAbout: () => void }) {
+export function TeamMoney({ funds, authority, home, onAbout, founderRange }: { funds: FundLine[]; authority: L10n; home: FxCurrency | null; onAbout: () => void; founderRange?: { min?: number; max?: number } }) {
   const { t, pick, money, count, locale } = useI18n();
   const { c } = useTheme();
-  const { state, set } = useStore();
+  const { state, patchTeam } = useStore();
   const { fontScale } = useWindowDimensions();
   const [how, setHow] = useState(false);
   if (!funds.length) return null;
@@ -288,20 +288,23 @@ export function TeamMoney({ funds, authority, home, onAbout }: { funds: FundLine
   const has = (...per: FundLine['per'][]) => funds.some((f) => per.includes(f.per));
   const sized = funds.some((f) => f.householdSize != null);
   // Controls appear only when a published amount depends on them (auditor P1).
-  const showFounders = has('founder');
+  const showFounders = has('founder', 'further-founder');
   const showSpouse = sized || has('spouse');
   const showChildren = sized || has('child', 'children');
-  const who: Who = { founders: showFounders ? team.founders : 1, spouse: showSpouse && team.spouse, children: showChildren ? team.children : 0 };
+  const fMin = founderRange?.min ?? 1;
+  const fMax = founderRange?.max ?? 5;
+  const founders = Math.max(fMin, Math.min(fMax, team.founders));
+  const who: Who = { founders: showFounders ? founders : 1, spouse: showSpouse && team.spouse, children: showChildren ? team.children : 0 };
   const announce = (msg: string) => {
     if (Platform.OS === 'ios') AccessibilityInfo.announceForAccessibility(msg);
   };
   const setTeam = (patch: Partial<typeof team>) => {
-    const next = { ...team, ...patch };
-    set({ team: next });
+    patchTeam(patch);
     announce(t('road.recounted'));
   };
   const stacked = fontScale > 1.35;
   const lines = linesFor(funds, who);
+  const missing = sizeMissing(funds, who);
   if (!lines.length) return null;
   return (
     <View style={{ gap: space.s2 }}>
@@ -309,10 +312,10 @@ export function TeamMoney({ funds, authority, home, onAbout }: { funds: FundLine
       {showFounders ? (
         <Stepper
           label={t('road.founders')}
-          value={team.founders}
-          valueText={team.founders === 1 ? t('road.foundersOne') : t('road.foundersValue', { n: count(team.founders) })}
-          min={1}
-          max={5}
+          value={founders}
+          valueText={founders === 1 ? t('road.foundersOne') : t('road.foundersValue', { n: count(founders) })}
+          min={fMin}
+          max={fMax}
           onChange={(n) => setTeam({ founders: n })}
           fewer={t('road.fewerFounders')}
           more={t('road.moreFounders')}
@@ -341,6 +344,11 @@ export function TeamMoney({ funds, authority, home, onAbout }: { funds: FundLine
       {!showSpouse && !showChildren ? (
         <T variant="caption" tone="fgMuted">
           {t('road.noFamilyAmount', { authority: pick(authority).text })}
+        </T>
+      ) : null}
+      {missing != null ? (
+        <T variant="caption" tone="fgMuted">
+          {t('road.sizeMissing', { n: count(missing) })}
         </T>
       ) : null}
       {(['show', 'spend', 'invest'] as const).map((kind) => {
@@ -464,7 +472,8 @@ export function ToCitizenship({ timeline }: { timeline: Timeline }) {
       </View>
       <T variant="body">{t(`road.dual.${timeline.dualCitizenship}`)}</T>
       {/* No lang here: the label is in the UI language, and an English fallback would flip an Arabic line's direction. */}
-      {timeline.language ? <T variant="body">{t('road.language', { text: pick(timeline.language).text })}</T> : null}
+      {/* First-strong isolate: an English fallback keeps its own order (and its full stop) inside an RTL line. */}
+      {timeline.language ? <T variant="body">{t('road.language', { text: `\u2068${pick(timeline.language).text}\u2069` })}</T> : null}
       {timeline.note ? <Txt text={timeline.note} variant="caption" tone="fgMuted" /> : null}
       <SourceLine url={timeline.source} updated={EXTRAS_CHECKED} />
     </View>

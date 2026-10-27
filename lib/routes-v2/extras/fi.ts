@@ -31,6 +31,8 @@ const CITIZENSHIP_NOTE = {
 
 export const EXTRAS_FI: Record<string, RouteExtras> = {
   'fi-startup': {
+    // At least 2 founders (europe.ts fi-startup `team-size`).
+    founders: { min: 2 },
     funds: [
       {
         key: 'application-fee',

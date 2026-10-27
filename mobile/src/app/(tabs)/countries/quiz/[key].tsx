@@ -137,7 +137,10 @@ export default function Quiz() {
     <Screen edges={[]}>
       <Stack.Screen options={header} />
       <T variant="label" tone="fgMuted">
-        {`${title} · ${t('quiz.progress', { n: count(i + 1), total: count(quiz.length) })}`}
+        {/* Separate strings so T isolates the route's Latin name on its own (a joined " · " pulled the ")" into the isolate). */}
+        {title}
+        {' · '}
+        {t('quiz.progress', { n: count(i + 1), total: count(quiz.length) })}
       </T>
       <Progress value={(i / quiz.length) * 100} />
       <T ref={questionRef} variant="headline" weight="bold" accessibilityRole="header" lang={qText.lang}>

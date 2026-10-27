@@ -136,6 +136,7 @@ const en = {
     moreChildren: 'More children',
     recounted: 'Totals updated.',
     noFamilyAmount: '{authority} publishes no extra amount for a spouse or children.',
+    sizeMissing: 'The official table has a row for a household of {n} that we have not published yet. Read your amount on the source page.',
     total: {
       show: 'Kept in your account',
       spend: 'Paid out: fees and deposits',
@@ -150,6 +151,7 @@ const en = {
     per: {
       person: 'per person',
       founder: 'per founder',
+      'further-founder': 'each further founder',
       team: 'per team',
       spouse: 'for a spouse',
       child: 'per child',

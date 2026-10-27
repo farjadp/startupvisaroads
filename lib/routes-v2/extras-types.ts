@@ -8,10 +8,11 @@ import type { L10n, MoneyBasis, Source, V2Currency } from './types';
 /**
  * Who a money line is counted for. 'household' counts once whatever the size
  * (a fee covering the whole family); 'children' counts once when there is at
- * least one child (Denmark's flat child add-on); 'child' counts per child.
+ * least one child (Denmark's flat child add-on); 'child' counts per child;
+ * 'further-founder' counts for every founder after the first (Ireland's STEP).
  * Lines from a size table carry `householdSize` instead (auditor, 27 Oct 2026).
  */
-export type MoneyPer = 'person' | 'founder' | 'team' | 'spouse' | 'child' | 'children' | 'household';
+export type MoneyPer = 'person' | 'founder' | 'further-founder' | 'team' | 'spouse' | 'child' | 'children' | 'household';
 
 export type FundLine = {
   key: string;
@@ -27,6 +28,8 @@ export type FundLine = {
   householdSize?: number;
   /** The table's last row also covers larger households (its label says what to add per member). */
   openEnded?: boolean;
+  /** Which size table a row belongs to, when a route has more than one (default: one table). */
+  table?: string;
   source: string;
 };
 
@@ -67,6 +70,8 @@ export type MediaLead = { notebookId: string; kind: 'video' | 'infographic' | 's
 export type QuizItem = { key: string; q: L10n; options: L10n[]; answer: number; why: L10n };
 
 export type RouteExtras = {
+  /** Team size the programme allows, for the founders stepper (Denmark: up to 3; Finland: at least 2). */
+  founders?: { min?: number; max?: number };
   funds?: FundLine[];
   steps?: Step[];
   documents?: DocItem[];

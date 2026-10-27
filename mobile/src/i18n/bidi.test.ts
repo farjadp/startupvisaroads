@@ -68,3 +68,8 @@ test('a closing parenthesis of the Persian sentence stays outside', () => {
     `ریاست مدیریت مهاجرت (قانون ۶۴۵۸ ماده‌ی ۳۱(۱)${iso('(c)')})؛ وزارت کار`,
   );
 });
+
+test('a middle dot after a Latin run stays outside the isolate', () => {
+  assert.equal(isolateLatin('۲ × EUR 50,000 · یک‌بار').includes('·'), true);
+  assert.ok(!isolateLatin('۲ × EUR 50,000 · یک‌بار').includes(`·⁩`));
+});

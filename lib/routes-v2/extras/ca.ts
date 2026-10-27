@@ -54,7 +54,9 @@ const PR_FEES: FundLine[] = [
   { key: 'pr-principal', label: { en: 'PR fee, principal applicant (processing + right of PR)', fa: 'هزینهٔ اقامت دائم، متقاضی اصلی (رسیدگی و حق اقامت دائم)' }, amount: 1_590, currency: 'CAD', basis: 'once', per: 'person', kind: 'spend', source: S.fees },
   { key: 'pr-spouse', label: { en: 'PR fee, spouse or partner', fa: 'هزینهٔ اقامت دائم، همسر یا شریک زندگی' }, amount: 1_590, currency: 'CAD', basis: 'once', per: 'spouse', kind: 'spend', source: S.fees },
   { key: 'pr-child', label: { en: 'PR fee, each dependent child', fa: 'هزینهٔ اقامت دائم، هر فرزند وابسته' }, amount: 270, currency: 'CAD', basis: 'once', per: 'child', kind: 'spend', source: S.fees },
-  { key: 'biometrics', label: { en: 'Biometrics, per person (family maximum CAD 170)', fa: 'انگشت‌نگاری، هر نفر (سقف خانواده ۱۷۰ دلار کانادا)' }, amount: 85, currency: 'CAD', basis: 'once', per: 'person', kind: 'spend', source: S.fees },
+  // IRCC charges CAD 85 a person with a family maximum of CAD 170: a two-row size table.
+  { key: 'biometrics-1', label: { en: 'Biometrics, one person', fa: 'انگشت‌نگاری، یک نفر' }, amount: 85, currency: 'CAD', basis: 'once', per: 'household', householdSize: 1, table: 'biometrics', kind: 'spend', source: S.fees },
+  { key: 'biometrics-family', label: { en: 'Biometrics, family of two or more (family maximum)', fa: 'انگشت‌نگاری، خانوادهٔ دو نفر یا بیشتر (سقف خانواده)' }, amount: 170, currency: 'CAD', basis: 'once', per: 'household', householdSize: 2, openEnded: true, table: 'biometrics', kind: 'spend', source: S.fees },
 ];
 
 const WORK_PERMIT_FEE: FundLine = {
@@ -78,6 +80,8 @@ const SETTLEMENT = (for_: 'family' | 'founder'): FundLine[] => {
     [2, 19_001, '۲'],
     [3, 23_360, '۳'],
     [4, 28_362, '۴'],
+    [5, 32_168, '۵'],
+    [6, 36_280, '۶'],
   ];
   const lines: FundLine[] = rows.map(([n, amount, faN]) => ({
     key: `settlement-${n}`,
@@ -87,6 +91,7 @@ const SETTLEMENT = (for_: 'family' | 'founder'): FundLine[] => {
     basis: 'once',
     per,
     householdSize: n,
+    table: 'settlement',
     kind: 'show',
     source: S.eeFunds,
   }));
@@ -99,6 +104,7 @@ const SETTLEMENT = (for_: 'family' | 'founder'): FundLine[] => {
     per,
     householdSize: 7,
     openEnded: true,
+    table: 'settlement',
     kind: 'show',
     source: S.eeFunds,
   });

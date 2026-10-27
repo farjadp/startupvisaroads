@@ -157,7 +157,7 @@ export default function RoutePage() {
       {runnable && extras.steps ? <YourRoad routeKey={route.key} steps={extras.steps} authority={route.agency} /> : null}
       {runnable && extras.quiz ? <CheckWhatYouKnow routeKey={route.key} questions={extras.quiz.length} onQuiz={() => router.push(`/(tabs)/countries/quiz/${route.key}`)} /> : null}
       {runnable && extras.documents ? <Documents routeKey={route.key} docs={extras.documents} /> : null}
-      {extras.funds?.length ? <TeamMoney funds={extras.funds} authority={route.agency} home={home} onAbout={about} /> : null}
+      {extras.funds?.length ? <TeamMoney funds={extras.funds} authority={route.agency} home={home} onAbout={about} founderRange={extras.founders} /> : null}
 
       {checkable.length ? (
         <View>

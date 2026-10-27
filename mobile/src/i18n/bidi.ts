@@ -25,7 +25,7 @@ const RUN = /[A-Za-zÀ-ÖØ-öø-ɏḀ-ỿ][^؀-ۿݐ-ݿﭐ-﷿ﹰ-﻿\n]*/g;
 const RTL_CHAR = /[֐-ࣿיִ-﷿ﹰ-﻿]/;
 // Also an opening "(" or quote the run ends on: in «فرم I-140 (کاغذی)» the "("
 // opens the Persian aside, and inside an LTR isolate it would not mirror.
-const TRAILING = /[\s.,:;!?(«»‹›“”"]$/;
+const TRAILING = /[\s.,:;!?(«»‹›“”"·]$/;
 
 const count = (s: string, ch: string) => s.split(ch).length - 1;
 
