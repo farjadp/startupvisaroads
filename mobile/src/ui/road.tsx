@@ -2,7 +2,7 @@
 // review). Each section renders nothing when its data is missing. Points are
 // never shown here; they live on Me.
 import * as WebBrowser from 'expo-web-browser';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { AccessibilityInfo, Platform, Pressable, Switch, View, useWindowDimensions } from 'react-native';
 import { convert, type FxCurrency } from '@shared/fx';
 import type { DocItem, FundLine, Reality, Step, Timeline } from '@shared/routes-v2/extras-types';
@@ -237,7 +237,19 @@ export function Documents({ routeKey, docs }: { routeKey: string; docs: DocItem[
 
 function Stepper({ label, value, valueText, min, max, onChange, fewer, more }: { label: string; value: number; valueText: string; min: number; max: number; onChange: (n: number) => void; fewer: string; more: string }) {
   const { c } = useTheme();
-  const set = (n: number) => onChange(Math.max(min, Math.min(max, n)));
+  // Two quick taps can both land before Pressable picks up the new handler; read the value through refs and build
+  // each step on the last value sent, so a double-tap on + counts twice (auditor, fourth pass).
+  const shown = useRef(value);
+  shown.current = value;
+  const sent = useRef<number | null>(null);
+  if (sent.current === value) sent.current = null;
+  const step = (d: number) => {
+    const from = sent.current ?? shown.current;
+    const n = Math.max(min, Math.min(max, from + d));
+    if (n === from) return;
+    sent.current = n;
+    onChange(n);
+  };
   const btn = (enabled: boolean) =>
     ({ pressed }: { pressed: boolean }) => ({ width: HIT, height: HIT, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: enabled ? c.fg : c.fgFaint, backgroundColor: pressed ? c.rowPressed : 'transparent' }) as const;
   // iOS: one adjustable element. Android: separate labelled buttons (TalkBack has no adjustable role).
@@ -249,7 +261,7 @@ function Stepper({ label, value, valueText, min, max, onChange, fewer, more }: {
       accessibilityLabel={ios ? label : undefined}
       accessibilityValue={ios ? { text: valueText } : undefined}
       accessibilityActions={ios ? [{ name: 'increment' }, { name: 'decrement' }] : undefined}
-      onAccessibilityAction={(e) => set(value + (e.nativeEvent.actionName === 'increment' ? 1 : -1))}
+      onAccessibilityAction={(e) => step(e.nativeEvent.actionName === 'increment' ? 1 : -1)}
       style={{ flexDirection: 'row', alignItems: 'center', gap: space.s2, minHeight: HIT }}
     >
       <View style={{ flex: 1 }}>
@@ -258,12 +270,12 @@ function Stepper({ label, value, valueText, min, max, onChange, fewer, more }: {
           {valueText}
         </T>
       </View>
-      <Pressable onPress={() => set(value - 1)} disabled={value <= min} accessibilityRole="button" accessibilityLabel={fewer} importantForAccessibility={ios ? 'no' : 'yes'} style={btn(value > min)}>
+      <Pressable onPress={() => step(-1)} disabled={value <= min} accessibilityRole="button" accessibilityLabel={fewer} importantForAccessibility={ios ? 'no' : 'yes'} style={btn(value > min)}>
         <T variant="headline" tone={value <= min ? 'disabledFg' : 'fg'}>
           −
         </T>
       </Pressable>
-      <Pressable onPress={() => set(value + 1)} disabled={value >= max} accessibilityRole="button" accessibilityLabel={more} importantForAccessibility={ios ? 'no' : 'yes'} style={btn(value < max)}>
+      <Pressable onPress={() => step(1)} disabled={value >= max} accessibilityRole="button" accessibilityLabel={more} importantForAccessibility={ios ? 'no' : 'yes'} style={btn(value < max)}>
         <T variant="headline" tone={value >= max ? 'disabledFg' : 'fg'}>
           +
         </T>
