@@ -11,6 +11,12 @@
 // two supervision denominators: a cancellation review opens on 22% of permits
 // issued; 71% is the share of decided reviews that end in cancellation.
 // Income thresholds and Migri fees are revised every January; re-check both.
+//
+// Re-checked 2026-10-27: Business Finland's startup-permit page ("at least 60%
+// holding"); the Government's 2024 release on the 8/5-year citizenship period;
+// Migri's notices on the 17 Dec 2025 financial-resources rule and the citizenship
+// test (applications filed on or after 1 March 2027). Extension approval is
+// computed from TEM 2025:36: 113/141 in 2024, 62/95 to Sep 2025.
 // ============================================================================
 
 import React from 'react';
@@ -45,6 +51,8 @@ import {
 } from 'lucide-react';
 import type { Metadata } from 'next';
 import { metaFor } from '@/lib/pageMeta';
+import JsonLd from '@/components/JsonLd';
+import { ORGANIZATION_ID, faqJsonLd } from '@/lib/seo';
 
 export async function generateMetadata({
   params,
@@ -56,6 +64,30 @@ export async function generateMetadata({
 }
 
 // ─── Data ────────────────────────────────────────────────────────────────────
+
+// The English walkthrough on @ashavidgroup. The Persian one (UyEsOpfswjk on
+// @FarjadTalks) belongs to /fa/europe/finland, never to this page.
+const VIDEO = {
+  id: 'onSFM-LkXxU',
+  title: 'How to Get the Finland Startup Visa in 2026: Ultimate Guide',
+  uploadDate: '2026-06-17T20:30:55-07:00',
+  duration: 'PT34M42S',
+};
+
+const videoJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'VideoObject',
+  name: VIDEO.title,
+  description: 'A walkthrough of the Finnish start-up entrepreneur permit: Business Finland\'s Eligibility Statement, the Migri Fast Track, family rights and the routes to permanent residence.',
+  inLanguage: 'en',
+  thumbnailUrl: `https://i.ytimg.com/vi/${VIDEO.id}/hqdefault.jpg`,
+  uploadDate: VIDEO.uploadDate,
+  duration: VIDEO.duration,
+  contentUrl: `https://www.youtube.com/watch?v=${VIDEO.id}`,
+  embedUrl: `https://www.youtube-nocookie.com/embed/${VIDEO.id}`,
+  publisher: { '@id': ORGANIZATION_ID },
+};
+
 
 const steps = [
   {
@@ -111,7 +143,7 @@ const scoringCriteria = [
   {
     title: 'Founder team',
     icon: Users,
-    desc: 'At least two founders holding more than 60% of the company between them, both working full-time on it with no side jobs, with complementary skills. Solo founders are effectively out.',
+    desc: 'At least two founders holding at least 60% of the company between them, both working full-time on it with no side jobs, with complementary skills. Solo founders are effectively out.',
     score: 'Required',
   },
   {
@@ -190,7 +222,7 @@ const prRoutes = [
     title: 'Foreign advanced degree',
     icon: Award,
     reqs: ['4 years continuous on an A permit', 'Master\'s, licentiate or doctoral degree recognised in Finland', '2 years of work in Finland'],
-    note: 'The realistic route for a founder arriving with an Iranian master\'s or PhD. The work-history condition is not waivable.',
+    note: 'The realistic route for a founder arriving with a master\'s or PhD earned abroad. The work-history condition is not waivable.',
   },
   {
     n: '05',
@@ -208,7 +240,7 @@ const faqs = [
   },
   {
     q: 'Can I apply as a solo founder?',
-    a: 'In practice, no. Business Finland expects at least two founders who together hold more than 60% of the company, both working full-time on it with no side employment, with complementary skills. Solo applications are the most common reason Iranian founders are refused. If you are alone, look at Denmark or Estonia instead.',
+    a: 'In practice, no. Business Finland expects at least two founders who together hold at least 60% of the company, both working full-time on it with no side employment, with complementary skills. If you are alone, look at Denmark or Estonia instead.',
   },
   {
     q: 'What are the real odds of approval?',
@@ -232,7 +264,7 @@ const faqs = [
   },
   {
     q: 'When can I apply for Finnish citizenship?',
-    a: 'For applications filed on or after 1 October 2024 the general residence period is eight years, reduced to five years if you meet the Finnish or Swedish language requirement. Residence time alone is not enough: you must also establish your identity, have a clean record, have met your payment obligations and — since 17 December 2025 — have sufficient financial resources. A citizenship test is being added from 1 January 2027.',
+    a: 'For applications filed on or after 1 October 2024 the general residence period is eight years; for applicants who meet the Finnish or Swedish language requirement it is five. Residence time alone is not enough: you must also establish your identity, have a clean record and have met your payment obligations. For applications filed on or after 17 December 2025 you must also show sufficient financial resources: a reliable account of how you supported yourself over the past two years, with no more than three months in total on unemployment benefit or social assistance. A citizenship test applies to applications filed on or after 1 March 2027; the first test is expected in March 2027.',
   },
   {
     q: 'Do I have to live in Finland, or can I travel freely?',
@@ -288,19 +320,19 @@ const deepDiveFaqs = [
   },
   {
     q: 'What are the real extension statistics?',
-    a: 'Far better than for the first permit. In 2024 there were 113 positive decisions against 28 negative; to the end of September 2025, 62 positive against 33 negative — an approval rate of roughly 80–90% in recent years. Cancellations of extended permits are rare: twelve in total across 2024 and 2025. One caveat hides inside those numbers: far fewer people reach the extension stage than hold a first permit, because a cancellation review opens on 22% of permits issued and 71% of decided reviews end in cancellation — 93% of those at the first-permit stage.',
+    a: 'Far better than for the first permit. In 2024 there were 113 positive decisions against 28 negative; to the end of September 2025, 62 positive against 33 negative — an approval rate of about 80% in 2024 and about 65% so far in 2025. Cancellations of extended permits are rare: twelve in total across 2024 and 2025. One caveat hides inside those numbers: far fewer people reach the extension stage than hold a first permit, because a cancellation review opens on 22% of permits issued and 71% of decided reviews end in cancellation — 93% of those at the first-permit stage.',
   },
   {
     q: 'Why should I not claim social benefits after arriving?',
     a: 'It is one of the most damaging mistakes flagged in supervision. Applicants who file for housing allowance, unemployment benefit or the startup grant (Starttiraha) immediately after arrival directly contradict what they told the immigration process — that they had savings and sufficient personal means. That contradiction is treated as grounds to doubt the original information and, ultimately, to refuse the extension. If your means-of-support evidence was real, your first year should not run on social benefits.',
   },
   {
-    q: 'Where do Iranian applicants appear in these statistics?',
-    a: 'In every significant table. Russia, Iran, Turkey and Pakistan are the largest source countries for Business Finland statement applications. For startup permits actually granted since 2018 the order is Russia, Turkey, India and Iran. Among permits cancelled in post-issuance supervision, most concern Russian nationals, followed by Turkish, Iranian and Chinese. The report also states plainly that the largest applicant countries are those under international sanctions — Iran and Russia — and stresses the need for closer monitoring of possible sanctions circumvention and dual-use technology.',
+    q: 'Which nationalities dominate these statistics?',
+    a: 'Russia, Iran, Turkey and Pakistan are the largest source countries for Business Finland statement applications. For startup permits actually granted since 2018 the order is Russia, Turkey, India and Iran. Among permits cancelled in post-issuance supervision, most concern Russian nationals, followed by Turkish, Iranian and Chinese. The report also states plainly that the largest applicant countries are those under international sanctions — Iran and Russia — and stresses the need for closer monitoring of possible sanctions circumvention and dual-use technology.',
   },
   {
     q: 'What does that mean for my own file?',
-    a: 'That an Iranian file is read more closely, and you should have documented answers ready for three things before you apply: a clear, traceable origin for the funds you present as means of support; your supply chain and customers, if the business depends on an Iranian counterparty; and the nature of your technology, if it could be considered dual-use. For a genuine team this is not bad news — it just means the file has to be visibly your own work rather than a package someone assembled for you.',
+    a: 'If you come from one of the largest source countries — above all one under international sanctions — expect your file to be read more closely, and have documented answers ready for three things before you apply: a clear, traceable origin for the funds you present as means of support; your supply chain and customers, if the business depends on a counterparty in a sanctioned country; and the nature of your technology, if it could be considered dual-use. For a genuine team this is not bad news — it just means the file has to be visibly your own work rather than a package someone assembled for you.',
   },
   {
     q: 'What type of permit is it, and how long is the D visa valid?',
@@ -317,6 +349,7 @@ const deepDiveFaqs = [
 export default function FinlandPage() {
   return (
     <div className="w-full bg-[#F2F0E9] text-[#1a1a1a] overflow-x-hidden">
+      <JsonLd data={[videoJsonLd, faqJsonLd([...faqs, ...deepDiveFaqs].map((f) => ({ question: f.q, answer: f.a })), 'en')]} />
 
       {/* ═══════════════════════════════════════════════════════
           HERO — FULL-BLEED
@@ -425,7 +458,7 @@ export default function FinlandPage() {
             {[
               { stat: '~2 Weeks', label: 'Fast Track', sub: 'from a complete application' },
               { stat: '~8%', label: 'Approval Rate', sub: 'Business Finland, 2024–2025' },
-              { stat: '2+', label: 'Founders Required', sub: 'holding over 60% between them' },
+              { stat: '2+', label: 'Founders Required', sub: 'holding at least 60% between them' },
               { stat: '€0', label: 'Minimum Investment', sub: 'no statutory capital threshold' },
             ].map((s, i) => (
               <div key={i} className="py-10 px-8 hover:bg-white/5 transition-colors text-center">
@@ -496,8 +529,8 @@ export default function FinlandPage() {
           <div className="relative w-full overflow-hidden shadow-2xl shadow-[#002F6C]/10 border border-[#1a1a1a]/10" style={{ paddingTop: '56.25%' }}>
             <iframe
               className="absolute top-0 left-0 w-full h-full border-0"
-              src="https://www.youtube.com/embed/UyEsOpfswjk"
-              title="The Finland Startup Visa in 2026: from idea approval to permanent residence"
+              src={`https://www.youtube-nocookie.com/embed/${VIDEO.id}?rel=0`}
+              title={VIDEO.title}
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
               allowFullScreen
             ></iframe>
@@ -550,7 +583,7 @@ export default function FinlandPage() {
               <strong>What this means for you.</strong> A weak file burns time and credibility, because refusals are on
               record and visible on your next attempt. Business Finland assessors also report a rising volume of
               AI-written business plans and agency-built packages — fake websites, invented LinkedIn profiles, off-the-shelf
-              plans. Iranian and Russian applicants are among the largest groups, so those files get read closely. For a
+              plans. Files from the largest source countries, several of them under international sanctions, get read closely. For a
               genuine team that is not bad news; it just means your case has to be visibly your own.
             </p>
           </div>
@@ -828,7 +861,7 @@ export default function FinlandPage() {
                 The start-up permit is an A permit, so the years count towards permanent residence and citizenship.
                 It is also conditional: at extension, Migri looks for a registered Finnish company, a product that has
                 genuinely been developed, a founder whose main occupation is still this startup, and real residence in Finland.
-                Extension approval rates run at roughly 80–90% — far higher than the first permit.
+                Extension approval ran at about 80% in 2024 and about 65% in 2025 — far higher than the first permit.
               </p>
             </div>
           </div>
@@ -932,8 +965,8 @@ export default function FinlandPage() {
             </div>
             <div className="lg:col-span-7 flex flex-col justify-end">
               <p className="font-sans text-white/60 text-base leading-relaxed">
-                Finland has the highest venture capital investment per capita in Europe and a deep-tech heritage rooted in
-                Nokia, concentrated around Helsinki and the Slush ecosystem. Aligning your startup with these sectors
+                Finland has a deep-tech heritage rooted in Nokia and a startup scene concentrated around Helsinki and the
+                Slush ecosystem. Aligning your startup with these sectors
                 strengthens the international-demand argument Business Finland is looking for.
               </p>
             </div>
@@ -1013,10 +1046,10 @@ export default function FinlandPage() {
               <h3 className="font-serif text-2xl mb-5">Finnish citizenship</h3>
               <p className="font-sans text-sm text-white/70 leading-relaxed mb-5">
                 For applications filed on or after 1 October 2024 the general residence period is <strong className="text-white">8 years</strong>,
-                reduced to <strong className="text-white">5 years</strong> if you meet the Finnish or Swedish language requirement.
+                or <strong className="text-white">5 years</strong> for applicants who meet the Finnish or Swedish language requirement.
               </p>
               <ul className="space-y-2 mb-6 flex-1">
-                {['Established identity', 'Clean record and met payment obligations', 'Sufficient financial resources (since 17 Dec 2025)', 'Proven language skills, e.g. the YKI test'].map((c, j) => (
+                {['Established identity', 'Clean record and met payment obligations', 'Sufficient financial resources (applications from 17 Dec 2025)', 'Proven language skills, e.g. the YKI test'].map((c, j) => (
                   <li key={j} className="flex gap-3 items-start">
                     <CheckCircle className="w-4 h-4 text-[#00BFA5] shrink-0 mt-0.5" />
                     <span className="font-sans text-sm text-white/70 leading-relaxed">{c}</span>
@@ -1024,7 +1057,7 @@ export default function FinlandPage() {
                 ))}
               </ul>
               <p className="font-sans text-xs text-[#00BFA5] border-t border-white/15 pt-4 leading-relaxed">
-                A citizenship test is being added from 1 January 2027. Language, not money, is the bottleneck on this path.
+                A citizenship test applies to applications filed on or after 1 March 2027. Language, not money, is the bottleneck on this path.
               </p>
             </div>
           </div>
@@ -1082,7 +1115,7 @@ export default function FinlandPage() {
           <div className="flex gap-4 items-start">
             <ShieldAlert className="shrink-0 w-4 h-4 text-[#1a1a1a]/30 mt-0.5" />
             <p className="font-sans text-[11px] text-[#1a1a1a]/45 leading-relaxed">
-              <strong>Regulatory Notice:</strong> Figures on this page were verified on 8 September 2026 against official
+              <strong>Regulatory Notice:</strong> Figures on this page were verified on 8 September 2026, and the citizenship rules re-checked on 27 October 2026, against official
               Business Finland and Migri documentation, the Finnish Government&apos;s announcement on reforming start-up
               entrepreneur permits, and the Ministry of Economic Affairs and Employment working-group report TEM 2025:36.
               They are provided for informational purposes only. VisaRoads, a brand of Ashavid Inc., is a strategic business advisory firm — we
