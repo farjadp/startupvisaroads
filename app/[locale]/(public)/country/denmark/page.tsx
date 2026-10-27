@@ -30,6 +30,9 @@ import {
 } from 'lucide-react';
 import type { Metadata } from 'next';
 import { metaFor } from '@/lib/pageMeta';
+import JsonLd from '@/components/JsonLd';
+import ChapterVideo from '@/components/guide/ChapterVideo';
+import { ORGANIZATION_ID, faqJsonLd } from '@/lib/seo';
 
 export async function generateMetadata({
   params,
@@ -41,6 +44,44 @@ export async function generateMetadata({
 }
 
 // ─── Data ────────────────────────────────────────────────────────────────────
+
+// The English walkthrough on @ashavidgroup, recorded June 2026. It says
+// permanent residence in four years; this page says eight, four only with all
+// four supplementary conditions — the note under the player says so.
+const VIDEO = {
+  id: '0BORlKEWXBU',
+  title: 'Denmark Startup Visa Explained: Costs, Rules & PR Path',
+  length: '20:58',
+  duration: 'PT20M58S',
+  uploadDate: '2026-06-30T02:04:31-07:00',
+  // No maxresdefault exists for this video; sddefault is the largest served.
+  poster: 'https://i.ytimg.com/vi/0BORlKEWXBU/sddefault.jpg',
+  chapters: [
+    { at: '01:16', label: 'Why the Denmark startup visa' },
+    { at: '03:28', label: 'The 75-place quota, and innovation and scalability' },
+    { at: '06:00', label: 'The rules: 15-page deck and 5-minute video pitch' },
+    { at: '08:49', label: 'The panel, the criteria, the score' },
+    { at: '12:07', label: 'The summer holiday trap' },
+    { at: '12:42', label: 'Real costs and proof of funds' },
+    { at: '15:50', label: 'Perks and the spouse’s open work permit' },
+    { at: '18:05', label: 'The road to permanent residence' },
+    { at: '19:10', label: 'Final tips' },
+  ],
+};
+
+const videoJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'VideoObject',
+  name: VIDEO.title,
+  description: 'A walkthrough of Start-up Denmark: the 75-place quota, the pitch deck and video pitch, how the expert panel scores you, proof of funds, and family rights.',
+  inLanguage: 'en',
+  thumbnailUrl: VIDEO.poster,
+  uploadDate: VIDEO.uploadDate,
+  duration: VIDEO.duration,
+  contentUrl: `https://www.youtube.com/watch?v=${VIDEO.id}`,
+  embedUrl: `https://www.youtube-nocookie.com/embed/${VIDEO.id}`,
+  publisher: { '@id': ORGANIZATION_ID },
+};
 
 const steps = [
   {
@@ -183,6 +224,7 @@ const faqs = [
 export default function DenmarkPage() {
   return (
     <div className="w-full bg-[#F2F0E9] text-[#1a1a1a] overflow-x-hidden">
+      <JsonLd data={[videoJsonLd, faqJsonLd(faqs.map((f) => ({ question: f.q, answer: f.a })), 'en')]} />
 
       {/* ═══════════════════════════════════════════════════════
           HERO — FULL-BLEED NYHAVN
@@ -318,6 +360,22 @@ export default function DenmarkPage() {
           </div>
         </div>
       </section>
+
+      {/* ═══════════════════════════════════════════════════════
+          VIDEO BRIEFING
+      ═══════════════════════════════════════════════════════ */}
+      <ChapterVideo
+        id={VIDEO.id}
+        title={VIDEO.title}
+        length={VIDEO.length}
+        poster={VIDEO.poster}
+        chapters={VIDEO.chapters}
+        eyebrow="The 21-minute briefing"
+        heading={<>The whole route,<br /><span className="italic text-[#C8102E]">start to finish.</span></>}
+        intro="The 75-person quota, the 15-page deck and 5-minute video pitch, how the panel scores you, the summer trap and the real cost. Pick a chapter to jump straight to it."
+        note={<>Recorded June 2026. The video&apos;s &ldquo;PR in 4 years&rdquo; is the fast route, open only if you meet all four supplementary conditions; the general rule is eight years. The figures on this page are the current ones.</>}
+        channel={{ handle: '@ashavidgroup', url: 'https://www.youtube.com/@ashavidgroup' }}
+      />
 
       {/* ═══════════════════════════════════════════════════════
           STEP-BY-STEP PROCESS
