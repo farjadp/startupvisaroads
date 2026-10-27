@@ -24,6 +24,9 @@ const HIT = Platform.OS === 'android' ? size.touchMinAndroid : size.touchMin;
 // given; at night fgMuted rendered #B4B4B4 (2.07:1 with the thumb). This darker fill keeps the
 // track 3:1 against night and the white thumb 3:1 against the track (WCAG 1.4.11).
 const OFF_TRACK_NIGHT = '#6B6A67';
+// The on knob is drawn white too, so the paper track left it at 1.1:1. Farjad chose a dimmed acid
+// (27 Oct 2026) over a darker grey: on reads by colour, 4.7:1 against night, 4.0:1 with the knob.
+const ON_TRACK_NIGHT = '#6E8A00';
 
 /** The day the v3 route depth (funds, realities, timelines) was read from the official pages. Move it into the data when a file is re-checked. */
 const EXTRAS_CHECKED = '2026-10-27';
@@ -64,6 +67,7 @@ function StepRow({ step, n, total, state, open, onOpen, onToggle }: { step: Step
   const { t, pick, count } = useI18n();
   const { c, mode } = useTheme();
   const offTrack = mode === 'night' ? OFF_TRACK_NIGHT : c.fgMuted;
+  const onTrack = mode === 'night' ? ON_TRACK_NIGHT : c.fg;
   const title = pick(step.title);
   const stateWord = t(`road.${state}`);
   return (
@@ -101,7 +105,7 @@ function StepRow({ step, n, total, state, open, onOpen, onToggle }: { step: Step
             <T variant="row" style={{ flex: 1 }}>
               {t('road.markDone')}
             </T>
-            <Switch value={state === 'done'} onValueChange={onToggle} accessibilityLabel={t('road.markDoneA11y', { title: title.text })} trackColor={{ true: c.fg, false: c.fgMuted }} ios_backgroundColor={offTrack} thumbColor={c.bg} />
+            <Switch value={state === 'done'} onValueChange={onToggle} accessibilityLabel={t('road.markDoneA11y', { title: title.text })} trackColor={{ true: onTrack, false: c.fgMuted }} ios_backgroundColor={offTrack} thumbColor={c.bg} />
           </View>
         </View>
       ) : null}
@@ -299,6 +303,7 @@ export function TeamMoney({ funds, authority, home, onAbout, founderRange }: { f
   const { t, pick, money, count, date, locale } = useI18n();
   const { c, mode } = useTheme();
   const offTrack = mode === 'night' ? OFF_TRACK_NIGHT : c.fgMuted;
+  const onTrack = mode === 'night' ? ON_TRACK_NIGHT : c.fg;
   const { state, patchTeam } = useStore();
   const { fontScale } = useWindowDimensions();
   const [how, setHow] = useState(false);
@@ -347,7 +352,7 @@ export function TeamMoney({ funds, authority, home, onAbout, founderRange }: { f
           <T variant="row" style={{ flex: 1 }}>
             {t('road.spouse')}
           </T>
-          <Switch value={team.spouse} onValueChange={(v) => setTeam({ spouse: v })} accessibilityLabel={t('road.spouse')} trackColor={{ true: c.fg, false: c.fgMuted }} ios_backgroundColor={offTrack} thumbColor={c.bg} />
+          <Switch value={team.spouse} onValueChange={(v) => setTeam({ spouse: v })} accessibilityLabel={t('road.spouse')} trackColor={{ true: onTrack, false: c.fgMuted }} ios_backgroundColor={offTrack} thumbColor={c.bg} />
         </View>
       ) : null}
       {showChildren ? (
