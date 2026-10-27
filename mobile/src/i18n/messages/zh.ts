@@ -228,6 +228,7 @@ const zh: Messages = {
     begin: '开始',
     next: '下一步',
     finish: '查看结果',
+    needAnswer: '回答本页所有问题后即可继续。',
     back: '返回',
     close: '关闭',
     skip: '不愿透露',

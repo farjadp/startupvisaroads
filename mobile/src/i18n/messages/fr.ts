@@ -228,6 +228,7 @@ const fr: Messages = {
     begin: 'Commencer',
     next: 'Suivant',
     finish: 'Voir mes résultats',
+    needAnswer: 'Répondez à toutes les questions de cet écran pour continuer.',
     back: 'Retour',
     close: 'Fermer',
     skip: 'Je préfère ne pas répondre',

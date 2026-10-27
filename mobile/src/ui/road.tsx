@@ -4,11 +4,12 @@
 import * as WebBrowser from 'expo-web-browser';
 import { useRef, useState } from 'react';
 import { AccessibilityInfo, Platform, Pressable, Switch, View, useWindowDimensions } from 'react-native';
-import { convert, type FxCurrency } from '@shared/fx';
+import { FX, convert, type FxCurrency } from '@shared/fx';
 import type { DocItem, FundLine, Reality, Step, Timeline } from '@shared/routes-v2/extras-types';
 import type { CountryProfile, Indicator } from '@shared/routes-v2/extras-types';
 import type { L10n } from '@shared/routes-v2/types';
 import { toPersianDigits } from '@/i18n/format';
+import { FX_OLD, FX_TOO_OLD } from '@/engine/fx-age';
 import { linesFor, sizeMissing, type Who } from '@/engine/household';
 import { useI18n } from '@/i18n/I18nProvider';
 import { useStore } from '@/state/store';
@@ -95,7 +96,7 @@ function StepRow({ step, n, total, state, open, onOpen, onToggle }: { step: Step
             <T variant="row" style={{ flex: 1 }}>
               {t('road.markDone')}
             </T>
-            <Switch value={state === 'done'} onValueChange={onToggle} accessibilityLabel={t('road.markDoneA11y', { title: title.text })} trackColor={{ true: c.fg, false: c.rule }} thumbColor={Platform.OS === 'android' ? c.bg : undefined} />
+            <Switch value={state === 'done'} onValueChange={onToggle} accessibilityLabel={t('road.markDoneA11y', { title: title.text })} trackColor={{ true: c.fg, false: c.fgMuted }} />
           </View>
         </View>
       ) : null}
@@ -290,7 +291,7 @@ type Basis = 'once' | 'firstYear' | 'year' | 'month';
 const BASIS: Record<FundLine['basis'], Basis> = { once: 'once', year: 'firstYear', perYear: 'year', prevYearIncome: 'year', month: 'month' };
 
 export function TeamMoney({ funds, authority, home, onAbout, founderRange }: { funds: FundLine[]; authority: L10n; home: FxCurrency | null; onAbout: () => void; founderRange?: { min?: number; max?: number } }) {
-  const { t, pick, money, count, locale } = useI18n();
+  const { t, pick, money, count, date, locale } = useI18n();
   const { c } = useTheme();
   const { state, patchTeam } = useStore();
   const { fontScale } = useWindowDimensions();
@@ -318,6 +319,8 @@ export function TeamMoney({ funds, authority, home, onAbout, founderRange }: { f
   const lines = linesFor(funds, who);
   const missing = sizeMissing(funds, who);
   if (!lines.length) return null;
+  // Converted amounts name the ECB rate date, as the Funds tool does (trust rule: every figure dated).
+  const converted = !FX_TOO_OLD && lines.some(({ f }) => f.currency !== 'USD' || (home != null && home !== f.currency));
   return (
     <View style={{ gap: space.s2 }}>
       <Label>{t('road.money')}</Label>
@@ -338,7 +341,7 @@ export function TeamMoney({ funds, authority, home, onAbout, founderRange }: { f
           <T variant="row" style={{ flex: 1 }}>
             {t('road.spouse')}
           </T>
-          <Switch value={team.spouse} onValueChange={(v) => setTeam({ spouse: v })} accessibilityLabel={t('road.spouse')} trackColor={{ true: c.fg, false: c.rule }} thumbColor={Platform.OS === 'android' ? c.bg : undefined} />
+          <Switch value={team.spouse} onValueChange={(v) => setTeam({ spouse: v })} accessibilityLabel={t('road.spouse')} trackColor={{ true: c.fg, false: c.fgMuted }} />
         </View>
       ) : null}
       {showChildren ? (
@@ -377,8 +380,8 @@ export function TeamMoney({ funds, authority, home, onAbout, founderRange }: { f
                 const shown = f.approx ? t('funds.about', { amount: money(amount, f.currency) }) : money(amount, f.currency);
                 const label = pick(f.label);
                 const meta = [times > 1 ? `${count(times)} × ${money(f.amount, f.currency)}` : f.householdSize != null ? null : t(`road.per.${f.per}`), t(`road.basis.${BASIS[f.basis]}`)].filter(Boolean).join(' · ');
-                const usd = f.currency !== 'USD' ? t('funds.about', { amount: money(convert(amount, f.currency, 'USD'), 'USD') }) : null;
-                const alt = home && home !== f.currency && home !== 'USD' ? t('funds.about', { amount: money(convert(amount, f.currency, home), home) }) : null;
+                const usd = !FX_TOO_OLD && f.currency !== 'USD' ? t('funds.about', { amount: money(convert(amount, f.currency, 'USD'), 'USD') }) : null;
+                const alt = !FX_TOO_OLD && home && home !== f.currency && home !== 'USD' ? t('funds.about', { amount: money(convert(amount, f.currency, home), home) }) : null;
                 return (
                   <View key={f.key} accessible style={{ paddingVertical: space.s3, borderBottomWidth: 1, borderBottomColor: c.rule, gap: 2 }}>
                     <View style={stacked ? { gap: 2 } : { flexDirection: 'row', justifyContent: 'space-between', gap: space.s3 }}>
@@ -399,6 +402,11 @@ export function TeamMoney({ funds, authority, home, onAbout, founderRange }: { f
           </View>
         );
       })}
+      {converted ? (
+        <T variant="caption" tone="fgMuted">
+          {`${t('funds.rates', { date: date(FX.date) })}${FX_OLD ? ` ${t('funds.usdOld')}` : ''}`}
+        </T>
+      ) : null}
       <Button kind="link" label={t('road.howCounted')} onPress={() => setHow(!how)} />
       {how
         ? funds.map((f) => (

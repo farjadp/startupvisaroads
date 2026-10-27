@@ -228,6 +228,7 @@ const en = {
     begin: 'Begin',
     next: 'Next',
     finish: 'See my results',
+    needAnswer: 'Answer every question on this screen to continue.',
     back: 'Back',
     close: 'Close',
     skip: 'Prefer not to say',

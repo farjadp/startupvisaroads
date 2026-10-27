@@ -8,11 +8,12 @@
 // can run; routes closed to them keep only the facts and the reason.
 import { Stack, router, useLocalSearchParams } from 'expo-router';
 import { View, useWindowDimensions } from 'react-native';
-import { toUsd, type FxCurrency } from '@shared/fx';
+import { FX, toUsd, type FxCurrency } from '@shared/fx';
 import { routeV2 } from '@shared/routes-v2';
 import { extrasOf } from '@shared/routes-v2/extras';
 import type { Criterion, MoneyLine } from '@shared/routes-v2/types';
 import { HOME_CURRENCY, type Residence } from '@/content/assessment';
+import { FX_OLD, FX_TOO_OLD } from '@/engine/fx-age';
 import { COUNTRY_NAMES, type Country, type RouteKey } from '@/content/routes';
 import { useI18n } from '@/i18n/I18nProvider';
 import { useStore } from '@/state/store';
@@ -68,7 +69,7 @@ function MoneyRow({ m }: { m: MoneyLine }) {
   const { state } = useStore();
   const amount = money(m.amount, m.currency);
   const shown = m.approx ? t('funds.about', { amount }) : amount;
-  const usd = state.fundsUsd && m.currency !== 'USD' ? t('funds.about', { amount: money(toUsd(m.amount, m.currency as FxCurrency), 'USD') }) : null;
+  const usd = !FX_TOO_OLD && state.fundsUsd && m.currency !== 'USD' ? t('funds.about', { amount: money(toUsd(m.amount, m.currency as FxCurrency), 'USD') }) : null;
   const label = pick(m.label);
   const row = useAmountRow();
   const basis = m.basis === 'perYear' ? t('route2.perYear') : t(`funds.basis.${m.basis}`);
@@ -100,7 +101,7 @@ function MoneyRow({ m }: { m: MoneyLine }) {
 
 export default function RoutePage() {
   const { key } = useLocalSearchParams<{ key: string }>();
-  const { t, pick, money } = useI18n();
+  const { t, pick, money, date } = useI18n();
   const { state } = useStore();
   const row = useAmountRow();
   const route = routeV2(String(key));
@@ -178,6 +179,11 @@ export default function RoutePage() {
         <View>
           <Label>{t('route2.money')}</Label>
           <Ruled>{route.money.map((m) => <MoneyRow key={m.key} m={m} />)}</Ruled>
+          {!FX_TOO_OLD && state.fundsUsd && route.money.some((m) => m.currency !== 'USD') ? (
+            <T variant="caption" tone="fgMuted" style={{ marginTop: space.s2 }}>
+              {`${t('funds.rates', { date: date(FX.date) })}${FX_OLD ? ` ${t('funds.usdOld')}` : ''}`}
+            </T>
+          ) : null}
           <T variant="caption" tone="fgMuted" style={{ marginTop: space.s2 }}>
             {t('funds.notApproval')}
           </T>

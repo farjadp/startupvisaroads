@@ -238,7 +238,17 @@ export default function Assessment() {
 
   return (
     <Screen
-      footer={<Button label={intro ? t('assess2.begin') : step === total - 1 ? t('assess2.finish') : t('assess2.next')} onPress={next} disabled={!ok} />}
+      footer={
+        <>
+          {/* A disabled button says why (tokens: disabled state). */}
+          {ok ? null : (
+            <T variant="caption" tone="fgMuted">
+              {t('assess2.needAnswer')}
+            </T>
+          )}
+          <Button label={intro ? t('assess2.begin') : step === total - 1 ? t('assess2.finish') : t('assess2.next')} onPress={next} disabled={!ok} hint={ok ? undefined : t('assess2.needAnswer')} />
+        </>
+      }
     >
       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
         <Button kind="link" icon={null} label={intro ? t('assess2.close') : t('assess2.back')} onPress={back} />
