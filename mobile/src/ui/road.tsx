@@ -96,7 +96,7 @@ function StepRow({ step, n, total, state, open, onOpen, onToggle }: { step: Step
             <T variant="row" style={{ flex: 1 }}>
               {t('road.markDone')}
             </T>
-            <Switch value={state === 'done'} onValueChange={onToggle} accessibilityLabel={t('road.markDoneA11y', { title: title.text })} trackColor={{ true: c.fg, false: c.fgMuted }} />
+            <Switch value={state === 'done'} onValueChange={onToggle} accessibilityLabel={t('road.markDoneA11y', { title: title.text })} trackColor={{ true: c.fg, false: c.fgMuted }} ios_backgroundColor={c.fgMuted} thumbColor={c.bg} />
           </View>
         </View>
       ) : null}
@@ -341,7 +341,7 @@ export function TeamMoney({ funds, authority, home, onAbout, founderRange }: { f
           <T variant="row" style={{ flex: 1 }}>
             {t('road.spouse')}
           </T>
-          <Switch value={team.spouse} onValueChange={(v) => setTeam({ spouse: v })} accessibilityLabel={t('road.spouse')} trackColor={{ true: c.fg, false: c.fgMuted }} />
+          <Switch value={team.spouse} onValueChange={(v) => setTeam({ spouse: v })} accessibilityLabel={t('road.spouse')} trackColor={{ true: c.fg, false: c.fgMuted }} ios_backgroundColor={c.fgMuted} thumbColor={c.bg} />
         </View>
       ) : null}
       {showChildren ? (

@@ -240,9 +240,9 @@ export default function Assessment() {
     <Screen
       footer={
         <>
-          {/* A disabled button says why (tokens: disabled state). */}
+          {/* A disabled button says why (tokens: disabled state); screen readers hear it once, as the hint. */}
           {ok ? null : (
-            <T variant="caption" tone="fgMuted">
+            <T variant="caption" tone="fgMuted" accessibilityElementsHidden importantForAccessibility="no">
               {t('assess2.needAnswer')}
             </T>
           )}

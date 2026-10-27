@@ -8,7 +8,7 @@
 // can run; routes closed to them keep only the facts and the reason.
 import { Stack, router, useLocalSearchParams } from 'expo-router';
 import { View, useWindowDimensions } from 'react-native';
-import { FX, toUsd, type FxCurrency } from '@shared/fx';
+import { FX, convert, type FxCurrency } from '@shared/fx';
 import { routeV2 } from '@shared/routes-v2';
 import { extrasOf } from '@shared/routes-v2/extras';
 import type { Criterion, MoneyLine } from '@shared/routes-v2/types';
@@ -63,13 +63,20 @@ function CriterionRow({ c }: { c: Criterion }) {
   );
 }
 
+/** The extra currency chosen in the Funds tool (older installs: the USD switch); none past 90 days. */
+function altCurrency(state: { fundsCurrency: FxCurrency | 'none' | null; fundsUsd: boolean }): FxCurrency | null {
+  const chosen = state.fundsCurrency ?? (state.fundsUsd ? 'USD' : 'none');
+  return FX_TOO_OLD || chosen === 'none' ? null : chosen;
+}
+
 function MoneyRow({ m }: { m: MoneyLine }) {
   const { t, pick, money } = useI18n();
   const { c } = useTheme();
   const { state } = useStore();
   const amount = money(m.amount, m.currency);
   const shown = m.approx ? t('funds.about', { amount }) : amount;
-  const usd = !FX_TOO_OLD && state.fundsUsd && m.currency !== 'USD' ? t('funds.about', { amount: money(toUsd(m.amount, m.currency as FxCurrency), 'USD') }) : null;
+  const alt = altCurrency(state);
+  const usd = alt && m.currency !== alt ? t('funds.about', { amount: money(convert(m.amount, m.currency as FxCurrency, alt), alt) }) : null;
   const label = pick(m.label);
   const row = useAmountRow();
   const basis = m.basis === 'perYear' ? t('route2.perYear') : t(`funds.basis.${m.basis}`);
@@ -113,6 +120,7 @@ export default function RoutePage() {
   const blocked = passport && route.blockedCitizenships?.codes.includes(passport) ? route.blockedCitizenships : null;
   const residence = state.assess.residence && state.assess.residence !== 'skip' ? (state.assess.residence as Residence) : null;
   const home = residence ? HOME_CURRENCY[residence] : null;
+  const moneyAlt = altCurrency(state);
 
   const name = pick(route.name);
   const fact = pick(route.fact);
@@ -179,7 +187,7 @@ export default function RoutePage() {
         <View>
           <Label>{t('route2.money')}</Label>
           <Ruled>{route.money.map((m) => <MoneyRow key={m.key} m={m} />)}</Ruled>
-          {!FX_TOO_OLD && state.fundsUsd && route.money.some((m) => m.currency !== 'USD') ? (
+          {moneyAlt && route.money.some((m) => m.currency !== moneyAlt) ? (
             <T variant="caption" tone="fgMuted" style={{ marginTop: space.s2 }}>
               {`${t('funds.rates', { date: date(FX.date) })}${FX_OLD ? ` ${t('funds.usdOld')}` : ''}`}
             </T>
