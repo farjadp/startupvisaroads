@@ -21,8 +21,9 @@ import { T } from './T';
 
 const HIT = Platform.OS === 'android' ? size.touchMinAndroid : size.touchMin;
 // iOS 26 draws the off-state thumb white whatever thumbColor says and lightens the off track it is
-// given; at night fgMuted rendered #B4B4B4 (2.07:1 with the thumb). This darker fill keeps the
-// track 3:1 against night and the white thumb 3:1 against the track (WCAG 1.4.11).
+// given; at night fgMuted rendered #B4B4B4 (2.07:1 with the thumb). This fill renders #919091 on
+// iOS 26: 5.8:1 against night but only 3.18:1 with the white thumb, so re-measure after any change
+// (WCAG 1.4.11). Android uses it as given, with a light knob, since a dark knob vanishes at night.
 const OFF_TRACK_NIGHT = '#6B6A67';
 // The on knob is drawn white too, so the paper track left it at 1.1:1. Farjad chose a dimmed acid
 // (27 Oct 2026) over a darker grey: on reads by colour, 4.7:1 against night, 4.0:1 with the knob.
@@ -105,7 +106,7 @@ function StepRow({ step, n, total, state, open, onOpen, onToggle }: { step: Step
             <T variant="row" style={{ flex: 1 }}>
               {t('road.markDone')}
             </T>
-            <Switch value={state === 'done'} onValueChange={onToggle} accessibilityLabel={t('road.markDoneA11y', { title: title.text })} trackColor={{ true: onTrack, false: c.fgMuted }} ios_backgroundColor={offTrack} thumbColor={c.bg} />
+            <Switch value={state === 'done'} onValueChange={onToggle} accessibilityLabel={t('road.markDoneA11y', { title: title.text })} trackColor={{ true: onTrack, false: offTrack }} ios_backgroundColor={offTrack} thumbColor={mode === 'night' ? c.fg : c.bg} />
           </View>
         </View>
       ) : null}
@@ -352,7 +353,7 @@ export function TeamMoney({ funds, authority, home, onAbout, founderRange }: { f
           <T variant="row" style={{ flex: 1 }}>
             {t('road.spouse')}
           </T>
-          <Switch value={team.spouse} onValueChange={(v) => setTeam({ spouse: v })} accessibilityLabel={t('road.spouse')} trackColor={{ true: onTrack, false: c.fgMuted }} ios_backgroundColor={offTrack} thumbColor={c.bg} />
+          <Switch value={team.spouse} onValueChange={(v) => setTeam({ spouse: v })} accessibilityLabel={t('road.spouse')} trackColor={{ true: onTrack, false: offTrack }} ios_backgroundColor={offTrack} thumbColor={mode === 'night' ? c.fg : c.bg} />
         </View>
       ) : null}
       {showChildren ? (
