@@ -5,7 +5,7 @@
 // best score is kept. Answers come from the route's official data only.
 import { Stack, router, useLocalSearchParams } from 'expo-router';
 import { useMemo, useState } from 'react';
-import { AccessibilityInfo, View } from 'react-native';
+import { AccessibilityInfo, Platform, View } from 'react-native';
 import { routeV2 } from '@shared/routes-v2';
 import { extrasOf } from '@shared/routes-v2/extras';
 import { useI18n } from '@/i18n/I18nProvider';
@@ -24,10 +24,20 @@ function shuffled(n: number): number[] {
   return a;
 }
 
+/** iOS sheet: a Close button at the top start (HIG); Android keeps its Back. */
+function useHeader(title: string) {
+  const { t } = useI18n();
+  return {
+    title,
+    headerLeft: Platform.OS === 'ios' ? () => <Button kind="link" label={t('assess2.close')} onPress={() => router.back()} /> : undefined,
+  };
+}
+
 export default function Quiz() {
   const { key } = useLocalSearchParams<{ key: string }>();
   const { t, pick, count } = useI18n();
   const { state, set } = useStore();
+  const header = useHeader(t('quiz.title'));
   const route = routeV2(String(key));
   const quiz = extrasOf(String(key))?.quiz ?? [];
   const [attempt, setAttempt] = useState(0);
@@ -80,7 +90,7 @@ export default function Quiz() {
     const kept = Math.max(best?.right ?? 0, right);
     return (
       <Screen edges={[]}>
-        <Stack.Screen options={{ title: t('quiz.title') }} />
+        <Stack.Screen options={header} />
         <T variant="label" tone="fgMuted">
           {title}
         </T>
@@ -110,7 +120,7 @@ export default function Quiz() {
   const qText = pick(q.q);
   return (
     <Screen edges={[]}>
-      <Stack.Screen options={{ title: t('quiz.title') }} />
+      <Stack.Screen options={header} />
       <T variant="label" tone="fgMuted">
         {`${title} · ${t('quiz.progress', { n: count(i + 1), total: count(quiz.length) })}`}
       </T>

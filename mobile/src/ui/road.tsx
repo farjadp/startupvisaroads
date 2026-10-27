@@ -8,6 +8,7 @@ import { convert, type FxCurrency } from '@shared/fx';
 import type { DocItem, FundLine, Reality, Step, Timeline } from '@shared/routes-v2/extras-types';
 import type { CountryProfile, Indicator } from '@shared/routes-v2/extras-types';
 import type { L10n } from '@shared/routes-v2/types';
+import { toPersianDigits } from '@/i18n/format';
 import { useI18n } from '@/i18n/I18nProvider';
 import { useStore } from '@/state/store';
 import { useTheme } from '@/theme/ThemeProvider';
@@ -114,7 +115,7 @@ export function YourRoad({ routeKey, steps, authority }: { routeKey: string; ste
             <Icon name="route" size={20} tone="fgMuted" />
           </View>
           <T variant="row" tone="fgMuted" style={{ flex: 1 }}>
-            {t('road.outcome', { authority: pick(authority).text })}
+            {t('road.outcome', { authority: pick(authority).text.split(/[;؛]/)[0].trim() })}
           </T>
         </View>
       </Ruled>
@@ -257,23 +258,18 @@ function Stepper({ label, value, valueText, min, max, onChange, fewer, more }: {
 }
 
 type Basis = 'once' | 'firstYear' | 'year' | 'month';
-type Totals = Record<'show' | 'spend' | 'invest', Record<Basis, Partial<Record<string, number>>>>;
 
 // 'year' in the data is one lump sum covering the first year (Denmark); 'perYear' recurs.
 const BASIS: Record<FundLine['basis'], Basis> = { once: 'once', year: 'firstYear', perYear: 'year', prevYearIncome: 'year', month: 'month' };
-const BASES: Basis[] = ['once', 'firstYear', 'year', 'month'];
 
-/** Sums by kind, then by basis, then by currency: a one-off is never added to a yearly amount (auditor P0). */
-function totalsFor(lines: FundLine[], who: { founders: number; spouse: boolean; children: number }): Totals {
-  const empty = () => ({ once: {}, firstYear: {}, year: {}, month: {} });
-  const out: Totals = { show: empty(), spend: empty(), invest: empty() };
-  for (const l of lines) {
-    const times = l.per === 'founder' ? who.founders : l.per === 'spouse' ? (who.spouse ? 1 : 0) : l.per === 'child' ? who.children : l.per === 'family' ? (who.spouse || who.children ? 1 : 0) : 1;
-    if (!times) continue;
-    const b = out[l.kind][BASIS[l.basis]];
-    b[l.currency] = (b[l.currency] ?? 0) + l.amount * times;
-  }
-  return out;
+/** How many times a line counts for this household. Lines are never summed with each other:
+ *  fee lines are often alternatives (in the country / abroad), and bases differ (auditor P0). */
+function timesFor(l: FundLine, who: { founders: number; spouse: boolean; children: number }): number {
+  if (l.per === 'founder') return who.founders;
+  if (l.per === 'spouse') return who.spouse ? 1 : 0;
+  if (l.per === 'child') return who.children;
+  if (l.per === 'family') return who.spouse || who.children ? 1 : 0;
+  return 1;
 }
 
 export function TeamMoney({ funds, authority, home, onAbout }: { funds: FundLine[]; authority: L10n; home: FxCurrency | null; onAbout: () => void }) {
@@ -289,7 +285,6 @@ export function TeamMoney({ funds, authority, home, onAbout }: { funds: FundLine
   const showSpouse = has('spouse', 'family');
   const showChildren = has('child', 'family');
   const who = { founders: showFounders ? team.founders : 1, spouse: showSpouse && team.spouse, children: showChildren ? team.children : 0 };
-  const totals = totalsFor(funds, who);
   const announce = (msg: string) => {
     if (Platform.OS === 'ios') AccessibilityInfo.announceForAccessibility(msg);
   };
@@ -299,12 +294,8 @@ export function TeamMoney({ funds, authority, home, onAbout }: { funds: FundLine
     announce(t('road.recounted'));
   };
   const stacked = fontScale > 1.35;
-  const lines = (['show', 'spend', 'invest'] as const).flatMap((kind) =>
-    BASES.flatMap((basis) =>
-      Object.entries(totals[kind][basis]).map(([cur, amount]) => ({ kind, basis, cur: cur as FxCurrency, amount: amount ?? 0 })),
-    ),
-  );
-  if (!lines.length && !showFounders) return null;
+  const lines = funds.map((f) => ({ f, times: timesFor(f, who) })).filter((l) => l.times > 0);
+  if (!lines.length) return null;
   return (
     <View style={{ gap: space.s2 }}>
       <Label>{t('road.money')}</Label>
@@ -345,30 +336,42 @@ export function TeamMoney({ funds, authority, home, onAbout }: { funds: FundLine
           {t('road.noFamilyAmount', { authority: pick(authority).text })}
         </T>
       ) : null}
-      <Ruled>
-        {lines.map((l) => {
-          const label = `${t(`road.total.${l.kind}`)} · ${t(`road.basis.${l.basis}`)}`;
-          const alt = home && home !== l.cur ? t('funds.about', { amount: money(convert(l.amount, l.cur, home), home) }) : null;
-          const usd = l.cur !== 'USD' && home !== 'USD' ? t('funds.about', { amount: money(convert(l.amount, l.cur, 'USD'), 'USD') }) : null;
-          return (
-            <View key={`${l.kind}-${l.basis}-${l.cur}`} accessible style={{ paddingVertical: space.s3, borderBottomWidth: 1, borderBottomColor: c.rule, gap: 2 }}>
-              <View style={stacked ? { gap: 2 } : { flexDirection: 'row', justifyContent: 'space-between', gap: space.s3 }}>
-                <T variant="row" tone="fgMuted" style={{ flexShrink: 1 }}>
-                  {label}
-                </T>
-                <T variant="row" weight="bold">
-                  {money(l.amount, l.cur)}
-                </T>
-              </View>
-              {alt || usd ? (
-                <T variant="caption" tone="fgMuted">
-                  {[usd, alt].filter(Boolean).join(' · ')}
-                </T>
-              ) : null}
-            </View>
-          );
-        })}
-      </Ruled>
+      {(['show', 'spend', 'invest'] as const).map((kind) => {
+        const rows = lines.filter((l) => l.f.kind === kind);
+        if (!rows.length) return null;
+        return (
+          <View key={kind}>
+            <T variant="label" tone="fgMuted" style={{ marginTop: space.s2 }}>
+              {t(`road.total.${kind}`)}
+            </T>
+            <Ruled>
+              {rows.map(({ f, times }) => {
+                const amount = f.amount * times;
+                const shown = f.approx ? t('funds.about', { amount: money(amount, f.currency) }) : money(amount, f.currency);
+                const label = pick(f.label);
+                const meta = [times > 1 ? `${count(times)} × ${money(f.amount, f.currency)}` : t(`road.per.${f.per}`), t(`road.basis.${BASIS[f.basis]}`)].join(' · ');
+                const usd = f.currency !== 'USD' ? t('funds.about', { amount: money(convert(amount, f.currency, 'USD'), 'USD') }) : null;
+                const alt = home && home !== f.currency && home !== 'USD' ? t('funds.about', { amount: money(convert(amount, f.currency, home), home) }) : null;
+                return (
+                  <View key={f.key} accessible style={{ paddingVertical: space.s3, borderBottomWidth: 1, borderBottomColor: c.rule, gap: 2 }}>
+                    <View style={stacked ? { gap: 2 } : { flexDirection: 'row', justifyContent: 'space-between', gap: space.s3 }}>
+                      <T variant="row" tone="fgMuted" lang={label.lang} style={{ flexShrink: 1 }}>
+                        {label.text}
+                      </T>
+                      <T variant="row" weight="bold">
+                        {shown}
+                      </T>
+                    </View>
+                    <T variant="caption" tone="fgMuted">
+                      {[meta, usd, alt].filter(Boolean).join(' · ')}
+                    </T>
+                  </View>
+                );
+              })}
+            </Ruled>
+          </View>
+        );
+      })}
       <Button kind="link" label={t('road.howCounted')} onPress={() => setHow(!how)} />
       {how
         ? funds.map((f) => (
@@ -460,7 +463,9 @@ export function ToCitizenship({ timeline }: { timeline: Timeline }) {
 // ------------------------------------------------------------------ country profile
 
 function IndicatorRow({ i }: { i: Indicator }) {
-  const { t, count } = useI18n();
+  const { t, count, meta } = useI18n();
+  // A year is a label, not a quantity: no thousands separator.
+  const year = meta.proseDigits === 'persian' ? toPersianDigits(String(i.year)) : String(i.year);
   const { c } = useTheme();
   const value =
     i.rank != null
@@ -474,7 +479,7 @@ function IndicatorRow({ i }: { i: Indicator }) {
     <View style={{ paddingVertical: space.s2, borderBottomWidth: 1, borderBottomColor: c.rule }}>
       <View accessible style={{ flexDirection: 'row', justifyContent: 'space-between', gap: space.s3 }}>
         <T variant="row" tone="fgMuted" style={{ flexShrink: 1 }}>
-          {`${t(`profile.names.${i.key}`)} · ${count(i.year)}`}
+          {`${t(`profile.names.${i.key}`)} · ${year}`}
         </T>
         <T variant="row" weight="bold">
           {value}
