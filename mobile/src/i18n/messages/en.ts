@@ -97,6 +97,28 @@ const en = {
       limited: 'Limited',
       closed: 'Closed',
     },
+    // Route page chapters and the status tally (layout A trim, 27 Oct 2026).
+    chapters: { do: 'Do', rules: 'The rules', after: 'After you arrive' },
+    parts: {
+      quiz: 'quiz',
+      documents: 'documents',
+      teamMoney: 'money for your team',
+      money: 'money',
+      conditions: 'conditions',
+      authority: 'what the authority decides',
+      timeFees: 'time and fees',
+      pr: 'permanent residence',
+      realities: 'realities',
+      citizenship: 'citizenship',
+      country: 'the country',
+    },
+    tallyMet: '{n} met',
+    tallyClose: '{n} close',
+    tallyNotYet: '{n} not yet',
+    tallyHint: 'Opens the rules at the conditions you can check',
+    notChecked: 'not checked here',
+    // Between the tally's counts and a chapter's parts. Arabic script takes its comma: a middle dot beside Persian digits reads as zero.
+    sep: ' · ',
   },
   road: {
     yourRoad: 'Your road',

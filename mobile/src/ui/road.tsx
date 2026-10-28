@@ -2,8 +2,8 @@
 // review). Each section renders nothing when its data is missing. Points are
 // never shown here; they live on Me.
 import * as WebBrowser from 'expo-web-browser';
-import { useRef, useState } from 'react';
-import { AccessibilityInfo, Platform, Pressable, Switch, View, useWindowDimensions } from 'react-native';
+import { useEffect, useRef, useState } from 'react';
+import { AccessibilityInfo, Animated, Easing, Platform, Pressable, Switch, View, useWindowDimensions } from 'react-native';
 import { FX, convert, type FxCurrency } from '@shared/fx';
 import type { DocItem, FundLine, Reality, Step, Timeline } from '@shared/routes-v2/extras-types';
 import type { CountryProfile, Indicator } from '@shared/routes-v2/extras-types';
@@ -14,9 +14,9 @@ import { linesFor, sizeMissing, type Who } from '@/engine/household';
 import { useI18n } from '@/i18n/I18nProvider';
 import { useStore } from '@/state/store';
 import { useTheme } from '@/theme/ThemeProvider';
-import { size, space } from '@/theme/tokens';
+import { motion, size, space } from '@/theme/tokens';
 import { Icon, type IconName } from './Icon';
-import { Button, CheckRow, Label, Progress, Ruled, SourceLine } from './kit';
+import { Button, CheckRow, Label, Progress, Ruled, SourceLine, useReduceMotion } from './kit';
 import { T } from './T';
 
 const HIT = Platform.OS === 'android' ? size.touchMinAndroid : size.touchMin;
@@ -56,25 +56,66 @@ function Txt({ text, variant = 'body', tone, weight }: { text: L10n; variant?: '
 
 type StepState = 'done' | 'now' | 'ahead';
 
+/** Stop size and the rail it sits on; the rail runs through the stops' centres at the start edge. */
+const STOP = 24;
+const RAIL = 2;
+const RAIL_START = (STOP - RAIL) / 2;
+const ease = Easing.bezier(...motion.ease);
+
 function Marker({ state }: { state: StepState }) {
   const { c } = useTheme();
-  const box = { width: 24, height: 24, alignItems: 'center', justifyContent: 'center' } as const;
+  const box = { width: STOP, height: STOP, alignItems: 'center', justifyContent: 'center' } as const;
   if (state === 'done') return <View style={[box, { backgroundColor: c.fg }]}>{<Icon name="check" size={16} tone="buttonFg" />}</View>;
   if (state === 'now') return <View style={[box, { backgroundColor: c.accent, borderWidth: 1.5, borderColor: c.fg }]} />;
-  return <View style={[box, { borderWidth: 1.5, borderColor: c.fgFaint }]} />;
+  // Filled with the page so the rail stops at the outline; fgFaint is 3.42:1 on paper, 3.72:1 at night (WCAG 1.4.11).
+  return <View style={[box, { backgroundColor: c.bg, borderWidth: 1.5, borderColor: c.fgFaint }]} />;
 }
 
-function StepRow({ step, n, total, state, open, onOpen, onToggle }: { step: Step; n: number; total: number; state: StepState; open: boolean; onOpen: () => void; onToggle: () => void }) {
+/**
+ * One stretch of the rail: rule-coloured, with ink laid over it once travelled. Static on load; when a step is
+ * marked done or undone, only the stretch that changed draws in or out along the road (none under Reduce Motion).
+ */
+function Rail({ travelled, top, bottom, height }: { travelled: boolean; top: number; bottom?: number; height?: number }) {
+  const { c } = useTheme();
+  const reduce = useReduceMotion();
+  const [fill] = useState(() => new Animated.Value(travelled ? 1 : 0));
+  const first = useRef(true);
+  useEffect(() => {
+    if (first.current) {
+      first.current = false;
+      return;
+    }
+    if (reduce !== false) fill.setValue(travelled ? 1 : 0);
+    else Animated.timing(fill, { toValue: travelled ? 1 : 0, duration: 350, easing: ease, useNativeDriver: true }).start();
+  }, [travelled, reduce, fill]);
+  const place = { position: 'absolute', start: RAIL_START, width: RAIL, top, ...(height != null ? { height } : { bottom }) } as const;
+  return (
+    <View style={[place, { backgroundColor: c.rule }]}>
+      <Animated.View style={{ flex: 1, backgroundColor: c.fg, transformOrigin: 'top', transform: [{ scaleY: fill }] }} />
+    </View>
+  );
+}
+
+function StepRow({ step, n, total, state, rail, open, onOpen, onToggle }: { step: Step; n: number; total: number; state: StepState; rail: { above: boolean | null; below: boolean }; open: boolean; onOpen: () => void; onToggle: () => void }) {
   const { t, pick, count } = useI18n();
   const { c, mode } = useTheme();
   const offTrack = mode === 'night' ? OFF_TRACK_NIGHT : c.fgMuted;
   const onTrack = mode === 'night' ? ON_TRACK_NIGHT : c.fg;
+  // The stop sits in the middle of the header row, which grows with the text: the rail meets it there.
+  const [head, setHead] = useState(size.row + 4 + space.s2 * 2);
+  const mid = head / 2;
   const title = pick(step.title);
   const stateWord = t(`road.${state}`);
   return (
-    <View style={{ borderBottomWidth: 1, borderBottomColor: c.rule }}>
+    <View>
+      {/* The drawn road is decoration: state is in each stop's label, its check and the Now tag. */}
+      <View accessible={false} importantForAccessibility="no-hide-descendants" pointerEvents="none" style={{ position: 'absolute', top: 0, bottom: 0, start: 0, width: STOP }}>
+        {rail.above == null ? null : <Rail travelled={rail.above} top={0} height={mid} />}
+        <Rail travelled={rail.below} top={mid} bottom={0} />
+      </View>
       <Pressable
         onPress={onOpen}
+        onLayout={(e) => setHead(e.nativeEvent.layout.height)}
         accessibilityRole="button"
         accessibilityState={{ expanded: open }}
         accessibilityLabel={t('road.stepA11y', { n: count(n), total: count(total), state: stateWord, title: title.text })}
@@ -85,9 +126,9 @@ function StepRow({ step, n, total, state, open, onOpen, onToggle }: { step: Step
           {title.text}
         </T>
         {state === 'now' ? (
-          // Ink on an acid chip, never acid text on paper (auditor, Brand Book).
-          <View style={{ backgroundColor: c.accent, paddingHorizontal: space.s2, paddingVertical: 2 }}>
-            <T variant="label" tone="onAccent">
+          // Ink-outlined tag: the acid stop beside it is the one accent on this row (fold budget: acid in two places).
+          <View style={{ borderWidth: 1, borderColor: c.fg, paddingHorizontal: space.s2, paddingVertical: 2 }}>
+            <T variant="label" tone="fg">
               {stateWord}
             </T>
           </View>
@@ -98,7 +139,7 @@ function StepRow({ step, n, total, state, open, onOpen, onToggle }: { step: Step
         ) : null}
       </Pressable>
       {open ? (
-        <View style={{ gap: space.s2, paddingBottom: space.s3, paddingStart: 24 + space.s3 }}>
+        <View style={{ gap: space.s2, paddingBottom: space.s3, paddingStart: STOP + space.s3 }}>
           <Txt text={step.detail} />
           {step.takes ? <T variant="caption" tone="fgMuted">{t('road.takes', { text: pick(step.takes).text })}</T> : null}
           {step.link ? <Button kind="link" label={t('road.openOfficial')} hint={t('common.opensBrowser')} onPress={() => void WebBrowser.openBrowserAsync(step.link!)} /> : null}
@@ -114,36 +155,46 @@ function StepRow({ step, n, total, state, open, onOpen, onToggle }: { step: Step
   );
 }
 
+/**
+ * The drawn road (direction B, 27 Oct 2026): each step is a square stop on one rail at the start edge, ink up to
+ * the current stop and rule beyond it. The rail replaces the progress bar; the count stays as text.
+ */
 export function YourRoad({ routeKey, steps, authority }: { routeKey: string; steps: Step[]; authority: L10n }) {
   const { t, pick, count } = useI18n();
+  const { c } = useTheme();
   const { state, toggleIn } = useStore();
   const [open, setOpen] = useState<string | null>(null);
+  const [endHead, setEndHead] = useState(size.row + 4 + space.s2 * 2);
   if (!steps.length) return null;
   const done = new Set((state.journey[routeKey] ?? []).filter((k) => steps.some((s) => s.key === k)));
   const nowKey = steps.find((s) => !done.has(s.key))?.key;
   const stateOf = (s: Step): StepState => (done.has(s.key) ? 'done' : s.key === nowKey ? 'now' : 'ahead');
+  // Travelled by position, not by ticks: steps can be marked out of order, the ink still runs only to the current stop.
+  const nowAt = nowKey ? steps.findIndex((s) => s.key === nowKey) : steps.length;
+  const endMid = endHead / 2;
   return (
     <View style={{ gap: space.s2 }}>
       <Label>{t('road.yourRoad')}</Label>
       <T variant="row" tone="fgMuted">
         {t('road.stepsDone', { done: count(done.size), total: count(steps.length) })}
       </T>
-      <Progress value={(done.size / steps.length) * 100} />
-      <Ruled>
+      <View>
         {steps.map((s, i) => (
-          <StepRow key={s.key} step={s} n={i + 1} total={steps.length} state={stateOf(s)} open={open === s.key} onOpen={() => setOpen(open === s.key ? null : s.key)} onToggle={() => toggleIn('journey', routeKey, s.key)} />
+          <StepRow key={s.key} step={s} n={i + 1} total={steps.length} state={stateOf(s)} rail={{ above: i === 0 ? null : i <= nowAt, below: i < nowAt }} open={open === s.key} onOpen={() => setOpen(open === s.key ? null : s.key)} onToggle={() => toggleIn('journey', routeKey, s.key)} />
         ))}
-        {/* The outcome is the authority's to decide: never tickable, never counted, never "Now" (auditor P0). */}
-        <View accessible style={{ flexDirection: 'row', alignItems: 'center', gap: space.s3, minHeight: size.row + 4, paddingVertical: space.s2 }}>
-          <View style={{ width: 24, alignItems: 'center' }}>
-            <Icon name="route" size={20} tone="fgMuted" />
+        {/* The outcome is the authority's to decide: never tickable, never counted, never "Now" (auditor P0).
+            The road ends here in a flat bar, not a stop. */}
+        <View accessible onLayout={(e) => setEndHead(e.nativeEvent.layout.height)} style={{ flexDirection: 'row', alignItems: 'center', gap: space.s3, minHeight: size.row + 4, paddingVertical: space.s2 }}>
+          <View accessible={false} importantForAccessibility="no-hide-descendants" pointerEvents="none" style={{ position: 'absolute', top: 0, start: 0, width: STOP, height: endMid }}>
+            <Rail travelled={!nowKey} top={0} height={endMid} />
           </View>
+          <View accessible={false} style={{ width: STOP, height: RAIL * 2, backgroundColor: c.fgMuted }} />
           <T variant="row" tone="fgMuted" style={{ flex: 1 }}>
             {/* The whole authority line: its first part can be the wrong body (Denmark: the panel, not SIRI, which grants residence). */}
             {t('road.outcome', { authority: pick(authority).text })}
           </T>
         </View>
-      </Ruled>
+      </View>
     </View>
   );
 }

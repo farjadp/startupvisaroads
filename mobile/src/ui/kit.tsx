@@ -2,8 +2,8 @@
 // every control with a role, a label and its state.
 import * as WebBrowser from 'expo-web-browser';
 import { Image } from 'expo-image';
-import type { ReactNode } from 'react';
-import { Platform, Pressable, ScrollView, View, useWindowDimensions, type ImageSourcePropType, type ViewStyle } from 'react-native';
+import { useEffect, useState, type ReactNode, type RefObject } from 'react';
+import { AccessibilityInfo, Platform, Pressable, ScrollView, View, useWindowDimensions, type ImageSourcePropType, type ViewStyle } from 'react-native';
 import { useSafeAreaInsets, type Edge } from 'react-native-safe-area-context';
 import { useI18n } from '@/i18n/I18nProvider';
 import type { Locale } from '@/i18n/locales';
@@ -23,6 +23,7 @@ export function Screen({
   scrim = edges.includes('top'),
   stickyFooter = true,
   background,
+  scrollRef,
 }: {
   children: ReactNode;
   /** Drawn behind the content, under the scroll (the onboarding flags). */
@@ -34,6 +35,8 @@ export function Screen({
   scrim?: boolean;
   /** False keeps the footer in the scroll flow (Welcome: a fixed footer hid the language chips on short phones). */
   stickyFooter?: boolean;
+  /** For screens that scroll to a section on request (the route page's status tally). */
+  scrollRef?: RefObject<ScrollView | null>;
 }) {
   const { c } = useTheme();
   const insets = useSafeAreaInsets();
@@ -44,6 +47,7 @@ export function Screen({
     <View style={{ flex: 1, backgroundColor: c.bg }}>
       {background}
       <ScrollView
+        ref={scrollRef}
         // Screens without a native header pad for the safe area themselves; screens with one let iOS inset under it.
         contentInsetAdjustmentBehavior={edges.includes('top') ? 'never' : 'automatic'}
         contentContainerStyle={[
@@ -68,6 +72,23 @@ export function Screen({
       ) : null}
     </View>
   );
+}
+
+/** The system's Reduce Motion (iOS) / Remove animations (Android), kept current; null until read. */
+export function useReduceMotion(): boolean | null {
+  const [reduce, setReduce] = useState<boolean | null>(null);
+  useEffect(() => {
+    let live = true;
+    AccessibilityInfo.isReduceMotionEnabled()
+      .then((v) => live && setReduce(v))
+      .catch(() => live && setReduce(false));
+    const sub = AccessibilityInfo.addEventListener('reduceMotionChanged', setReduce);
+    return () => {
+      live = false;
+      sub.remove();
+    };
+  }, []);
+  return reduce;
 }
 
 export function AcidRule() {
@@ -250,6 +271,40 @@ export function StatusRow({ icon, label, status, statusLabel }: { icon?: IconNam
 export function Ruled({ children }: { children: ReactNode }) {
   const { c } = useTheme();
   return <View style={{ borderTopWidth: 1, borderTopColor: c.fg }}>{children}</View>;
+}
+
+/**
+ * A folding chapter: a ruled header row (title, what is inside, chevron) that opens its body in place.
+ * Collapsed by default is the caller's choice; the open state lives with the caller.
+ */
+export function Chapter({ title, sub, open, onToggle, children }: { title: string; sub?: string; open: boolean; onToggle: () => void; children: ReactNode }) {
+  const { c } = useTheme();
+  const { meta } = useI18n();
+  return (
+    <View style={{ borderTopWidth: 1, borderTopColor: c.fg }}>
+      <Pressable
+        onPress={onToggle}
+        accessibilityRole="button"
+        accessibilityState={{ expanded: open }}
+        accessibilityLabel={sub ? `${title}. ${sub}` : title}
+        style={({ pressed }) => ({ flexDirection: 'row', alignItems: 'center', gap: space.s3, minHeight: HIT, paddingVertical: space.s3, backgroundColor: pressed ? c.rowPressed : 'transparent' })}
+      >
+        <View style={{ flex: 1, gap: 2 }}>
+          <T variant="label">{title}</T>
+          {sub ? (
+            <T variant="caption" tone="fgMuted">
+              {sub}
+            </T>
+          ) : null}
+        </View>
+        {/* Points down when open; the chevron already mirrors in RTL, so it turns the other way there. */}
+        <View style={{ transform: [{ rotate: open ? (meta.rtl ? '-90deg' : '90deg') : '0deg' }] }}>
+          <Icon name="chevron" tone="fgMuted" />
+        </View>
+      </Pressable>
+      {open ? <View style={{ gap: space.s5, paddingTop: space.s2, paddingBottom: space.s4 }}>{children}</View> : null}
+    </View>
+  );
 }
 
 /** Whole-row checkbox (spec 7). */
