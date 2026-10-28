@@ -192,21 +192,6 @@ export const ROUTES: Record<RouteKey, RouteContent> = {
   },
 };
 
-/** Kind of road (4A icons). Picked by how the route works, never by country. */
-export type RouteType = 'startup' | 'pnp' | 'tech' | 'niw';
-
-export const ROUTE_TYPE: Record<RouteKey, RouteType> = {
-  denmark: 'startup',
-  finland: 'startup',
-  estonia: 'startup',
-  netherlands: 'startup',
-  italy: 'startup',
-  turkey: 'tech',
-  'new-brunswick': 'pnp',
-  'nova-scotia': 'pnp',
-  eb2niw: 'niw',
-};
-
 /** The countries of v2 (Farjad, 15 Oct 2026) and the five added on 27 Oct, in the order the Countries tab shows them. */
 export const COUNTRY_ORDER: Country[] = ['CA', 'US', 'AU', 'DK', 'FI', 'EE', 'NL', 'IT', 'AT', 'IE', 'NO', 'SE', 'TR', 'IL', 'AE'];
 
@@ -215,17 +200,6 @@ export type RouteFamily = 'startup' | 'entrepreneur' | 'study' | 'talent' | 'exp
 export const FAMILY_ORDER: RouteFamily[] = ['startup', 'entrepreneur', 'study', 'talent', 'express'];
 /** One icon per family (4A line icons). */
 export const FAMILY_ICON: Record<RouteFamily, 'startup' | 'pnp' | 'study' | 'niw' | 'compass'> = { startup: 'startup', entrepreneur: 'pnp', study: 'study', talent: 'niw', express: 'compass' };
-export const ROUTE_FAMILY: Record<RouteKey, RouteFamily> = {
-  denmark: 'startup',
-  finland: 'startup',
-  estonia: 'startup',
-  netherlands: 'startup',
-  italy: 'startup',
-  turkey: 'startup',
-  'new-brunswick': 'entrepreneur',
-  'nova-scotia': 'entrepreneur',
-  eb2niw: 'talent',
-};
 
 /** A country's main photo (real, credited): its first road's. Null until one is sourced (US, Israel, UAE). */
 export const COUNTRY_HERO: Record<Country, Photo | null> = {
@@ -246,19 +220,10 @@ export const COUNTRY_HERO: Record<Country, Photo | null> = {
   SE: null,
 };
 
-/** The roads the app has for a country, in the app's order. */
-export const roadsOf = (country: Country): RouteKey[] => ROUTE_ORDER.filter((k) => ROUTES[k].country === country);
-
 export const ROUTE_ORDER: RouteKey[] = ['nova-scotia', 'new-brunswick', 'denmark', 'finland', 'estonia', 'netherlands', 'italy', 'turkey', 'eb2niw'];
 
 export function ruleFor(key: RouteKey): Rule | undefined {
   return RULES.find((r) => r.key === key);
-}
-
-export function sourceFor(key: RouteKey): { url: string; updated: string } {
-  const rule = ruleFor(key);
-  if (rule) return { url: rule.source, updated: rule.updated };
-  return ROUTES[key].sourceOverride!;
 }
 
 export const COUNTRY_NAMES: Record<Country, Text> = {

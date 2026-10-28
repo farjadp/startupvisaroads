@@ -14,7 +14,7 @@ import { extrasOf } from '@shared/routes-v2/extras';
 import type { Criterion, MoneyLine } from '@shared/routes-v2/types';
 import { HOME_CURRENCY, type Residence } from '@/content/assessment';
 import { FX_OLD, FX_TOO_OLD } from '@/engine/fx-age';
-import { COUNTRY_NAMES, type Country, type RouteKey } from '@/content/routes';
+import { COUNTRY_NAMES, type Country } from '@/content/routes';
 import { useI18n } from '@/i18n/I18nProvider';
 import { useStore } from '@/state/store';
 import { useTheme } from '@/theme/ThemeProvider';
@@ -31,19 +31,6 @@ function useAmountRow() {
     ? ({ flexDirection: 'column', gap: 2 } as const)
     : ({ flexDirection: 'row', justifyContent: 'space-between', gap: space.s3 } as const);
 }
-
-// v2 routes the app already has a step checklist for (v1 route pages).
-const V1_CHECKLIST: Record<string, RouteKey> = {
-  'ca-pnp-nova-scotia': 'nova-scotia',
-  'ca-pnp-new-brunswick': 'new-brunswick',
-  'us-eb2-niw': 'eb2niw',
-  'dk-startup': 'denmark',
-  'fi-startup': 'finland',
-  'ee-startup': 'estonia',
-  'nl-startup': 'netherlands',
-  'it-startup': 'italy',
-  'tr-tech-visa': 'turkey',
-};
 
 function CriterionRow({ c }: { c: Criterion }) {
   const { pick } = useI18n();
@@ -109,7 +96,7 @@ function MoneyRow({ m }: { m: MoneyLine }) {
 export default function RoutePage() {
   const { key } = useLocalSearchParams<{ key: string }>();
   const { t, pick, money, date } = useI18n();
-  const { state } = useStore();
+  const { state, openedSource } = useStore();
   const row = useAmountRow();
   const route = routeV2(String(key));
   if (!route) return null;
@@ -132,7 +119,6 @@ export default function RoutePage() {
   const sources = route.sources.filter((s) => (seen.has(s.url) ? false : (seen.add(s.url), true)));
   // A paused or closed route carries no offer: no CTA, no checklist (trust rules).
   const runnable = (route.status === 'open' || route.status === 'limited') && !blocked;
-  const v1 = runnable && !extras.steps?.length ? V1_CHECKLIST[route.key] : undefined;
   const calculator = !!extras.funds?.length && (route.status === 'open' || route.status === 'limited');
 
   return (
@@ -228,14 +214,9 @@ export default function RoutePage() {
         <LinkRow icon="globe" label={t('road.aboutCountry', { country: pick(COUNTRY_NAMES[route.country as Country]).text })} onPress={() => router.push(`/(tabs)/countries/country/${route.country}`)} />
       </Ruled>
 
-      {v1 ? (
-        <Ruled>
-          <LinkRow icon="doc" label={t('route2.steps')} onPress={() => router.push(`/(tabs)/countries/${v1}`)} />
-        </Ruled>
-      ) : null}
       {runnable ? <Button kind="secondary" label={t('route2.talk')} onPress={() => router.navigate('/(tabs)/me/mentor')} /> : null}
       {sources.map((s) => (
-        <SourceLine key={s.url} url={s.url} updated={s.checked} />
+        <SourceLine key={s.url} url={s.url} updated={s.checked} onOpen={() => openedSource(route.key)} />
       ))}
       <Disclaimer onAbout={() => router.navigate('/(tabs)/me/about')} />
     </Screen>

@@ -12,10 +12,12 @@ import { AccessibilityInfo, Animated, Easing, PixelRatio, Platform, Pressable, S
 import Svg, { Circle, Path } from 'react-native-svg';
 import { SUV_SETTLEMENT_FUNDS, SUV_SETTLEMENT_FUNDS_EXTRA_PER_PERSON, SUV_SETTLEMENT_FUNDS_UPDATED, SUV_SOURCES, SUV_STATE, SUV_VERIFIED, settlementFundsFor } from '@shared/canada-suv';
 import { FUNDS, type FundsCountry, type FundsLine } from '@shared/funds';
-import { FX, convert, type FxCurrency } from '@shared/fx';
-import { HOME_CURRENCY } from '@/content/assessment';
+import { FX, convert, toUsdExact, type FxCurrency } from '@shared/fx';
+import { ROUTES_V2, routeV2 } from '@shared/routes-v2';
+import { rank } from '@shared/routes-v2/match';
+import { HOME_CURRENCY, preferredFamily, toProfile, type AssessAnswers } from '@/content/assessment';
 import { FX_OLD, FX_TOO_OLD } from '@/engine/fx-age';
-import { COUNTRY_NAMES, COUNTRY_ORDER, ROUTES } from '@/content/routes';
+import { COUNTRY_NAMES, COUNTRY_ORDER } from '@/content/routes';
 import { useI18n } from '@/i18n/I18nProvider';
 import type { Locale } from '@/i18n/locales';
 import { useStore } from '@/state/store';
@@ -27,6 +29,13 @@ import { T } from '@/ui/T';
 
 /** Countries with a funds entry, in the app's country order. */
 const FUNDS_ORDER = COUNTRY_ORDER.filter((k): k is FundsCountry => k in FUNDS);
+
+/** The country of the closest v2 match, once the assessment is finished. */
+function closestCountry(assess: AssessAnswers, at: string | null): string | null {
+  if (!at) return null;
+  const best = rank(ROUTES_V2, toProfile(assess), toUsdExact, preferredFamily(assess))[0];
+  return best ? (routeV2(best.route)?.country ?? null) : null;
+}
 
 const MAX = 12;
 /** Figures drawn in the family row: IRCC's table lists 1–7; "8+" hands over to the stepper. */
@@ -481,9 +490,9 @@ export default function Funds() {
   const { t, pick } = useI18n();
   const { c } = useTheme();
   const { state, set } = useStore();
-  // A country page links here with ?country=; otherwise a road the user follows, the pathfinder's, or Canada.
+  // A country page links here with ?country=; otherwise a road the user follows, their closest v2 match, or Canada.
   const { country: asked } = useLocalSearchParams<{ country?: string }>();
-  const preferred = asked || (state.following[0] && ROUTES[state.following[0]].country) || (state.outcome && state.outcome !== 'too-early' ? ROUTES[state.outcome].country : null);
+  const [preferred] = useState(() => asked || state.following.map((k) => routeV2(k)?.country).find(Boolean) || closestCountry(state.assess, state.assessAt));
   const initial: FundsCountry = preferred && preferred in FUNDS ? (preferred as FundsCountry) : 'CA';
   const [country, setCountry] = useState<FundsCountry>(initial);
   const official = OFFICIAL[country] ?? 'USD';

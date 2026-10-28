@@ -3,25 +3,28 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import type { StepId } from '@/content/checklist';
-import type { RouteKey } from '@/content/routes';
 import type { Outcome } from '@/engine/road';
-import type { QuizKey, StoredAnswers } from '@/engine/readiness';
+import type { StoredAnswers } from '@/engine/readiness';
 import type { Locale } from '@/i18n/locales';
 import type { AssessAnswers } from '@/content/assessment';
 import type { FxCurrency } from '@shared/fx';
+import { migrate } from './migrate';
 
 export type ModePref = 'system' | 'paper' | 'night';
 
 export type AppState = {
-  v: 1;
+  /** 2 since 27 Oct 2026: followed roads and opened sources hold v2 route keys (migrate.ts). */
+  v: 2;
   onboarded: boolean;
   locale: Locale | null;
   mode: ModePref;
+  /** The retired v1 pathfinder (seven answers, its road, its step ticks, keyed by v1 road). Kept as stored; no screen reads them. */
   answers: StoredAnswers;
   step: number;
   outcome: Outcome | null;
-  done: Partial<Record<RouteKey, StepId[]>>;
-  sourcesOpened: RouteKey[];
+  done: Partial<Record<string, StepId[]>>;
+  /** v2 route keys whose official source the user opened (the Sources badge). */
+  sourcesOpened: string[];
   newsRead: boolean;
   fundsUsed: boolean;
   /** Funds tool: also show an indicative US dollar amount (v1 switch; read once into fundsCurrencies). */
@@ -33,8 +36,8 @@ export type AppState = {
   assess: AssessAnswers;
   assessStep: number;
   assessAt: string | null;
-  /** Roads the user chose to follow (onboarding 3B). Orders Roads and filters News; never scored. */
-  following: RouteKey[];
+  /** v2 route keys the user chose to follow (onboarding 3B). Filters News and leads Home; never scored. */
+  following: string[];
   /** The opening motion plays once; later launches fade. */
   introSeen: boolean;
   /** Route page v3 (road map): steps ticked, documents ready, best quiz attempt, per v2 route key. Points are derived, never stored. */
@@ -48,7 +51,7 @@ export type AppState = {
 const KEY = 'vr.state.v1';
 
 export const INITIAL: AppState = {
-  v: 1,
+  v: 2,
   onboarded: false,
   locale: null,
   mode: 'system',
@@ -75,9 +78,7 @@ export const INITIAL: AppState = {
 
 type Actions = {
   set: (patch: Partial<AppState>) => void;
-  answer: (key: QuizKey, value: string) => void;
-  toggleStep: (route: RouteKey, step: StepId) => void;
-  openedSource: (route: RouteKey) => void;
+  openedSource: (route: string) => void;
   /** Ticks or unticks an item in a per-route list (journey stations, documents). */
   toggleIn: (list: 'journey' | 'docs', route: string, item: string) => void;
   /** Merges into the latest team, so two quick taps never read a stale value. */
@@ -102,8 +103,9 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     AsyncStorage.getItem(KEY)
       .then((raw) => {
         if (!raw) return;
-        const parsed = JSON.parse(raw) as AppState;
-        if (parsed?.v === 1) {
+        // A v1 blob is brought up to v2 on read; the next write stores it as v2.
+        const parsed = migrate<AppState>(JSON.parse(raw));
+        if (parsed) {
           setState({ ...INITIAL, ...parsed });
           setIntroSeenAtLaunch(!!parsed.introSeen);
         }
@@ -120,18 +122,8 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   }, [state, hydrated]);
 
   const set = useCallback((patch: Partial<AppState>) => setState((s) => ({ ...s, ...patch })), []);
-  const answer = useCallback((key: QuizKey, value: string) => setState((s) => ({ ...s, answers: { ...s.answers, [key]: value } as StoredAnswers })), []);
-  const toggleStep = useCallback(
-    (route: RouteKey, step: StepId) =>
-      setState((s) => {
-        const cur = s.done[route] ?? [];
-        const next = cur.includes(step) ? cur.filter((x) => x !== step) : [...cur, step];
-        return { ...s, done: { ...s.done, [route]: next } };
-      }),
-    [],
-  );
   const openedSource = useCallback(
-    (route: RouteKey) => setState((s) => (s.sourcesOpened.includes(route) ? s : { ...s, sourcesOpened: [...s.sourcesOpened, route] })),
+    (route: string) => setState((s) => (s.sourcesOpened.includes(route) ? s : { ...s, sourcesOpened: [...s.sourcesOpened, route] })),
     [],
   );
   const toggleIn = useCallback(
@@ -149,7 +141,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     setState((s) => ({ ...INITIAL, locale: s.locale, onboarded: true, mode: s.mode, introSeen: s.introSeen }));
   }, []);
 
-  const value = useMemo(() => ({ state, hydrated, introSeenAtLaunch, set, answer, toggleStep, openedSource, toggleIn, patchTeam, reset, persistNow }), [state, hydrated, introSeenAtLaunch, set, answer, toggleStep, openedSource, toggleIn, patchTeam, reset, persistNow]);
+  const value = useMemo(() => ({ state, hydrated, introSeenAtLaunch, set, openedSource, toggleIn, patchTeam, reset, persistNow }), [state, hydrated, introSeenAtLaunch, set, openedSource, toggleIn, patchTeam, reset, persistNow]);
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }
 

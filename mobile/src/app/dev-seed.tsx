@@ -1,13 +1,16 @@
 // Development only: visaroads://dev-seed?preset=ns&locale=fa&mode=night&to=/(tabs)/me
 // Puts the app into a known state so screens can be reviewed in every
-// language and mode without tapping through the pathfinder. In a release
-// build it changes nothing and goes home.
+// language and mode without tapping through the assessment. In a release
+// build it changes nothing and goes home. The old pathfinder presets (ns,
+// finland, early) now follow the v2 route their v1 road became, and &steps=
+// ticks that route's road-map steps (v2 step keys).
 import { Redirect, useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
 import type { AssessAnswers } from '@/content/assessment';
 import type { StoredAnswers } from '@/engine/readiness';
 import { outcomeFor } from '@/engine/road';
 import { LOCALES, type Locale } from '@/i18n/locales';
+import { V1_TO_V2 } from '@/state/migrate';
 import { useStore, type ModePref } from '@/state/store';
 
 const PRESETS: Record<string, StoredAnswers> = {
@@ -38,10 +41,9 @@ export default function DevSeed() {
       if (p.mode === 'paper' || p.mode === 'night' || p.mode === 'system') patch.mode = p.mode as ModePref;
       if (answers) {
         const { outcome } = outcomeFor(answers);
-        patch.answers = answers;
-        patch.outcome = outcome;
-        patch.step = 0;
-        if (p.steps && outcome !== 'too-early') patch.done = { [outcome]: p.steps.split(',') as never };
+        const route = outcome === 'too-early' ? null : V1_TO_V2[outcome];
+        patch.following = route ? [route] : [];
+        if (route && p.steps) patch.journey = { [route]: p.steps.split(',') };
       }
       if (p.assess && ASSESS[p.assess]) {
         patch.assess = ASSESS[p.assess];
