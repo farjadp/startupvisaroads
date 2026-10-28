@@ -62,6 +62,7 @@ const zh: Messages = {
     roadA11y: '{route}，{country}。已完成 {done}/{total} 步。',
     roadA11yAll: '{route}，{country}。全部 {total} 步已完成。决定权在主管机构。',
     opensRoad: '打开该路径',
+    followCta: '从你的结果中选一条路径',
   },
   countries: {
     title: '国家',

@@ -88,7 +88,7 @@ function FollowCard() {
   return (
     <View style={{ borderWidth: 1.5, borderColor: c.fg, padding: space.s4, gap: space.s4 }}>
       <T variant="headline">{t('home.followPrompt')}</T>
-      <Button label={t('home.seeResult')} onPress={() => router.push('/(tabs)/assess/results')} />
+      <Button label={t('home.followCta')} onPress={() => router.push('/(tabs)/assess/results')} />
     </View>
   );
 }

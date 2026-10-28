@@ -61,6 +61,7 @@ const en = {
     roadA11y: '{route}, {country}. {done} of {total} steps done.',
     roadA11yAll: '{route}, {country}. All {total} steps done. The decision is the authority’s.',
     opensRoad: 'Opens the road',
+    followCta: 'Pick a road from your result',
   },
   countries: {
     title: 'Countries',

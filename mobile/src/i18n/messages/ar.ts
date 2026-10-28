@@ -63,6 +63,7 @@ const ar: Messages = {
     roadA11y: '{route}، {country}. {done} من {total} خطوات منجزة.',
     roadA11yAll: '{route}، {country}. أُنجزت كل الخطوات ({total}). القرار للجهة الرسمية.',
     opensRoad: 'يفتح المسار',
+    followCta: 'اختر مسارًا من نتيجتك',
   },
   countries: {
     title: 'الدول',

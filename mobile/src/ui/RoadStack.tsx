@@ -84,7 +84,8 @@ function Scrim({ width, height, textTop }: { width: number; height: number; text
   const span = Math.max(1, height - start);
   const knee = ((top - start) / span).toFixed(3);
   return (
-    <Svg style={StyleSheet.absoluteFill} width={width} height={height} pointerEvents="none">
+    // Overdrawn by 2pt each side (the card clips it): an exact fit left a 1px unscrimmed sliver at the card edge. Symmetric, so direction-neutral.
+    <Svg style={{ position: 'absolute', top: 0, left: -2 }} width={Math.ceil(width) + 4} height={Math.ceil(height) + 2} pointerEvents="none">
       <Defs>
         <LinearGradient id="scrim" x1="0" y1="0" x2="0" y2="1">
           <Stop offset="0" stopColor={raw_ink} stopOpacity="0" />
@@ -92,7 +93,7 @@ function Scrim({ width, height, textTop }: { width: number; height: number; text
           <Stop offset="1" stopColor={raw_ink} stopOpacity={String(SCRIM_BOTTOM)} />
         </LinearGradient>
       </Defs>
-      <Rect x="0" y={start} width={width} height={span} fill="url(#scrim)" />
+      <Rect x={0} y={start} width={Math.ceil(width) + 4} height={span + 2} fill="url(#scrim)" />
     </Svg>
   );
 }
@@ -134,6 +135,9 @@ function Rail({ total, nowAt, animate, delay }: { total: number; nowAt: number; 
 function RoadCard({ route, index, animate, shut }: { route: RouteV2; index: number; animate: boolean; shut: boolean }) {
   const { t, pick, count } = useI18n();
   const { state } = useStore();
+  const { mode, c } = useTheme();
+  // Ink on night is 1.1:1: a hairline keeps the shut and cover cards reading as cards.
+  const edge = mode === 'night' ? { borderWidth: 1, borderColor: c.rule } : null;
   const country = route.country as Country;
   const name = pick(route.name);
   const countryName = pick(COUNTRY_NAMES[country]).text;
@@ -163,7 +167,7 @@ function RoadCard({ route, index, animate, shut }: { route: RouteV2; index: numb
           accessibilityRole="button"
           accessibilityLabel={`${name.text}, ${countryName}. ${t('follow.notForPassport')}`}
           accessibilityHint={t('home.opensRoad')}
-          style={({ pressed }) => ({ minHeight: SHUT, backgroundColor: raw_ink, padding: space.s4, gap: space.s2, opacity: pressed ? 0.85 : 1 })}
+          style={({ pressed }) => ({ minHeight: SHUT, backgroundColor: raw_ink, padding: space.s4, gap: space.s2, opacity: pressed ? 0.85 : 1, ...edge })}
         >
           <CountryTag country={country} />
           <T variant="display-m" tone="photoPlateFg" lang={name.lang}>
@@ -194,7 +198,7 @@ function RoadCard({ route, index, animate, shut }: { route: RouteV2; index: numb
         accessibilityLabel={a11y}
         accessibilityHint={t('home.opensRoad')}
         onLayout={(e) => setBox({ w: e.nativeEvent.layout.width, h: e.nativeEvent.layout.height })}
-        style={({ pressed }) => ({ minHeight: CARD, justifyContent: 'space-between', padding: space.s4, gap: space.s3, overflow: 'hidden', backgroundColor: raw_ink, opacity: pressed ? 0.85 : 1 })}
+        style={({ pressed }) => ({ minHeight: CARD, justifyContent: 'space-between', padding: space.s4, gap: space.s3, overflow: 'hidden', backgroundColor: raw_ink, opacity: pressed ? 0.85 : 1, ...(photo ? null : edge) })}
       >
         {photo ? <Image source={photo.source} style={StyleSheet.absoluteFill} contentFit="cover" accessible={false} /> : <Cover country={country} />}
         {box.w ? <Scrim width={box.w} height={box.h} textTop={textTop} /> : null}

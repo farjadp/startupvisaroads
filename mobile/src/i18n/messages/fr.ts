@@ -62,6 +62,7 @@ const fr: Messages = {
     roadA11y: '{route}, {country}. {done} étapes sur {total} faites.',
     roadA11yAll: '{route}, {country}. Les {total} étapes sont faites. La décision revient à l’autorité.',
     opensRoad: 'Ouvre le parcours',
+    followCta: 'Choisir un parcours dans votre résultat',
   },
   countries: {
     title: 'Pays',

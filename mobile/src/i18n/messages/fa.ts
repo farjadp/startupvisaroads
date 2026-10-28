@@ -61,6 +61,7 @@ const fa: Messages = {
     roadA11y: '{route}، {country}. {done} از {total} گام انجام شده.',
     roadA11yAll: '{route}، {country}. هر {total} گام انجام شده. تصمیم با مرجع رسمی است.',
     opensRoad: 'مسیر را باز می‌کند',
+    followCta: 'یک مسیر از نتیجه‌تان انتخاب کنید',
   },
   countries: {
     title: 'کشورها',
