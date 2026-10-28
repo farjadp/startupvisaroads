@@ -3,11 +3,13 @@
 // language and mode without tapping through the assessment. In a release
 // build it changes nothing and goes home. The old pathfinder presets (ns,
 // finland, early) now follow the v2 route their v1 road became, and &steps=
-// ticks that route's road-map steps (v2 step keys).
+// ticks that route's road-map steps (v2 step keys). &follow=a,b follows those v2
+// routes (after any preset), for a Home with several roads.
 // A locale that flips layout direction restarts the app, and Android then
 // replays the activity's launch link, often an older dev-seed. So the target
 // is kept across the restart and the replayed link is ignored once.
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { routeV2 } from '@shared/routes-v2';
 import { Redirect, useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
 import type { AssessAnswers } from '@/content/assessment';
@@ -34,7 +36,7 @@ const ASSESS: Record<string, AssessAnswers> = {
 };
 
 export default function DevSeed() {
-  const p = useLocalSearchParams<{ assess?: string; preset?: string; locale?: string; mode?: string; to?: string; steps?: string }>();
+  const p = useLocalSearchParams<{ assess?: string; preset?: string; locale?: string; mode?: string; to?: string; steps?: string; follow?: string }>();
   const { set, reset } = useStore();
   const [done, setDone] = useState(false);
   const [to, setTo] = useState(p.to);
@@ -62,6 +64,11 @@ export default function DevSeed() {
         const route = outcome === 'too-early' ? null : V1_TO_V2[outcome];
         patch.following = route ? [route] : [];
         if (route && p.steps) patch.journey = { [route]: p.steps.split(',') };
+      }
+      if (p.follow) {
+        patch.following = p.follow.split(',').filter((k) => !!routeV2(k));
+        // &steps= ticks the first followed road when the roads are given.
+        if (p.steps && patch.following[0]) patch.journey = { [patch.following[0]]: p.steps.split(',') };
       }
       if (p.assess && ASSESS[p.assess]) {
         patch.assess = ASSESS[p.assess];
