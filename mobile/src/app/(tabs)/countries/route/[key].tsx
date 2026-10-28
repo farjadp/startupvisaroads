@@ -194,7 +194,7 @@ export default function RoutePage() {
   const sources = route.sources.filter((s) => (seen.has(s.url) ? false : (seen.add(s.url), true)));
   // A paused or closed route carries no offer: no CTA, no checklist (trust rules).
   const runnable = (route.status === 'open' || route.status === 'limited') && !blocked;
-  const calculator = !!extras.funds?.length && (route.status === 'open' || route.status === 'limited');
+  const calculator = !!extras.funds?.length && runnable;
   // The same engine as Results and the match card. Shown only when it scores this route: a finished assessment,
   // a route open to this passport, and at least one condition answered (pct is null otherwise).
   const found = state.assessAt && !blocked ? match(route, toProfile(state.assess), toUsdExact) : null;
@@ -287,7 +287,7 @@ export default function RoutePage() {
           <Chapter title={t('route2.chapters.do')} sub={doSub} open={open.do} onToggle={() => toggle('do')}>
             {quiz && extras.quiz ? <CheckWhatYouKnow routeKey={route.key} questions={extras.quiz.length} onQuiz={() => router.push(`/(tabs)/countries/quiz/${route.key}`)} /> : null}
             {docs && extras.documents ? <Documents routeKey={route.key} docs={extras.documents} /> : null}
-            {/* Paused or closed routes show the official figures only, no calculator (Farjad, 27 Oct 2026). */}
+            {/* Paused, closed or passport-blocked routes show the official figures only, no calculator (Farjad, 27-28 Oct 2026). */}
             {team && extras.funds ? <TeamMoney funds={extras.funds} authority={route.agency} home={home} onAbout={about} founderRange={extras.founders} /> : null}
           </Chapter>
         ) : null}
