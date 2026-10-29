@@ -32,6 +32,9 @@ export const SUV_SOURCES = {
   designatedOrganizations:
     'https://www.canada.ca/en/immigration-refugees-citizenship/services/immigrate-canada/start-visa/eligibility/designated-organizations.html',
   apply: 'https://www.canada.ca/en/immigration-refugees-citizenship/services/immigrate-canada/start-visa/apply.html',
+  /** Read 2026-10-29 (page dated 2026-07-21): the source for both deadlines. */
+  commitmentCertificate:
+    'https://www.canada.ca/en/immigration-refugees-citizenship/services/immigrate-canada/start-visa/participate/commitment-certificate.html',
 } as const;
 
 // ---------------------------------------------------------------------------
@@ -58,6 +61,13 @@ export const SUV_STATE = {
    * 6 months to send us your application."
    */
   certificateCutoff: '2026-01-01',
+  /**
+   * "We stopped accepting commitment certificates from organizations after
+   * December 31, 2025." This is the date CIC News and AI answers report as
+   * the close (as "1 January 2026"); 30 June 2026 is the filing deadline and
+   * IRCC's pause date. Two deadlines, both true — say both.
+   */
+  certificatesAcceptedUntil: '2025-12-31',
   certificateFilingWindowMonths: 6,
   /** Applications accepted before the pause date are still being processed. */
   inFlightStillProcessed: true,

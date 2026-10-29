@@ -91,7 +91,8 @@ export default async function CanadaSUVPage({ params }: { params: Promise<{ loca
            </h1>
            
            <p className="text-xl text-[#F2F0E9]/80 font-sans max-w-2xl mb-12 leading-relaxed border-l-4 border-[#b91c1c] pl-6">
-              IRCC paused the Start-up Visa Program on 30 June 2026 and is not accepting new applications. Applications filed before that date are still being processed, and if you are eligible you can still apply for an <span className="text-[#CCFF00]">open work permit</span> while yours is assessed. There is no way to start a new Start-up Visa application today.{' '}
+              IRCC paused the Start-up Visa Program on 30 June 2026 and is not accepting new applications. Applications filed before that date are still being processed, and if you are eligible you can still apply for an <span className="text-[#CCFF00]">open work permit</span> while yours is assessed. There is no way to start a new Start-up Visa application today. Two dates, not one: IRCC stopped accepting commitment certificates from designated organizations after 31 December 2025, and founders holding a valid 2025 certificate had until 30 June 2026 to apply, the date IRCC gives as the pause.{' '}
+              <a href={SUV_SOURCES.commitmentCertificate} target="_blank" rel="noreferrer" className="underline decoration-[#F2F0E9]/40 hover:text-[#CCFF00]">IRCC, commitment certificates</a>;{' '}
               <a href={SUV_SOURCES.program} target="_blank" rel="noreferrer" className="underline decoration-[#F2F0E9]/40 hover:text-[#CCFF00]">IRCC, Start-up Visa Program</a>.
            </p>
 
@@ -356,6 +357,10 @@ export default async function CanadaSUVPage({ params }: { params: Promise<{ loca
             <div className="space-y-2">
                {[
                   {
+                     q: "Did the Start-up Visa close on 1 January 2026 or on 30 June 2026?",
+                     a: "Both dates are real. IRCC stopped accepting commitment certificates from designated organizations after 31 December 2025, so no new founder could enter from 1 January 2026. Founders who already held a valid 2025 certificate had until 30 June 2026 to file, and IRCC gives that day as the date the program was paused.",
+                  },
+                  {
                      q: "Can I apply for the Start-up Visa today?",
                      a: `No. IRCC paused the program on 30 June 2026 and is not accepting new applications. The last route in required a valid ${SUV_STATE.lastIntake.certificateYear} commitment certificate and a filing by that date. Anyone offering to register you for the Start-up Visa, or to reserve you a place in the program that replaces it, is selling something that does not exist.`,
                   },
@@ -413,6 +418,7 @@ export default async function CanadaSUVPage({ params }: { params: Promise<{ loca
                   { label: 'Who can apply — eligibility and settlement funds', href: SUV_SOURCES.eligibility },
                   { label: 'List of designated organizations and priority processing', href: SUV_SOURCES.designatedOrganizations },
                   { label: 'How to apply', href: SUV_SOURCES.apply },
+                  { label: 'Commitment certificates — the two deadlines', href: SUV_SOURCES.commitmentCertificate },
                ].map((src) => (
                   <li key={src.href}>
                      <a href={src.href} target="_blank" rel="noreferrer" className="text-[#1a1a1a] underline decoration-[#1a1a1a]/30 hover:decoration-[#1a1a1a] break-words">
