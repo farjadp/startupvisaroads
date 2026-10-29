@@ -227,14 +227,17 @@ export function RouteStop({
   useEffect(() => {
     if (completeOn !== 'view' || !ref.current) return;
     let timer: ReturnType<typeof setTimeout>;
+    // "Seen" means half the section, or half the screen for a section taller
+    // than two screens — on a phone a long stop never shows half of itself.
     const io = new IntersectionObserver(
       ([e]) => {
-        if (e.isIntersecting) {
+        const need = Math.min(e.boundingClientRect.height, window.innerHeight) * 0.5;
+        if (e.isIntersecting && e.intersectionRect.height >= need) {
           timer = setTimeout(() => complete(id, message ?? 'Checkpoint reached'), 1200);
           io.disconnect();
         }
       },
-      { threshold: 0.5 },
+      { threshold: Array.from({ length: 21 }, (_, i) => i / 20) },
     );
     io.observe(ref.current);
     return () => {
