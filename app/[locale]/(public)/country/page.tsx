@@ -8,6 +8,7 @@ import React from 'react';
 import { Link } from '@/routing';
 import { ArrowRight, Globe, Map } from 'lucide-react';
 import type { Metadata } from 'next';
+import { setRequestLocale } from 'next-intl/server';
 import LifestyleCompass from '@/components/LifestyleCompass'; // Import
 
 
@@ -115,7 +116,12 @@ const COUNTRIES = [
   }
 ];
 
-export default function CountryIndexPage() {
+// setRequestLocale before the first <Link>: without it next-intl reads
+// headers(), Next renders the route dynamically and streams <title> and
+// the meta tags into <body> instead of <head>.
+export default async function CountryIndexPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  setRequestLocale(locale);
   return (
     <div className="w-full px-4 md:px-8 border-x border-[#1a1a1a]/10 max-w-[1400px] mx-auto bg-[#F2F0E9] text-[#1a1a1a]">
       <GuideJsonLd path="/country" />

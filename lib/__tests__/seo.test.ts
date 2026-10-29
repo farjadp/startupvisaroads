@@ -17,6 +17,7 @@ import {
   selfLocalizedAlternates,
   stripHtml,
   brandedTitle,
+  clampDescription,
   isReviewed,
   reviewedPageJsonLd,
 } from '../seo';
@@ -236,6 +237,28 @@ describe('schema identity and localization', () => {
       isPartOf: { '@id': `${url}#webpage` },
       publisher: { '@id': `${SITE_URL}/#organization` },
     });
+  });
+});
+
+describe('clampDescription', () => {
+  it('leaves a short description alone', () => {
+    expect(clampDescription('<p>Short and complete.</p>')).toBe('Short and complete.');
+  });
+
+  it('cuts at a word boundary within 160 characters and adds an ellipsis', () => {
+    const long = 'Canada ' + 'changes the post-graduation work permit rules for the fall intake '.repeat(4);
+    const out = clampDescription(long);
+    expect([...out].length).toBeLessThanOrEqual(160);
+    expect(out.endsWith('…')).toBe(true);
+    expect(long.startsWith(out.slice(0, -1))).toBe(true);
+    expect(long.charAt(out.length - 1)).toBe(' ');
+  });
+
+  it('counts Persian text by characters', () => {
+    const fa = 'مسیر کارآفرینی آلبرتا '.repeat(12);
+    const out = clampDescription(fa);
+    expect([...out].length).toBeLessThanOrEqual(160);
+    expect(out.endsWith('…')).toBe(true);
   });
 });
 

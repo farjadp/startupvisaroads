@@ -51,6 +51,7 @@
 import React from 'react';
 import Image from 'next/image';
 import type { Metadata } from 'next';
+import { setRequestLocale } from 'next-intl/server';
 import { ArrowRight, ShieldAlert } from 'lucide-react';
 import { Link } from '@/routing';
 import { metaFor } from '@/lib/pageMeta';
@@ -374,7 +375,12 @@ const reads = [
 const label = 'font-sans text-xs font-bold uppercase tracking-[0.18em]';
 const prose = 'font-sans text-[15px] leading-relaxed text-[#1a1a1a]/70';
 
-export default function ItalyPage() {
+// setRequestLocale before the first <Link>: without it next-intl reads
+// headers(), Next renders the route dynamically and streams <title> and
+// the meta tags into <body> instead of <head>.
+export default async function ItalyPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  setRequestLocale(locale);
   return (
     <div className="w-full overflow-x-clip bg-[#F2F0E9] text-[#1a1a1a]">
       <JsonLd data={[howToJsonLd, faqJsonLd(faqs.map((f) => ({ question: f.q, answer: f.a })), 'en')]} />

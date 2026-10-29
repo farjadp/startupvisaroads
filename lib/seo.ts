@@ -81,6 +81,24 @@ export function stripHtml(value: string): string {
     .trim();
 }
 
+/** Google shows roughly this many characters of a meta description. */
+export const DESCRIPTION_MAX = 160;
+
+/**
+ * Shortens a description to whole words within `max` characters, ending in an
+ * ellipsis when it had to cut. A plain slice(0, 200) ended blog descriptions
+ * mid-word ("...the fall intake and how to prepa"), and that is the text
+ * og:description and Article.description hand to AI engines to quote.
+ */
+export function clampDescription(value: string, max = DESCRIPTION_MAX): string {
+  const text = stripHtml(value);
+  if ([...text].length <= max) return text;
+  const cut = [...text].slice(0, max - 1).join('');
+  const lastSpace = cut.lastIndexOf(' ');
+  const head = lastSpace > max * 0.6 ? cut.slice(0, lastSpace) : cut;
+  return `${head.replace(/[\s,;:.\-–—،؛]+$/u, '')}…`;
+}
+
 export function isDataImageUrl(value: string | null | undefined): boolean {
   return typeof value === 'string' && /^data:image\//i.test(value.trim());
 }

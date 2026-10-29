@@ -45,6 +45,7 @@
 import React from 'react';
 import Image from 'next/image';
 import type { Metadata } from 'next';
+import { setRequestLocale } from 'next-intl/server';
 import { ArrowRight, ShieldAlert } from 'lucide-react';
 import { Link } from '@/routing';
 import { metaFor } from '@/lib/pageMeta';
@@ -269,7 +270,12 @@ const linkCls = 'underline decoration-[#1a1a1a]/30 underline-offset-4 hover:deco
 
 // ─── Page ────────────────────────────────────────────────────────────────────
 
-export default function CanadaPage() {
+// setRequestLocale before the first <Link>: without it next-intl reads
+// headers(), Next renders the route dynamically and streams <title> and
+// the meta tags into <body> instead of <head>.
+export default async function CanadaPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  setRequestLocale(locale);
   return (
     <div className="w-full overflow-x-clip bg-[#F2F0E9] text-[#1a1a1a]">
       <JsonLd data={[howToJsonLd]} />

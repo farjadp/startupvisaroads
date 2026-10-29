@@ -32,6 +32,7 @@
 import React from 'react';
 import Image from 'next/image';
 import type { Metadata } from 'next';
+import { setRequestLocale } from 'next-intl/server';
 import { ArrowRight, ShieldAlert } from 'lucide-react';
 import { Link } from '@/routing';
 import { metaFor } from '@/lib/pageMeta';
@@ -396,7 +397,12 @@ const reads = [
 const dkk = (n: number) => `DKK ${n.toLocaleString('en')}`;
 const label = 'font-sans text-xs font-bold uppercase tracking-[0.18em]';
 
-export default function DenmarkPage() {
+// setRequestLocale before the first <Link>: without it next-intl reads
+// headers(), Next renders the route dynamically and streams <title> and
+// the meta tags into <body> instead of <head>.
+export default async function DenmarkPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  setRequestLocale(locale);
   return (
     <div className="w-full overflow-x-clip bg-[#F2F0E9] text-[#1a1a1a]">
       <JsonLd data={[videoJsonLd, howToJsonLd, faqJsonLd(faqs.map((f) => ({ question: f.q, answer: f.a })), 'en')]} />
