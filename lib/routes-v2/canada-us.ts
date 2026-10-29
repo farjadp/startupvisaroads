@@ -647,8 +647,8 @@ export const ROUTES_CANADA_US: RouteV2[] = [
     },
     status: 'open',
     fact: {
-      en: 'You need a rural community endorsement before you can enter the pool. The 2026 entrepreneur allocation is 60 nominations; 36 were issued by 7 Oct.',
-      fa: 'پیش از ورود به استخر باید تأییدیهٔ یک جامعهٔ روستایی را بگیرید. سهمیهٔ کارآفرینی ۲۰۲۶ شصت نامزدی است که تا ۷ اکتبر ۳۶ مورد آن صادر شده است.',
+      en: 'You need a rural community endorsement before you can enter the pool. The 2026 entrepreneur allocation is 60 nominations; 37 were issued by 21 Oct.',
+      fa: 'پیش از ورود به استخر باید تأییدیهٔ یک جامعهٔ روستایی را بگیرید. سهمیهٔ کارآفرینی ۲۰۲۶ شصت نامزدی است که تا ۲۱ اکتبر ۳۷ مورد آن صادر شده است.',
     },
     criteria: [
       {
@@ -714,8 +714,8 @@ export const ROUTES_CANADA_US: RouteV2[] = [
         weight: 2,
         scoreable: false,
         note: {
-          en: 'No entrepreneur draws or scores are published. Allocation: 60 nominations in 2026, 36 issued by 7 Oct.',
-          fa: 'قرعه یا امتیاز کارآفرینی منتشر نمی‌شود. سهمیه: ۶۰ نامزدی در ۲۰۲۶ که ۳۶ مورد تا ۷ اکتبر صادر شده است.',
+          en: 'No entrepreneur draws or scores are published. Allocation: 60 nominations in 2026, 37 issued by 21 Oct.',
+          fa: 'قرعه یا امتیاز کارآفرینی منتشر نمی‌شود. سهمیه: ۶۰ نامزدی در ۲۰۲۶ که ۳۷ مورد تا ۲۱ اکتبر صادر شده است.',
         },
       },
       {
@@ -756,11 +756,11 @@ export const ROUTES_CANADA_US: RouteV2[] = [
     },
     sources: [
       { url: 'https://www.alberta.ca/aaip-rural-entrepreneur-stream-eligibility', checked: '2026-10-12', label: 'AAIP Rural Entrepreneur eligibility' },
-      { url: 'https://www.alberta.ca/aaip-processing-information', checked: '2026-10-12', label: 'AAIP processing information' },
+      { url: 'https://www.alberta.ca/aaip-processing-information', checked: '2026-10-29', label: 'AAIP processing information' },
     ],
     verified: true,
     review:
-      'Allocation count (36 of 60 by 7 Oct) moves monthly. No age rule published. Notes suggest separate v2 rows for Alberta Graduate Entrepreneur and Foreign Graduate Entrepreneur (not encoded here).',
+      'Allocation count (37 of 60 by 21 Oct, page updated 21 Oct 2026) moves monthly. No age rule published. Notes suggest separate v2 rows for Alberta Graduate Entrepreneur and Foreign Graduate Entrepreneur (not encoded here).',
   },
   {
     key: 'ca-pnp-manitoba',
