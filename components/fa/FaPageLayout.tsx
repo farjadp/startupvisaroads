@@ -36,12 +36,17 @@ import ScrollProgress from './motion/ScrollProgress';
 import Stepper, { type Step } from './motion/Stepper';
 import Faq from './motion/Faq';
 import Downloads from './motion/Downloads';
-import { FaStop } from './FaRoute';
+import { FaStop, FaCheck } from './FaRoute';
 import { RouteProvider, RouteRail, RouteFinish, type RouteTheme, type RouteLabels } from '@/components/route/RouteProgress';
 import type { FlagCode as RouteFlagCode } from '@/components/route/flags';
 
 // Guides carry the progress layer in the site's own colours: acid on ink.
-const FA_THEME: RouteTheme = { accent: '#CCFF00', accentInk: '#1a1a1a', accentText: '#1a1a1a', primary: '#1a1a1a', deep: '#1a1a1a', soft: '#F1FFC2', accentOnDark: '#CCFF00' };
+const FA_THEME: RouteTheme = { accent: '#CCFF00', accentInk: '#1a1a1a', accentText: '#1a1a1a', primary: '#1a1a1a', deep: '#1a1a1a', soft: '#CCFF00', accentOnDark: '#CCFF00' };
+
+// A requirements section becomes a self-check, except where a readiness
+// verdict would mislead: the paused Canada Start-up Visa, and Israel, which
+// is not open to the passports this site writes for.
+const NO_SELF_CHECK = new Set(['/canada-startup-visa', '/israel']);
 const FA_LABELS: Partial<RouteLabels> = {
   rail: 'پیشرفت شما در این راهنما',
   railTitle: 'با خواندن هر بخش، پرچم بالاتر می‌رود',
@@ -108,9 +113,9 @@ function stepsOf(s: FaSection): Step[] | null {
   return parsed.every(Boolean) ? (parsed as Step[]) : null;
 }
 
-function Section({ s, i, guide = false }: { s: FaSection; i: number; guide?: boolean }) {
+function Section({ s, i, guide = false, selfCheck = false }: { s: FaSection; i: number; guide?: boolean; selfCheck?: boolean }) {
   const steps = stepsOf(s);
-  if (guide) return <GuideSection s={s} i={i} steps={steps} />;
+  if (guide) return <GuideSection s={s} i={i} steps={steps} selfCheck={selfCheck} />;
   return (
     <Reveal as="section" id={`s${i + 1}`} className="scroll-mt-28">
       <Rule className="mb-5" />
@@ -145,9 +150,11 @@ function Section({ s, i, guide = false }: { s: FaSection; i: number; guide?: boo
  * stays in the HTML, so search engines and answer engines read all of it.
  * Steps and the callout always stay open.
  */
-function GuideSection({ s, i, steps }: { s: FaSection; i: number; steps: Step[] | null }) {
+function GuideSection({ s, i, steps, selfCheck }: { s: FaSection; i: number; steps: Step[] | null; selfCheck: boolean }) {
   const [lead, ...rest] = s.body;
-  const bullets = !steps && s.bullets ? s.bullets : [];
+  // A short list of requirements becomes the self-check; its text stays in the HTML.
+  const check = selfCheck && !steps && !!s.bullets && s.bullets.length >= 3 && s.bullets.length <= 8 && s.heading.slice(0, 24).includes('شرایط');
+  const bullets = !steps && !check && s.bullets ? s.bullets : [];
   const restWords = wordCount(rest.join(' ')) + wordCount(bullets.join(' '));
   const fold = restWords > 60;
   const minutes = Math.max(1, Math.round(restWords / 200));
@@ -172,10 +179,10 @@ function GuideSection({ s, i, steps }: { s: FaSection; i: number; steps: Step[] 
         <Rule className="mb-5" />
         <MaskText as="h2" text={s.heading} className="font-estedad font-black text-3xl md:text-4xl leading-tight mb-6 max-w-3xl [text-wrap:balance]" />
       </Reveal>
-      <div className="space-y-5 text-lg leading-[1.9] text-[#1a1a1a]/80 max-w-[70ch]">
-        {lead && <p className="border-s-4 border-[#CCFF00] ps-5 text-xl leading-[1.9] text-[#1a1a1a]">{lead}</p>}
+      <div className="space-y-5 text-lg leading-[1.9] text-[#1a1a1a]/80">
+        {lead && <p className="max-w-[70ch] border-s-4 border-[#CCFF00] ps-5 text-xl leading-[1.9] text-[#1a1a1a]">{lead}</p>}
         {fold ? (
-          <details className="group border-t border-[#1a1a1a]/10 pt-4">
+          <details className="group max-w-[70ch] border-t border-[#1a1a1a]/10 pt-4">
             <summary className="flex cursor-pointer list-none items-center gap-3 font-bold text-[#1a1a1a] [&::-webkit-details-marker]:hidden">
               <span className="grid h-7 w-7 place-items-center rounded-full bg-[#CCFF00] text-base transition-transform group-open:rotate-45" aria-hidden>+</span>
               <span className="group-open:hidden">ادامه‌ی این بخش · حدود {toPersianDigits(String(minutes))} دقیقه</span>
@@ -184,11 +191,12 @@ function GuideSection({ s, i, steps }: { s: FaSection; i: number; steps: Step[] 
             <div className="space-y-5 pt-5">{detail}</div>
           </details>
         ) : (
-          detail
+          <div className="max-w-[70ch] space-y-5">{detail}</div>
         )}
         {steps && <div className="pt-2"><Stepper steps={steps} /></div>}
+        {check && s.bullets && <div className="pt-2 max-w-none"><FaCheck stopId={`s${i + 1}`} items={s.bullets} /></div>}
         {s.callout && (
-          <aside className="mt-4 bg-[#1a1a1a] text-[#F2F0E9] p-7 md:p-8 border-t-2 border-[#CCFF00]">
+          <aside className="mt-4 max-w-[70ch] bg-[#1a1a1a] text-[#F2F0E9] p-7 md:p-8 border-t-2 border-[#CCFF00]">
             <p className="font-estedad font-bold text-xl md:text-2xl leading-relaxed [text-wrap:pretty]">{s.callout}</p>
           </aside>
         )}
@@ -336,7 +344,7 @@ export default function FaPageLayout({
           </aside>
 
           <div className="lg:col-span-9 space-y-16 md:space-y-24">
-            {before.map((s, i) => <Section key={i} s={s} i={i} guide={guide} />)}
+            {before.map((s, i) => <Section key={i} s={s} i={i} guide={guide} selfCheck={!NO_SELF_CHECK.has(page.path)} />)}
 
             {/* mid-page breather: a different photograph, with the positioning line */}
             {gallery[0] && after.length > 0 && (
@@ -357,7 +365,7 @@ export default function FaPageLayout({
               const shot = gallery.slice(1).find((_, k) => slotFor(k + 1) === idx + 1);
               return (
                 <React.Fragment key={idx}>
-                  <Section s={s} i={idx} guide={guide} />
+                  <Section s={s} i={idx} guide={guide} selfCheck={!NO_SELF_CHECK.has(page.path)} />
                   {shot && (
                     <Reveal as="figure" className="-mx-4 md:mx-0">
                       <div className="relative aspect-[16/9] bg-[#1a1a1a] overflow-hidden">
