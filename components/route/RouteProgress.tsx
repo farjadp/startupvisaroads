@@ -40,9 +40,35 @@ export interface RouteTheme {
   accentOnDark?: string;
 }
 
+/** UI copy for the progress layer, so a Persian page can carry the same game. */
+export interface RouteLabels {
+  rail: string;
+  railTitle: string;
+  routeComplete: string;
+  flagRaised: string;
+  /** "{n}/{total} checkpoints" */
+  checkpoints: string;
+  digits: 'latin' | 'persian';
+}
+
+const EN_LABELS: RouteLabels = {
+  rail: 'Your progress through this guide',
+  railTitle: 'Complete the route to raise the flag',
+  routeComplete: 'Route complete',
+  flagRaised: 'Flag raised. Route complete.',
+  checkpoints: '{n}/{total} checkpoints',
+  digits: 'latin',
+};
+
+const FA_DIGITS = '۰۱۲۳۴۵۶۷۸۹';
+export const formatDigits = (text: string, digits: RouteLabels['digits']) =>
+  digits === 'persian' ? text.replace(/[0-9]/g, (d) => FA_DIGITS[Number(d)]) : text;
+
 interface RouteState {
   stops: RouteStopDef[];
-  flag: FlagCode;
+  /** No flag when the national symbol cannot be drawn to its legislated geometry (Israel, by the site's rule). */
+  flag?: FlagCode;
+  labels: RouteLabels;
   done: ReadonlySet<string>;
   complete: (id: string, message: string) => void;
   /** Index of the permanent-residence route the reader matched, shared by the finder and the roadmap. */
@@ -61,7 +87,20 @@ export function useRoute(): RouteState {
 const prefersReducedMotion = () =>
   typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-export function RouteProvider({ stops, flag, theme, children }: { stops: RouteStopDef[]; flag: FlagCode; theme: RouteTheme; children: React.ReactNode }) {
+export function RouteProvider({
+  stops,
+  flag,
+  theme,
+  labels: labelOverrides,
+  children,
+}: {
+  stops: RouteStopDef[];
+  flag?: FlagCode;
+  theme: RouteTheme;
+  labels?: Partial<RouteLabels>;
+  children: React.ReactNode;
+}) {
+  const labels = useMemo(() => ({ ...EN_LABELS, ...labelOverrides }), [labelOverrides]);
   const [done, setDone] = useState<Set<string>>(() => new Set());
   const [toast, setToast] = useState<string | null>(null);
   const [prRoute, setPrRoute] = useState<number | null>(null);
@@ -77,12 +116,12 @@ export function RouteProvider({ stops, flag, theme, children }: { stops: RouteSt
       doneRef.current = next;
       setDone(next);
       const finished = next.size === stops.length;
-      setToast(`${finished ? 'Route complete' : `✓ ${message}`} · ${next.size}/${stops.length}`);
+      setToast(formatDigits(`${finished ? labels.routeComplete : `✓ ${message}`} · ${next.size}/${stops.length}`, labels.digits));
       clearTimeout(toastTimer.current);
       toastTimer.current = setTimeout(() => setToast(null), 2400);
       snow.current?.(finished ? 120 : 28);
     },
-    [stops.length],
+    [stops.length, labels],
   );
 
   const registerSnow = useCallback((fn: (count: number) => void) => {
@@ -91,7 +130,7 @@ export function RouteProvider({ stops, flag, theme, children }: { stops: RouteSt
 
   useEffect(() => () => clearTimeout(toastTimer.current), []);
 
-  const value = useMemo(() => ({ stops, flag, done, complete, prRoute, setPrRoute }), [stops, flag, done, complete, prRoute]);
+  const value = useMemo(() => ({ stops, flag, labels, done, complete, prRoute, setPrRoute }), [stops, flag, labels, done, complete, prRoute]);
   // Custom properties are the one thing Tailwind cannot express statically.
   const vars = { '--ra': theme.accent, '--ra-ink': theme.accentInk, '--ra-text': theme.accentText, '--rp': theme.primary, '--rd': theme.deep, '--rs': theme.soft, '--ra-dark': theme.accentOnDark ?? theme.accent } as React.CSSProperties;
 
@@ -114,8 +153,9 @@ export function RouteProvider({ stops, flag, theme, children }: { stops: RouteSt
 }
 
 /** A flag that climbs its pole as the route fills in. The flag always keeps its official proportions. */
-export function FlagPole({ progress, code, uid, width, light = false }: { progress: number; code: FlagCode; uid: string; width: number; light?: boolean }) {
-  const f = FLAGS[code];
+export function FlagPole({ progress, code, uid, width, light = false }: { progress: number; code?: FlagCode; uid: string; width: number; light?: boolean }) {
+  // Without a national flag the pole carries a plain pennant in the guide's accent.
+  const f = code ? FLAGS[code] : { w: 3, h: 2 };
   const fw = 34;
   const fh = (fw * f.h) / f.w;
   const drop = (53 - fh) * (1 - Math.min(Math.max(progress, 0), 1));
@@ -126,7 +166,7 @@ export function FlagPole({ progress, code, uid, width, light = false }: { progre
       <g className="transition-transform duration-[900ms] ease-out motion-reduce:transition-none" style={{ transform: `translateY(${drop}px)` }}>
         <g transform={`translate(4 5) scale(${fw / f.w})`}>
           <g className={progress >= 1 ? 'origin-left animate-flutter motion-reduce:animate-none [transform-box:fill-box]' : ''}>
-            <FlagShapes code={code} uid={uid} />
+            {code ? <FlagShapes code={code} uid={uid} /> : <rect width="3" height="2" className="fill-[var(--ra)]" />}
           </g>
         </g>
       </g>
@@ -136,14 +176,14 @@ export function FlagPole({ progress, code, uid, width, light = false }: { progre
 
 /** Sticky rail: the pole, the count, and one chip per stop. */
 export function RouteRail() {
-  const { stops, done, flag } = useRoute();
+  const { stops, done, flag, labels } = useRoute();
   return (
-    <nav aria-label="Your progress through this guide" className="sticky top-[4.5rem] z-40 border-b border-[#1a1a1a]/10 bg-[#F2F0E9]/90 backdrop-blur">
+    <nav aria-label={labels.rail} className="sticky top-[4.5rem] z-40 border-b border-[#1a1a1a]/10 bg-[#F2F0E9]/90 backdrop-blur">
       <div className="container mx-auto flex items-center gap-3 px-6 py-1.5">
-        <div className="flex shrink-0 items-end gap-1.5" title="Complete the route to raise the flag">
+        <div className="flex shrink-0 items-end gap-1.5" title={labels.railTitle}>
           <FlagPole progress={done.size / stops.length} code={flag} uid="rail" width={26} />
           <span className="font-sans text-xs tabular-nums text-[#1a1a1a]/60">
-            {done.size}/{stops.length}
+            {formatDigits(`${done.size}/${stops.length}`, labels.digits)}
           </span>
         </div>
         <ol className="flex min-w-0 flex-1 gap-1.5 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
@@ -171,13 +211,13 @@ export function RouteRail() {
 
 /** The big pole in the booking section, with the running count. */
 export function RouteFinish() {
-  const { stops, done, flag } = useRoute();
+  const { stops, done, flag, labels } = useRoute();
   const finished = done.size === stops.length;
   return (
     <div className="mb-6 flex items-end gap-4">
       <FlagPole progress={done.size / stops.length} code={flag} uid="finish" width={84} light />
       <span className="pb-1 font-sans text-xs tabular-nums text-white/60">
-        {finished ? 'Flag raised. Route complete.' : `${done.size}/${stops.length} checkpoints`}
+        {finished ? labels.flagRaised : formatDigits(labels.checkpoints.replace('{n}', String(done.size)).replace('{total}', String(stops.length)), labels.digits)}
       </span>
     </div>
   );

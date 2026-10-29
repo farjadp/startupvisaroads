@@ -382,7 +382,10 @@ export default async function IsraelPage({ params }: { params: Promise<{ locale:
     <div className="w-full overflow-x-clip bg-[#F2F0E9] text-[#1a1a1a]">
       <JsonLd data={[howToJsonLd, faqJsonLd(faqs.map((f) => ({ question: f.q, answer: f.a })), 'en')]} />
 
-      <RouteProvider stops={STOPS} flag="il" theme={THEME}>
+      {/* No Israeli flag: the legislated spec fixes the field and the bands but
+          not the size of the Star of David, so by the site's rule (see
+          lib/fa/flags.ts) the flag is not drawn. The pole carries a pennant. */}
+      <RouteProvider stops={STOPS} theme={THEME}>
         {/* ── Hero: the answer up front ── */}
         <header className="relative overflow-hidden bg-[#0a0e1a] text-white">
           <Image
@@ -408,7 +411,7 @@ export default async function IsraelPage({ params }: { params: Promise<{ locale:
 
             <div>
               <div className={`mb-5 flex items-center gap-3 text-white/75 ${label}`}>
-                <Flag code="il" uid="hero" width={36} />
+                <span className="h-px w-8 bg-[var(--ra-dark)]" aria-hidden="true" />
                 Israel Innovation Visa · B/2 Innovation
               </div>
               <h1>

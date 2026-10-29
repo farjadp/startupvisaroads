@@ -236,7 +236,7 @@ export function ConversionClock({ stopId, copy }: { stopId: string; copy: ClockC
             </div>
           ))}
           <span className="absolute top-[83px] z-10 -translate-x-1/2 drop-shadow-md transition-[left] duration-500" style={{ left: `${pos(month)}%` }}>
-            <Flag code={flag} uid="clock" width={32} />
+            {flag ? <Flag code={flag} uid="clock" width={32} /> : <span className="block h-4 w-6 rounded-sm bg-[var(--ra)]" />}
           </span>
         </div>
       </div>

@@ -8,7 +8,7 @@
 // ============================================================================
 import React from 'react';
 
-export type FlagCode = 'fi' | 'dk' | 'it' | 'nl' | 'tr' | 'il' | 'au' | 'ca' | 'ae' | 'ee' | 'es' | 'bg';
+export type FlagCode = 'fi' | 'dk' | 'it' | 'nl' | 'tr' | 'au' | 'ca' | 'ae' | 'ee' | 'es' | 'bg';
 
 export interface FlagDef {
   name: string;
@@ -77,19 +77,6 @@ export const FLAGS: Record<FlagCode, FlagDef> = {
         <path fill="#e30a17" d="m0-30000h90000v60000H0z" />
         <path fill="#fff" d="m41750 0 13568-4408-8386 11541V-7133l8386 11541zm925 8021a15000 15000 0 1 1 0-16042 12000 12000 0 1 0 0 16042z" />
       </g>
-    ),
-  },
-  il: {
-    name: 'Israel',
-    w: 1100,
-    h: 800,
-    draw: () => (
-      <>
-        <path d="M0,0H1100V800H0Z" fill="#fff" />
-        <path d="M0,75H1100V200H0Z" fill="#0038b8" />
-        <path d="M0,600H1100V725H0Z" fill="#0038b8" />
-        <path d="M423.81566,472.85253H676.18435L550.00001,254.29492Zm126.18435,72.85255 126.1843,-218.55765H423.81566Z" fill="none" stroke="#0038b8" strokeWidth="27.5" />
-      </>
     ),
   },
   au: {
