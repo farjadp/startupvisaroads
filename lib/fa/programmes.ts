@@ -144,6 +144,25 @@ export const RULES: Rule[] = [
     source: 'https://italiastartupvisa.mise.gov.it/',
   },
   {
+    key: 'spain',
+    name: 'ویزای استارتاپ اسپانیا',
+    href: '/europe/spain',
+    // No founder cap in Ley 14/2013 — ENISA weighs each partner separately.
+    founders: { min: 1 },
+    // 100% of the monthly IPREM (€600 in 2026, frozen since 2023) × 12, per
+    // the Secretaría de Estado de Migraciones criterion for entrepreneurs.
+    // NOT the €34,188 (200% SMI) in circulation: that is the teleworker rule
+    // of art. 74 bis. The law names no figure, and no minimum investment.
+    yearlyFunds: { amount: 7200, currency: 'EUR', perFounder: true, note: '۶۰۰ یورو در ماه (۱۰۰٪ IPREM)؛ ۹۰۰ برای زوج و ۳۰۰ برای هر نفر بیشتر' },
+    unscored: [
+      'گزارش موافق ENISA: نوآورانه و/یا دارای منفعت اقتصادی ویژه برای اسپانیا',
+      'منابع مالی باید شخصی باشد؛ پرونده‌ی امن کل اقامت سه‌ساله را پوشش می‌دهد',
+      'تابعیت پس از ده سال و بدون تابعیت دوگانه با ایران',
+    ],
+    updated: '2026-10-29',
+    source: 'https://www.inclusion.gob.es/web/unidadgrandesempresas/emprendedores',
+  },
+  {
     key: 'turkey',
     name: 'تک‌ویزای ترکیه',
     href: '/turkey-tech-visa',

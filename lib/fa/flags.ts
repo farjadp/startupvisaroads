@@ -24,6 +24,11 @@
 // published geometry. A national symbol — this one especially — drawn nearly
 // right is worse than none, so /fa/israel carries no flag.
 //
+// Spain is the civil flag, without the coat of arms. Article 4 of the
+// Constitution fixes three horizontal bands, red, yellow, red, the yellow
+// twice the width of each red; the arms are optional outside official use.
+// Bands are geometry; the arms are not, so they are left out on purpose.
+//
 // Australia IS here, and only because the official artwork could be had: the
 // Union Jack canton, the seven-pointed Commonwealth Star and the Southern
 // Cross are none of them geometry to attempt by eye. It is the Wikimedia
@@ -31,7 +36,7 @@
 // ids.
 // ============================================================================
 
-export type FlagCode = 'dk' | 'fi' | 'nl' | 'ee' | 'it' | 'tr' | 'ca' | 'au';
+export type FlagCode = 'dk' | 'fi' | 'nl' | 'ee' | 'it' | 'es' | 'tr' | 'ca' | 'au';
 
 const BY_PATH: Record<string, FlagCode> = {
   '/europe/denmark': 'dk',
@@ -39,6 +44,7 @@ const BY_PATH: Record<string, FlagCode> = {
   '/europe/netherlands': 'nl',
   '/europe/estonia': 'ee',
   '/europe/italy': 'it',
+  '/europe/spain': 'es',
   '/turkey-tech-visa': 'tr',
   '/australia': 'au',
   '/pnp': 'ca',
@@ -61,6 +67,7 @@ export const FLAG_NAME: Record<FlagCode, string> = {
   nl: 'هلند',
   ee: 'استونی',
   it: 'ایتالیا',
+  es: 'اسپانیا',
   tr: 'ترکیه',
   au: 'استرالیا',
   ca: 'کانادا',
@@ -76,6 +83,7 @@ export const FLAG_RATIO: Record<FlagCode, { w: number; h: number }> = {
   nl: { w: 3, h: 2 },
   ee: { w: 11, h: 7 },
   it: { w: 3, h: 2 }, // Legge 5 febbraio 1998, n. 22
+  es: { w: 3, h: 2 }, // Ley 39/1981
   tr: { w: 3, h: 2 }, // Türk Bayrağı Kanunu
   au: { w: 2, h: 1 }, // Flags Act 1953
   ca: { w: 2, h: 1 },

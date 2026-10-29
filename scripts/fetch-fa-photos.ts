@@ -72,6 +72,12 @@ const SLOTS: Record<string, string> = {
   'italy-2': 'Milan business district street Italy',
   'italy-3': 'Turin Italy city street architecture',
 
+  // Spain. Madrid first because the UGE that decides the file sits there;
+  // Barcelona and Valencia because that is where the startup hubs are.
+  spain: 'Madrid Gran Via city Spain',
+  'spain-2': 'Barcelona city street architecture Spain',
+  'spain-3': 'Valencia City of Arts and Sciences Spain',
+
   estonia: 'Tallinn old town Estonia',
   'estonia-2': 'Tallinn Estonia street',
   'estonia-3': 'Tallinn rooftops Estonia',
