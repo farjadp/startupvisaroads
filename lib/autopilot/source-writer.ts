@@ -62,7 +62,7 @@ const arr = (v: unknown) => (Array.isArray(v) ? v.map(String).map((s) => s.trim(
 async function readSource(article: WritableDocument, inv: Inventory): Promise<SourceBrief> {
   const lang = inv.locale === 'fa' ? 'Persian (Farsi)' : 'English';
   const raw = await chatJson<Record<string, unknown>>(
-    `You are the content editor of Startup Visa Roads (visaroads.com). ${BRAND_FACTS}
+    `You are the content editor of VisaRoads (visaroads.com). ${BRAND_FACTS}
 
 Below is an article published by ${article.sourceName}. Your job is NOT to summarise or rewrite it. Your job is to (a) pull out the checkable facts it reports, and (b) decide what visaroads would write about the same subject that is genuinely ours: what it means for the people it actually affects — workers, students, families or business owners, whichever this news is about — and what they should do about it. Never add a founder or startup angle to news that is not about a business route.
 

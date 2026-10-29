@@ -12,7 +12,7 @@ const MAX_INPUT_CHARS = 60_000;
 
 export async function writeDigest(doc: { title: string; text: string; url: string | null; trust: string }): Promise<string> {
   const body = doc.text.length > MAX_INPUT_CHARS ? `${doc.text.slice(0, MAX_INPUT_CHARS)}\n\n[… document continues; ${doc.text.length - MAX_INPUT_CHARS} more characters not shown]` : doc.text;
-  const prompt = `You are the research editor of Startup Visa Roads (visaroads.com), a site about start-up and skilled-immigration routes to Canada, the USA, Europe, Australia and the UAE.
+  const prompt = `You are the research editor of VisaRoads (visaroads.com), a site about start-up and skilled-immigration routes to Canada, the USA, Europe, Australia and the UAE.
 
 Below is a document (${doc.trust} source${doc.url ? `, ${doc.url}` : ''}). Write its DIGEST for our writers.
 

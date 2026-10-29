@@ -1,6 +1,6 @@
-# Startup Visa Roads
+# VisaRoads
 
-> Startup Visa Roads (visaroads.com) is a product of Ashavid Inc., based in Toronto, Ontario, Canada. We are not lawyers or licensed immigration consultants (RCIC). We are exited founders, investment bankers, and grant-committee members who build the business side of a startup visa or entrepreneur immigration case: business plans, financial models, pitch decks, founder mentorship, and a free Express Entry diagnostic tool.
+> VisaRoads (visaroads.com, formerly Startup Visa Roads) is run by VisaRoads Inc., an Ashavid company, based in Toronto, Ontario, Canada. We are not lawyers or licensed immigration consultants (RCIC). We are exited founders, investment bankers, and grant-committee members who build the business side of a startup visa or entrepreneur immigration case: business plans, financial models, pitch decks, founder mentorship, and a free Express Entry diagnostic tool.
 
 ## What we do
 

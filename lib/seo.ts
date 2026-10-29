@@ -19,7 +19,7 @@ export const SITE_URL = (
   process.env.NEXT_PUBLIC_SITE_URL ||
   'https://visaroads.com'
 ).replace(/\/$/, '');
-export const SITE_NAME = 'Startup Visa Roads';
+export const SITE_NAME = 'VisaRoads';
 export const TWITTER_HANDLE = '@ashavidgroup';
 
 // VisaRoads is a product of Ashavid Inc. — these are the official company
@@ -246,8 +246,9 @@ export function organizationJsonLd() {
     '@type': 'Organization',
     '@id': ORGANIZATION_ID,
     name: SITE_NAME,
-    // The brand is written three ways in the wild; all three are this entity.
-    alternateName: ['VisaRoads', 'Visa Roads'],
+    // The brand was Startup Visa Roads until Oct 2026 (startupvisaroads.com
+    // now 301s here); all three spellings are this entity.
+    alternateName: ['Startup Visa Roads', 'Visa Roads'],
     url: SITE_URL,
     logo: {
       '@type': 'ImageObject',
@@ -392,7 +393,7 @@ export function articleJsonLd(a: ArticleJsonLdInput) {
     author: {
       '@type': 'Organization',
       '@id': `${SITE_URL}/#editorial-team-${a.locale === 'fa' ? 'fa' : 'en'}`,
-      name: a.locale === 'fa' ? 'تیم تحریریه استارتاپ ویزا رودز' : 'Startup Visa Roads Editorial Team',
+      name: a.locale === 'fa' ? 'تیم تحریریه استارتاپ ویزا رودز' : 'VisaRoads Editorial Team',
       url: `${SITE_URL}/${a.locale === 'fa' ? 'fa' : 'en'}/blog`,
     },
     publisher: { '@id': ORGANIZATION_ID },

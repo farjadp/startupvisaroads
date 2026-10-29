@@ -86,7 +86,7 @@ export const SITE_PAGES: Page[] = [
   { path: '/webinar', en: 'Free immigration webinar registration', kind: 'page' },
   { path: '/book-meeting', en: 'Book a strategy call', kind: 'page' },
   { path: '/contact', en: 'Request a free advisory', kind: 'page' },
-  { path: '/about', en: 'About Startup Visa Roads', kind: 'page' },
+  { path: '/about', en: 'About VisaRoads', kind: 'page' },
   { path: '/team', en: 'Our team — startup mentors and advisors', kind: 'page' },
   { path: '/blog', en: 'Journal', kind: 'page' },
 ];
@@ -139,7 +139,7 @@ export const FA_SITE_PAGES: FaPage[] = [
 ];
 
 /** Facts about us the writer may state. Nothing else about us may be claimed. */
-export const BRAND_FACTS = `Startup Visa Roads (visaroads.com) is a product of Ashavid, based in Toronto, Ontario. We are not lawyers or licensed immigration consultants; we are exited founders, investment bankers and grant-committee members who build the business side of a case: business plans, financial models, pitch decks, founder mentorship, and a free Express Entry diagnostic tool. Our journal serves anyone planning a move — professionals, students, families and business owners — many of them Persian-speaking.`;
+export const BRAND_FACTS = `VisaRoads (visaroads.com) is a product of Ashavid, based in Toronto, Ontario. We are not lawyers or licensed immigration consultants; we are exited founders, investment bankers and grant-committee members who build the business side of a case: business plans, financial models, pitch decks, founder mentorship, and a free Express Entry diagnostic tool. Our journal serves anyone planning a move — professionals, students, families and business owners — many of them Persian-speaking.`;
 
 /** How long a backlog topic that ended up as a DRAFT stays out of the planner's hands. */
 const HELD_TOPIC_DAYS = 30;

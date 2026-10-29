@@ -60,7 +60,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   const isRtl = locale === 'fa';
   const title = isRtl
     ? 'راه‌های ویزای استارتاپ | مهاجرت کارآفرینی و استارتاپ ویزا'
-    : 'Startup Visa Roads | Startup Visa & Global Mobility Mentorship';
+    : 'VisaRoads | Startup Visa & Global Mobility Mentorship';
   const description = isRtl
     ? 'مشاوره و آماده‌سازی برای ویزای استارتاپ کانادا، PNP، EB-1/EB-2 NIW/EB-5 آمریکا و برنامه‌های کارآفرینی اروپا و استرالیا.'
     : 'Mentorship and startup readiness for the Canada Startup Visa, Provincial Nominee Programs, US EB-1/EB-2 NIW/EB-5, and European & Australian entrepreneur pathways.';
