@@ -36,6 +36,8 @@ export interface RouteTheme {
   deep: string;
   /** Light tint of the accent: notes, completed chips. */
   soft: string;
+  /** The accent as text on `deep`, when `accent` itself is too dark to reach 4.5:1 there. Defaults to `accent`. */
+  accentOnDark?: string;
 }
 
 interface RouteState {
@@ -91,7 +93,7 @@ export function RouteProvider({ stops, flag, theme, children }: { stops: RouteSt
 
   const value = useMemo(() => ({ stops, flag, done, complete, prRoute, setPrRoute }), [stops, flag, done, complete, prRoute]);
   // Custom properties are the one thing Tailwind cannot express statically.
-  const vars = { '--ra': theme.accent, '--ra-ink': theme.accentInk, '--ra-text': theme.accentText, '--rp': theme.primary, '--rd': theme.deep, '--rs': theme.soft } as React.CSSProperties;
+  const vars = { '--ra': theme.accent, '--ra-ink': theme.accentInk, '--ra-text': theme.accentText, '--rp': theme.primary, '--rd': theme.deep, '--rs': theme.soft, '--ra-dark': theme.accentOnDark ?? theme.accent } as React.CSSProperties;
 
   return (
     <RouteContext.Provider value={value}>
@@ -185,7 +187,7 @@ type Tone = 'paper' | 'white' | 'night';
 const TONES: Record<Tone, { section: string; eyebrow: string; muted: string; number: string; answer: string }> = {
   paper: { section: 'bg-[#F2F0E9] text-[#1a1a1a]', eyebrow: 'text-[var(--ra-text)]', muted: 'text-[#1a1a1a]/60', number: 'border-[#1a1a1a]/15 text-[#1a1a1a]/50', answer: 'text-[#1a1a1a]/85' },
   white: { section: 'bg-white text-[#1a1a1a]', eyebrow: 'text-[var(--ra-text)]', muted: 'text-[#1a1a1a]/60', number: 'border-[#1a1a1a]/15 text-[#1a1a1a]/50', answer: 'text-[#1a1a1a]/85' },
-  night: { section: 'bg-[var(--rd)] text-white', eyebrow: 'text-[var(--ra)]', muted: 'text-white/60', number: 'border-white/20 text-white/55', answer: 'text-white/80' },
+  night: { section: 'bg-[var(--rd)] text-white', eyebrow: 'text-[var(--ra-dark)]', muted: 'text-white/60', number: 'border-white/20 text-white/55', answer: 'text-white/80' },
 };
 
 /**

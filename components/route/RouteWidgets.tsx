@@ -42,7 +42,24 @@ function Switch({ on, onClick, label }: { on: boolean; onClick: () => void; labe
 
 /* ── Eligibility quiz ───────────────────────────────────────────────────── */
 
-export function GateQuiz({ stopId, criteria, children }: { stopId: string; criteria: { title: string; body: string }[]; children?: React.ReactNode }) {
+/**
+ * `strongNote` follows the all-yes verdict and `gapNote` follows the list of
+ * gaps; both are country-specific, so they come from the page.
+ */
+export function GateQuiz({
+  stopId,
+  criteria,
+  strongNote = '',
+  gapNote = '',
+  children,
+}: {
+  stopId: string;
+  criteria: { title: string; body: string }[];
+  strongNote?: string;
+  gapNote?: string;
+  children?: React.ReactNode;
+}) {
+  const WORDS = ['', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight'];
   const { complete } = useRoute();
   const [answers, setAnswers] = useState<Record<number, boolean>>({});
   const answered = Object.keys(answers).length;
@@ -60,10 +77,10 @@ export function GateQuiz({ stopId, criteria, children }: { stopId: string; crite
   if (answered === criteria.length) {
     if (yes === criteria.length) {
       title = 'Strong on paper';
-      body = 'You meet all four tests as you describe them. What decides it now is whether the file is visibly your own work: real traction, named competitors, an itemised first-year budget.';
+      body = `You meet all ${WORDS[criteria.length] ?? criteria.length} tests as you describe them. ${strongNote}`.trim();
     } else if (yes >= 2) {
       title = 'Close, with gaps';
-      body = `Fix before applying: ${missing.join(', ')}. A refusal stays on record and is visible on your next attempt.`;
+      body = `Fix before applying: ${missing.join(', ')}. ${gapNote}`.trim();
     } else {
       title = 'Not ready yet';
       body = `Missing: ${missing.join(', ')}. Applying now mostly burns time. Another country may fit your team better.`;
@@ -285,7 +302,7 @@ export function FundsCalculator({ stopId, t }: { stopId: string; t: FundsTable }
         </div>
       </div>
       <div className="rounded-2xl bg-[var(--rd)] p-6 text-white" aria-live="polite">
-        <p className="font-sans text-xs font-bold uppercase tracking-[0.18em] text-[var(--ra)]">To show for a two-year permit</p>
+        <p className="font-sans text-xs font-bold uppercase tracking-[0.18em] text-[var(--ra-dark)]">To show for a two-year permit</p>
         <p className="mb-1 mt-2 font-serif text-5xl tabular-nums">{eur(shown)}</p>
         <p className="font-sans text-sm text-white/60">
           <span className="tabular-nums">{eur(monthly)}</span> net per month × {t.months} months

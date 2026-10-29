@@ -636,7 +636,12 @@ export default function FinlandPage() {
             </p>
           }
         >
-          <GateQuiz stopId="gate" criteria={criteria}>
+          <GateQuiz
+            stopId="gate"
+            criteria={criteria}
+            strongNote="What decides it now is whether the file is visibly your own work: real traction, named competitors, an itemised first-year budget."
+            gapNote="A refusal stays on record and is visible on your next attempt."
+          >
             <h3 className="font-serif text-xl">Why are about 92% of applications refused?</h3>
             <div>
               <p className="mb-2 font-sans text-sm text-[#1a1a1a]/60"><b className="tabular-nums text-[#1a1a1a]">8 in 100</b> files got a positive statement in 2024–2025</p>

@@ -43,7 +43,7 @@ type Theme = 'denmark' | 'route';
 const THEMES: Record<Theme, { bg: string; fade: string; accent: string; dot: string; playIcon: string; border: string; hover: string }> = {
   denmark: { bg: 'bg-[#0a0e1a]', fade: 'from-[#0a0e1a]/70', accent: 'text-[#C8102E]', dot: 'bg-[#C8102E] ring-[#C8102E]/25', playIcon: 'fill-white text-white', border: 'border-[#C8102E]', hover: 'hover:text-[#C8102E]' },
   // Route guides: the palette comes from RouteProvider's CSS variables.
-  route: { bg: 'bg-[var(--rd)]', fade: 'from-[color-mix(in_srgb,var(--rd)_70%,transparent)]', accent: 'text-[var(--ra)]', dot: 'bg-[var(--ra)] ring-[color-mix(in_srgb,var(--ra)_25%,transparent)] motion-safe:animate-[pulse_2.4s_ease-in-out_infinite]', playIcon: 'fill-[var(--ra-ink)] text-[var(--ra-ink)]', border: 'border-[var(--ra)]', hover: 'hover:text-[var(--ra)]' },
+  route: { bg: 'bg-[var(--rd)]', fade: 'from-[color-mix(in_srgb,var(--rd)_70%,transparent)]', accent: 'text-[var(--ra-dark)]', dot: 'bg-[var(--ra)] ring-[color-mix(in_srgb,var(--ra)_25%,transparent)] motion-safe:animate-[pulse_2.4s_ease-in-out_infinite]', playIcon: 'fill-[var(--ra-ink)] text-[var(--ra-ink)]', border: 'border-[var(--ra)]', hover: 'hover:text-[var(--ra-dark)]' },
 };
 
 const seconds = (at: string) => at.split(':').reduce((t, part) => t * 60 + Number(part), 0);
