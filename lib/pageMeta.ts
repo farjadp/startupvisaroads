@@ -9,10 +9,12 @@ import { buildMetadata } from '@/lib/seo';
 import { SUV_STATE } from '@/lib/canada-suv';
 
 /** The pause date, written out, so no page metadata hardcodes it. */
+// ISO dates parse as UTC midnight; format in UTC or a North American server prints the day before.
 const SUV_PAUSED_ON_LABEL = new Date(SUV_STATE.pausedOn).toLocaleDateString('en-CA', {
   day: 'numeric',
   month: 'long',
   year: 'numeric',
+  timeZone: 'UTC',
 });
 
 interface Entry {
@@ -53,6 +55,14 @@ export const EN_INDEXABLE_PATHS = [
   '/usa/assessment',
   '/usa/founder-readiness',
   '/europe/netherlands',
+  '/europe/estonia',
+  '/europe/spain',
+  '/europe/bulgaria',
+  '/startup-visa-canada/requirements',
+  '/startup-visa-canada/cost',
+  '/startup-visa-canada/designated-organizations',
+  '/which-path',
+  '/faq',
   '/uae/golden-visa',
   '/country',
   '/country/canada',

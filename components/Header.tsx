@@ -194,6 +194,11 @@ export default function Header() {
         { href: '/country/canada', label: t('canada_profile') },
         { href: '/startup-visa-canada', label: t('suv') },
         { href: '/pnp', label: t('pnp') },
+        { href: '/pnp/alberta', label: 'Alberta' },
+        { href: '/pnp/manitoba', label: 'Manitoba' },
+        { href: '/pnp/nova-scotia', label: 'Nova Scotia' },
+        { href: '/pnp/new-brunswick', label: 'New Brunswick' },
+        { href: '/pnp/pei', label: 'Prince Edward Island' },
 
         { header: t('usa') },
         { href: '/country/usa', label: t('usa_profile') },
@@ -206,6 +211,10 @@ export default function Header() {
         { href: '/country/finland', label: t('finland') },
         { href: '/europe/netherlands', label: t('netherlands') },
         { href: '/country/italy', label: t('italy') },
+        { href: '/europe/spain', label: 'Spain' },
+        { href: '/europe/bulgaria', label: 'Bulgaria' },
+        { href: '/europe/estonia', label: 'Estonia' },
+        { href: '/uk/innovator-founder', label: 'UK Innovator Founder' },
 
         { header: t('global') },
         { href: '/country/uae', label: t('uae') },
@@ -213,6 +222,11 @@ export default function Header() {
         { href: '/country/turkey', label: t('turkey') },
         { href: '/country/israel', label: t('israel') },
         { href: '/country', label: t('view_all') },
+
+        { header: 'Where to start' },
+        { href: '/which-path', label: 'Which route fits me?' },
+        { href: '/tools', label: 'Self-assessment tools' },
+        { href: '/faq', label: 'FAQ' },
       ]
     },
     { href: '/mentorship', label: t('mentorship') },
@@ -223,6 +237,7 @@ export default function Header() {
       key: 'firm',
       subLinks: [
         { href: '/about', label: t('our_story') },
+        { href: '/webinar', label: 'Webinar' },
         { href: '/contact', label: t('contact') },
         { href: '/book-meeting', label: t('book_consultation') },
       ]

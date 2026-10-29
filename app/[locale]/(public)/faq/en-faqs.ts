@@ -69,7 +69,7 @@ const suv: EnFaq[] = [
   },
   {
     q: 'What is the new Canada start-up pilot?',
-    a: 'IRCC has said the pause is a transition to a targeted entrepreneur pilot, and so far it has published no details: no cap, no processing target, no criteria and no opening date. The figures circulating online, a cap of about 2,000 people a year and a 12-month target, come from specialist immigration press reporting in December 2025; IRCC has not published them. You cannot plan on these numbers.',
+    a: 'IRCC has said the pause is a transition to a targeted entrepreneur pilot, and so far it has published no details: no cap, no processing target, no criteria and no opening date. The figures circulating online, a cap of about 2,000 people a year and a 12-month target, were reported by the immigration trade press in December 2025; IRCC has not published them. You cannot plan on these numbers.',
   },
   {
     q: 'Is the Canada Start-up Visa legitimate or a scam?',

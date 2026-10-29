@@ -43,12 +43,22 @@ describe('buildAlternates', () => {
     expect(a.languages['x-default']).toBe(`${SITE_URL}/en/usa/eb5`);
   });
 
-  it('omits en for a Persian-only path and self-references x-default', () => {
+  it('pairs a page that now exists in both languages, with x-default on English', () => {
+    // /which-path was Persian-only until the English assessment shipped.
     const a = buildAlternates('/which-path', 'fa') as any;
     expect(a.canonical).toBe(`${SITE_URL}/fa/which-path`);
-    expect(a.languages.en).toBeUndefined();
+    expect(a.languages.en).toBe(`${SITE_URL}/en/which-path`);
     expect(a.languages.fa).toBe(`${SITE_URL}/fa/which-path`);
-    expect(a.languages['x-default']).toBe(`${SITE_URL}/fa/which-path`);
+    expect(a.languages['x-default']).toBe(`${SITE_URL}/en/which-path`);
+  });
+
+  it('pairs every Persian guide that has an English twin', () => {
+    for (const p of ['/europe/estonia', '/europe/spain', '/europe/bulgaria', '/faq']) {
+      const a = buildAlternates(p, 'en') as any;
+      expect(a.languages.fa).toBe(`${SITE_URL}/fa${p}`);
+    }
+    const c = buildAlternates('/startup-visa-canada/cost', 'en') as any;
+    expect(c.languages.fa).toBe(`${SITE_URL}/fa/canada-startup-visa/cost`);
   });
 
   it('strips an incoming locale prefix before pairing', () => {

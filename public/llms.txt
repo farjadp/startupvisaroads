@@ -34,9 +34,11 @@ Several immigration programs have changed or closed. Always verify current statu
 - https://visaroads.com/en/mentorship — Founder mentorship program
 - https://visaroads.com/fa/mentorship — Persian mentorship program
 - https://visaroads.com/en/tools/express-entry — Free Express Entry CRS calculator
+- https://visaroads.com/en/which-path — Free route assessment: seven questions, one suggested route and why
 - https://visaroads.com/fa/which-path — Free pathway assessment (Persian)
 - https://visaroads.com/en/usa/assessment — US readiness assessment for founders (O-1A, EB-2 NIW)
 - https://visaroads.com/fa/usa/assessment — US readiness assessment (Persian)
+- https://visaroads.com/en/faq — FAQ on entrepreneur immigration routes (Canada, Europe, Atlantic PNP, EB-2 NIW)
 - https://visaroads.com/fa/faq — Persian FAQ on entrepreneur immigration routes
 
 ## Route guides
@@ -58,8 +60,11 @@ Canada — Entrepreneur Provincial Nominee Programs (our Canada specialty):
 Canada — Start-Up Visa status:
 - https://visaroads.com/en/startup-visa-canada — Current status of the paused Start-Up Visa
 - https://visaroads.com/fa/canada-startup-visa — Persian status guide
+- https://visaroads.com/en/startup-visa-canada/requirements — Start-Up Visa requirements and documents (paused programme)
 - https://visaroads.com/fa/canada-startup-visa/requirements — Persian: Start-Up Visa requirements and documents
+- https://visaroads.com/en/startup-visa-canada/designated-organizations — Start-Up Visa designated organizations
 - https://visaroads.com/fa/canada-startup-visa/designated-organizations — Persian: designated organizations
+- https://visaroads.com/en/startup-visa-canada/cost — What the Start-Up Visa costs, and the warning signs of inflated fees
 - https://visaroads.com/fa/canada-startup-visa/cost — Persian: what the Start-Up Visa costs, and the warning signs of inflated fees
 - https://visaroads.com/en/c10-work-permit — C10, C11 and C60 significant benefit work permits (R205(a))
 
@@ -72,8 +77,11 @@ Europe:
 - https://visaroads.com/fa/europe/finland — Finland startup permit (Persian)
 - https://visaroads.com/en/country/italy — Italia Startup Visa
 - https://visaroads.com/fa/europe/italy — Italia Startup Visa (Persian)
+- https://visaroads.com/en/europe/estonia — Estonia startup visa
 - https://visaroads.com/fa/europe/estonia — Estonia startup visa (Persian)
+- https://visaroads.com/en/europe/spain — Spain entrepreneur residence, assessed by ENISA
 - https://visaroads.com/fa/europe/spain — Spain entrepreneur residence, assessed by ENISA (Persian)
+- https://visaroads.com/en/europe/bulgaria — Bulgarian Startup Visa
 - https://visaroads.com/fa/europe/bulgaria — Bulgarian Startup Visa (Persian)
 
 United States (founder routes):
