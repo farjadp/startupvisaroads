@@ -1037,7 +1037,7 @@ export default function FinlandPage() {
               <strong>Regulatory Notice:</strong> Figures on this page were verified on 8 September 2026, and the citizenship rules re-checked on 27 October
               2026, against official Business Finland and Migri documentation, the Finnish Government&apos;s announcement on reforming start-up
               entrepreneur permits, and the Ministry of Economic Affairs and Employment working-group report TEM 2025:36. They are provided for
-              informational purposes only. VisaRoads, a brand of Ashavid Inc., is a strategic business advisory firm — we are{' '}
+              informational purposes only. VisaRoads Inc., an Ashavid company, is a strategic business advisory firm — we are{' '}
               <span className="underline">NOT</span> an immigration law firm or recruitment agency. A positive Eligibility Statement does not guarantee a
               residence permit. Income thresholds and processing fees are revised every January and the law itself is under reform — always verify current
               figures at{' '}

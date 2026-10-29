@@ -5,7 +5,7 @@ import GuideJsonLd from '@/components/GuideJsonLd';
 import { FOUNDER_ID } from '@/lib/seo';
 
 const FACTS = {
-  dateModified: '2026-10-29',
+  dateModified: '2026-09-08',
   author: { '@id': FOUNDER_ID },
   citation: [
     'https://turkiyetechvisa.gov.tr/',

@@ -74,7 +74,7 @@ export async function generateMetadata({
 
 // ─── Data ────────────────────────────────────────────────────────────────────
 
-const UPDATED = { iso: '2026-10-29', label: '29 Oct 2026' };
+const UPDATED = { iso: '2026-09-08', label: '8 Sep 2026' };
 const PAGE_URL = `${SITE_URL}/en/country/turkey`;
 
 // The page's own palette: flag red for highlights, a deeper red for figures,

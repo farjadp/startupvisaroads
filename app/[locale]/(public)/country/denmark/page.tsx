@@ -1008,7 +1008,7 @@ export default function DenmarkPage() {
             <p className="font-sans text-[11px] leading-relaxed text-[#1a1a1a]/45">
               <strong>Regulatory Notice:</strong> All information is sourced from official Startup
               Denmark, SIRI, and Danish Business Authority documentation and is provided for
-              informational purposes only. VisaRoads, a brand of Ashavid Inc., is a strategic business advisory firm — we
+              informational purposes only. VisaRoads Inc., an Ashavid company, is a strategic business advisory firm — we
               are <span className="underline">NOT</span> an immigration law firm or recruitment agency.
               Panel approval does not guarantee a residence permit; final decisions rest solely with SIRI.
               Financial thresholds are subject to annual revision — always verify current figures at{' '}
