@@ -48,7 +48,11 @@ export interface RouteLabels {
   flagRaised: string;
   /** "{n}/{total} checkpoints" */
   checkpoints: string;
+  /** The bare counter: "{n}/{total}". */
+  count: string;
   digits: 'latin' | 'persian';
+  /** Font utility for the rail, toast and finish line. */
+  font: string;
 }
 
 const EN_LABELS: RouteLabels = {
@@ -57,12 +61,16 @@ const EN_LABELS: RouteLabels = {
   routeComplete: 'Route complete',
   flagRaised: 'Flag raised. Route complete.',
   checkpoints: '{n}/{total} checkpoints',
+  count: '{n}/{total}',
   digits: 'latin',
+  font: 'font-sans',
 };
 
 const FA_DIGITS = '۰۱۲۳۴۵۶۷۸۹';
 export const formatDigits = (text: string, digits: RouteLabels['digits']) =>
   digits === 'persian' ? text.replace(/[0-9]/g, (d) => FA_DIGITS[Number(d)]) : text;
+
+const fillCount = (tpl: string, n: number, total: number) => tpl.replace('{n}', String(n)).replace('{total}', String(total));
 
 interface RouteState {
   stops: RouteStopDef[];
@@ -116,7 +124,7 @@ export function RouteProvider({
       doneRef.current = next;
       setDone(next);
       const finished = next.size === stops.length;
-      setToast(formatDigits(`${finished ? labels.routeComplete : `✓ ${message}`} · ${next.size}/${stops.length}`, labels.digits));
+      setToast(formatDigits(`${finished ? labels.routeComplete : `✓ ${message}`} · ${fillCount(labels.count, next.size, stops.length)}`, labels.digits));
       clearTimeout(toastTimer.current);
       toastTimer.current = setTimeout(() => setToast(null), 2400);
       snow.current?.(finished ? 120 : 28);
@@ -141,7 +149,7 @@ export function RouteProvider({
       <Snow register={registerSnow} />
       <div
         role="status"
-        className={`fixed left-1/2 bottom-5 z-50 -translate-x-1/2 whitespace-nowrap rounded-full bg-[#1a1a1a] px-5 py-2.5 font-sans text-sm text-[#F2F0E9] shadow-lg transition-transform duration-300 ${
+        className={`fixed left-1/2 bottom-5 z-50 -translate-x-1/2 whitespace-nowrap rounded-full bg-[#1a1a1a] px-5 py-2.5 ${labels.font} text-sm text-[#F2F0E9] shadow-lg transition-transform duration-300 ${
           toast ? 'translate-y-0' : 'translate-y-[200%]'
         }`}
       >
@@ -182,8 +190,8 @@ export function RouteRail() {
       <div className="container mx-auto flex items-center gap-3 px-6 py-1.5">
         <div className="flex shrink-0 items-end gap-1.5" title={labels.railTitle}>
           <FlagPole progress={done.size / stops.length} code={flag} uid="rail" width={26} />
-          <span className="font-sans text-xs tabular-nums text-[#1a1a1a]/60">
-            {formatDigits(`${done.size}/${stops.length}`, labels.digits)}
+          <span className={`${labels.font} text-xs tabular-nums text-[#1a1a1a]/60`}>
+            {formatDigits(fillCount(labels.count, done.size, stops.length), labels.digits)}
           </span>
         </div>
         <ol className="flex min-w-0 flex-1 gap-1.5 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
@@ -193,7 +201,7 @@ export function RouteRail() {
               <li key={s.id} className="shrink-0">
                 <a
                   href={`#${s.id}`}
-                  className={`flex items-center gap-1.5 rounded-full border px-3 py-1.5 font-sans text-xs transition-colors ${
+                  className={`flex items-center gap-1.5 rounded-full border px-3 py-1.5 ${labels.font} text-xs transition-colors ${
                     isDone ? 'border-[var(--ra)] bg-[var(--rs)]' : 'border-[#1a1a1a]/10 bg-white hover:border-[var(--ra)]'
                   }`}
                 >
@@ -216,8 +224,8 @@ export function RouteFinish() {
   return (
     <div className="mb-6 flex items-end gap-4">
       <FlagPole progress={done.size / stops.length} code={flag} uid="finish" width={84} light />
-      <span className="pb-1 font-sans text-xs tabular-nums text-white/60">
-        {finished ? labels.flagRaised : formatDigits(labels.checkpoints.replace('{n}', String(done.size)).replace('{total}', String(stops.length)), labels.digits)}
+      <span className={`pb-1 ${labels.font} text-xs tabular-nums text-white/60`}>
+        {finished ? labels.flagRaised : formatDigits(fillCount(labels.checkpoints, done.size, stops.length), labels.digits)}
       </span>
     </div>
   );
