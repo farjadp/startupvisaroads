@@ -7,6 +7,7 @@ import { router } from 'expo-router';
 import { useEffect, useRef } from 'react';
 import { AccessibilityInfo, BackHandler, Pressable, View, findNodeHandle, type Text as RNText } from 'react-native';
 import { fromUsd, type FxCurrency } from '@shared/fx';
+import { ROUTES_V2 } from '@shared/routes-v2';
 import {
   AGE_BANDS,
   ASSESS_ORDER,
@@ -237,7 +238,17 @@ export default function Assessment() {
 
   return (
     <Screen
-      footer={<Button label={intro ? t('assess2.begin') : step === total - 1 ? t('assess2.finish') : t('assess2.next')} onPress={next} disabled={!ok} />}
+      footer={
+        <>
+          {/* A disabled button says why (tokens: disabled state); screen readers hear it once, as the hint. */}
+          {ok ? null : (
+            <T variant="caption" tone="fgMuted" accessibilityElementsHidden importantForAccessibility="no">
+              {t('assess2.needAnswer')}
+            </T>
+          )}
+          <Button label={intro ? t('assess2.begin') : step === total - 1 ? t('assess2.finish') : t('assess2.next')} onPress={next} disabled={!ok} hint={ok ? undefined : t('assess2.needAnswer')} />
+        </>
+      }
     >
       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
         <Button kind="link" icon={null} label={intro ? t('assess2.close') : t('assess2.back')} onPress={back} />
@@ -260,7 +271,7 @@ export default function Assessment() {
       </T>
       {intro ? (
         <View style={{ gap: space.s3 }}>
-          <T variant="body">{t('assess2.introBody')}</T>
+          <T variant="body">{t('assess2.introBody', { routes: count(ROUTES_V2.length), countries: count(new Set(ROUTES_V2.map((r) => r.country)).size) })}</T>
           <T variant="body">{t('assess2.introPrivate')}</T>
           <T variant="caption" tone="fgMuted">
             {t('assess2.introNotApproval')}

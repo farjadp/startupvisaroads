@@ -1,6 +1,10 @@
 // ============================================================================
-// Page: /fa/which-path — the Persian assessment lead magnet. Persian-only;
-// the English site has its own assessments and this is not a port of them.
+// Page: /which-path — the route assessment, in both locales.
+// /fa renders the Persian lead magnet exactly as before. /en renders the
+// English assessment (./WhichPathEn.tsx): same questions, same scorer
+// (lib/fa/path-quiz.ts), English copy and English guides. The English site's
+// other self-assessment, the Express Entry calculator at /en/tools, is
+// linked from the English page rather than repeated.
 // ============================================================================
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
@@ -13,19 +17,25 @@ import PathQuiz from '@/components/fa/PathQuiz';
 import RouteCompare from '@/components/fa/RouteCompare';
 import Eligibility from '@/components/fa/Eligibility';
 import { meta } from '@/content/fa/which-path';
+import WhichPathEn from './WhichPathEn';
+import { EN_META, EN_PATH } from './en-copy';
 
 type Props = { params: Promise<{ locale: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
+  if (locale === 'en') {
+    return buildMetadata({ locale, path: EN_PATH, title: EN_META.title, description: EN_META.description, image: faImageUrl('which-path') });
+  }
   if (locale !== 'fa') return {};
   return buildMetadata({ locale, path: meta.path, title: meta.title, description: meta.description, image: faImageUrl('which-path') });
 }
 
 export default async function WhichPathFa({ params }: Props) {
   const { locale } = await params;
-  if (locale !== 'fa') notFound();
+  if (locale !== 'fa' && locale !== 'en') notFound();
   setRequestLocale(locale);
+  if (locale === 'en') return <WhichPathEn />;
 
   return (
     <div className="w-full px-4 md:px-8 border-x border-[#1a1a1a]/10 max-w-[1400px] mx-auto bg-[#F2F0E9] font-vazir">

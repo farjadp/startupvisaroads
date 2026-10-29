@@ -73,7 +73,6 @@ function Shell() {
             <Stack.Screen name="welcome" options={{ gestureEnabled: false }} />
             <Stack.Screen name="follow" />
             <Stack.Screen name="(tabs)" />
-            <Stack.Screen name="pathfinder" options={{ presentation: 'fullScreenModal', gestureEnabled: false }} />
             <Stack.Screen name="assessment" options={{ presentation: 'fullScreenModal', gestureEnabled: false }} />
           </Stack>
         </LocaleProvider>

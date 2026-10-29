@@ -23,6 +23,7 @@ import type { Metadata } from 'next';
 import { setRequestLocale } from 'next-intl/server';
 
 import { metaFor } from '@/lib/pageMeta';
+import GuideJsonLd from '@/components/GuideJsonLd';
 import BookingCTA from '@/components/BookingCTA';
 import { MAIN_CONTACT } from '@/content/contact';
 import {
@@ -50,6 +51,12 @@ export default async function CanadaSUVPage({ params }: { params: Promise<{ loca
   const { locale } = await params;
   setRequestLocale(locale);
   return (
+    <>
+    {/* WebPage + BreadcrumbList for this page only. It used to live in a
+        layout.tsx beside this file, which made every nested route
+        (/requirements, /cost, /designated-organizations) inherit the
+        pillar's structured data; those pages now emit their own. */}
+    {locale === 'en' && <GuideJsonLd path="/startup-visa-canada" />}
     <div className="w-full bg-[#F2F0E9] text-[#1a1a1a]">
 
       {/* =========================================
@@ -158,7 +165,7 @@ export default async function CanadaSUVPage({ params }: { params: Promise<{ loca
                  You could never apply directly to the government. You first needed a <span className="font-bold text-[#1a1a1a]">Letter of Support</span> from an organisation on IRCC&rsquo;s list, which then sent a commitment certificate to IRCC directly. Taking on new founders is <span className="font-bold text-[#1a1a1a]">paused</span> for these organisations too.
               </p>
               <p className="font-sans text-[#1a1a1a]/50 text-sm mt-4">
-                 Two rules that decided more applications than the investment amounts: since {new Date(SUV_ORGS.capInForceSince).toLocaleDateString('en-CA', { day: 'numeric', month: 'long', year: 'numeric' })} IRCC considered only {SUV_ORGS.groupApplicationsPerOrganisationPerYear} complete group applications per organisation per year, returning later ones and reimbursing the fees; and a group counted against that cap even when one member failed the completeness check.{' '}
+                 Two rules that decided more applications than the investment amounts: since {new Date(SUV_ORGS.capInForceSince).toLocaleDateString('en-CA', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' })} IRCC considered only {SUV_ORGS.groupApplicationsPerOrganisationPerYear} complete group applications per organisation per year, returning later ones and reimbursing the fees; and a group counted against that cap even when one member failed the completeness check.{' '}
                  <a href={SUV_SOURCES.eligibility} target="_blank" rel="noreferrer" className="underline hover:text-[#1a1a1a]">IRCC, who can apply</a>.
               </p>
            </div>
@@ -279,7 +286,7 @@ export default async function CanadaSUVPage({ params }: { params: Promise<{ loca
             <div className="text-center mb-16">
                <h2 className="font-serif text-4xl text-[#1a1a1a] mb-4">What the program required</h2>
                <p className="font-sans text-[#1a1a1a]/60 max-w-2xl mx-auto">
-                  Figures below are IRCC&rsquo;s own, read from canada.ca on {new Date(SUV_VERIFIED).toLocaleDateString('en-CA', { day: 'numeric', month: 'long', year: 'numeric' })}.
+                  Figures below are IRCC&rsquo;s own, read from canada.ca on {new Date(SUV_VERIFIED).toLocaleDateString('en-CA', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' })}.
                </p>
             </div>
             
@@ -287,7 +294,7 @@ export default async function CanadaSUVPage({ params }: { params: Promise<{ loca
                {[
                   { title: "Voting Rights", text: `Each applicant had to hold at least ${SUV_RULES.minVotingRightsPerApplicant}% of the total voting rights, and the applicants together with the designated organisation more than ${SUV_RULES.minCombinedVotingRights}%. Up to ${SUV_RULES.maxOwnersPerBusiness} owners could apply on one business.` },
                   { title: "Language Test", text: `Canadian Language Benchmark ${SUV_RULES.language.benchmark} in all four abilities — listening, reading, writing and speaking — in English or French, from an approved test.` },
-                  { title: "Settlement Funds", text: `Proof of funds you did not borrow: ${cad(SUV_SETTLEMENT_FUNDS[1])} for one person, ${cad(SUV_SETTLEMENT_FUNDS[4])} for a family of four. IRCC's table, updated ${new Date(SUV_SETTLEMENT_FUNDS_UPDATED).toLocaleDateString('en-CA', { day: 'numeric', month: 'long', year: 'numeric' })}, and revised yearly.` },
+                  { title: "Settlement Funds", text: `Proof of funds you did not borrow: ${cad(SUV_SETTLEMENT_FUNDS[1])} for one person, ${cad(SUV_SETTLEMENT_FUNDS[4])} for a family of four. IRCC's table, updated ${new Date(SUV_SETTLEMENT_FUNDS_UPDATED).toLocaleDateString('en-CA', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' })}, and revised yearly.` },
                   { title: "Letter of Support", text: "A designated organisation had to support the business and send a commitment certificate to IRCC directly. Outside Quebec only — Quebec runs its own programmes." },
                ].map((item, i) => (
                   <div key={i} className="bg-white p-8 border-t-4 border-[#1a1a1a] hover:border-[#CCFF00] transition-colors shadow-sm">
@@ -398,7 +405,7 @@ export default async function CanadaSUVPage({ params }: { params: Promise<{ loca
          <div className="container mx-auto max-w-3xl">
             <h2 className="font-sans text-xs font-bold uppercase tracking-widest text-[#1a1a1a]/40 mb-6">Sources</h2>
             <p className="font-sans text-sm text-[#1a1a1a]/60 mb-4">
-               Every status, rule and figure on this page is Immigration, Refugees and Citizenship Canada&rsquo;s own, read on {new Date(SUV_VERIFIED).toLocaleDateString('en-CA', { day: 'numeric', month: 'long', year: 'numeric' })}. Where we state an opinion we say so. Verify before you act &mdash; IRCC revises these pages without notice.
+               Every status, rule and figure on this page is Immigration, Refugees and Citizenship Canada&rsquo;s own, read on {new Date(SUV_VERIFIED).toLocaleDateString('en-CA', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' })}. Where we state an opinion we say so. Verify before you act &mdash; IRCC revises these pages without notice.
             </p>
             <ul className="font-sans text-sm space-y-2">
                {[
@@ -454,5 +461,6 @@ export default async function CanadaSUVPage({ params }: { params: Promise<{ loca
       </section>
 
     </div>
+    </>
   );
 }

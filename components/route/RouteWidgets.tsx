@@ -566,7 +566,7 @@ export function YearsRoadmap({ stopId, routes, defaultRoute, copy }: { stopId: s
               </div>
             ))}
             <span className="absolute top-[103px] z-10 -translate-x-1/2 drop-shadow-md transition-[left] duration-500" style={{ left: `${pos(year)}%` }}>
-              <Flag code={flag} uid="roadmap" width={36} />
+              {flag ? <Flag code={flag} uid="roadmap" width={36} /> : <span className="block h-4 w-6 rounded-sm bg-[var(--ra)]" />}
             </span>
           </div>
         </div>

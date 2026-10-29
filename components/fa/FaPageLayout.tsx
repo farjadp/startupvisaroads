@@ -15,7 +15,7 @@ import { Link } from '@/navigation';
 import JsonLd from '@/components/JsonLd';
 import { SITE_URL } from '@/lib/seo';
 import { faqJsonLd, breadcrumbJsonLd, faWebPageJsonLd, type FaPage, type FaCta, type FaSection } from '@/lib/fa/content';
-import { faDate, isoDate } from '@/lib/fa/format';
+import { faDate, isoDate, toPersianDigits } from '@/lib/fa/format';
 import { TELEGRAM_URL, CONTACT } from '@/content/fa/home';
 import { videosById } from '@/content/fa/videos';
 import StatusBanner from './StatusBanner';
@@ -36,6 +36,34 @@ import ScrollProgress from './motion/ScrollProgress';
 import Stepper, { type Step } from './motion/Stepper';
 import Faq from './motion/Faq';
 import Downloads from './motion/Downloads';
+import { FaStop, FaCheck } from './FaRoute';
+import { RouteProvider, RouteRail, RouteFinish, type RouteTheme, type RouteLabels } from '@/components/route/RouteProgress';
+import type { FlagCode as RouteFlagCode } from '@/components/route/flags';
+
+// Guides carry the progress layer in the site's own colours: acid on ink.
+const FA_THEME: RouteTheme = { accent: '#CCFF00', accentInk: '#1a1a1a', accentText: '#1a1a1a', primary: '#1a1a1a', deep: '#1a1a1a', soft: '#CCFF00', accentOnDark: '#CCFF00' };
+
+// A requirements section becomes a self-check, except where a readiness
+// verdict would mislead: the paused Canada Start-up Visa, and Israel, which
+// is not open to the passports this site writes for.
+const NO_SELF_CHECK = new Set(['/canada-startup-visa', '/israel']);
+const FA_LABELS: Partial<RouteLabels> = {
+  rail: 'پیشرفت شما در این راهنما',
+  railTitle: 'با خواندن هر بخش، پرچم بالاتر می‌رود',
+  routeComplete: 'مسیر کامل شد',
+  flagRaised: 'پرچم بالا رفت؛ همه‌ی بخش‌ها را دیدید.',
+  checkpoints: '{n} از {total} بخش',
+  count: '{n} از {total}',
+  digits: 'persian',
+  font: 'font-vazir',
+};
+
+/** A heading cut to a rail-sized label: up to the first colon, dash or question mark. */
+const shortLabel = (h: string) => {
+  const cut = h.split(/[:—–؟?]/)[0].trim();
+  return cut.length > 28 ? `${cut.slice(0, 26).trim()}…` : cut;
+};
+const wordCount = (t: string) => t.split(/\s+/).filter(Boolean).length;
 
 // Absolute URLs and explicit /en/ paths render as plain anchors; everything
 // else goes through the locale-aware Link.
@@ -85,8 +113,9 @@ function stepsOf(s: FaSection): Step[] | null {
   return parsed.every(Boolean) ? (parsed as Step[]) : null;
 }
 
-function Section({ s, i }: { s: FaSection; i: number }) {
+function Section({ s, i, guide = false, selfCheck = false }: { s: FaSection; i: number; guide?: boolean; selfCheck?: boolean }) {
   const steps = stepsOf(s);
+  if (guide) return <GuideSection s={s} i={i} steps={steps} selfCheck={selfCheck} />;
   return (
     <Reveal as="section" id={`s${i + 1}`} className="scroll-mt-28">
       <Rule className="mb-5" />
@@ -115,6 +144,67 @@ function Section({ s, i }: { s: FaSection; i: number }) {
   );
 }
 
+/**
+ * A section of a programme guide. The first paragraph stands alone as the
+ * section's answer; a long remainder folds behind a "continue" control. It
+ * stays in the HTML, so search engines and answer engines read all of it.
+ * Steps and the callout always stay open.
+ */
+function GuideSection({ s, i, steps, selfCheck }: { s: FaSection; i: number; steps: Step[] | null; selfCheck: boolean }) {
+  const [lead, ...rest] = s.body;
+  // A short list of requirements becomes the self-check; its text stays in the HTML.
+  const check = selfCheck && !steps && !!s.bullets && s.bullets.length >= 3 && s.bullets.length <= 8 && s.heading.slice(0, 24).includes('شرایط');
+  const bullets = !steps && !check && s.bullets ? s.bullets : [];
+  const restWords = wordCount(rest.join(' ')) + wordCount(bullets.join(' '));
+  const fold = restWords > 60;
+  const minutes = Math.max(1, Math.round(restWords / 200));
+  const detail = (
+    <>
+      {rest.map((p, j) => <p key={j}>{p}</p>)}
+      {bullets.length > 0 && (
+        <ul className="space-y-3 pt-1">
+          {bullets.map((b, j) => (
+            <li key={j} className="flex gap-4">
+              <span className="mt-[0.85em] h-px w-5 bg-[#1a1a1a] shrink-0" aria-hidden />
+              <span>{b}</span>
+            </li>
+          ))}
+        </ul>
+      )}
+    </>
+  );
+  return (
+    <FaStop id={`s${i + 1}`} message={`خواندید: ${shortLabel(s.heading)}`} className="scroll-mt-40">
+      <Reveal>
+        <Rule className="mb-5" />
+        <MaskText as="h2" text={s.heading} className="font-estedad font-black text-3xl md:text-4xl leading-tight mb-6 max-w-3xl [text-wrap:balance]" />
+      </Reveal>
+      <div className="space-y-5 text-lg leading-[1.9] text-[#1a1a1a]/80">
+        {lead && <p className="max-w-[70ch] border-s-4 border-[#CCFF00] ps-5 text-xl leading-[1.9] text-[#1a1a1a]">{lead}</p>}
+        {fold ? (
+          <details className="group max-w-[70ch] border-t border-[#1a1a1a]/10 pt-4">
+            <summary className="flex cursor-pointer list-none items-center gap-3 font-bold text-[#1a1a1a] [&::-webkit-details-marker]:hidden">
+              <span className="grid h-7 w-7 place-items-center rounded-full bg-[#CCFF00] text-base transition-transform group-open:rotate-45" aria-hidden>+</span>
+              <span className="group-open:hidden">ادامه‌ی این بخش · حدود {toPersianDigits(String(minutes))} دقیقه</span>
+              <span className="hidden group-open:inline">بستن</span>
+            </summary>
+            <div className="space-y-5 pt-5">{detail}</div>
+          </details>
+        ) : (
+          <div className="max-w-[70ch] space-y-5">{detail}</div>
+        )}
+        {steps && <div className="pt-2"><Stepper steps={steps} /></div>}
+        {check && s.bullets && <div className="pt-2 max-w-none"><FaCheck stopId={`s${i + 1}`} items={s.bullets} /></div>}
+        {s.callout && (
+          <aside className="mt-4 max-w-[70ch] bg-[#1a1a1a] text-[#F2F0E9] p-7 md:p-8 border-t-2 border-[#CCFF00]">
+            <p className="font-estedad font-bold text-xl md:text-2xl leading-relaxed [text-wrap:pretty]">{s.callout}</p>
+          </aside>
+        )}
+      </div>
+    </FaStop>
+  );
+}
+
 export default function FaPageLayout({
   page,
   trail,
@@ -140,11 +230,18 @@ export default function FaPageLayout({
   // calculator, matched on path so no content module has to opt in.
   const rule = RULES.find((r) => r.href === page.path);
   const flag = flagFor(page.path);
+  // Programme guides get the progress layer; our own pages (about, team,
+  // mentorship) and pages without sections keep the plain layout.
+  const guide = !!page.entity && page.entity.type !== 'Service' && page.sections.length >= 4;
+  const stops = [
+    ...page.sections.map((s, i) => ({ id: `s${i + 1}`, label: shortLabel(s.heading) })),
+    ...(page.faqs.length > 0 ? [{ id: 'faq', label: 'سؤالات متداول' }] : []),
+  ];
   const mid = Math.min(3, Math.max(1, Math.floor(page.sections.length / 2)));
   const before = page.sections.slice(0, mid);
   const after = page.sections.slice(mid);
 
-  return (
+  const body = (
     <article className="w-full bg-[#F2F0E9] font-vazir">
       <ScrollProgress />
       <JsonLd data={[faWebPageJsonLd(page), faqJsonLd(page.faqs), breadcrumbJsonLd(SITE_URL, [{ name: 'خانه', path: '' }, ...trail])]} />
@@ -214,6 +311,8 @@ export default function FaPageLayout({
 
       {afterHero}
 
+      {guide && <RouteRail />}
+
       <div className="px-4 md:px-8 max-w-[1400px] mx-auto border-x border-[#1a1a1a]/10">
         {page.status && <StatusBanner status={page.status} />}
         {page.facts && (
@@ -226,7 +325,7 @@ export default function FaPageLayout({
         {/* BODY */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 py-16 md:py-24">
           <aside className="lg:col-span-3 hidden lg:block">
-            <div className="sticky top-28">
+            <div className={`sticky ${guide ? 'top-40' : 'top-28'}`}>
               <SectionNav
                 items={[
                   ...page.sections.map((s, i) => ({ id: `s${i + 1}`, label: s.heading })),
@@ -245,7 +344,7 @@ export default function FaPageLayout({
           </aside>
 
           <div className="lg:col-span-9 space-y-16 md:space-y-24">
-            {before.map((s, i) => <Section key={i} s={s} i={i} />)}
+            {before.map((s, i) => <Section key={i} s={s} i={i} guide={guide} selfCheck={!NO_SELF_CHECK.has(page.path)} />)}
 
             {/* mid-page breather: a different photograph, with the positioning line */}
             {gallery[0] && after.length > 0 && (
@@ -266,7 +365,7 @@ export default function FaPageLayout({
               const shot = gallery.slice(1).find((_, k) => slotFor(k + 1) === idx + 1);
               return (
                 <React.Fragment key={idx}>
-                  <Section s={s} i={idx} />
+                  <Section s={s} i={idx} guide={guide} selfCheck={!NO_SELF_CHECK.has(page.path)} />
                   {shot && (
                     <Reveal as="figure" className="-mx-4 md:mx-0">
                       <div className="relative aspect-[16/9] bg-[#1a1a1a] overflow-hidden">
@@ -283,7 +382,19 @@ export default function FaPageLayout({
 
             {extra}
 
-            {page.faqs.length > 0 && (
+            {page.faqs.length > 0 && guide && (
+              <FaStop id="faq" message="خواندید: سؤالات متداول" className="scroll-mt-40">
+                <h2 className="font-estedad font-black text-3xl md:text-4xl mb-10">سؤالات متداول</h2>
+                {(page.faqGroups ?? [{ heading: '', faqs: page.faqs }]).map((g, gi) => (
+                  <div key={gi} id={g.heading ? `faq-${gi + 1}` : undefined} className={gi > 0 ? 'mt-14 scroll-mt-40' : ''}>
+                    {g.heading && <h3 className="font-estedad font-bold text-xl text-[#1a1a1a]/60 mb-4">{g.heading}</h3>}
+                    <Faq items={g.faqs} idPrefix={`faq${gi}`} />
+                  </div>
+                ))}
+              </FaStop>
+            )}
+
+            {page.faqs.length > 0 && !guide && (
               <Reveal as="section" className="scroll-mt-28">
                 <div id="faq" />
                 <h2 className="font-estedad font-black text-3xl md:text-4xl mb-10">سؤالات متداول</h2>
@@ -336,6 +447,7 @@ export default function FaPageLayout({
       <section className="py-24 border-t border-[#1a1a1a] bg-[#1a1a1a] text-[#F2F0E9]">
         <div className="px-4 md:px-8 max-w-[1400px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
           <div className="lg:col-span-8">
+            {guide && <RouteFinish />}
             <h2 className="font-estedad font-black text-4xl md:text-6xl leading-tight mb-10 max-w-[20ch] [text-wrap:balance]">هنوز مطمئن نیستید این مسیر برای شماست؟</h2>
             <div className="flex flex-wrap gap-4">
               {page.closing.map((c, i) => <Cta key={c.href} cta={c} primary={i === 0} dark={i !== 0} />)}
@@ -344,5 +456,13 @@ export default function FaPageLayout({
         </div>
       </section>
     </article>
+  );
+
+  return guide ? (
+    <RouteProvider stops={stops} flag={(flag ?? undefined) as RouteFlagCode | undefined} theme={FA_THEME} labels={FA_LABELS}>
+      {body}
+    </RouteProvider>
+  ) : (
+    body
   );
 }

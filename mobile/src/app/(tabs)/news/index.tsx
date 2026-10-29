@@ -6,7 +6,8 @@ import { FlatList, Pressable, RefreshControl, ScrollView, View } from 'react-nat
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { cachedFeed, fetchFeed, type Feed, type NewsItem } from '@/content/news';
 import { Image } from 'expo-image';
-import { COUNTRY_NAMES, COUNTRY_PHOTO, ROUTES, type Country } from '@/content/routes';
+import { routeV2 } from '@shared/routes-v2';
+import { COUNTRY_NAMES, COUNTRY_PHOTO, type Country } from '@/content/routes';
 import { useI18n } from '@/i18n/I18nProvider';
 import { useStore } from '@/state/store';
 import { useTheme } from '@/theme/ThemeProvider';
@@ -23,9 +24,8 @@ export default function News() {
   const { state, set } = useStore();
   const insets = useSafeAreaInsets();
   const lang = meta.siteLocale;
-  // "My roads": the pathfinder's road and the roads the user follows (3B), by country.
-  const outcomeCountry = state.outcome && state.outcome !== 'too-early' ? ROUTES[state.outcome].country : null;
-  const myCountries = [...new Set([...(outcomeCountry ? [outcomeCountry] : []), ...state.following.map((k) => ROUTES[k].country)])];
+  // "My roads": the countries of the v2 routes the user follows (3B).
+  const myCountries = [...new Set(state.following.flatMap((k) => routeV2(k)?.country ?? []))] as Country[];
   const mine = myCountries.length > 0;
 
   const [feed, setFeed] = useState<Feed | null>(null);

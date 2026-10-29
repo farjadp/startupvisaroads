@@ -5,6 +5,8 @@
 import type { RouteV2 } from './types';
 
 const CHECKED = '2026-10-15';
+/** Official-source re-check of the 27 Oct 2026 research (docs/research/app-v3). */
+const RECHECKED = '2026-10-27';
 
 export const ROUTES_EUROPE: RouteV2[] = [
   // ───────────────────────────── DENMARK ─────────────────────────────
@@ -45,8 +47,8 @@ export const ROUTES_EUROPE: RouteV2[] = [
         weight: 2,
         scoreable: false,
         note: {
-          en: 'Three judges each grade four criteria from 1 to 5. You can only self-assess this.',
-          fa: 'سه داور هر یک چهار معیار را از ۱ تا ۵ نمره می‌دهند. این مورد را فقط خودتان می‌توانید ارزیابی کنید.',
+          en: 'Three judges each grade four criteria from 1 to 5; you need an average of at least 3.5 across all four. You can only self-assess this.',
+          fa: 'سه داور هر یک چهار معیار را از ۱ تا ۵ نمره می‌دهند و میانگین هر چهار معیار باید دست‌کم ۳٫۵ باشد. این مورد را فقط خودتان می‌توانید ارزیابی کنید.',
         },
       },
       {
@@ -94,22 +96,25 @@ export const ROUTES_EUROPE: RouteV2[] = [
       { key: 'with-children-no-spouse', label: { en: 'With children, no spouse', fa: 'با فرزند و بدون همسر' }, amount: 203_664, currency: 'DKK', basis: 'year' },
     ],
     processing: {
-      text: { en: 'Normally 2 months; up to 4 months if more information is needed.', fa: 'معمولاً ۲ ماه؛ اگر مدارک بیشتری لازم باشد تا ۴ ماه.' },
+      text: {
+        en: 'The expert panel usually takes up to 6 weeks (longer in holidays or at high caseload). SIRI then normally takes 2 months, up to 4 if more information is needed.',
+        fa: 'بررسی پنل کارشناسان معمولاً تا ۶ هفته طول می‌کشد (در تعطیلات یا هنگام حجم بالای پرونده‌ها بیشتر). پس از آن SIRI معمولاً ۲ ماه زمان می‌برد و اگر مدارک بیشتری لازم باشد تا ۴ ماه.',
+      },
       source: 'https://www.nyidanmark.dk/en-GB/You-want-to-apply/Work/Start-up-Denmark',
     },
     fees: [{ label: { en: 'Application fee', fa: 'هزینه‌ی درخواست' }, amount: 3_060, currency: 'DKK' }],
     pr: {
-      en: 'Permit for up to 2 years, then 3 years at a time after panel re-evaluation. Permanent residence after 8 years (4 if all supplementary requirements are met), with Danish test 2 and 3.5 years of full-time work or self-employment in the last 4.',
-      fa: 'اقامت اولیه تا ۲ سال و سپس پس از ارزیابی دوباره‌ی پنل، هر بار ۳ سال. اقامت دائم پس از ۸ سال (۴ سال اگر همه‌ی شرایط تکمیلی برقرار باشد)، با قبولی در آزمون زبان دانمارکی سطح ۲ و ۳٫۵ سال کار تمام‌وقت یا خوداشتغالی در ۴ سال اخیر.',
+      en: 'Permit for up to 2 years, then 3 years at a time after panel re-evaluation. Permanent residence after 8 years of uninterrupted legal residence plus at least 2 of the 4 supplementary requirements (4 years if all 4 are met), with Danish test 2 and 3.5 years of full-time work or self-employment in the last 4.',
+      fa: 'اقامت اولیه تا ۲ سال و سپس پس از ارزیابی دوباره‌ی پنل، هر بار ۳ سال. اقامت دائم پس از ۸ سال اقامت قانونی بی‌وقفه به‌علاوه‌ی دست‌کم ۲ شرط از ۴ شرط تکمیلی (اگر هر ۴ شرط برقرار باشد، ۴ سال)، با قبولی در آزمون زبان دانمارکی سطح ۲ و ۳٫۵ سال کار تمام‌وقت یا خوداشتغالی در ۴ سال اخیر.',
     },
     sources: [
-      { url: 'https://www.nyidanmark.dk/en-GB/You-want-to-apply/Work/Start-up-Denmark', checked: CHECKED, label: 'SIRI, last updated 29-06-2026' },
-      { url: 'https://startupdenmarkprogramme.dk/application-guide-startups', checked: CHECKED, label: 'Start-up Denmark application guide' },
-      { url: 'https://nyidanmark.dk/en-GB/Applying/Permanent%20residence%20permit/Permanent%20residence', checked: CHECKED, label: 'SIRI, permanent residence' },
+      { url: 'https://www.nyidanmark.dk/en-GB/You-want-to-apply/Work/Start-up-Denmark', checked: RECHECKED, label: 'SIRI, last updated 29-06-2026' },
+      { url: 'https://startupdenmarkprogramme.dk/application-guide-startups', checked: RECHECKED, label: 'Start-up Denmark application guide (read in a browser)' },
+      { url: 'https://nyidanmark.dk/en-GB/Applying/Permanent%20residence%20permit/Permanent%20residence', checked: RECHECKED, label: 'SIRI, permanent residence (updated 17-09-2026)' },
     ],
     verified: true,
     review:
-      'Funds labelled the "2025 level" on a SIRI page updated 29-06-2026; re-check in January. The 3.5 panel bar and the four criteria come from the search-indexed text of startupdenmarkprogramme.dk (TLS failed on direct fetch) and the guide does not say whether 3.5 applies per criterion or overall: confirm. Status "limited" because of the 75-person yearly quota. No general Danish self-employed route found (not checked in depth); confirm before mapping "entrepreneur" to Start-up Denmark. Panel approval could be scored via the `endorsement` field; left unscored per the notes.',
+      'Funds labelled the "2025 level" on a SIRI page updated 29-06-2026; re-check in January. 27 Oct 2026: the guide (read in a browser; fetch tools reject its TLS chain) says "at least 3.5 in average score for all four criteria", so 3.5 is one overall average, resolved; panel time "usually up to 6 weeks" added to processing; pr now says the 8-year route also needs 2 of the 4 supplementary requirements (SIRI PR page). Status "limited" because of the 75-person yearly quota. No general Danish self-employed route found (not checked in depth); confirm before mapping "entrepreneur" to Start-up Denmark. Panel approval could be scored via the `endorsement` field; left unscored per the notes.',
   },
   {
     key: 'dk-study',
@@ -162,6 +167,16 @@ export const ROUTES_EUROPE: RouteV2[] = [
         weight: 2,
         scoreable: false,
       },
+      {
+        key: 'family',
+        label: { en: 'Family generally cannot come with you (applications from 1 Oct 2026)', fa: 'خانواده معمولاً نمی‌تواند همراه شما بیاید (درخواست‌های از ۱ اکتبر ۲۰۲۶)' },
+        weight: 2,
+        scoreable: false,
+        note: {
+          en: 'For state-approved programmes applied for on or after 1 Oct 2026, family members generally cannot be included. For non-state-approved programmes this has applied since 2 May 2025.',
+          fa: 'برای برنامه‌های مورد تأیید دولت که از ۱ اکتبر ۲۰۲۶ به بعد درخواست داده شوند، اعضای خانواده معمولاً پذیرفته نمی‌شوند. برای برنامه‌های بدون تأیید دولت این قاعده از ۲ مه ۲۰۲۵ برقرار است.',
+        },
+      },
     ],
     money: [
       {
@@ -183,16 +198,17 @@ export const ROUTES_EUROPE: RouteV2[] = [
     },
     fees: [{ label: { en: 'Application fee', fa: 'هزینه‌ی درخواست' }, amount: 3_060, currency: 'DKK' }],
     pr: {
-      en: 'Study years count toward the general 8-year permanent residence rule.',
-      fa: 'سال‌های تحصیل در قاعده‌ی کلی ۸ ساله‌ی اقامت دائم محاسبه می‌شوند.',
+      en: 'Study alone does not lead to permanent residence: the general rule needs 8 years of uninterrupted legal residence and also 3.5 years of full-time work in the last 4.',
+      fa: 'تحصیل به‌تنهایی به اقامت دائم نمی‌رسد: قاعده‌ی کلی ۸ سال اقامت قانونی بی‌وقفه می‌خواهد و علاوه بر آن ۳٫۵ سال کار تمام‌وقت در ۴ سال اخیر.',
     },
     sources: [
-      { url: 'https://nyidanmark.dk/en-GB/You-want-to-apply/Study/Higher-Education', checked: CHECKED, label: 'SIRI, last updated 01-10-2026' },
+      { url: 'https://nyidanmark.dk/en-GB/You-want-to-apply/Study/Higher-Education', checked: RECHECKED, label: 'SIRI, last updated 01-10-2026' },
       { url: 'https://nyidanmark.dk/en-GB/Words-and-concepts/SIRI/Self-support---SIRI', checked: CHECKED, label: 'SIRI, self-support' },
+      { url: 'https://nyidanmark.dk/en-GB/Applying/Permanent%20residence%20permit/Permanent%20residence', checked: RECHECKED, label: 'SIRI, permanent residence (updated 17-09-2026)' },
     ],
     verified: true,
     review:
-      'New rule from 1 Oct 2026: post-study job-seeking is 6 months or 1 year (3 years for PhDs) for applications filed on or after that date; it was up to 3 years before. Funds are the 2026 level. CONFLICT: SIRI pages differ on whether proof of paid first-semester tuition replaces the funds proof. Work allowed 90 h/month, full-time Jun–Aug.',
+      'New rule from 1 Oct 2026: post-study job-seeking is 6 months or 1 year (3 years for PhDs) for applications filed on or after that date; it was up to 3 years before. Funds are the 2026 level. Tuition conflict resolved on the higher-education page (27 Oct 2026): proof of paid first-semester tuition is accepted if it is accepted as documentation of sufficient funds (self-support page not re-read). 27 Oct 2026: added the family criterion (state-approved programmes from 1 Oct 2026; non-state-approved since 2 May 2025) and corrected pr: the old "study years count toward the 8-year rule" was misleading, PR also needs 3.5 years of full-time work in the last 4. Work allowed 90 h/month, full-time Jun–Aug.',
   },
 
   // ───────────────────────────── FINLAND ─────────────────────────────
@@ -303,10 +319,12 @@ export const ROUTES_EUROPE: RouteV2[] = [
       { url: 'https://migri.fi/en/processing-times', checked: CHECKED },
       { url: 'https://migri.fi/en/permanent-residence-permit', checked: CHECKED },
       { url: 'https://intermin.fi/en/areas-of-expertise/migration/government-programme-measures-to-reform-migration-policy/permanent-residence-permits', checked: CHECKED },
+      { url: 'https://www.finlex.fi/fi/lainsaadanto/2004/301', checked: RECHECKED, label: 'Finlex, Ulkomaalaislaki 301/2004 (consolidated)' },
+      { url: 'https://www.edilex.fi/he/20260216', checked: RECHECKED, label: 'HE 216/2026 (reform bill, in Parliament)' },
     ],
     verified: false,
     review:
-      'UNVERIFIED: migri.fi blocked automated access (Cloudflare 403). Every Migri figure (funds 1,030/1,090/1,210, family add-ons, fees, processing) comes from Migri’s own text as indexed by search; page dates not seen. Figures are kept because they are Migri’s published text and match lib/funds.ts, but the app must show the source until someone reads the pages in a browser. CONFLICT: family table gives +360 per child from the third; a note on the same page says +310. PR moved on 8 Jan 2026 to 6 years (plus 2 years’ work and B1) or 4 years with income ≥ EUR 40,000, a recognised master’s plus 2 years’ work, or C1 plus 3 years’ work. Whether the start-up permit is an A (continuous) permit is not published on the pages read. Funds test uses the lowest yearly figure (12,360); Helsinki is 14,520. Business Finland statement could be scored via `endorsement`; left unscored per the notes.',
+      'UNVERIFIED: migri.fi blocked automated access (Cloudflare 403). Every Migri figure (funds 1,030/1,090/1,210, family add-ons, fees, processing) comes from Migri’s own text as indexed by search; page dates not seen. Figures are kept because they are Migri’s published text and match lib/funds.ts, but the app must show the source until someone reads the pages in a browser. CONFLICT: family table gives +360 per child from the third; a note on the same page says +310. PR moved on 8 Jan 2026 to 6 years (plus 2 years’ work and B1) or 4 years with income ≥ EUR 40,000, a recognised master’s plus 2 years’ work, or C1 plus 3 years’ work. 27 Oct 2026: Finlex § 80 settles the permit type: a continuous (A) growth-entrepreneur permit, first permit up to 2 years (startupinfinland); the EUR 650 online fee is confirmed in HE 216/2026. Reform pending: HE 216/2026 (in Parliament, proposed in force 12 Jan 2028) would replace the separate Eligibility Statement with a Business Finland partial decision inside Migri after the paid application; current rules still apply. Stays unverified until migri.fi is read in a browser. Funds test uses the lowest yearly figure (12,360); Helsinki is 14,520. Business Finland statement could be scored via `endorsement`; left unscored per the notes.',
   },
   {
     key: 'fi-self-employed',
@@ -314,13 +332,13 @@ export const ROUTES_EUROPE: RouteV2[] = [
     family: 'entrepreneur',
     name: { en: 'Residence permit for an entrepreneur', fa: 'اقامت کارآفرینی (خوداشتغالی) فنلاند' },
     agency: {
-      en: 'ELY Centre (partial decision); Migri (permit)',
-      fa: 'مرکز ELY (تصمیم جزئی)؛ اداره‌ی مهاجرت فنلاند، Migri (اجازه‌ی اقامت)',
+      en: 'Elinvoimakeskus (formerly the ELY Centre; partial decision); Migri (permit)',
+      fa: 'مرکز توسعه‌ی منطقه‌ای (elinvoimakeskus، پیش‌تر ELY) برای تصمیم جزئی؛ اداره‌ی مهاجرت فنلاند (Migri) برای اجازه‌ی اقامت',
     },
     status: 'open',
     fact: {
-      en: 'The ELY Centre must find the business profitable enough to support you. A negative ELY decision means a negative Migri decision; most refusals are on this ground.',
-      fa: 'مرکز ELY باید کسب‌وکار شما را آن‌قدر سودآور بداند که هزینه‌ی زندگی‌تان را تأمین کند. تصمیم منفی ELY به تصمیم منفی Migri می‌انجامد و بیشتر ردها به همین دلیل است.',
+      en: 'The elinvoimakeskus (formerly the ELY Centre) must find that the business can be profitable and support you. A negative partial decision means a negative Migri decision; over 70% of first applications end negative.',
+      fa: 'مرکز توسعه‌ی منطقه‌ای (elinvoimakeskus، پیش‌تر ELY) باید تشخیص دهد که کسب‌وکار می‌تواند سودآور باشد و هزینه‌ی زندگی‌تان را تأمین کند. تصمیم جزئی منفی به تصمیم منفی Migri می‌انجامد؛ بیش از ۷۰ درصد درخواست‌های اول به نتیجه‌ی منفی می‌رسند.',
     },
     criteria: [
       {
@@ -344,6 +362,10 @@ export const ROUTES_EUROPE: RouteV2[] = [
         label: { en: 'Profitable business, with a 2-year forecast', fa: 'کسب‌وکار سودآور، همراه با پیش‌بینی مالی ۲ ساله' },
         weight: 2,
         scoreable: false,
+        note: {
+          en: 'The Act (§ 79 a) also requires sufficient resources for the business and no serious neglect of taxes or other payments.',
+          fa: 'قانون (بند ۷۹ a) همچنین منابع کافی برای کسب‌وکار و نداشتن قصور جدی در پرداخت مالیات یا دیگر پرداخت‌ها را لازم می‌داند.',
+        },
       },
       {
         key: 'funds',
@@ -352,15 +374,19 @@ export const ROUTES_EUROPE: RouteV2[] = [
         scoreable: true,
         test: { field: 'liquid', op: 'gte', value: 12_360, currency: 'EUR' },
         note: {
-          en: 'Same income requirement as the start-up permit: EUR 1,030 to 1,210 net per month, depending on the city.',
-          fa: 'همان شرط درآمدی اقامت استارتاپی: ۱٬۰۳۰ تا ۱٬۲۱۰ یورو خالص در ماه، بسته به شهر.',
+          en: 'Same income requirement as the start-up permit: EUR 1,030 to 1,210 net per month, depending on the city. Living costs come from business income, or at the start from earned income, start-up funding or own funds.',
+          fa: 'همان شرط درآمدی اقامت استارتاپی: ۱٬۰۳۰ تا ۱٬۲۱۰ یورو خالص در ماه، بسته به شهر. هزینه‌ی زندگی باید از درآمد کسب‌وکار تأمین شود، یا در آغاز کار از درآمد کاری، سرمایه‌ی راه‌اندازی یا پول خودتان.',
         },
       },
       {
         key: 'ely-decision',
-        label: { en: 'Positive ELY Centre partial decision', fa: 'تصمیم مثبت اولیه‌ی مرکز ELY' },
+        label: { en: 'Positive partial decision from the elinvoimakeskus (formerly ELY Centre)', fa: 'تصمیم جزئی مثبت مرکز توسعه‌ی منطقه‌ای (elinvoimakeskus، پیش‌تر ELY)' },
         weight: 3,
         scoreable: false,
+        note: {
+          en: 'The partial decision also sets the permit length and whether it is temporary or continuous.',
+          fa: 'همین تصمیم جزئی مدت اقامت و موقت یا دائمی بودن آن را هم تعیین می‌کند.',
+        },
       },
     ],
     money: [
@@ -380,8 +406,8 @@ export const ROUTES_EUROPE: RouteV2[] = [
     ],
     processing: {
       text: {
-        en: 'Usually 1 month at Migri, in a minority of cases 2 months. The two-stage process (ELY, then Migri) adds time.',
-        fa: 'معمولاً ۱ ماه در Migri و در موارد کمتر ۲ ماه. فرایند دومرحله‌ای (ابتدا ELY و سپس Migri) زمان بیشتری می‌برد.',
+        en: 'Usually 1 month at Migri, in a minority of cases 2 months. The two-stage process (elinvoimakeskus, then Migri) adds time.',
+        fa: 'معمولاً ۱ ماه در Migri و در موارد کمتر ۲ ماه. فرایند دومرحله‌ای (ابتدا elinvoimakeskus و سپس Migri) زمان بیشتری می‌برد.',
       },
       source: 'https://migri.fi/en/processing-times',
     },
@@ -398,10 +424,12 @@ export const ROUTES_EUROPE: RouteV2[] = [
       { url: 'https://migri.fi/en/-/changes-to-finnish-immigration-service-processing-fees-as-of-1-january-2026', checked: CHECKED, label: 'Migri fees from 1 Jan 2026' },
       { url: 'https://migri.fi/en/working-in-finland/income-requirement', checked: CHECKED, label: 'Migri income requirement (blocked)' },
       { url: 'https://migri.fi/en/permanent-residence-permit', checked: CHECKED },
+      { url: 'https://www.finlex.fi/fi/lainsaadanto/2004/301', checked: RECHECKED, label: 'Finlex, Ulkomaalaislaki 301/2004 (consolidated)' },
+      { url: 'https://www.edilex.fi/he/20260216', checked: RECHECKED, label: 'HE 216/2026 (reform bill, in Parliament)' },
     ],
     verified: false,
     review:
-      'UNVERIFIED: migri.fi blocked automated access (Cloudflare 403); the income requirement, fees and processing times are from Migri’s own search-indexed text. Kept in the data because they are Migri’s published figures, but the app must show the source until the pages are read in a browser. Processing figure is from an older snapshot of Migri’s table. PR moved on 8 Jan 2026 to 6 years (plus 2 years’ work and B1), or 4 years with income ≥ EUR 40,000, a recognised master’s plus 2 years’ work, or C1 plus 3 years’ work.',
+      '27 Oct 2026: agency renamed per Finlex § 79 / 79 a (27.6.2025/582): the elinvoimakeskus (formerly ELY Centre) makes the partial decision; added the § 79 a conditions (sufficient resources, no serious neglect of taxes) and that the partial decision sets length and temporary/continuous; fact now cites HE 216/2026 (over 70% of first applications negative, about 40% appealed) instead of the unverified "most refusals on the ELY ground". "Freelancers excluded" and "2-year forecast" are Migri text, not in the Act. Reform pending (HE 216/2026, proposed 12 Jan 2028): a first applicant could register the company after the permit. UNVERIFIED: migri.fi blocked automated access (Cloudflare 403); the income requirement, fees and processing times are from Migri’s own search-indexed text. Kept in the data because they are Migri’s published figures, but the app must show the source until the pages are read in a browser. Processing figure is from an older snapshot of Migri’s table. PR moved on 8 Jan 2026 to 6 years (plus 2 years’ work and B1), or 4 years with income ≥ EUR 40,000, a recognised master’s plus 2 years’ work, or C1 plus 3 years’ work.',
   },
   {
     key: 'fi-study',
@@ -471,17 +499,18 @@ export const ROUTES_EUROPE: RouteV2[] = [
       { label: { en: 'Application fee, paper', fa: 'هزینه‌ی درخواست، کاغذی' }, amount: 750, currency: 'EUR' },
     ],
     pr: {
-      en: 'Since 8 Jan 2026, a Finnish master’s (or university bachelor’s) degree plus A2 language gives a path to permanent residence with no residence period.',
-      fa: 'از ۸ ژانویه‌ی ۲۰۲۶، مدرک کارشناسی ارشد (یا کارشناسی دانشگاهی) فنلاند همراه با زبان در سطح A2 بدون شرط مدت اقامت راه اقامت دائم را باز می‌کند.',
+      en: 'A Finnish university degree (or a UAS master’s) plus developing Finnish or Swedish (YKI level 2, or 15 ECTS of Finnish or Swedish) gives a path to permanent residence with no residence period, if your permit stayed valid throughout the degree and you have not lived abroad since graduating other than briefly. Student years count toward the general rule only if the degree is completed.',
+      fa: 'مدرک دانشگاهی فنلاند (یا کارشناسی ارشد دانشگاه علوم کاربردی، UAS) همراه با زبان فنلاندی یا سوئدی در سطح «در حال پیشرفت» (سطح ۲ آزمون YKI یا ۱۵ واحد ECTS زبان فنلاندی یا سوئدی) بدون شرط مدت اقامت راه اقامت دائم را باز می‌کند؛ به شرط آنکه اقامت شما در تمام دوره‌ی تحصیل معتبر بوده باشد و پس از فارغ‌التحصیلی جز برای مدتی کوتاه خارج از فنلاند زندگی نکرده باشید. سال‌های تحصیل فقط در صورت پایان دوره در قاعده‌ی کلی حساب می‌شوند.',
     },
     sources: [
       { url: 'https://migri.fi/en/income-requirement-for-students', checked: CHECKED, label: 'Migri (blocked; search-indexed text)' },
       { url: 'https://migri.fi/en/residence-permit-application-for-studies', checked: CHECKED },
       { url: 'https://migri.fi/en/-/current-information-about-the-processing-of-students-residence-permit-applications-2026', checked: CHECKED },
+      { url: 'https://www.finlex.fi/fi/lainsaadanto/2004/301', checked: RECHECKED, label: 'Finlex, Ulkomaalaislaki 301/2004 § 56, 56 c, 56 f' },
     ],
     verified: false,
     review:
-      'UNVERIFIED: migri.fi blocked automated access (Cloudflare 403); EUR 800/month and 9,600, fees and processing figures are from Migri’s search-indexed text. Kept because they are Migri’s published figures; the app must show the source until the pages are read in a browser. The figure was EUR 560 before 1 Nov 2024; older reduced rates for free housing (EUR 400 / 270) may be stale and are not encoded. PR rules moved on 8 Jan 2026 (general rule now 6 years); the degree path here needs no residence period.',
+      'UNVERIFIED: migri.fi blocked automated access (Cloudflare 403); EUR 800/month and 9,600, fees and processing figures are from Migri’s search-indexed text. Kept because they are Migri’s published figures; the app must show the source until the pages are read in a browser. The figure was EUR 560 before 1 Nov 2024; older reduced rates for free housing (EUR 400 / 270) may be stale and are not encoded. PR rules moved on 8 Jan 2026 (general rule now 6 years; the entry date was not re-read on Finlex). 27 Oct 2026: degree-route pr rewritten from Finlex § 56 c / 56 f: university degree under the Universities Act § 7 or a UAS master’s (our old "university bachelor’s" was close, "A2" replaced by YKI level 2 or 15 ECTS), permit valid throughout the degree, refused after living abroad post-graduation other than briefly; § 56: study years count only if the degree is completed.',
   },
 
   // ───────────────────────────── ESTONIA ─────────────────────────────
@@ -567,22 +596,32 @@ export const ROUTES_EUROPE: RouteV2[] = [
     fees: [
       { label: { en: 'Business permit fee, in Estonia', fa: 'هزینه‌ی اقامت کسب‌وکار، در استونی' }, amount: 350, currency: 'EUR' },
       { label: { en: 'Business permit fee, abroad', fa: 'هزینه‌ی اقامت کسب‌وکار، خارج از استونی' }, amount: 380, currency: 'EUR' },
-      { label: { en: 'Start-up D-visa', fa: 'ویزای D استارتاپی' }, amount: 80, currency: 'EUR' },
+      { label: { en: 'Long-stay D-visa (children 6–11: EUR 60)', fa: 'ویزای بلندمدت D (کودکان ۶ تا ۱۱ سال: ۶۰ یورو)' }, amount: 120, currency: 'EUR' },
     ],
     pr: {
-      en: 'Permit for up to 5 years. Long-term resident permit after 5 years, with stable income, health insurance and Estonian B1.',
-      fa: 'اقامت تا ۵ سال. اقامت بلندمدت پس از ۵ سال، با درآمد پایدار، بیمه‌ی درمانی و زبان استونیایی در سطح B1.',
+      en: 'First permit for up to 5 years; extensions up to 10 years at a time. Long-term resident permit after 5 years, with stable income, health insurance and Estonian B1.',
+      fa: 'اقامت اول تا ۵ سال و تمدید هر بار تا ۱۰ سال. اقامت بلندمدت پس از ۵ سال، با درآمد پایدار، بیمه‌ی درمانی و زبان استونیایی در سطح B1.',
     },
     sources: [
-      { url: 'https://www.politsei.ee/en/instructions/residence-permit-for-business/for-start-up-entrepreneurs', checked: CHECKED, label: 'PPA' },
-      { url: 'https://startupestonia.ee/startup-visa/', checked: CHECKED, label: 'Startup Estonia' },
-      { url: 'https://www.politsei.ee/en/instructions/state-fee-amounts/residence-permit-and-rights-of-residence', checked: CHECKED, label: 'PPA fees from 1 Jan 2025' },
+      { url: 'https://www.politsei.ee/en/instructions/residence-permit-for-business/for-start-up-entrepreneurs', checked: RECHECKED, label: 'PPA' },
+      { url: 'https://startupestonia.ee/startup-visa/', checked: RECHECKED, label: 'Startup Estonia' },
+      { url: 'https://www.politsei.ee/en/instructions/state-fee-amounts/residence-permit-and-rights-of-residence', checked: RECHECKED, label: 'PPA fees from 1 Jan 2025' },
+      { url: 'https://www.politsei.ee/en/instructions/state-fee-amounts/visa-application-and-extending-period-of-stay', checked: RECHECKED, label: 'PPA visa fees (long-term visa EUR 120)' },
+      { url: 'https://vm.ee/en/consular-visa-and-travel-information/visa-information/application-long-stay-d-visa', checked: RECHECKED, label: 'Ministry of Foreign Affairs, long-stay D visa' },
+      { url: 'https://vm.ee/en/consular-visa-and-travel-information/visa-information/restrictions-accepting-visa-applications', checked: RECHECKED, label: 'Ministry of Foreign Affairs, visa restrictions (Belarus, Russia)' },
       { url: 'https://www.riigiteataja.ee/akt/118122025022', checked: CHECKED, label: '2026 State Budget Act (subsistence level EUR 220)' },
       { url: 'https://www.politsei.ee/en/instructions/residence-permit-for-a-permanent-resident/long-term-resident-s-residence-permit', checked: CHECKED },
     ],
     verified: true,
+    blockedCitizenships: {
+      codes: ['BY', 'RU'],
+      reason: {
+        en: 'Estonia’s Ministry of Foreign Affairs (vm.ee) does not issue visas to Belarusian citizens for engaging in business, including start-up business. For Russian citizens, restrictions apply to all types of visas, with narrow exceptions.',
+        fa: 'وزارت امور خارجه‌ی استونی (vm.ee) به شهروندان بلاروس برای فعالیت تجاری، از جمله استارتاپ، ویزا نمی‌دهد. برای شهروندان روسیه محدودیت‌ها همه‌ی انواع ویزا را دربر می‌گیرد و فقط استثناهای محدودی دارد.',
+      },
+    },
     review:
-      'politsei.ee gives "4 × subsistence level" with no euro figure; EUR 880 = 4 × 220 (2026 State Budget Act). Re-check with the 2027 Budget Act. CONFLICT: Startup Estonia FAQ still says EUR 800 (old EUR 200 level). The EUR 350/380 fee is inferred from the business TRP fee line; the fee table has no start-up line. D-visa EUR 80 is quoted by Startup Estonia. Long-term resident PPA fee EUR 185 not encoded. Startup Committee approval could be scored via `endorsement`; left unscored per the notes.',
+      'politsei.ee gives "4 × subsistence level" with no euro figure; EUR 880 = 4 × 220 (2026 State Budget Act); vm.ee confirms 880/month for the applicant and 704/month for a spouse. Re-check with the 2027 Budget Act. Startup Estonia’s founder page still says EUR 800 (old level, stale). The EUR 350/380 fee is the business TRP fee line (PPA fee table). 27 Oct 2026: D-visa fee corrected from 80 (Startup Estonia, out of date) to 120 (PPA visa fee table; vm.ee: EUR 120, children 6–11 EUR 60); added blockedCitizenships BY and RU from the vm.ee restrictions page; pr adds extensions up to 10 years at a time (PPA). Long-term resident PPA fee EUR 185 not encoded. Startup Committee approval could be scored via `endorsement`; left unscored per the notes.',
   },
   {
     key: 'ee-entrepreneur',
@@ -619,7 +658,7 @@ export const ROUTES_EUROPE: RouteV2[] = [
       },
       {
         key: 'income-shareholder',
-        label: { en: 'Shareholder: legal income of 6 × the subsistence level (EUR 1,320 a month)', fa: 'سهام‌دار: درآمد قانونی معادل ۶ برابر حداقل معیشت (۱٬۳۲۰ یورو در ماه)' },
+        label: { en: 'Shareholder or sole proprietor: legal income of 6 × the subsistence level (EUR 1,320 a month)', fa: 'سهام‌دار یا مالک انفرادی: درآمد قانونی معادل ۶ برابر حداقل معیشت (۱٬۳۲۰ یورو در ماه)' },
         weight: 3,
         scoreable: true,
         test: { field: 'income', op: 'gte', value: 15_840, currency: 'EUR' },
@@ -657,7 +696,7 @@ export const ROUTES_EUROPE: RouteV2[] = [
       { key: 'investment-sole-proprietor', label: { en: 'Investment, sole proprietor', fa: 'سرمایه‌گذاری، مالک انفرادی' }, amount: 16_000, currency: 'EUR', basis: 'once' },
       {
         key: 'income-shareholder',
-        label: { en: 'Income, shareholder', fa: 'درآمد، سهام‌دار' },
+        label: { en: 'Income, shareholder or sole proprietor', fa: 'درآمد، سهام‌دار یا مالک انفرادی' },
         amount: 1_320,
         currency: 'EUR',
         basis: 'month',
@@ -673,18 +712,18 @@ export const ROUTES_EUROPE: RouteV2[] = [
       { label: { en: 'Application fee, abroad', fa: 'هزینه‌ی درخواست، خارج از استونی' }, amount: 380, currency: 'EUR' },
     ],
     pr: {
-      en: 'Permit for up to 5 years. Long-term resident permit after 5 years, with stable income, health insurance and Estonian B1.',
-      fa: 'اقامت تا ۵ سال. اقامت بلندمدت پس از ۵ سال، با درآمد پایدار، بیمه‌ی درمانی و زبان استونیایی در سطح B1.',
+      en: 'First permit for up to 5 years; extensions up to 10 years at a time. Long-term resident permit after 5 years, with stable income, health insurance and Estonian B1.',
+      fa: 'اقامت اول تا ۵ سال و تمدید هر بار تا ۱۰ سال. اقامت بلندمدت پس از ۵ سال، با درآمد پایدار، بیمه‌ی درمانی و زبان استونیایی در سطح B1.',
     },
     sources: [
-      { url: 'https://www.politsei.ee/en/instructions/residence-permit-for-business', checked: CHECKED, label: 'PPA' },
-      { url: 'https://www.politsei.ee/en/instructions/residence-permit-for-business/for-sole-proprietors', checked: CHECKED, label: 'PPA, sole proprietors' },
+      { url: 'https://www.politsei.ee/en/instructions/residence-permit-for-business', checked: RECHECKED, label: 'PPA' },
+      { url: 'https://www.politsei.ee/en/instructions/residence-permit-for-business/for-sole-proprietors', checked: RECHECKED, label: 'PPA, sole proprietors (income 6 × subsistence level)' },
       { url: 'https://www.politsei.ee/en/instructions/state-fee-amounts/residence-permit-and-rights-of-residence', checked: CHECKED, label: 'PPA fees from 1 Jan 2025' },
       { url: 'https://www.riigiteataja.ee/akt/118122025022', checked: CHECKED, label: '2026 State Budget Act (subsistence level EUR 220)' },
     ],
     verified: true,
     review:
-      'Scores the shareholder path; the sole-proprietor EUR 16,000 is an alternative, listed unscored. The sole-proprietor income multiple was not read on the page: not encoded. EUR 1,320 = 6 × 220 (2026 subsistence level); the yearly test value 15,840 is 1,320 × 12. Re-check with the 2027 Budget Act.',
+      'Scores the shareholder path; the sole-proprietor EUR 16,000 is an alternative, listed unscored. 27 Oct 2026: the PPA sole-proprietor page gives 6 × the subsistence level, the same EUR 1,320 as shareholders, so the income criterion and money line now cover both; pr adds extensions up to 10 years at a time. EUR 1,320 = 6 × 220 (2026 subsistence level); the yearly test value 15,840 is 1,320 × 12. Re-check with the 2027 Budget Act.',
   },
   {
     key: 'ee-study',
@@ -715,8 +754,8 @@ export const ROUTES_EUROPE: RouteV2[] = [
         scoreable: true,
         test: { field: 'income', op: 'gte', value: 10_560, currency: 'EUR' },
         note: {
-          en: 'EUR 880 a month, or EUR 10,560 a year. The form asks for legal income over the previous 6 months.',
-          fa: '۸۸۰ یورو در ماه، یعنی ۱۰٬۵۶۰ یورو در سال. فرم درخواست درآمد قانونی ۶ ماه گذشته را می‌پرسد.',
+          en: 'EUR 880 a month, or EUR 10,560 a year (PPA student guide, July 2026). For the D visa, bank statements cover the 3 months before you apply.',
+          fa: '۸۸۰ یورو در ماه، یعنی ۱۰٬۵۶۰ یورو در سال (راهنمای دانشجویی PPA، ژوئیه‌ی ۲۰۲۶). برای ویزای D، صورت‌حساب بانکی ۳ ماه پیش از درخواست لازم است.',
         },
       },
       {
@@ -750,12 +789,12 @@ export const ROUTES_EUROPE: RouteV2[] = [
     },
     sources: [
       { url: 'https://www.politsei.ee/en/instructions/residence-permit-for-study', checked: CHECKED, label: 'PPA' },
-      { url: 'https://www.politsei.ee/files/2025-05/student-guide.pdf', checked: CHECKED, label: 'PPA student guide 2025' },
+      { url: 'https://www.politsei.ee/files/2026-07/student-guide.pdf', checked: RECHECKED, label: 'PPA student guide, 9 July 2026' },
       { url: 'https://www.riigiteataja.ee/akt/118122025022', checked: CHECKED, label: '2026 State Budget Act (subsistence level EUR 220)' },
     ],
     verified: true,
     review:
-      'CONFLICT: the 2025 PPA student guide says EUR 800 (old subsistence level); 880 = 4 × 220 for 2026. Fee is the general TRP fee (no study-specific line); CONFLICT: the student guide also mentions EUR 120 in one checklist. Post-study stay not published on the page read; how study years count toward long-term residence not read.',
+      '27 Oct 2026: both conflicts resolved by the PPA student guide of 9 July 2026: "at least 880 euros per month in 2026" (source updated from the 2025 guide), and the EUR 120 in its checklist is the D-visa fee, not the TRP fee (TRP 225 at a service office). Added the 3-month bank-statement rule for the D visa; the "previous 6 months" on the TRP form is still unverified. Russian citizens face vm.ee restrictions on all visa types: not blocked here (D visa is only one way in), consider. Post-study stay not published on the page read; how study years count toward long-term residence not read.',
   },
 
   // ─────────────────────────── NETHERLANDS ───────────────────────────
@@ -850,13 +889,13 @@ export const ROUTES_EUROPE: RouteV2[] = [
       fa: 'پس از سال استارتاپی باید به اقامت خوداشتغالی تغییر وضعیت دهید. اقامت دائم پس از ۵ سال اقامت پیوسته، با شرط درآمد و آزمون هم‌گرایی مدنی در سطح A2.',
     },
     sources: [
-      { url: 'https://ind.nl/en/residence-permits/work/start-up', checked: CHECKED, label: 'IND, updated 8 Jun 2026' },
-      { url: 'https://ind.nl/en/required-amounts-income-requirements', checked: CHECKED, label: 'IND amounts, valid 1 Jul to 31 Dec 2026' },
+      { url: 'https://ind.nl/en/residence-permits/work/start-up', checked: RECHECKED, label: 'IND, updated 8 Jun 2026' },
+      { url: 'https://ind.nl/en/required-amounts-income-requirements', checked: RECHECKED, label: 'IND amounts, valid 1 Jul to 31 Dec 2026' },
       { url: 'https://ind.nl/en/replace-extend-renew-and-change/permanent-residency/permanent-residence-permit', checked: CHECKED, label: 'IND, updated 20 May 2026' },
     ],
     verified: true,
     review:
-      'The start-up page links to the amounts page without naming a figure; mapping it to the self-employed amount (1,766.77) is inferred. Do not use the EUR 3,122 "essential personnel" amount for founders. Amounts change 1 Jan 2027. The family-member amount (EUR 2,523.96/month from 1 Jul 2026) is a separate permit; the repo’s old "≈29,700 family" is stale. A facilitator statement of ≥ 3 months’ successful mentoring earns up to 30 points in the self-employed scoring. Civic integration fee EUR 254 not encoded.',
+      '27 Oct 2026: the start-up page links to the amounts page at #application-for-a-residence-permit-as-a-self-employed-person, so 1,766.77 is the IND’s own figure, no longer inferred. IND publishes no start-up family amount (partners/children may rely on expected or other income). Funds are shown with a Dutch bank statement, or the facilitator finances up to 1 year. Do not use the EUR 3,122 "essential personnel" amount for founders. Amounts change 1 Jan 2027. The family-member amount (EUR 2,523.96/month from 1 Jul 2026) is a separate permit; the repo’s old "≈29,700 family" is stale. A facilitator statement of ≥ 3 months’ successful mentoring earns up to 30 points in the self-employed scoring. Civic integration fee EUR 254 not encoded.',
   },
   {
     key: 'nl-self-employed',
@@ -869,8 +908,8 @@ export const ROUTES_EUROPE: RouteV2[] = [
     },
     status: 'open',
     fact: {
-      en: 'You need at least 30 points in each of three areas (personal experience, business plan, added value), or 45 + 45 in the first two. US nationals can use DAFT with an investment of at least EUR 4,500 instead.',
-      fa: 'باید در هر سه بخش (سابقه‌ی شخصی، طرح کسب‌وکار، ارزش افزوده) دست‌کم ۳۰ امتیاز بگیرید، یا در دو بخش نخست ۴۵ و ۴۵. اتباع آمریکا می‌توانند به‌جای آن از معاهده‌ی DAFT با دست‌کم ۴٬۵۰۰ یورو سرمایه‌گذاری استفاده کنند.',
+      en: 'You need at least 30 points in each of three areas (personal experience, business plan, added value), or 45 + 45 in the first two. US and Japanese nationals can use their treaty instead, with an investment of at least EUR 4,500 for most business forms.',
+      fa: 'باید در هر سه بخش (سابقه‌ی شخصی، طرح کسب‌وکار، ارزش افزوده) دست‌کم ۳۰ امتیاز بگیرید، یا در دو بخش نخست ۴۵ و ۴۵. اتباع آمریکا و ژاپن می‌توانند به‌جای آن از معاهده‌ی کشورشان استفاده کنند، با دست‌کم ۴٬۵۰۰ یورو سرمایه‌گذاری برای بیشتر شکل‌های کسب‌وکار.',
     },
     criteria: [
       {
@@ -944,30 +983,31 @@ export const ROUTES_EUROPE: RouteV2[] = [
       },
       {
         key: 'daft-investment',
-        label: { en: 'US nationals under DAFT: investment', fa: 'اتباع آمریکا در چارچوب DAFT: سرمایه‌گذاری' },
+        label: { en: 'US (DAFT) or Japanese treaty nationals: investment', fa: 'اتباع آمریکا (DAFT) یا ژاپن طبق معاهده: سرمایه‌گذاری' },
         amount: 4_500,
         currency: 'EUR',
         basis: 'once',
       },
     ],
     processing: {
-      text: { en: '90 days, extendable by up to 6 months if RVO advice is requested.', fa: '۹۰ روز؛ اگر نظر RVO خواسته شود تا ۶ ماه قابل تمدید است.' },
+      text: { en: '90 days, extendable by up to 6 months if RVO or OCW advice is requested.', fa: '۹۰ روز؛ اگر نظر RVO یا OCW خواسته شود تا ۶ ماه قابل تمدید است.' },
       source: 'https://ind.nl/en/residence-permits/work/residence-permit-self-employed-person',
     },
-    fees: [{ label: { en: 'Application fee', fa: 'هزینه‌ی درخواست' }, amount: 423, currency: 'EUR' }],
+    fees: [{ label: { en: 'Application fee (also 423 when switching from the start-up permit)', fa: 'هزینه‌ی درخواست (برای تغییر از اقامت استارتاپی هم ۴۲۳ یورو)' }, amount: 423, currency: 'EUR' }],
     pr: {
       en: 'Permit for up to 2 years at a time. Permanent residence after 5 continuous years, with the income test and civic integration at A2.',
       fa: 'اقامت هر بار تا ۲ سال. اقامت دائم پس از ۵ سال اقامت پیوسته، با شرط درآمد و آزمون هم‌گرایی مدنی در سطح A2.',
     },
     sources: [
-      { url: 'https://ind.nl/en/residence-permits/work/residence-permit-self-employed-person', checked: CHECKED, label: 'IND, updated 13 Oct 2026' },
+      { url: 'https://ind.nl/en/residence-permits/work/residence-permit-self-employed-person', checked: RECHECKED, label: 'IND, updated 13 Oct 2026' },
+      { url: 'https://ind.nl/en/fees-costs-of-an-application', checked: RECHECKED, label: 'IND fees (change of purpose after start-up: EUR 423)' },
       { url: 'https://wetten.overheid.nl/BWBR0012002', checked: CHECKED, label: 'Voorschrift Vreemdelingen 2000, Art. 3.20a and Annex 8a' },
       { url: 'https://ind.nl/en/documents/07-2022/dutch-scoring-system-business-of-essential-interest.pdf', checked: CHECKED, label: 'IND scoring system (2022)' },
       { url: 'https://ind.nl/en/required-amounts-income-requirements', checked: CHECKED, label: 'IND amounts, valid 1 Jul to 31 Dec 2026' },
     ],
     verified: true,
     review:
-      'Points sub-scores cannot be computed: the sub-criterion maximums for personal experience and business plan were not read (IND PDF encoded; Annex 8a version read 2016-10-01), and the "300 total" could not be confirmed. Score only the 30/30/30 or 45/45 rule. Exemptions not encoded as criteria (no nationality field): Turkish nationals (business plan only), EU long-term residents, independent professions, US (DAFT) and Japanese treaty nationals (≥ EUR 4,500 for most business forms). Income test is a business-profit forecast, so it is unscored though its threshold is held in the test. Start-up holders switching pay a different fee (amount not published). Amount changes 1 Jan 2027.',
+      'Points sub-scores cannot be computed: the sub-criterion maximums for personal experience and business plan were not read (IND PDF encoded; Annex 8a version read 2016-10-01), and the "300 total" could not be confirmed. Score only the 30/30/30 or 45/45 rule. Exemptions not encoded as criteria (no nationality field): Turkish nationals (business plan only), EU long-term residents, independent professions, US (DAFT) and Japanese treaty nationals (≥ EUR 4,500 for most business forms). Income test is a business-profit forecast, so it is unscored though its threshold is held in the test. 27 Oct 2026: switch fee after the start-up permit resolved, EUR 423 on the IND fees page (the self-employed page only says "a different amount"); Japanese treaty nationals added to the fact; OCW added to processing. Amount changes 1 Jan 2027.',
   },
   {
     key: 'nl-study',
@@ -1038,7 +1078,7 @@ export const ROUTES_EUROPE: RouteV2[] = [
     ],
     verified: true,
     review:
-      'Study norm changes yearly on 1 Jan; the IND news page also mentions 1 Jul adjustments (minor CONFLICT). Admission is implied (the institution files) and not in the notes’ table, so no admission criterion. Study progress (≥ 50% of credits each year) applies after arrival, not at entry: not encoded. How study years count toward the 5-year PR clock was not checked. Work: 16 h/week or full-time Jun–Aug.',
+      'Study norm changes yearly on 1 Jan; 27 Oct 2026: the amounts page gives the study norm as valid 1 Jan–31 Dec 2026, so the 1 Jul conflict is resolved (yearly). Family members the institution brings may not work (IND study page; not encoded). Admission is implied (the institution files) and not in the notes’ table, so no admission criterion. Study progress (≥ 50% of credits each year) applies after arrival, not at entry: not encoded. How study years count toward the 5-year PR clock was not checked. Work: 16 h/week or full-time Jun–Aug.',
   },
 
   // ───────────────────────────── ITALY ─────────────────────────────
@@ -1145,14 +1185,16 @@ export const ROUTES_EUROPE: RouteV2[] = [
     ],
     processing: {
       text: {
-        en: 'Nulla osta within 30 days. Consular visa time varies by consulate.',
-        fa: 'مجوز (nulla osta) ظرف ۳۰ روز. زمان صدور ویزا در کنسولگری‌ها متفاوت است.',
+        en: 'Nulla osta usually within 30 days. Consular visa time varies by consulate. After entry, apply for the permit within 8 working days at the Questura of your province.',
+        fa: 'مجوز (nulla osta) معمولاً ظرف ۳۰ روز. زمان صدور ویزا در کنسولگری‌ها متفاوت است. پس از ورود باید ظرف ۸ روز کاری در Questura استان خود برای اجازه‌ی اقامت درخواست دهید.',
       },
-      source: 'https://italiastartupvisa.mise.gov.it/',
+      source: 'https://consmontreal.esteri.it/en/servizi-consolari-e-visti/servizi-per-il-cittadino-straniero/visti/italia-startup-visa/',
     },
     fees: [
-      { label: { en: 'Permit kit postal bulletin', fa: 'فیش پستی کیت اقامت' }, amount: 30.46, currency: 'EUR' },
-      { label: { en: 'Permit kit postal bulletin (second)', fa: 'فیش پستی کیت اقامت (دوم)' }, amount: 50, currency: 'EUR' },
+      { label: { en: 'Type D self-employment / start-up visa (Maputo embassy; consulates may vary)', fa: 'ویزای نوع D کار مستقل / استارتاپ (سفارت ماپوتو؛ ممکن است در کنسولگری‌ها متفاوت باشد)' }, amount: 116, currency: 'EUR' },
+      { label: { en: 'Electronic permit card', fa: 'کارت الکترونیکی اجازه‌ی اقامت' }, amount: 30.46, currency: 'EUR' },
+      { label: { en: 'Post office fee for the permit kit', fa: 'کارمزد اداره‌ی پست برای کیت اقامت' }, amount: 30, currency: 'EUR' },
+      { label: { en: 'Permit contribution, depends on permit length (amount not confirmed)', fa: 'سهم پرداختی اجازه‌ی اقامت، بسته به مدت اقامت (مبلغ تأیید نشده)' }, amount: 50, currency: 'EUR' },
       { label: { en: 'Revenue stamp', fa: 'تمبر مالیاتی' }, amount: 16, currency: 'EUR' },
     ],
     pr: {
@@ -1164,11 +1206,15 @@ export const ROUTES_EUROPE: RouteV2[] = [
       { url: 'https://italiastartupvisa.mise.gov.it/media/documents/Guidelines%20ISV%20ENG%2020_03_2018%20def.pdf', checked: CHECKED, label: 'ISV Guidelines 20/03/2018' },
       { url: 'https://conschicago.esteri.it/en/servizi-consolari-e-visti/servizi-per-il-cittadino-straniero/visti/visa-categories-and-requirements/italia-start-up-visanational-long-term-visa/', checked: CHECKED, label: 'Consulate Chicago' },
       { url: 'https://ambmaputo.esteri.it/wp-content/uploads/2026/06/LAVORO-AUTONOMO-START-UP.pdf', checked: CHECKED, label: 'Consulate checklist 2026' },
-      { url: 'https://www.poliziadistato.it/articolo/permesso-di-soggiorno-ue-per-soggiornanti-di-lungo-periodo.--carta-di-soggiorno-per-cittadini-stranieri', checked: CHECKED, label: 'Polizia di Stato, EU long-term permit' },
+      { url: 'https://ambmaputo.esteri.it/wp-content/uploads/2026/06/SELF-EMPLOYMENT-START-UP-1.pdf', checked: RECHECKED, label: 'Embassy Maputo checklist, updated 25/05/2026 (visa fee EUR 116)' },
+      { url: 'https://consmontreal.esteri.it/en/servizi-consolari-e-visti/servizi-per-il-cittadino-straniero/visti/italia-startup-visa/', checked: RECHECKED, label: 'Consulate Montreal, Italia Startup Visa' },
+      { url: 'https://www.poste.it/prodotti/guida-rilascio-e-rinnovo-permesso-di-soggiorno.html', checked: RECHECKED, label: 'Poste Italiane, permit issue and renewal fees' },
+      { url: 'https://www.poliziadistato.it/articolo/225', checked: RECHECKED, label: 'Polizia di Stato, permit within 8 working days' },
+      { url: 'https://www.poliziadistato.it/articolo/permesso-di-soggiorno-ue-per-soggiornanti-di-lungo-periodo.--carta-di-soggiorno-per-cittadini-stranieri', checked: RECHECKED, label: 'Polizia di Stato, EU long-term permit' },
     ],
     verified: true,
     review:
-      'CONFLICT: the ISV portal, the 2018 guidelines and the NY consulate say about EUR 8,500; the Chicago consulate says 8,400. Using 8,500 approx, as lib/funds.ts does. Whether ISV entries count against the 650/year self-employment quota (Circular 8047, 16 Oct 2025) is not confirmed; do not claim "outside quota". Consular visa fee not published on the portal. 2026 assegno sociale figure not read. The consulting/brokerage exclusion (Law 193/2024) and the EUR 100,000 joining rule come from the repo, per the notes. Prior link to Italy and the certified-incubator route not encoded. Committee approval could be scored via `endorsement`; left unscored per the notes.',
+      'CONFLICT: the ISV portal, the 2018 guidelines and the NY consulate say about EUR 8,500; the Chicago consulate says 8,400. Using 8,500 approx, as lib/funds.ts does. Whether ISV entries count against the 650/year self-employment quota (Circular 8047, 16 Oct 2025) is not confirmed; do not claim "outside quota". 27 Oct 2026: added the EUR 116 type D visa fee (Maputo checklist, 25/05/2026) and the EUR 30 post-office fee (poste.it); the EUR 50 line is a duration-based contribution whose amount poste.it does not state, kept and labelled unconfirmed; 8-working-day permit deadline added to processing (poliziadistato.it). ISV portal and mimit.gov.it refused connections on 27 Oct, so team cap, renewal length and the EUR 100,000 joining figure were not re-read. 2026 assegno sociale figure not read. The consulting/brokerage exclusion (Law 193/2024) and the EUR 100,000 joining rule come from the repo, per the notes. Prior link to Italy and the certified-incubator route not encoded. Committee approval could be scored via `endorsement`; left unscored per the notes.',
   },
   {
     key: 'it-self-employed',
@@ -1264,6 +1310,9 @@ export const ROUTES_EUROPE: RouteV2[] = [
       },
       { key: 'investor-plan', label: { en: 'Investor route', fa: 'مسیر سرمایه‌گذار' }, amount: 500_000, currency: 'EUR', basis: 'once' },
     ],
+    fees: [
+      { label: { en: 'Type D self-employment visa (Maputo embassy; consulates may vary)', fa: 'ویزای نوع D کار مستقل (سفارت ماپوتو؛ ممکن است در کنسولگری‌ها متفاوت باشد)' }, amount: 116, currency: 'EUR' },
+    ],
     pr: {
       en: 'EU long-term permit after 5 years of legal residence, with income at least the assegno sociale and Italian A2.',
       fa: 'اقامت بلندمدت اتحادیه‌ی اروپا پس از ۵ سال اقامت قانونی، با درآمدی دست‌کم برابر assegno sociale و زبان ایتالیایی در سطح A2.',
@@ -1273,10 +1322,11 @@ export const ROUTES_EUROPE: RouteV2[] = [
       { url: 'https://www.lavoro.gov.it/documenti-e-norme/normativa/Circolare-8047-del-16102025', checked: CHECKED, label: 'Circular 8047, 16 Oct 2025' },
       { url: 'https://prefettura.interno.gov.it/it/prefetture/macerata/comunicazioni/dpcm-2-ottobre-2025-programmazione-dei-flussi-dingresso-2026-2028', checked: CHECKED, label: 'DPCM 2 Oct 2025, flussi 2026–2028' },
       { url: 'https://ambdhaka.esteri.it/wp-content/uploads/2026/07/Self-employment.pdf', checked: CHECKED, label: 'Embassy Dhaka checklist, Jul 2026' },
+      { url: 'https://ambmaputo.esteri.it/wp-content/uploads/2026/06/SELF-EMPLOYMENT-START-UP-1.pdf', checked: RECHECKED, label: 'Embassy Maputo checklist, updated 25/05/2026 (visa fee EUR 116)' },
     ],
     verified: true,
     review:
-      'CONFLICT on income: about EUR 8,500 (ISV portal, NY consulate) vs 8,400 (Chicago); using 8,500 approx, as lib/funds.ts does. Circular 8047 PDF and the Dhaka checklist are not machine-readable; figures from indexed text. The NY consulate says professionals’ requirements "are being updated". Processing: some consulates quote up to 120 days, officially not published, so no processing entry. Consular visa fee not published on the pages read. The EUR 14,000 is "triple the minimum social welfare yearly income" per the NY consulate.',
+      'CONFLICT on income: about EUR 8,500 (ISV portal, NY consulate) vs 8,400 (Chicago); using 8,500 approx, as lib/funds.ts does. Circular 8047 PDF and the Dhaka checklist are not machine-readable; figures from indexed text. The NY consulate says professionals’ requirements "are being updated". Processing: some consulates quote up to 120 days, officially not published, so no processing entry. 27 Oct 2026: type D visa fee EUR 116 added from the Maputo checklist (self-employment / start-up line; other consulates may differ). The 50-place reserve for people of Italian origin is not on the Macerata page re-read on 27 Oct (Circular 8047 not reopened). The EUR 14,000 is "triple the minimum social welfare yearly income" per the NY consulate.',
   },
   {
     key: 'it-study',

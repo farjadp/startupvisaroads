@@ -20,6 +20,11 @@ const KEYWORDS: Record<Country, RegExp> = {
   US: /\busa?\b|united states|\bu\.s\.|eb-?[125]|\bniw\b|o-1|uscis|آمریکا/i,
   IL: /israel|tel aviv|jerusalem|اسرائیل/i,
   AE: /\buae\b|emirates|dubai|abu dhabi|golden visa|امارات|دبی|ابوظبی/i,
+  AU: /australia|sydney|melbourne|استرالیا/i,
+  AT: /austria|vienna|red-white-red|اتریش|وین/i,
+  NO: /norw(ay|egian)|oslo|\budi\b|نروژ/i,
+  IE: /ireland|irish|dublin|ایرلند/i,
+  SE: /swed(en|ish)|stockholm|migrationsverket|سوئد/i,
 };
 
 const decode = (s: string) =>

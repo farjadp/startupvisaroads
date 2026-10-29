@@ -5,9 +5,14 @@
 // Telegram message (no parse_mode, so user input cannot inject markup),
 // env-var credentials, fail closed. Sends the quiz answers and the computed
 // recommendation so the reply can be specific.
+//
+// Serves both quizzes. The English quiz (/en/which-path) adds locale=en to
+// the form; its lead is labelled English and carries the English guide it
+// was sent to. Without that field the message is the Persian one, unchanged.
 // ============================================================================
 import { reportLead } from '@/lib/openaiAds';
 import { recommendPath, type QuizAnswers } from '@/lib/fa/path-quiz';
+import { EN_RESULT } from './en-copy';
 
 const KEYS: (keyof QuizAnswers)[] = ['goal', 'team', 'business', 'language', 'capital', 'background', 'horizon'];
 
@@ -37,14 +42,17 @@ export async function sendWhichPathLead(formData: FormData): Promise<{ success: 
     return { success: false, message: 'validation' };
   }
   const rec = recommendPath(answers as QuizAnswers);
+  const isEn = String(formData.get('locale') ?? '') === 'en';
+  const heading = isEn ? '🧭 New English assessment lead (/en/which-path)' : '🧭 New Persian assessment lead (/fa/which-path)';
+  const recommended = isEn ? `${rec.path} → /en${EN_RESULT[rec.path].href}` : `${rec.path} → ${rec.href}`;
 
-  const text = `🧭 New Persian assessment lead (/fa/which-path)
+  const text = `${heading}
 ----------------------------
 👤 Name: ${name}
 📧 Email: ${email || '-'}
 ✈️ Telegram: ${telegram || '-'}
 ----------------------------
-Recommended: ${rec.path} → ${rec.href}
+Recommended: ${recommended}
 ----------------------------
 goal=${answers.goal}
 team=${answers.team}
