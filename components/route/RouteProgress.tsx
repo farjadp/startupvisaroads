@@ -92,9 +92,6 @@ export function useRoute(): RouteState {
   return ctx;
 }
 
-const prefersReducedMotion = () =>
-  typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
 export function RouteProvider({
   stops,
   flag,
@@ -112,7 +109,6 @@ export function RouteProvider({
   const [done, setDone] = useState<Set<string>>(() => new Set());
   const [toast, setToast] = useState<string | null>(null);
   const [prRoute, setPrRoute] = useState<number | null>(null);
-  const snow = useRef<((count: number) => void) | null>(null);
   const toastTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   const doneRef = useRef<Set<string>>(new Set());
@@ -127,14 +123,9 @@ export function RouteProvider({
       setToast(formatDigits(`${finished ? labels.routeComplete : `✓ ${message}`} · ${fillCount(labels.count, next.size, stops.length)}`, labels.digits));
       clearTimeout(toastTimer.current);
       toastTimer.current = setTimeout(() => setToast(null), 2400);
-      snow.current?.(finished ? 120 : 28);
     },
     [stops.length, labels],
   );
-
-  const registerSnow = useCallback((fn: (count: number) => void) => {
-    snow.current = fn;
-  }, []);
 
   useEffect(() => () => clearTimeout(toastTimer.current), []);
 
@@ -146,7 +137,6 @@ export function RouteProvider({
     <RouteContext.Provider value={value}>
       <div className="contents" style={vars}>
       {children}
-      <Snow register={registerSnow} />
       <div
         role="status"
         className={`fixed left-1/2 bottom-5 z-50 -translate-x-1/2 whitespace-nowrap rounded-full bg-[#1a1a1a] px-5 py-2.5 ${labels.font} text-sm text-[#F2F0E9] shadow-lg transition-transform duration-300 ${
@@ -327,59 +317,6 @@ export function RouteStop({
       </div>
     </section>
   );
-}
-
-function Snow({ register }: { register: (fn: (count: number) => void) => void }) {
-  const canvas = useRef<HTMLCanvasElement>(null);
-  useEffect(() => {
-    const c = canvas.current;
-    const ctx = c?.getContext('2d');
-    if (!c || !ctx) return;
-    type Flake = { x: number; y: number; r: number; vy: number; ph: number; life: number };
-    let flakes: Flake[] = [];
-    let running = false;
-    const fit = () => {
-      c.width = window.innerWidth * window.devicePixelRatio;
-      c.height = window.innerHeight * window.devicePixelRatio;
-    };
-    fit();
-    window.addEventListener('resize', fit);
-    let color = '#00BFA5';
-    const frame = () => {
-      ctx.clearRect(0, 0, c.width, c.height);
-      for (const f of flakes) {
-        f.y += f.vy;
-        f.ph += 0.03;
-        f.x += Math.sin(f.ph) * 0.8;
-        if (f.y > c.height * 0.7) f.life -= 0.02;
-        ctx.globalAlpha = Math.max(f.life, 0) * 0.9;
-        ctx.fillStyle = color;
-        ctx.beginPath();
-        ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2);
-        ctx.fill();
-      }
-      flakes = flakes.filter((f) => f.life > 0 && f.y < c.height + 20);
-      if (flakes.length) requestAnimationFrame(frame);
-      else {
-        running = false;
-        ctx.clearRect(0, 0, c.width, c.height);
-      }
-    };
-    register((count) => {
-      if (prefersReducedMotion()) return;
-      const dpr = window.devicePixelRatio;
-      for (let i = 0; i < count; i++) {
-        flakes.push({ x: Math.random() * c.width, y: -10 - Math.random() * c.height * 0.3, r: (1.5 + Math.random() * 3) * dpr, vy: (1 + Math.random() * 2) * dpr, ph: Math.random() * 6, life: 1 });
-      }
-      color = getComputedStyle(c).getPropertyValue('--ra').trim() || color;
-      if (!running) {
-        running = true;
-        requestAnimationFrame(frame);
-      }
-    });
-    return () => window.removeEventListener('resize', fit);
-  }, [register]);
-  return <canvas ref={canvas} aria-hidden="true" className="pointer-events-none fixed inset-0 z-40 h-full w-full" />;
 }
 
 /** For components that also live outside route guides (the chapter video). */
