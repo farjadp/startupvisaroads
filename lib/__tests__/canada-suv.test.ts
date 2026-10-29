@@ -184,7 +184,8 @@ describe('no page contradicts the SUV facts', () => {
     // Only the written forms — a bare 2000 in code is a timeout, not a cap —
     // and only on reader-facing surfaces: an engine comment listing example
     // figures is documentation, not a claim made to a reader.
-    const written = [/۲٬۰۰۰/, /\b2,000\b(?!\s*-?\s*word)/];
+    // "2,000,000" (AED two million) and "US$2,000" (a funds conversion) are money, not the cap.
+    const written = [/۲٬۰۰۰(?!٬[۰-۹])/, /(?<!\$)\b2,000\b(?!,\d)(?!\s*-?\s*word)/];
     for (const f of FILES.filter((x) => /^(app|components|content|messages)\//.test(x.path))) {
       if (!written.some((re) => re.test(f.text))) continue;
       if (!/start-?up\s*visa|ویزای استارتاپ|پایلوت|pilot/i.test(f.text)) continue;
