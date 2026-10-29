@@ -7,11 +7,14 @@
 // ============================================================================
 import React, { useRef, useState } from 'react';
 import { ArrowUpRight, Play } from 'lucide-react';
+import { useOptionalRoute } from '@/components/route/RouteProgress';
 
 export interface Chapter {
   /** "mm:ss" as YouTube shows it. */
   at: string;
   label: string;
+  /** Marks a chapter worth jumping to first. */
+  highlight?: boolean;
 }
 
 interface Props {
@@ -28,16 +31,32 @@ interface Props {
   /** Shown under the player — where the video and the page disagree. */
   note?: React.ReactNode;
   channel: { handle: string; url: string };
+  /** Section id, for in-page links. */
+  sectionId?: string;
+  /** Inside a route guide: the stop that playing the video completes. */
+  checkpoint?: string;
+  theme?: Theme;
 }
+
+type Theme = 'denmark' | 'route';
+// Static class strings so Tailwind can see them.
+const THEMES: Record<Theme, { bg: string; fade: string; accent: string; dot: string; playIcon: string; border: string; hover: string }> = {
+  denmark: { bg: 'bg-[#0a0e1a]', fade: 'from-[#0a0e1a]/70', accent: 'text-[#C8102E]', dot: 'bg-[#C8102E] ring-[#C8102E]/25', playIcon: 'fill-white text-white', border: 'border-[#C8102E]', hover: 'hover:text-[#C8102E]' },
+  // Route guides: the palette comes from RouteProvider's CSS variables.
+  route: { bg: 'bg-[var(--rd)]', fade: 'from-[color-mix(in_srgb,var(--rd)_70%,transparent)]', accent: 'text-[var(--ra-dark)]', dot: 'bg-[var(--ra)] ring-[color-mix(in_srgb,var(--ra)_25%,transparent)] motion-safe:animate-[pulse_2.4s_ease-in-out_infinite]', playIcon: 'fill-[var(--ra-ink)] text-[var(--ra-ink)]', border: 'border-[var(--ra)]', hover: 'hover:text-[var(--ra-dark)]' },
+};
 
 const seconds = (at: string) => at.split(':').reduce((t, part) => t * 60 + Number(part), 0);
 
-export default function ChapterVideo({ id, title, length, poster, chapters, eyebrow, heading, intro, note, channel }: Props) {
+export default function ChapterVideo({ id, title, length, poster, chapters, eyebrow, heading, intro, note, channel, sectionId, checkpoint, theme = 'denmark' }: Props) {
+  const t = THEMES[theme];
+  const route = useOptionalRoute();
   const [start, setStart] = useState<number | null>(null);
   const [active, setActive] = useState<string | null>(null);
   const player = useRef<HTMLDivElement>(null);
 
   const play = (chapter?: Chapter) => {
+    if (checkpoint) route?.complete(checkpoint, 'Masterclass opened');
     setStart(chapter ? seconds(chapter.at) : 0);
     setActive(chapter?.at ?? null);
     // Below lg the list sits under the player, so a chapter tapped near the
@@ -48,11 +67,11 @@ export default function ChapterVideo({ id, title, length, poster, chapters, eyeb
   };
 
   return (
-    <section className="py-28 px-6 bg-[#0a0e1a] text-white border-b border-white/10">
+    <section id={sectionId} className={`scroll-mt-32 py-28 px-6 ${t.bg} text-white border-b border-white/10`}>
       {/* Phone: heading, player, chapters. Desktop: heading and chapters on the left, player sticky on the right. */}
       <div className="container mx-auto grid grid-cols-1 lg:grid-cols-12 gap-x-16 gap-y-10 items-start">
         <div className="lg:col-span-5 lg:row-start-1">
-          <span className="font-sans text-xs font-bold uppercase tracking-[0.2em] text-[#C8102E] block mb-4">{eyebrow}</span>
+          <span className={`font-sans text-xs font-bold uppercase tracking-[0.2em] ${t.accent} block mb-4`}>{eyebrow}</span>
           <h2 className="font-serif text-5xl md:text-6xl leading-[1.02] tracking-[-0.02em] mb-6">{heading}</h2>
           <p className="font-sans text-white/60 text-base leading-relaxed">{intro}</p>
         </div>
@@ -63,14 +82,14 @@ export default function ChapterVideo({ id, title, length, poster, chapters, eyeb
               <button type="button" onClick={() => play()} aria-label={`Play video: ${title}`} className="group absolute inset-0 w-full h-full">
                 {/* A plain img: YouTube's CDN already sizes it, and next/image would need ytimg in remotePatterns. */}
                 <img src={poster} alt="" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.02]" />
-                <span className="absolute inset-0 bg-gradient-to-t from-[#0a0e1a]/70 via-transparent to-transparent" />
+                <span className={`absolute inset-0 bg-gradient-to-t ${t.fade} via-transparent to-transparent`} />
                 <span className="absolute left-4 bottom-4 md:left-6 md:bottom-6 flex items-center gap-4">
-                  <span className="grid place-items-center w-14 h-14 md:w-20 md:h-20 rounded-full bg-[#C8102E] ring-8 md:ring-[12px] ring-[#C8102E]/25 transition-transform duration-300 group-hover:scale-105">
-                    <Play className="w-6 h-6 md:w-7 md:h-7 ml-1 fill-white text-white" />
+                  <span className={`grid place-items-center w-14 h-14 md:w-20 md:h-20 rounded-full ${t.dot} ring-8 md:ring-[12px] transition-transform duration-300 group-hover:scale-105`}>
+                    <Play className={`w-6 h-6 md:w-7 md:h-7 ml-1 ${t.playIcon}`} />
                   </span>
                   <span className="hidden md:inline font-sans text-xs font-bold uppercase tracking-[0.15em] text-white">Play the briefing</span>
                 </span>
-                <span className="absolute right-4 bottom-4 bg-[#0a0e1a]/85 px-2.5 py-1 font-sans text-xs font-bold tabular-nums">{length}</span>
+                <span className="absolute right-4 bottom-4 bg-black/80 px-2.5 py-1 font-sans text-xs font-bold tabular-nums">{length}</span>
               </button>
             ) : (
               <iframe
@@ -83,7 +102,7 @@ export default function ChapterVideo({ id, title, length, poster, chapters, eyeb
               />
             )}
           </div>
-          {note && <p className="mt-5 font-sans text-xs text-white/50 leading-relaxed border-l-2 border-[#C8102E] pl-4">{note}</p>}
+          {note && <p className={`mt-5 font-sans text-xs text-white/50 leading-relaxed border-l-2 ${t.border} pl-4`}>{note}</p>}
         </div>
 
         <div className="lg:col-span-5 lg:col-start-1 lg:row-start-2">
@@ -98,9 +117,12 @@ export default function ChapterVideo({ id, title, length, poster, chapters, eyeb
                     active === c.at ? 'text-white' : 'text-white/70 hover:text-white'
                   }`}
                 >
-                  <span className={`w-12 shrink-0 tabular-nums font-bold ${active === c.at ? 'text-white' : 'text-[#C8102E]'}`}>{c.at}</span>
-                  <span className="flex-1">{c.label}</span>
-                  <Play className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100 transition-opacity text-[#C8102E]" />
+                  <span className={`w-12 shrink-0 tabular-nums font-bold ${active === c.at ? 'text-white' : t.accent}`}>{c.at}</span>
+                  <span className="flex-1">
+                    {c.label}
+                    {c.highlight && <span className="ml-2 inline-block rounded-full bg-white/15 px-1.5 py-0.5 align-[2px] text-[10px] font-bold uppercase tracking-[0.12em] text-white">Key</span>}
+                  </span>
+                  <Play className={`w-3.5 h-3.5 opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100 transition-opacity ${t.accent}`} />
                 </button>
               </li>
             ))}
@@ -110,7 +132,7 @@ export default function ChapterVideo({ id, title, length, poster, chapters, eyeb
             href={`https://www.youtube.com/watch?v=${id}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-8 inline-flex items-center gap-2 font-sans text-xs font-bold uppercase tracking-[0.15em] text-[#C8102E] hover:text-white transition-colors"
+            className={`mt-8 inline-flex items-center gap-2 font-sans text-xs font-bold uppercase tracking-[0.15em] ${t.accent} hover:text-white transition-colors`}
           >
             Watch on YouTube <ArrowUpRight className="w-3.5 h-3.5" />
           </a>
