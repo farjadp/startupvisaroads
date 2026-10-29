@@ -25,6 +25,9 @@ const C = {
   itRed: '#CD212A',
   esRed: '#AA151B',
   esYellow: '#F1BF00',
+  bgWhite: '#FFFFFF',
+  bgGreen: '#00966E',
+  bgRed: '#D62612',
   trRed: '#E30A17',
   caRed: '#D52B1E',
   auBlue: '#012169',
@@ -88,6 +91,15 @@ function Shapes({ code }: { code: FlagCode }) {
         <>
           <rect width={3} height={2} fill={C.esRed} />
           <rect y={0.5} width={3} height={1} fill={C.esYellow} />
+        </>
+      );
+    // White, green, red in equal bands (Constitution art. 166), ratio 3:5.
+    case 'bg':
+      return (
+        <>
+          <rect width={5} height={1} fill={C.bgWhite} />
+          <rect y={1} width={5} height={1} fill={C.bgGreen} />
+          <rect y={2} width={5} height={1} fill={C.bgRed} />
         </>
       );
     // Official artwork (Wikimedia Commons, public domain), authored on a
