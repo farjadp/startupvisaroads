@@ -137,6 +137,7 @@ export interface RouteStep {
 }
 
 export function StepWalker({ stopId, steps }: { stopId: string; steps: RouteStep[] }) {
+  const WORDS = ['', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten'];
   const { complete } = useRoute();
   const [cur, setCur] = useState(0);
   const [seen, setSeen] = useState(0);
@@ -145,7 +146,7 @@ export function StepWalker({ stopId, steps }: { stopId: string; steps: RouteStep
     const n = Math.max(0, Math.min(last, i));
     setCur(n);
     setSeen((s) => Math.max(s, n));
-    if (n === last) complete(stopId, 'All five steps walked');
+    if (n === last) complete(stopId, `All ${WORDS[steps.length] ?? steps.length} steps walked`);
   };
   return (
     <div>
@@ -367,65 +368,56 @@ export function PerkOrCatch({ stopId, items }: { stopId: string; items: { title:
 
 /* ── Permanent residence finder ─────────────────────────────────────────── */
 
+/** One question in the finder. The answer is the index of the chosen option. */
+export interface PrQuestion {
+  key: string;
+  q: string;
+  /** In display order; index 0 is the default. For yes/no use ['No', 'Yes']. */
+  options: string[];
+}
+
 export interface PrRoute {
   title: string;
+  /** Minimum years of residence; 0 for "no minimum". */
   years: number;
   reqs: string[];
   note: string;
-  /** Which answers open this route. */
-  needs: { finnishDegree?: boolean; foreignDegree?: boolean; income?: boolean; language?: 0 | 1 | 2 | 3 };
+  /** Answer index each question needs at least, keyed by PrQuestion.key. */
+  needs: Record<string, number>;
 }
 
-const LANG = ['None', 'A2', 'B1', 'C1'] as const;
-
-export function PrFinder({ stopId, routes }: { stopId: string; routes: PrRoute[] }) {
+export function PrFinder({ stopId, questions, routes }: { stopId: string; questions: PrQuestion[]; routes: PrRoute[] }) {
   const { complete, setPrRoute } = useRoute();
-  const [a, setA] = useState({ finnishDegree: false, foreignDegree: false, income: false, language: 0 });
+  const [a, setA] = useState<Record<string, number>>(() => Object.fromEntries(questions.map((q) => [q.key, 0])));
   const [touched, setTouched] = useState(false);
+  const maxYears = Math.max(...routes.map((r) => r.years), 1);
 
-  const open = routes.map((r) =>
-    (!r.needs.finnishDegree || a.finnishDegree) &&
-    (!r.needs.foreignDegree || a.foreignDegree) &&
-    (!r.needs.income || a.income) &&
-    a.language >= (r.needs.language ?? 0),
-  );
+  const open = routes.map((r) => Object.entries(r.needs).every(([k, min]) => (a[k] ?? 0) >= min));
   const best = open.reduce((bi, o, i) => (o && (bi < 0 || routes[i].years < routes[bi].years) ? i : bi), -1);
 
-  const set = (patch: Partial<typeof a>) => {
-    const next = { ...a, ...patch };
-    setA(next);
+  const set = (key: string, v: number) => {
+    setA((prev) => ({ ...prev, [key]: v }));
     setTouched(true);
     complete(stopId, 'Residence route found');
   };
 
   useEffect(() => {
-    if (touched && best > 0) setPrRoute(best);
+    if (touched && best >= 0) setPrRoute(best);
   }, [best, touched, setPrRoute]);
-
-  const yn = (key: 'finnishDegree' | 'foreignDegree' | 'income', q: string) => (
-    <div>
-      <p className="mb-2 font-sans text-sm font-bold">{q}</p>
-      <div className="flex gap-1.5">
-        <Toggle pressed={a[key]} onClick={() => set({ [key]: true })}>Yes</Toggle>
-        <Toggle pressed={!a[key]} onClick={() => set({ [key]: false })}>No</Toggle>
-      </div>
-    </div>
-  );
 
   return (
     <div className="grid grid-cols-1 gap-5 lg:grid-cols-[minmax(0,.9fr)_minmax(0,1.3fr)]">
-      <div className="content-start gap-5 rounded-2xl border border-[#1a1a1a]/10 bg-white p-6 grid">
-        {yn('finnishDegree', 'Will you hold a Finnish university degree?')}
-        {yn('foreignDegree', 'A master’s or PhD from abroad, recognised in Finland?')}
-        {yn('income', 'Expect €40,000+ taxable income a year?')}
-        <div>
-          <p className="mb-2 font-sans text-sm font-bold">Finnish or Swedish level you can reach</p>
-          <div className="flex flex-wrap gap-1.5">
-            {LANG.map((l, i) => (
-              <Toggle key={l} pressed={a.language === i} onClick={() => set({ language: i })}>{l}</Toggle>
-            ))}
+      <div className="grid content-start gap-5 rounded-2xl border border-[#1a1a1a]/10 bg-white p-6">
+        {questions.map((q) => (
+          <div key={q.key}>
+            <p className="mb-2 font-sans text-sm font-bold">{q.q}</p>
+            <div className="flex flex-wrap gap-1.5">
+              {q.options.map((o, i) => (
+                <Toggle key={o} pressed={a[q.key] === i} onClick={() => set(q.key, i)}>{o}</Toggle>
+              ))}
+            </div>
           </div>
-        </div>
+        ))}
       </div>
       <ol className="grid gap-2.5" aria-live="polite">
         {routes.map((r, i) => (
@@ -444,8 +436,8 @@ export function PrFinder({ stopId, routes }: { stopId: string; routes: PrRoute[]
               )}
             </h3>
             <span className="font-sans text-sm tabular-nums">{r.years ? `${r.years} yrs` : 'no wait'}</span>
-            <span aria-hidden="true" className="col-span-2 h-1.5 overflow-hidden rounded-full bg-[#1a1a1a]/10 block">
-              <span className="block h-full bg-[var(--ra)] transition-[width] duration-500" style={{ width: open[i] ? `${Math.max(6, (r.years / 6) * 100)}%` : '0%' }} />
+            <span aria-hidden="true" className="col-span-2 block h-1.5 overflow-hidden rounded-full bg-[#1a1a1a]/10">
+              <span className="block h-full bg-[var(--ra)] transition-[width] duration-500" style={{ width: open[i] ? `${Math.max(6, (r.years / maxYears) * 100)}%` : '0%' }} />
             </span>
             <ul className="col-span-2 grid gap-0.5 font-sans text-sm text-[#1a1a1a]/70">
               {r.reqs.map((q) => (
@@ -465,44 +457,55 @@ export function PrFinder({ stopId, routes }: { stopId: string; routes: PrRoute[]
 
 /* ── Years roadmap ──────────────────────────────────────────────────────── */
 
-export function YearsRoadmap({ stopId, routes, defaultRoute }: { stopId: string; routes: PrRoute[]; defaultRoute: number }) {
+/**
+ * Copy for the years roadmap. Phase bodies may use {toPr}, {toCitizenship}
+ * and {route}; they are filled in as the reader drags the slider. Copy only,
+ * no functions, so the server page can pass it straight through.
+ */
+export interface RoadmapCopy {
+  prep: { title: string; sub: string };
+  arrive: { title: string; sub: string };
+  /** Year the first permit is renewed, and the label for it. */
+  extension: { year: number; title: string; sub: string };
+  /** Residence years to citizenship, with and without the language requirement. Omit `withLanguage` where there is no shorter path. */
+  citizenship: { years: number; withLanguage?: number; languageQuestion?: string };
+  phases: {
+    first: { title: string; body: string };
+    extended: { title: string; body: string };
+    resident: { title: string; body: string };
+    citizen: { title: string; body: string };
+  };
+}
+
+const fill = (t: string, v: Record<string, string>) => t.replace(/\{(\w+)\}/g, (_, k: string) => v[k] ?? '');
+
+export function YearsRoadmap({ stopId, routes, defaultRoute, copy }: { stopId: string; routes: PrRoute[]; defaultRoute: number; copy: RoadmapCopy }) {
   const { complete, prRoute, setPrRoute, flag } = useRoute();
   const [lang, setLang] = useState(false);
   const [year, setYear] = useState(0);
-  const route = prRoute && prRoute > 0 ? prRoute : defaultRoute;
+  const route = prRoute !== null && routes[prRoute].years > 0 ? prRoute : defaultRoute;
   const prY = routes[route].years;
-  const citY = lang ? 5 : 8;
-  const pos = (y: number) => 15 + (y / 8) * 75;
-  const left = (n: number) => `${n} more year${n > 1 ? 's' : ''}`;
+  const citY = lang && copy.citizenship.withLanguage ? copy.citizenship.withLanguage : copy.citizenship.years;
+  const maxY = Math.max(copy.citizenship.years, prY);
+  const pos = (y: number) => 15 + (y / maxY) * 75;
+  const more = (n: number) => `${n} more year${n > 1 ? 's' : ''}`;
+  const vars = { toPr: more(prY - year), toCitizenship: more(citY - year), route: routes[route].title.toLowerCase() };
 
   const marks = [
-    { id: 'prep', at: 10, y: -1, up: true, big: false, t: 'Before you move', s: 'Plan, statement, Fast Track' },
-    { id: 'arrive', at: pos(0), y: 0, up: false, big: false, t: 'Arrive', s: 'D visa, register with DVV' },
-    { id: 'ext', at: pos(2), y: 2, up: true, big: false, t: 'Extension', s: 'Up to 4 more years' },
+    { id: 'prep', at: 10, y: -1, up: true, big: false, t: copy.prep.title, s: copy.prep.sub },
+    { id: 'arrive', at: pos(0), y: 0, up: false, big: false, t: copy.arrive.title, s: copy.arrive.sub },
+    { id: 'ext', at: pos(copy.extension.year), y: copy.extension.year, up: true, big: false, t: copy.extension.title, s: copy.extension.sub },
     { id: 'pr', at: pos(prY), y: prY, up: false, big: false, t: 'Permanent residence', s: routes[route].title },
-    { id: 'cit', at: pos(citY), y: citY, up: true, big: true, t: 'Citizenship', s: `${citY} years${lang ? ', with language' : ''}` },
+    { id: 'cit', at: pos(citY), y: citY, up: true, big: true, t: 'Citizenship', s: `${citY} years${lang && copy.citizenship.withLanguage ? ', with language' : ''}` },
   ];
 
-  let s1: string;
-  let s2: string;
-  if (year < 2) {
-    s1 = 'First permit, up to 2 years';
-    s2 = 'Build the company and live in Finland. A cancellation review opens on 22% of startup permits, mostly for not really living here.';
-  } else if (year < prY) {
-    s1 = 'Extended permit, up to 4 more years';
-    s2 = `Same business, actively developed, genuine residence. Permanent residence in ${left(prY - year)}.`;
-  } else if (year < citY) {
-    s1 = 'Permanent resident';
-    s2 = `Via the ${routes[route].title.toLowerCase()} route. Citizenship in ${left(citY - year)}.`;
-  } else {
-    s1 = 'Eligible to apply for citizenship';
-    s2 = 'You also need a clean record, met payment obligations and proof of financial resources. A citizenship test applies from 1 March 2027.';
-  }
+  const phase =
+    year < copy.extension.year ? copy.phases.first : year < prY ? copy.phases.extended : year < citY ? copy.phases.resident : copy.phases.citizen;
 
   const done = () => complete(stopId, 'Road mapped');
 
   return (
-    <div className="block">
+    <div>
       <div className="mb-5 flex flex-wrap items-end gap-x-8 gap-y-4">
         <div>
           <p className="mb-2 font-sans text-sm font-bold">Your permanent residence route</p>
@@ -516,10 +519,12 @@ export function YearsRoadmap({ stopId, routes, defaultRoute }: { stopId: string;
             )}
           </div>
         </div>
-        <div>
-          <p className="mb-2 font-sans text-sm font-bold">Finnish or Swedish for citizenship?</p>
-          <Switch on={lang} label="Finnish or Swedish for citizenship" onClick={() => { setLang(!lang); done(); }} />
-        </div>
+        {copy.citizenship.withLanguage && (
+          <div>
+            <p className="mb-2 font-sans text-sm font-bold">{copy.citizenship.languageQuestion ?? 'Will you meet the language requirement?'}</p>
+            <Switch on={lang} label={copy.citizenship.languageQuestion ?? 'Language requirement'} onClick={() => { setLang(!lang); done(); }} />
+          </div>
+        )}
       </div>
       <div className="rounded-2xl border border-[#1a1a1a]/10 bg-white p-6">
         <div className="overflow-x-auto pb-1.5">
@@ -527,7 +532,7 @@ export function YearsRoadmap({ stopId, routes, defaultRoute }: { stopId: string;
             <span className="absolute left-0 right-0 top-[112px] h-1 rounded bg-[#1a1a1a]/10" />
             <span className="absolute left-0 top-[112px] h-1 rounded bg-[var(--ra)] transition-[width] duration-500" style={{ width: `${pos(year)}%` }} />
             <span className="absolute left-0 top-[98px] h-8 w-[15%] rounded-lg border border-dashed border-[var(--ra)] bg-[repeating-linear-gradient(135deg,var(--rs)_0_8px,transparent_8px_16px)]" />
-            {Array.from({ length: 9 }, (_, y) => (
+            {Array.from({ length: maxY + 1 }, (_, y) => (
               <span key={y} className="absolute top-[126px] -translate-x-1/2 font-sans text-[11px] tabular-nums text-[#1a1a1a]/50" style={{ left: `${pos(y)}%` }}>
                 Y{y}
               </span>
@@ -548,25 +553,25 @@ export function YearsRoadmap({ stopId, routes, defaultRoute }: { stopId: string;
             </span>
           </div>
         </div>
-        <label htmlFor={`${stopId}-year`} className="font-sans text-xs text-[#1a1a1a]/55">Years in Finland</label>
+        <label htmlFor={`${stopId}-year`} className="font-sans text-xs text-[#1a1a1a]/55">Years in the country</label>
         <input
           id={`${stopId}-year`}
           type="range"
           min={0}
-          max={8}
+          max={maxY}
           step={1}
           value={year}
           onChange={(e) => {
             const y = Number(e.target.value);
             setYear(y);
-            if (y >= 2) done();
+            if (y >= copy.extension.year) done();
           }}
           className="mt-1 w-full accent-[var(--ra)]"
         />
         <div className="mt-4 grid grid-cols-[auto_minmax(0,1fr)] items-center gap-x-5 gap-y-1" aria-live="polite">
           <span className="row-span-2 font-serif text-5xl tabular-nums text-[var(--rp)]">Y{year}</span>
-          <span className="font-sans font-bold">{s1}</span>
-          <span className="font-sans text-sm text-[#1a1a1a]/60">{s2}</span>
+          <span className="font-sans font-bold">{fill(phase.title, vars)}</span>
+          <span className="font-sans text-sm text-[#1a1a1a]/60">{fill(phase.body, vars)}</span>
         </div>
       </div>
     </div>

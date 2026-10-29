@@ -52,7 +52,9 @@ import {
   StepWalker,
   YearsRoadmap,
   type FundsTable,
+  type PrQuestion,
   type PrRoute,
+  type RoadmapCopy,
   type RouteStep,
 } from '@/components/route/RouteWidgets';
 
@@ -257,6 +259,26 @@ const family = [
   { title: 'Child benefit', body: 'Paid monthly until the child turns 17 — subject to Kela residence-based eligibility, not automatic on arrival.' },
 ];
 
+const prQuestions: PrQuestion[] = [
+  { key: 'finnishDegree', q: 'Will you hold a Finnish university degree?', options: ['No', 'Yes'] },
+  { key: 'foreignDegree', q: 'A master’s or PhD from abroad, recognised in Finland?', options: ['No', 'Yes'] },
+  { key: 'income', q: 'Expect €40,000+ taxable income a year?', options: ['No', 'Yes'] },
+  { key: 'language', q: 'Finnish or Swedish level you can reach', options: ['None', 'A2', 'B1', 'C1'] },
+];
+
+const roadmap: RoadmapCopy = {
+  prep: { title: 'Before you move', sub: 'Plan, statement, Fast Track' },
+  arrive: { title: 'Arrive', sub: 'D visa, register with DVV' },
+  extension: { year: 2, title: 'Extension', sub: 'Up to 4 more years' },
+  citizenship: { years: 8, withLanguage: 5, languageQuestion: 'Finnish or Swedish for citizenship?' },
+  phases: {
+    first: { title: 'First permit, up to 2 years', body: 'Build the company and live in Finland. A cancellation review opens on 22% of startup permits, mostly for not really living here.' },
+    extended: { title: 'Extended permit, up to 4 more years', body: 'Same business, actively developed, genuine residence. Permanent residence in {toPr}.' },
+    resident: { title: 'Permanent resident', body: 'Via the {route} route. Citizenship in {toCitizenship}.' },
+    citizen: { title: 'Eligible to apply for citizenship', body: 'You also need a clean record, met payment obligations and proof of financial resources. A citizenship test applies from 1 March 2027.' },
+  },
+};
+
 // Permanent residence, for applications filed on or after 8 January 2026.
 // Ordered fastest first; `needs` drives the finder.
 const prRoutes: PrRoute[] = [
@@ -265,21 +287,21 @@ const prRoutes: PrRoute[] = [
     years: 0,
     reqs: ['Master\'s, licentiate or doctoral degree from a Finnish university, or a university bachelor\'s (not a university of applied sciences)', 'Language at A2, or 15 credits of Finnish/Swedish studies at a higher education institution'],
     note: 'No minimum residence period and no work-history requirement — the fastest route on the board.',
-    needs: { finnishDegree: true, language: 1 },
+    needs: { finnishDegree: 1, language: 1 },
   },
   {
     title: 'High income',
     years: 4,
     reqs: ['4 years continuous on an A permit', 'At least €40,000 taxable income in the most recently completed tax assessment'],
     note: 'No language requirement and no work-history requirement.',
-    needs: { income: true },
+    needs: { income: 1 },
   },
   {
     title: 'Foreign advanced degree',
     years: 4,
     reqs: ['4 years continuous on an A permit', 'Master\'s, licentiate or doctoral degree recognised in Finland', '2 years of work in Finland'],
     note: 'The realistic route for a founder arriving with a master\'s or PhD earned abroad. The work-history condition is not waivable.',
-    needs: { foreignDegree: true },
+    needs: { foreignDegree: 1 },
   },
   {
     title: 'Superior language skills',
@@ -838,7 +860,7 @@ export default function FinlandPage() {
             </p>
           }
         >
-          <PrFinder stopId="residence" routes={prRoutes} />
+          <PrFinder stopId="residence" questions={prQuestions} routes={prRoutes} />
           <p className="mt-4 font-sans text-xs text-[#1a1a1a]/55">Every route requires that you still meet the conditions for a continuous (A) residence permit.</p>
         </RouteStop>
 
@@ -857,7 +879,7 @@ export default function FinlandPage() {
             </p>
           }
         >
-          <YearsRoadmap stopId="roadmap" routes={prRoutes} defaultRoute={4} />
+          <YearsRoadmap stopId="roadmap" routes={prRoutes} defaultRoute={4} copy={roadmap} />
           <ol className="mt-6 grid grid-cols-2 gap-3 font-sans text-sm text-[#1a1a1a]/65 md:grid-cols-5">
             {[
               ['Before you move', 'Business plan, Eligibility Statement, ~2-week Fast Track'],
