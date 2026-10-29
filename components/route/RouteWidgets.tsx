@@ -10,6 +10,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { ArrowLeft, ArrowRight, Check } from 'lucide-react';
 import { useRoute } from './RouteProgress';
+import Flag from './flags';
 
 const eur = (n: number) => `€${Math.round(n).toLocaleString('en')}`;
 
@@ -20,7 +21,7 @@ function Toggle({ pressed, onClick, children, dark = false }: { pressed: boolean
       aria-pressed={pressed}
       onClick={onClick}
       className={`rounded-full border px-3.5 py-1.5 font-sans text-sm transition-colors ${
-        pressed ? 'border-[#002F6C] bg-[#002F6C] text-white' : dark ? 'border-white/25 text-white hover:border-white/60' : 'border-[#1a1a1a]/15 bg-[#F2F0E9] hover:border-[#002F6C]'
+        pressed ? 'border-[var(--rp)] bg-[var(--rp)] text-white' : dark ? 'border-white/25 text-white hover:border-white/60' : 'border-[#1a1a1a]/15 bg-[#F2F0E9] hover:border-[var(--rp)]'
       }`}
     >
       {children}
@@ -31,7 +32,7 @@ function Toggle({ pressed, onClick, children, dark = false }: { pressed: boolean
 function Switch({ on, onClick, label }: { on: boolean; onClick: () => void; label: string }) {
   return (
     <button type="button" role="switch" aria-checked={on} aria-label={label} onClick={onClick} className="inline-flex items-center gap-2.5 font-sans text-sm">
-      <span className={`relative h-[26px] w-11 rounded-full transition-colors ${on ? 'bg-[#00BFA5]' : 'bg-[#1a1a1a]/15'}`}>
+      <span className={`relative h-[26px] w-11 rounded-full transition-colors ${on ? 'bg-[var(--ra)]' : 'bg-[#1a1a1a]/15'}`}>
         <span className={`absolute left-[3px] top-[3px] h-5 w-5 rounded-full bg-white transition-transform ${on ? 'translate-x-[18px]' : ''}`} />
       </span>
       {on ? 'Yes' : 'No'}
@@ -85,9 +86,9 @@ export function GateQuiz({ stopId, criteria, children }: { stopId: string; crite
       </ol>
       <div className="grid content-start gap-4 self-start rounded-2xl border border-[#1a1a1a]/10 bg-white p-6 lg:sticky lg:top-20">
         <div className="block" aria-live="polite">
-          <p className="font-sans text-xs font-bold uppercase tracking-[0.18em] text-[#00796B]">Your readiness</p>
+          <p className="font-sans text-xs font-bold uppercase tracking-[0.18em] text-[var(--ra-text)]">Your readiness</p>
           <div className="my-3 h-3 overflow-hidden rounded-full bg-[#1a1a1a]/10">
-            <div className="h-full bg-gradient-to-r from-[#B4531A] to-[#00BFA5] transition-[width] duration-500" style={{ width: `${(yes / criteria.length) * 100}%` }} />
+            <div className="h-full bg-gradient-to-r from-[#B4531A] to-[var(--ra)] transition-[width] duration-500" style={{ width: `${(yes / criteria.length) * 100}%` }} />
           </div>
           <p className="font-serif text-2xl">{title}</p>
           <p className="mt-1.5 font-sans text-sm leading-relaxed text-[#1a1a1a]/65">{body}</p>
@@ -118,7 +119,7 @@ export function ApprovalDots({ approved = 8 }: { approved?: number }) {
   return (
     <div ref={ref} aria-hidden="true" className="grid max-w-[340px] grid-cols-[repeat(20,minmax(0,1fr))] gap-1">
       {Array.from({ length: 100 }, (_, i) => (
-        <i key={i} className={`aspect-square rounded-full ${lit.has(i) ? `bg-[#00BFA5] ${play ? 'motion-safe:animate-pop' : ''}` : 'bg-[#1a1a1a]/10'}`} />
+        <i key={i} className={`aspect-square rounded-full ${lit.has(i) ? `bg-[var(--ra)] ${play ? 'motion-safe:animate-pop' : ''}` : 'bg-[#1a1a1a]/10'}`} />
       ))}
     </div>
   );
@@ -150,12 +151,12 @@ export function StepWalker({ stopId, steps }: { stopId: string; steps: RouteStep
     <div>
       <div aria-hidden="true" className="relative mb-5 grid-cols-5 grid">
         <span className="absolute left-[10%] right-[10%] top-[22px] h-0.5 bg-[#1a1a1a]/10" />
-        <span className="absolute left-[10%] top-[22px] h-0.5 bg-[#00BFA5] transition-[width] duration-500" style={{ width: `${(cur / last) * 80}%` }} />
+        <span className="absolute left-[10%] top-[22px] h-0.5 bg-[var(--ra)] transition-[width] duration-500" style={{ width: `${(cur / last) * 80}%` }} />
         {steps.map((s, i) => (
           <button key={s.title} type="button" tabIndex={-1} onClick={() => go(i)} className="relative grid justify-items-center gap-2 px-1 text-center">
             <span
               className={`grid h-11 w-11 place-items-center rounded-full border-2 font-sans text-sm tabular-nums transition-all ${
-                i === cur ? 'scale-110 border-[#00BFA5] bg-[#00BFA5] text-[#00261F]' : i <= seen ? 'border-[#00BFA5] bg-white' : 'border-[#1a1a1a]/10 bg-white'
+                i === cur ? 'scale-110 border-[var(--ra)] bg-[var(--ra)] text-[var(--ra-ink)]' : i <= seen ? 'border-[var(--ra)] bg-white' : 'border-[#1a1a1a]/10 bg-white'
               }`}
             >
               {String(i + 1).padStart(2, '0')}
@@ -173,15 +174,15 @@ export function StepWalker({ stopId, steps }: { stopId: string; steps: RouteStep
             }`}
           >
             <div>
-              <p className="font-sans text-xs font-bold uppercase tracking-[0.18em] text-[#00796B]">
+              <p className="font-sans text-xs font-bold uppercase tracking-[0.18em] text-[var(--ra-text)]">
                 Step {i + 1} of {steps.length} · {s.who}
               </p>
               <h3 className="mb-2 mt-1 font-serif text-2xl">{s.title}</h3>
               <p className="max-w-[64ch] font-sans text-sm leading-relaxed text-[#1a1a1a]/70">{s.body}</p>
-              <p className="mt-3 rounded-lg bg-[#DDF4EF] px-3 py-2.5 font-sans text-sm">{s.note}</p>
+              <p className="mt-3 rounded-lg bg-[var(--rs)] px-3 py-2.5 font-sans text-sm">{s.note}</p>
             </div>
             <dl className="md:text-right">
-              <dd className="font-serif text-3xl text-[#002F6C]">{s.figure}</dd>
+              <dd className="font-serif text-3xl text-[var(--rp)]">{s.figure}</dd>
               <dt className="font-sans text-xs text-[#1a1a1a]/55">{s.figureLabel}</dt>
             </dl>
           </li>
@@ -191,7 +192,7 @@ export function StepWalker({ stopId, steps }: { stopId: string; steps: RouteStep
         <button type="button" onClick={() => go(cur - 1)} disabled={cur === 0} className="inline-flex items-center gap-2 rounded-full border border-[#1a1a1a] px-5 py-2.5 font-sans text-sm font-bold disabled:opacity-30">
           <ArrowLeft className="h-4 w-4" /> Back
         </button>
-        <button type="button" onClick={() => go(cur + 1)} className="inline-flex items-center gap-2 rounded-full bg-[#00BFA5] px-5 py-2.5 font-sans text-sm font-bold text-[#00261F] transition-transform hover:-translate-y-0.5">
+        <button type="button" onClick={() => go(cur + 1)} className="inline-flex items-center gap-2 rounded-full bg-[var(--ra)] px-5 py-2.5 font-sans text-sm font-bold text-[var(--ra-ink)] transition-transform hover:-translate-y-0.5">
           {cur === last ? (<>Done <Check className="h-4 w-4" /></>) : (<>Next step <ArrowRight className="h-4 w-4" /></>)}
         </button>
       </div>
@@ -282,8 +283,8 @@ export function FundsCalculator({ stopId, t }: { stopId: string; t: FundsTable }
           <Switch on={dVisa} label="Add the D visa" onClick={() => touch(setDVisa)(!dVisa)} />
         </div>
       </div>
-      <div className="rounded-2xl bg-[#001B3D] p-6 text-white" aria-live="polite">
-        <p className="font-sans text-xs font-bold uppercase tracking-[0.18em] text-[#00BFA5]">To show for a two-year permit</p>
+      <div className="rounded-2xl bg-[var(--rd)] p-6 text-white" aria-live="polite">
+        <p className="font-sans text-xs font-bold uppercase tracking-[0.18em] text-[var(--ra)]">To show for a two-year permit</p>
         <p className="mb-1 mt-2 font-serif text-5xl tabular-nums">{eur(shown)}</p>
         <p className="font-sans text-sm text-white/60">
           <span className="tabular-nums">{eur(monthly)}</span> net per month × {t.months} months
@@ -346,10 +347,10 @@ export function PerkOrCatch({ stopId, items }: { stopId: string; items: { title:
                 </div>
                 <div
                   className={`flex flex-col gap-2.5 border p-4 font-sans text-sm leading-relaxed absolute inset-0 overflow-auto rounded-2xl border-t [backface-visibility:hidden] [transform:rotateY(180deg)] ${
-                    it.positive ? 'border-[#00BFA5]/30 bg-[#DDF4EF]' : 'border-[#B4531A]/25 bg-[#FBEBDD]'
+                    it.positive ? 'border-[color-mix(in_srgb,var(--ra)_30%,transparent)] bg-[var(--rs)]' : 'border-[#B4531A]/25 bg-[#FBEBDD]'
                   }`}
                 >
-                  <span className={`font-sans text-[11px] font-bold uppercase tracking-[0.16em] ${it.positive ? 'text-[#00796B]' : 'text-[#B4531A]'}`}>
+                  <span className={`font-sans text-[11px] font-bold uppercase tracking-[0.16em] ${it.positive ? 'text-[var(--ra-text)]' : 'text-[#B4531A]'}`}>
                     {it.positive ? 'Perk' : 'Catch'} · {it.title}
                   </span>
                   <p>{it.content}</p>
@@ -431,25 +432,25 @@ export function PrFinder({ stopId, routes }: { stopId: string; routes: PrRoute[]
           <li
             key={r.title}
             className={`grid grid-cols-[minmax(0,1fr)_auto] gap-x-4 gap-y-1.5 rounded-2xl border bg-white p-4 transition-all ${
-              open[i] ? 'border-[#00BFA5]' : 'border-[#1a1a1a]/10 opacity-50'
-            } ${i === best ? 'ring-[3px] ring-[#00BFA5]/35' : ''}`}
+              open[i] ? 'border-[var(--ra)]' : 'border-[#1a1a1a]/10 opacity-50'
+            } ${i === best ? 'ring-[3px] ring-[color-mix(in_srgb,var(--ra)_35%,transparent)]' : ''}`}
           >
             <h3 className="font-serif text-xl">
               {r.title}
               {i === best && (
-                <span className="ml-2 inline-block rounded-full bg-[#00BFA5] px-2 py-1 align-middle font-sans text-[10px] font-bold uppercase tracking-[0.12em] text-[#00261F]">
+                <span className="ml-2 inline-block rounded-full bg-[var(--ra)] px-2 py-1 align-middle font-sans text-[10px] font-bold uppercase tracking-[0.12em] text-[var(--ra-ink)]">
                   Fastest for you
                 </span>
               )}
             </h3>
             <span className="font-sans text-sm tabular-nums">{r.years ? `${r.years} yrs` : 'no wait'}</span>
             <span aria-hidden="true" className="col-span-2 h-1.5 overflow-hidden rounded-full bg-[#1a1a1a]/10 block">
-              <span className="block h-full bg-[#00BFA5] transition-[width] duration-500" style={{ width: open[i] ? `${Math.max(6, (r.years / 6) * 100)}%` : '0%' }} />
+              <span className="block h-full bg-[var(--ra)] transition-[width] duration-500" style={{ width: open[i] ? `${Math.max(6, (r.years / 6) * 100)}%` : '0%' }} />
             </span>
             <ul className="col-span-2 grid gap-0.5 font-sans text-sm text-[#1a1a1a]/70">
               {r.reqs.map((q) => (
                 <li key={q} className="flex gap-2">
-                  <Check className="mt-0.5 h-4 w-4 shrink-0 text-[#00BFA5]" />
+                  <Check className="mt-0.5 h-4 w-4 shrink-0 text-[var(--ra)]" />
                   {q}
                 </li>
               ))}
@@ -465,7 +466,7 @@ export function PrFinder({ stopId, routes }: { stopId: string; routes: PrRoute[]
 /* ── Years roadmap ──────────────────────────────────────────────────────── */
 
 export function YearsRoadmap({ stopId, routes, defaultRoute }: { stopId: string; routes: PrRoute[]; defaultRoute: number }) {
-  const { complete, prRoute, setPrRoute } = useRoute();
+  const { complete, prRoute, setPrRoute, flag } = useRoute();
   const [lang, setLang] = useState(false);
   const [year, setYear] = useState(0);
   const route = prRoute && prRoute > 0 ? prRoute : defaultRoute;
@@ -524,8 +525,8 @@ export function YearsRoadmap({ stopId, routes, defaultRoute }: { stopId: string;
         <div className="overflow-x-auto pb-1.5">
           <div className="relative h-[230px] min-w-[700px]" aria-hidden="true">
             <span className="absolute left-0 right-0 top-[112px] h-1 rounded bg-[#1a1a1a]/10" />
-            <span className="absolute left-0 top-[112px] h-1 rounded bg-[#00BFA5] transition-[width] duration-500" style={{ width: `${pos(year)}%` }} />
-            <span className="absolute left-0 top-[98px] h-8 w-[15%] rounded-lg border border-dashed border-[#00BFA5] bg-[repeating-linear-gradient(135deg,#DDF4EF_0_8px,transparent_8px_16px)]" />
+            <span className="absolute left-0 top-[112px] h-1 rounded bg-[var(--ra)] transition-[width] duration-500" style={{ width: `${pos(year)}%` }} />
+            <span className="absolute left-0 top-[98px] h-8 w-[15%] rounded-lg border border-dashed border-[var(--ra)] bg-[repeating-linear-gradient(135deg,var(--rs)_0_8px,transparent_8px_16px)]" />
             {Array.from({ length: 9 }, (_, y) => (
               <span key={y} className="absolute top-[126px] -translate-x-1/2 font-sans text-[11px] tabular-nums text-[#1a1a1a]/50" style={{ left: `${pos(y)}%` }}>
                 Y{y}
@@ -534,7 +535,7 @@ export function YearsRoadmap({ stopId, routes, defaultRoute }: { stopId: string;
             {marks.map((m) => (
               <div key={m.id} className="absolute top-0 -ml-[70px] h-[230px] w-[140px] transition-[left] duration-500" style={{ left: `${m.at}%` }}>
                 <span
-                  className={`absolute left-1/2 rounded-full border-[3px] border-[#00BFA5] transition-colors ${m.big ? '-ml-3 top-[102px] h-6 w-6' : '-ml-2 top-[106px] h-4 w-4'} ${year >= m.y ? 'bg-[#00BFA5]' : 'bg-white'}`}
+                  className={`absolute left-1/2 rounded-full border-[3px] border-[var(--ra)] transition-colors ${m.big ? '-ml-3 top-[102px] h-6 w-6' : '-ml-2 top-[106px] h-4 w-4'} ${year >= m.y ? 'bg-[var(--ra)]' : 'bg-white'}`}
                 />
                 <span className={`absolute inset-x-0 text-center font-sans text-xs leading-snug text-[#1a1a1a]/55 ${m.up ? 'bottom-[136px]' : 'top-[146px]'}`}>
                   <b className="block text-sm text-[#1a1a1a]">{m.t}</b>
@@ -543,12 +544,7 @@ export function YearsRoadmap({ stopId, routes, defaultRoute }: { stopId: string;
               </div>
             ))}
             <span className="absolute top-[103px] z-10 -translate-x-1/2 drop-shadow-md transition-[left] duration-500" style={{ left: `${pos(year)}%` }}>
-              <svg width="36" height="22" viewBox="0 0 18 11">
-                <rect width="18" height="11" fill="#fff" />
-                <rect x="5" width="3" height="11" fill="#002F6C" />
-                <rect y="4" width="18" height="3" fill="#002F6C" />
-                <rect x=".125" y=".125" width="17.75" height="10.75" fill="none" stroke="rgba(0,0,0,.18)" strokeWidth=".25" />
-              </svg>
+              <Flag code={flag} uid="roadmap" width={36} />
             </span>
           </div>
         </div>
@@ -565,10 +561,10 @@ export function YearsRoadmap({ stopId, routes, defaultRoute }: { stopId: string;
             setYear(y);
             if (y >= 2) done();
           }}
-          className="mt-1 w-full accent-[#00BFA5]"
+          className="mt-1 w-full accent-[var(--ra)]"
         />
         <div className="mt-4 grid grid-cols-[auto_minmax(0,1fr)] items-center gap-x-5 gap-y-1" aria-live="polite">
-          <span className="row-span-2 font-serif text-5xl tabular-nums text-[#002F6C]">Y{year}</span>
+          <span className="row-span-2 font-serif text-5xl tabular-nums text-[var(--rp)]">Y{year}</span>
           <span className="font-sans font-bold">{s1}</span>
           <span className="font-sans text-sm text-[#1a1a1a]/60">{s2}</span>
         </div>

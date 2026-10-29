@@ -37,8 +37,8 @@ import JsonLd from '@/components/JsonLd';
 import { ORGANIZATION_ID, SITE_URL, faqJsonLd } from '@/lib/seo';
 import { MAIN_CONTACT } from '@/content/contact';
 import ChapterVideo, { type Chapter } from '@/components/guide/ChapterVideo';
-import FinnishFlag, { FinnishFlagShapes } from '@/components/route/FinnishFlag';
-import { RouteProvider, RouteRail, RouteStop, RouteFinish, type RouteStopDef } from '@/components/route/RouteProgress';
+import Flag from '@/components/route/flags';
+import { RouteProvider, RouteRail, RouteStop, RouteFinish, type RouteStopDef, type RouteTheme } from '@/components/route/RouteProgress';
 import {
   ApprovalDots,
   AuroraCanvas,
@@ -69,6 +69,9 @@ export async function generateMetadata({
 
 const UPDATED = { iso: '2026-10-27', label: '27 Oct 2026' };
 const PAGE_URL = `${SITE_URL}/en/country/finland`;
+
+// Finnish blue for figures, the site's teal for highlights.
+const THEME: RouteTheme = { accent: '#00BFA5', accentInk: '#00261F', accentText: '#00796B', primary: '#002F6C', deep: '#001B3D', soft: '#DDF4EF' };
 
 const STOPS: RouteStopDef[] = [
   { id: 'snapshot', label: 'Snapshot' },
@@ -458,7 +461,7 @@ export default function FinlandPage() {
     <div className="w-full overflow-x-clip bg-[#F2F0E9] text-[#1a1a1a]">
       <JsonLd data={[videoJsonLd, howToJsonLd, faqJsonLd([...faqs, ...deepDiveFaqs].map((f) => ({ question: f.q, answer: f.a })), 'en')]} />
 
-      <RouteProvider stops={STOPS}>
+      <RouteProvider stops={STOPS} flag="fi" theme={THEME}>
         {/* ── Hero: the answer up front ── */}
         <header className="relative overflow-hidden bg-[#001B3D] text-white">
           <Image
@@ -490,7 +493,7 @@ export default function FinlandPage() {
 
             <div>
               <div className={`mb-5 flex items-center gap-3 text-white/75 ${label}`}>
-                <FinnishFlag width={36} />
+                <Flag code="fi" uid="hero" width={36} />
                 Startup Finland · Fast Track permit
               </div>
               <h1>
@@ -532,7 +535,7 @@ export default function FinlandPage() {
           </div>
         </header>
 
-        <RouteRail flag={<FinnishFlagShapes />} />
+        <RouteRail />
 
         {/* 01 — What it is */}
         <RouteStop
@@ -583,7 +586,7 @@ export default function FinlandPage() {
         <ChapterVideo
           sectionId="video"
           checkpoint="video"
-          theme="finland"
+          theme="route"
           id={VIDEO.id}
           title={VIDEO.title}
           length={VIDEO.length}
@@ -916,7 +919,7 @@ export default function FinlandPage() {
         <section id="book" aria-labelledby="book-h" className="scroll-mt-32 bg-[#001B3D] px-6 py-16 text-white">
           <div className="container mx-auto grid grid-cols-1 items-start gap-10 lg:grid-cols-2">
             <div>
-              <RouteFinish flag={<FinnishFlagShapes />} />
+              <RouteFinish />
               <p className={`text-[#00BFA5] ${label}`}>Talk it through</p>
               <h2 id="book-h" className="mt-2 font-serif text-4xl leading-tight">
                 Bring your file to a <span className="italic text-[#00BFA5]">free session.</span>

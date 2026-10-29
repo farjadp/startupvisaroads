@@ -12,14 +12,35 @@
 // ============================================================================
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { Check } from 'lucide-react';
+import { FLAGS, FlagShapes, type FlagCode } from './flags';
 
 export interface RouteStopDef {
   id: string;
   label: string;
 }
 
+/**
+ * A guide's palette. Components read these as CSS variables, so one set of
+ * widgets serves every country in its own colours.
+ */
+export interface RouteTheme {
+  /** Highlight: buttons, progress, ticks. */
+  accent: string;
+  /** Text on the accent. */
+  accentInk: string;
+  /** The accent dark enough to read as text on paper and white. */
+  accentText: string;
+  /** Figures and selected controls. */
+  primary: string;
+  /** Dark bands: video, booking, calculator result. */
+  deep: string;
+  /** Light tint of the accent: notes, completed chips. */
+  soft: string;
+}
+
 interface RouteState {
   stops: RouteStopDef[];
+  flag: FlagCode;
   done: ReadonlySet<string>;
   complete: (id: string, message: string) => void;
   /** Index of the permanent-residence route the reader matched, shared by the finder and the roadmap. */
@@ -38,7 +59,7 @@ export function useRoute(): RouteState {
 const prefersReducedMotion = () =>
   typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-export function RouteProvider({ stops, children }: { stops: RouteStopDef[]; children: React.ReactNode }) {
+export function RouteProvider({ stops, flag, theme, children }: { stops: RouteStopDef[]; flag: FlagCode; theme: RouteTheme; children: React.ReactNode }) {
   const [done, setDone] = useState<Set<string>>(() => new Set());
   const [toast, setToast] = useState<string | null>(null);
   const [prRoute, setPrRoute] = useState<number | null>(null);
@@ -68,10 +89,13 @@ export function RouteProvider({ stops, children }: { stops: RouteStopDef[]; chil
 
   useEffect(() => () => clearTimeout(toastTimer.current), []);
 
-  const value = useMemo(() => ({ stops, done, complete, prRoute, setPrRoute }), [stops, done, complete, prRoute]);
+  const value = useMemo(() => ({ stops, flag, done, complete, prRoute, setPrRoute }), [stops, flag, done, complete, prRoute]);
+  // Custom properties are the one thing Tailwind cannot express statically.
+  const vars = { '--ra': theme.accent, '--ra-ink': theme.accentInk, '--ra-text': theme.accentText, '--rp': theme.primary, '--rd': theme.deep, '--rs': theme.soft } as React.CSSProperties;
 
   return (
     <RouteContext.Provider value={value}>
+      <div className="contents" style={vars}>
       {children}
       <Snow register={registerSnow} />
       <div
@@ -82,20 +106,26 @@ export function RouteProvider({ stops, children }: { stops: RouteStopDef[]; chil
       >
         {toast}
       </div>
+      </div>
     </RouteContext.Provider>
   );
 }
 
-/** A flag that climbs its pole as the route fills in. `flag` is drawn in an 18 × 11 user space. */
-export function FlagPole({ progress, flag, width, light = false }: { progress: number; flag: React.ReactNode; width: number; light?: boolean }) {
-  const drop = 32 * (1 - Math.min(Math.max(progress, 0), 1));
+/** A flag that climbs its pole as the route fills in. The flag always keeps its official proportions. */
+export function FlagPole({ progress, code, uid, width, light = false }: { progress: number; code: FlagCode; uid: string; width: number; light?: boolean }) {
+  const f = FLAGS[code];
+  const fw = 34;
+  const fh = (fw * f.h) / f.w;
+  const drop = (53 - fh) * (1 - Math.min(Math.max(progress, 0), 1));
   return (
     <svg width={width} height={width * 1.5} viewBox="0 0 40 60" aria-hidden="true" className="block shrink-0 overflow-visible">
       <line x1="3" y1="3" x2="3" y2="60" strokeWidth="1.6" className={light ? 'stroke-white/60' : 'stroke-[#1a1a1a]/45'} />
       <circle cx="3" cy="3" r="2.5" className={light ? 'fill-white/60' : 'fill-[#1a1a1a]/45'} />
       <g className="transition-transform duration-[900ms] ease-out motion-reduce:transition-none" style={{ transform: `translateY(${drop}px)` }}>
-        <g transform="translate(4 5) scale(1.8889)">
-          <g className={progress >= 1 ? 'origin-left animate-flutter motion-reduce:animate-none [transform-box:fill-box]' : ''}>{flag}</g>
+        <g transform={`translate(4 5) scale(${fw / f.w})`}>
+          <g className={progress >= 1 ? 'origin-left animate-flutter motion-reduce:animate-none [transform-box:fill-box]' : ''}>
+            <FlagShapes code={code} uid={uid} />
+          </g>
         </g>
       </g>
     </svg>
@@ -103,13 +133,13 @@ export function FlagPole({ progress, flag, width, light = false }: { progress: n
 }
 
 /** Sticky rail: the pole, the count, and one chip per stop. */
-export function RouteRail({ flag }: { flag: React.ReactNode }) {
-  const { stops, done } = useRoute();
+export function RouteRail() {
+  const { stops, done, flag } = useRoute();
   return (
     <nav aria-label="Your progress through this guide" className="sticky top-[4.5rem] z-40 border-b border-[#1a1a1a]/10 bg-[#F2F0E9]/90 backdrop-blur">
       <div className="container mx-auto flex items-center gap-3 px-6 py-1.5">
         <div className="flex shrink-0 items-end gap-1.5" title="Complete the route to raise the flag">
-          <FlagPole progress={done.size / stops.length} flag={flag} width={26} />
+          <FlagPole progress={done.size / stops.length} code={flag} uid="rail" width={26} />
           <span className="font-sans text-xs tabular-nums text-[#1a1a1a]/60">
             {done.size}/{stops.length}
           </span>
@@ -122,10 +152,10 @@ export function RouteRail({ flag }: { flag: React.ReactNode }) {
                 <a
                   href={`#${s.id}`}
                   className={`flex items-center gap-1.5 rounded-full border px-3 py-1.5 font-sans text-xs transition-colors ${
-                    isDone ? 'border-[#00BFA5] bg-[#DDF4EF]' : 'border-[#1a1a1a]/10 bg-white hover:border-[#00BFA5]'
+                    isDone ? 'border-[var(--ra)] bg-[var(--rs)]' : 'border-[#1a1a1a]/10 bg-white hover:border-[var(--ra)]'
                   }`}
                 >
-                  <span className={`h-2 w-2 rounded-full border-[1.5px] ${isDone ? 'border-[#00BFA5] bg-[#00BFA5]' : 'border-[#1a1a1a]/40'}`} />
+                  <span className={`h-2 w-2 rounded-full border-[1.5px] ${isDone ? 'border-[var(--ra)] bg-[var(--ra)]' : 'border-[#1a1a1a]/40'}`} />
                   {s.label}
                 </a>
               </li>
@@ -138,12 +168,12 @@ export function RouteRail({ flag }: { flag: React.ReactNode }) {
 }
 
 /** The big pole in the booking section, with the running count. */
-export function RouteFinish({ flag }: { flag: React.ReactNode }) {
-  const { stops, done } = useRoute();
+export function RouteFinish() {
+  const { stops, done, flag } = useRoute();
   const finished = done.size === stops.length;
   return (
     <div className="mb-6 flex items-end gap-4">
-      <FlagPole progress={done.size / stops.length} flag={flag} width={84} light />
+      <FlagPole progress={done.size / stops.length} code={flag} uid="finish" width={84} light />
       <span className="pb-1 font-sans text-xs tabular-nums text-white/60">
         {finished ? 'Flag raised. Route complete.' : `${done.size}/${stops.length} checkpoints`}
       </span>
@@ -153,9 +183,9 @@ export function RouteFinish({ flag }: { flag: React.ReactNode }) {
 
 type Tone = 'paper' | 'white' | 'night';
 const TONES: Record<Tone, { section: string; eyebrow: string; muted: string; number: string; answer: string }> = {
-  paper: { section: 'bg-[#F2F0E9] text-[#1a1a1a]', eyebrow: 'text-[#00796B]', muted: 'text-[#1a1a1a]/60', number: 'border-[#1a1a1a]/15 text-[#1a1a1a]/50', answer: 'text-[#1a1a1a]/85' },
-  white: { section: 'bg-white text-[#1a1a1a]', eyebrow: 'text-[#00796B]', muted: 'text-[#1a1a1a]/60', number: 'border-[#1a1a1a]/15 text-[#1a1a1a]/50', answer: 'text-[#1a1a1a]/85' },
-  night: { section: 'bg-[#001B3D] text-white', eyebrow: 'text-[#00BFA5]', muted: 'text-white/60', number: 'border-white/20 text-white/55', answer: 'text-white/80' },
+  paper: { section: 'bg-[#F2F0E9] text-[#1a1a1a]', eyebrow: 'text-[var(--ra-text)]', muted: 'text-[#1a1a1a]/60', number: 'border-[#1a1a1a]/15 text-[#1a1a1a]/50', answer: 'text-[#1a1a1a]/85' },
+  white: { section: 'bg-white text-[#1a1a1a]', eyebrow: 'text-[var(--ra-text)]', muted: 'text-[#1a1a1a]/60', number: 'border-[#1a1a1a]/15 text-[#1a1a1a]/50', answer: 'text-[#1a1a1a]/85' },
+  night: { section: 'bg-[var(--rd)] text-white', eyebrow: 'text-[var(--ra)]', muted: 'text-white/60', number: 'border-white/20 text-white/55', answer: 'text-white/80' },
 };
 
 /**
@@ -231,7 +261,7 @@ export function RouteStop({
           <span className={`items-center gap-2 font-sans text-xs inline-flex ${t.muted}`}>
             <span
               className={`grid h-[18px] w-[18px] place-items-center rounded-full border-[1.5px] transition-colors ${
-                isDone ? 'border-[#00BFA5] bg-[#00BFA5] text-[#00261F]' : tone === 'night' ? 'border-white/50' : 'border-[#1a1a1a]/40'
+                isDone ? 'border-[var(--ra)] bg-[var(--ra)] text-[var(--ra-ink)]' : tone === 'night' ? 'border-white/50' : 'border-[#1a1a1a]/40'
               }`}
             >
               {isDone && <Check className="h-3 w-3" strokeWidth={3} />}
@@ -239,7 +269,7 @@ export function RouteStop({
             {task}
           </span>
         </div>
-        <div className={`mb-8 max-w-[68ch] border-l-[3px] border-[#00BFA5] pl-4 font-sans text-[1.05rem] leading-relaxed ${t.answer}`}>{answer}</div>
+        <div className={`mb-8 max-w-[68ch] border-l-[3px] border-[var(--ra)] pl-4 font-sans text-[1.05rem] leading-relaxed ${t.answer}`}>{answer}</div>
         {children}
       </div>
     </section>
@@ -261,6 +291,7 @@ function Snow({ register }: { register: (fn: (count: number) => void) => void })
     };
     fit();
     window.addEventListener('resize', fit);
+    let color = '#00BFA5';
     const frame = () => {
       ctx.clearRect(0, 0, c.width, c.height);
       for (const f of flakes) {
@@ -269,7 +300,7 @@ function Snow({ register }: { register: (fn: (count: number) => void) => void })
         f.x += Math.sin(f.ph) * 0.8;
         if (f.y > c.height * 0.7) f.life -= 0.02;
         ctx.globalAlpha = Math.max(f.life, 0) * 0.9;
-        ctx.fillStyle = '#00BFA5';
+        ctx.fillStyle = color;
         ctx.beginPath();
         ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2);
         ctx.fill();
@@ -287,6 +318,7 @@ function Snow({ register }: { register: (fn: (count: number) => void) => void })
       for (let i = 0; i < count; i++) {
         flakes.push({ x: Math.random() * c.width, y: -10 - Math.random() * c.height * 0.3, r: (1.5 + Math.random() * 3) * dpr, vy: (1 + Math.random() * 2) * dpr, ph: Math.random() * 6, life: 1 });
       }
+      color = getComputedStyle(c).getPropertyValue('--ra').trim() || color;
       if (!running) {
         running = true;
         requestAnimationFrame(frame);

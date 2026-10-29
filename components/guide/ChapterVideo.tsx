@@ -38,11 +38,12 @@ interface Props {
   theme?: Theme;
 }
 
-type Theme = 'denmark' | 'finland';
+type Theme = 'denmark' | 'route';
 // Static class strings so Tailwind can see them.
 const THEMES: Record<Theme, { bg: string; fade: string; accent: string; dot: string; playIcon: string; border: string; hover: string }> = {
   denmark: { bg: 'bg-[#0a0e1a]', fade: 'from-[#0a0e1a]/70', accent: 'text-[#C8102E]', dot: 'bg-[#C8102E] ring-[#C8102E]/25', playIcon: 'fill-white text-white', border: 'border-[#C8102E]', hover: 'hover:text-[#C8102E]' },
-  finland: { bg: 'bg-[#001B3D]', fade: 'from-[#001B3D]/70', accent: 'text-[#00BFA5]', dot: 'bg-[#00BFA5] ring-[#00BFA5]/25 motion-safe:animate-[pulse_2.4s_ease-in-out_infinite]', playIcon: 'fill-[#00261F] text-[#00261F]', border: 'border-[#00BFA5]', hover: 'hover:text-[#00BFA5]' },
+  // Route guides: the palette comes from RouteProvider's CSS variables.
+  route: { bg: 'bg-[var(--rd)]', fade: 'from-[color-mix(in_srgb,var(--rd)_70%,transparent)]', accent: 'text-[var(--ra)]', dot: 'bg-[var(--ra)] ring-[color-mix(in_srgb,var(--ra)_25%,transparent)] motion-safe:animate-[pulse_2.4s_ease-in-out_infinite]', playIcon: 'fill-[var(--ra-ink)] text-[var(--ra-ink)]', border: 'border-[var(--ra)]', hover: 'hover:text-[var(--ra)]' },
 };
 
 const seconds = (at: string) => at.split(':').reduce((t, part) => t * 60 + Number(part), 0);
