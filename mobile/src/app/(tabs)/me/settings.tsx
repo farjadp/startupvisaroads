@@ -5,6 +5,7 @@ import { router } from 'expo-router';
 import * as WebBrowser from 'expo-web-browser';
 import { useState } from 'react';
 import { Alert, View } from 'react-native';
+import { routeV2 } from '@shared/routes-v2';
 import { needsDirectionRestart, useI18n } from '@/i18n/I18nProvider';
 import { LOCALES, LOCALE_ORDER, type Locale } from '@/i18n/locales';
 import { useStore, type ModePref } from '@/state/store';
@@ -47,6 +48,9 @@ export default function Settings() {
     ]);
 
   const modes: ModePref[] = ['system', 'paper', 'night'];
+  // v2 route keys only: a key whose route left the data is not counted.
+  const followed = state.following.filter((k) => routeV2(k)).length;
+
   return (
     <Screen edges={[]}>
       {notice ? <Banner text={notice} /> : null}
@@ -67,7 +71,7 @@ export default function Settings() {
         </Ruled>
       </View>
       <Ruled>
-        <LinkRow icon="route" label={t('settings.following')} sub={state.following.length ? count(state.following.length) : undefined} onPress={() => router.push({ pathname: '/follow', params: { next: 'back' } })} />
+        <LinkRow icon="route" label={t('settings.following')} sub={followed ? count(followed) : undefined} onPress={() => router.push({ pathname: '/follow', params: { next: 'back' } })} />
         <LinkRow icon="shield" label={t('settings.about')} onPress={() => router.push('/(tabs)/me/about')} />
         <LinkRow icon="doc" external label={t('settings.privacy')} onPress={() => void WebBrowser.openBrowserAsync(`https://visaroads.com/${meta.siteLocale}/privacy`)} />
         <LinkRow icon="globe" label={t('settings.credits')} onPress={() => router.push('/(tabs)/me/credits')} />

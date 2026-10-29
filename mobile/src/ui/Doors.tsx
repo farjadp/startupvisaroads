@@ -3,6 +3,7 @@
 // assessment reads as the suggested way without hiding the other.
 import { Image } from 'expo-image';
 import { Pressable, View } from 'react-native';
+import { ROUTES_V2 } from '@shared/routes-v2';
 import { useI18n } from '@/i18n/I18nProvider';
 import { useTheme } from '@/theme/ThemeProvider';
 import { space } from '@/theme/tokens';
@@ -45,10 +46,12 @@ function Door({ title, sub, tag, photo, ink, onPress }: { title: string; sub: st
 }
 
 export function Doors({ onRoad, onAssess }: { onRoad: () => void; onAssess: () => void }) {
-  const { t } = useI18n();
+  const { t, count } = useI18n();
+  // Counted from the route data so the door never trails the content (it said 10 after v3 added five).
+  const countries = new Set(ROUTES_V2.map((r) => r.country)).size;
   return (
     <View style={{ gap: space.s3 }}>
-      <Door title={t('start.roadTitle')} sub={t('start.roadSub')} photo={ROAD_PHOTO} onPress={onRoad} />
+      <Door title={t('start.roadTitle')} sub={t('start.roadSub', { n: count(countries) })} photo={ROAD_PHOTO} onPress={onRoad} />
       <Door title={t('start.assessTitle')} sub={t('start.assessSub')} tag={t('start.assessTag')} photo={ASSESS_PHOTO} ink onPress={onAssess} />
     </View>
   );

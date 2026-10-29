@@ -4,7 +4,7 @@
 // reference rates for one day, fixed here rather than fetched live: a live
 // rate would be a new third-party request from the app. Refresh by editing
 // FX and shipping an over-the-air update.
-export type FxCurrency = 'EUR' | 'USD' | 'CAD' | 'DKK' | 'TRY' | 'ILS' | 'AED' | 'GBP' | 'CNY' | 'INR';
+export type FxCurrency = 'EUR' | 'USD' | 'CAD' | 'DKK' | 'TRY' | 'ILS' | 'AED' | 'GBP' | 'CNY' | 'INR' | 'AUD' | 'NOK' | 'SEK';
 
 export const FX = {
   /** The ECB reference date these rates are from. */
@@ -12,7 +12,7 @@ export const FX = {
   source: 'https://www.ecb.europa.eu/stats/policy_and_exchange_rates/euro_reference_exchange_rates/html/index.en.html',
   /** Units of each currency per 1 EUR, as published by the ECB. */
   // AED is not an ECB currency: the UAE dirham is pegged at 3.6725 per USD (Central Bank of the UAE).
-  perEur: { EUR: 1, USD: 1.1208, CAD: 1.5923, DKK: 7.475, TRY: 55.3873, ILS: 3.4769, AED: 1.1208 * 3.6725, GBP: 0.8461, CNY: 7.4993, INR: 106.5408 } as Record<FxCurrency, number>,
+  perEur: { EUR: 1, USD: 1.1208, CAD: 1.5923, DKK: 7.475, TRY: 55.3873, ILS: 3.4769, AED: 1.1208 * 3.6725, GBP: 0.8461, CNY: 7.4993, INR: 106.5408, AUD: 1.6218, NOK: 10.652, SEK: 11.1765 } as Record<FxCurrency, number>,
 };
 
 /** From US dollars to another currency (the assessment shows its USD bands in the home currency). */

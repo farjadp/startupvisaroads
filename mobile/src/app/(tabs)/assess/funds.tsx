@@ -8,19 +8,21 @@
 import { router, useLocalSearchParams } from 'expo-router';
 import * as Haptics from 'expo-haptics';
 import { createContext, useContext, useEffect, useRef, useState } from 'react';
-import { AccessibilityInfo, Animated, Easing, PixelRatio, Platform, Pressable, Share, View } from 'react-native';
+import { AccessibilityInfo, Animated, Easing, PixelRatio, Platform, Pressable, Share, View, useWindowDimensions } from 'react-native';
 import Svg, { Circle, Path } from 'react-native-svg';
 import { SUV_SETTLEMENT_FUNDS, SUV_SETTLEMENT_FUNDS_EXTRA_PER_PERSON, SUV_SETTLEMENT_FUNDS_UPDATED, SUV_SOURCES, SUV_STATE, SUV_VERIFIED, settlementFundsFor } from '@shared/canada-suv';
 import { FUNDS, type FundsCountry, type FundsLine } from '@shared/funds';
-import { FX, convert, type FxCurrency } from '@shared/fx';
-import { HOME_CURRENCY } from '@/content/assessment';
-import { parseIsoDate } from '@/i18n/format';
-import { COUNTRY_NAMES, COUNTRY_ORDER, ROUTES } from '@/content/routes';
+import { FX, convert, toUsdExact, type FxCurrency } from '@shared/fx';
+import { ROUTES_V2, routeV2 } from '@shared/routes-v2';
+import { rank } from '@shared/routes-v2/match';
+import { HOME_CURRENCY, preferredFamily, toProfile, type AssessAnswers } from '@/content/assessment';
+import { FX_OLD, FX_TOO_OLD } from '@/engine/fx-age';
+import { COUNTRY_NAMES, COUNTRY_ORDER } from '@/content/routes';
 import { useI18n } from '@/i18n/I18nProvider';
 import type { Locale } from '@/i18n/locales';
 import { useStore } from '@/state/store';
 import { useTheme } from '@/theme/ThemeProvider';
-import { motion, space, size } from '@/theme/tokens';
+import { motion, space, size, typeSpec } from '@/theme/tokens';
 import { Flag } from '@/ui/Flag';
 import { Banner, Button, Chip, Disclaimer, Heading, Label, SourceLine, Screen } from '@/ui/kit';
 import { T } from '@/ui/T';
@@ -28,11 +30,18 @@ import { T } from '@/ui/T';
 /** Countries with a funds entry, in the app's country order. */
 const FUNDS_ORDER = COUNTRY_ORDER.filter((k): k is FundsCountry => k in FUNDS);
 
+/** The country of the closest v2 match, once the assessment is finished. */
+function closestCountry(assess: AssessAnswers, at: string | null): string | null {
+  if (!at) return null;
+  const best = rank(ROUTES_V2, toProfile(assess), toUsdExact, preferredFamily(assess))[0];
+  return best ? (routeV2(best.route)?.country ?? null) : null;
+}
+
 const MAX = 12;
 /** Figures drawn in the family row: IRCC's table lists 1–7; "8+" hands over to the stepper. */
 const GLYPHS = 7;
 
-const SYMBOL: Record<FxCurrency, string> = { EUR: '€', USD: '$', CAD: 'C$', DKK: 'kr', TRY: '₺', ILS: '₪', AED: 'د.إ', GBP: '£', CNY: '¥', INR: '₹' };
+const SYMBOL: Record<FxCurrency, string> = { EUR: '€', USD: '$', CAD: 'C$', DKK: 'kr', TRY: '₺', ILS: '₪', AED: 'د.إ', GBP: '£', CNY: '¥', INR: '₹', AUD: 'A$', NOK: 'kr', SEK: 'kr' };
 /** The official currency of each country's figure (the one never offered as an extra). */
 const OFFICIAL: Record<FundsCountry, FxCurrency> = { CA: 'CAD', DK: 'DKK', FI: 'EUR', EE: 'EUR', NL: 'EUR', IT: 'EUR', TR: 'TRY', US: 'USD' } as Record<FundsCountry, FxCurrency>;
 /** Home currency when the assessment has not said where the user lives. */
@@ -40,9 +49,6 @@ const BY_LOCALE: Record<Locale, FxCurrency> = { en: 'USD', fa: 'USD', fr: 'EUR',
 
 // The official figure stays first and unchanged; converted lines are small, muted, rounded,
 // say "about" and name the ECB rate date. Rates over 90 days old are not offered at all.
-const FX_AGE_DAYS = Math.floor((Date.now() - parseIsoDate(FX.date).getTime()) / 86_400_000);
-const FX_OLD = FX_AGE_DAYS > 30;
-const FX_TOO_OLD = FX_AGE_DAYS > 90;
 const AltCtx = createContext<FxCurrency | null>(null);
 
 // One tick per real change; Android goes through the system setting for touch feedback.
@@ -51,6 +57,24 @@ const tick = () => {
 };
 
 /** True when the person asked the system for less motion: figures then swap instead of rising. */
+/**
+ * Text props for a hero amount. A formatted amount cannot wrap (its spaces are non-breaking), so at
+ * large text sizes Latin is capped at the scale that still fits the acid block (auditor P1: "CAD 23,36(").
+ * Estedad's wide digits shrink to fit instead; fitting clips DM Serif tops on iOS, so Latin never fits.
+ */
+function useFigureFit(): (text: string) => object {
+  const { meta } = useI18n();
+  const { width } = useWindowDimensions();
+  return (text) => {
+    if (meta.script === 'arabic') return { numberOfLines: 1, adjustsFontSizeToFit: true, minimumFontScale: 0.6 };
+    const s = typeSpec('figure', meta.script);
+    const room = width - 2 * space.s6 - 2 * space.s2;
+    // 0.6 em per glyph is a safe upper bound for DM Serif Display digits and capitals.
+    const fits = room / (0.6 * s.fontSize * text.length);
+    return { maxFontSizeMultiplier: Math.max(1, Math.min(s.maxScale, fits)) };
+  };
+}
+
 function useReduceMotion() {
   const [on, setOn] = useState(false);
   useEffect(() => {
@@ -134,6 +158,7 @@ function ShareButton({ text }: { text: string }) {
 
 function CanadaFunds() {
   const { t, money, count, date, pick, meta } = useI18n();
+  const figureFit = useFigureFit();
   const alt = useAltLine();
   const { c } = useTheme();
   const { state, set } = useStore();
@@ -230,7 +255,7 @@ function CanadaFunds() {
         <Rising dep={n}>
           <View style={{ alignSelf: 'flex-start', backgroundColor: c.accent, paddingHorizontal: space.s2, paddingTop: space.s2 }}>
             {/* Estedad's wide digits wrap the amount in fa/ar; shrink to fit there. Latin keeps its natural size (fitting clips DM Serif tops on iOS). */}
-            <T variant="figure" tone="onAccent" {...(meta.script === 'arabic' ? { numberOfLines: 1, adjustsFontSizeToFit: true, minimumFontScale: 0.6 } : null)}>
+            <T variant="figure" tone="onAccent" {...figureFit(money(amount, 'CAD'))}>
               {money(amount, 'CAD')}
             </T>
           </View>
@@ -265,7 +290,7 @@ function CanadaFunds() {
               accessibilityRole="button"
               accessibilityState={{ selected: mine }}
               accessibilityLabel={[`${people(size_)}: ${money(v, 'CAD')}`, alt(v, 'CAD')].filter(Boolean).join(', ')}
-              style={({ pressed }) => ({ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', columnGap: space.s3, paddingVertical: 6, borderBottomWidth: 1, borderBottomColor: c.rule, backgroundColor: pressed ? c.rowPressed : 'transparent' })}
+              style={({ pressed }) => ({ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', columnGap: space.s3, minHeight: Platform.OS === 'android' ? size.touchMinAndroid : size.touchMin, paddingVertical: 6, borderBottomWidth: 1, borderBottomColor: c.rule, backgroundColor: pressed ? c.rowPressed : 'transparent' })}
             >
               <T variant="row" weight={mine ? 'bold' : 'regular'} tone={mine ? 'fg' : 'fgMuted'}>
                 {people(size_)}
@@ -301,7 +326,8 @@ function CanadaFunds() {
 }
 
 function Figure({ line }: { line: FundsLine }) {
-  const { t, money, meta } = useI18n();
+  const { t, money } = useI18n();
+  const figureFit = useFigureFit();
   const { c } = useTheme();
   const alt = useAltLine()(line.amount, line.currency);
   const amount = money(line.amount, line.currency);
@@ -313,7 +339,7 @@ function Figure({ line }: { line: FundsLine }) {
         {t(`funds.lines.${line.key}`)}
       </T>
       <View style={{ alignSelf: 'flex-start', backgroundColor: c.accent, paddingHorizontal: space.s2, paddingTop: space.s2 }}>
-        <T variant="figure" tone="onAccent" {...(meta.script === 'arabic' ? { numberOfLines: 1, adjustsFontSizeToFit: true, minimumFontScale: 0.6 } : null)}>
+        <T variant="figure" tone="onAccent" {...figureFit(shown)}>
           {shown}
         </T>
       </View>
@@ -464,9 +490,9 @@ export default function Funds() {
   const { t, pick } = useI18n();
   const { c } = useTheme();
   const { state, set } = useStore();
-  // A country page links here with ?country=; otherwise a road the user follows, the pathfinder's, or Canada.
+  // A country page links here with ?country=; otherwise a road the user follows, their closest v2 match, or Canada.
   const { country: asked } = useLocalSearchParams<{ country?: string }>();
-  const preferred = asked || (state.following[0] && ROUTES[state.following[0]].country) || (state.outcome && state.outcome !== 'too-early' ? ROUTES[state.outcome].country : null);
+  const [preferred] = useState(() => asked || state.following.map((k) => routeV2(k)?.country).find(Boolean) || closestCountry(state.assess, state.assessAt));
   const initial: FundsCountry = preferred && preferred in FUNDS ? (preferred as FundsCountry) : 'CA';
   const [country, setCountry] = useState<FundsCountry>(initial);
   const official = OFFICIAL[country] ?? 'USD';
