@@ -55,6 +55,7 @@ import {
   CircleDollarSign,
 } from 'lucide-react';
 import type { Metadata } from 'next';
+import { setRequestLocale } from 'next-intl/server';
 import { metaFor } from '@/lib/pageMeta';
 
 export async function generateMetadata({
@@ -214,7 +215,12 @@ const faqs = [
 
 // ─── Component ───────────────────────────────────────────────────────────────
 
-export default function IsraelPage() {
+// setRequestLocale before the first <Link>: without it next-intl reads
+// headers(), Next renders the route dynamically and streams <title> and
+// the meta tags into <body> instead of <head>.
+export default async function IsraelPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  setRequestLocale(locale);
   return (
     <div className="w-full bg-[#F2F0E9] text-[#1a1a1a] overflow-x-hidden">
 

@@ -7,6 +7,7 @@ import { MapPin } from 'lucide-react';
 import { Link } from '@/navigation';
 import { TEAM_MEMBERS } from '@/content/team';
 import TeamContactLinks from '@/components/TeamContactLinks';
+import Faq from './motion/Faq';
 import { page } from '@/content/fa/team';
 import JsonLd from '@/components/JsonLd';
 import { faWebPageJsonLd, faqJsonLd, breadcrumbJsonLd } from '@/lib/fa/content';
@@ -75,6 +76,20 @@ export default function FaTeam() {
           ))}
         </div>
       </div>
+
+      {/* FAQ — visible, so the FAQPage schema above describes what is on the page */}
+      {p.faqs.length > 0 && (
+        <section className="px-4 md:px-8 max-w-[1400px] mx-auto border-x border-[#1a1a1a]/10 pb-16 md:pb-24">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
+            <div className="lg:col-span-4">
+              <h2 id="faq" className="font-estedad font-black text-3xl md:text-4xl">سؤالات متداول</h2>
+            </div>
+            <div className="lg:col-span-8">
+              <Faq items={p.faqs} idPrefix="team" />
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* CLOSING */}
       <section className="py-24 border-t border-[#1a1a1a] bg-[#1a1a1a] text-[#F2F0E9]">

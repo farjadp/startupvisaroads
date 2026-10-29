@@ -8,7 +8,7 @@ import * as cheerio from 'cheerio';
 import { Link } from '@/navigation';
 import JsonLd from '@/components/JsonLd';
 import { sanitizeHtml } from '@/lib/sanitize';
-import { SITE_URL, articleJsonLd, breadcrumbJsonLd, buildMetadata, faqJsonLd, isDataImageUrl, isReviewed, reviewedPageJsonLd, selfLocalizedAlternates, stripHtml } from '@/lib/seo';
+import { SITE_URL, articleJsonLd, breadcrumbJsonLd, buildMetadata, clampDescription, faqJsonLd, isDataImageUrl, isReviewed, reviewedPageJsonLd, selfLocalizedAlternates } from '@/lib/seo';
 import { REVIEWER } from '@/content/contact';
 import { blogType } from '@/lib/fa/blog-type';
 import SuvStatusNotice from '@/components/SuvStatusNotice';
@@ -53,7 +53,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   }
 
   const articleLocale = article.locale === 'fa' ? 'fa' : 'en';
-  const description = stripHtml(article.excerpt || article.title).slice(0, 200);
+  const description = clampDescription(article.excerpt || article.title);
   const metadata = buildMetadata({
     title: article.title,
     description,
@@ -245,7 +245,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ local
   const structuredData = [
     articleJsonLd({
       title: article.title,
-      description: stripHtml(article.excerpt || article.title).slice(0, 200),
+      description: clampDescription(article.excerpt || article.title),
       url: articleUrl,
       image: article.coverImage,
       datePublished: article.createdAt,
