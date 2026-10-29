@@ -17,7 +17,7 @@ export type RouteKey =
   | 'nova-scotia'
   | 'eb2niw';
 
-export type Country = 'CA' | 'DK' | 'FI' | 'EE' | 'NL' | 'IT' | 'TR' | 'US' | 'IL' | 'AE';
+export type Country = 'CA' | 'DK' | 'FI' | 'EE' | 'NL' | 'IT' | 'TR' | 'US' | 'IL' | 'AE' | 'AU' | 'AT' | 'NO' | 'IE' | 'SE';
 
 export type Photo = { source: ImageSourcePropType; alt: Text; credit: string; page: string };
 
@@ -192,40 +192,14 @@ export const ROUTES: Record<RouteKey, RouteContent> = {
   },
 };
 
-/** Kind of road (4A icons). Picked by how the route works, never by country. */
-export type RouteType = 'startup' | 'pnp' | 'tech' | 'niw';
+/** The countries of v2 (Farjad, 15 Oct 2026) and the five added on 27 Oct, in the order the Countries tab shows them. */
+export const COUNTRY_ORDER: Country[] = ['CA', 'US', 'AU', 'DK', 'FI', 'EE', 'NL', 'IT', 'AT', 'IE', 'NO', 'SE', 'TR', 'IL', 'AE'];
 
-export const ROUTE_TYPE: Record<RouteKey, RouteType> = {
-  denmark: 'startup',
-  finland: 'startup',
-  estonia: 'startup',
-  netherlands: 'startup',
-  italy: 'startup',
-  turkey: 'tech',
-  'new-brunswick': 'pnp',
-  'nova-scotia': 'pnp',
-  eb2niw: 'niw',
-};
-
-/** The ten countries of v2 (Farjad, 15 Oct 2026), in the order the Countries tab shows them. */
-export const COUNTRY_ORDER: Country[] = ['CA', 'US', 'DK', 'FI', 'EE', 'NL', 'IT', 'TR', 'IL', 'AE'];
-
-/** v2 route families (spec 2026-10-15). Study and Express Entry have no roads in the app yet. */
+/** v2 route families (spec 2026-10-15). */
 export type RouteFamily = 'startup' | 'entrepreneur' | 'study' | 'talent' | 'express';
 export const FAMILY_ORDER: RouteFamily[] = ['startup', 'entrepreneur', 'study', 'talent', 'express'];
 /** One icon per family (4A line icons). */
 export const FAMILY_ICON: Record<RouteFamily, 'startup' | 'pnp' | 'study' | 'niw' | 'compass'> = { startup: 'startup', entrepreneur: 'pnp', study: 'study', talent: 'niw', express: 'compass' };
-export const ROUTE_FAMILY: Record<RouteKey, RouteFamily> = {
-  denmark: 'startup',
-  finland: 'startup',
-  estonia: 'startup',
-  netherlands: 'startup',
-  italy: 'startup',
-  turkey: 'startup',
-  'new-brunswick': 'entrepreneur',
-  'nova-scotia': 'entrepreneur',
-  eb2niw: 'talent',
-};
 
 /** A country's main photo (real, credited): its first road's. Null until one is sourced (US, Israel, UAE). */
 export const COUNTRY_HERO: Record<Country, Photo | null> = {
@@ -239,21 +213,17 @@ export const COUNTRY_HERO: Record<Country, Photo | null> = {
   TR: null,
   IL: null,
   AE: null,
+  AU: null,
+  AT: null,
+  NO: null,
+  IE: null,
+  SE: null,
 };
-
-/** The roads the app has for a country, in the app's order. */
-export const roadsOf = (country: Country): RouteKey[] => ROUTE_ORDER.filter((k) => ROUTES[k].country === country);
 
 export const ROUTE_ORDER: RouteKey[] = ['nova-scotia', 'new-brunswick', 'denmark', 'finland', 'estonia', 'netherlands', 'italy', 'turkey', 'eb2niw'];
 
 export function ruleFor(key: RouteKey): Rule | undefined {
   return RULES.find((r) => r.key === key);
-}
-
-export function sourceFor(key: RouteKey): { url: string; updated: string } {
-  const rule = ruleFor(key);
-  if (rule) return { url: rule.source, updated: rule.updated };
-  return ROUTES[key].sourceOverride!;
 }
 
 export const COUNTRY_NAMES: Record<Country, Text> = {
@@ -267,6 +237,11 @@ export const COUNTRY_NAMES: Record<Country, Text> = {
   US: { en: 'United States', fa: 'آمریکا', fr: 'États-Unis', zh: '美国', ar: 'الولايات المتحدة' },
   IL: { en: 'Israel', fa: 'اسرائیل', fr: 'Israël', zh: '以色列', ar: 'إسرائيل' },
   AE: { en: 'United Arab Emirates', fa: 'امارات', fr: 'Émirats arabes unis', zh: '阿联酋', ar: 'الإمارات' },
+  AU: { en: 'Australia', fa: 'استرالیا', fr: 'Australie', zh: '澳大利亚', ar: 'أستراليا' },
+  AT: { en: 'Austria', fa: 'اتریش', fr: 'Autriche', zh: '奥地利', ar: 'النمسا' },
+  NO: { en: 'Norway', fa: 'نروژ', fr: 'Norvège', zh: '挪威', ar: 'النرويج' },
+  IE: { en: 'Ireland', fa: 'ایرلند', fr: 'Irlande', zh: '爱尔兰', ar: 'أيرلندا' },
+  SE: { en: 'Sweden', fa: 'سوئد', fr: 'Suède', zh: '瑞典', ar: 'السويد' },
 };
 
 // Filled after ROUTES exists: Canada shows Nova Scotia's Peggy's Cove.

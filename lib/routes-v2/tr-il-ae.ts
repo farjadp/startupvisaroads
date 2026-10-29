@@ -4,6 +4,8 @@ import type { RouteV2 } from './types';
 // official government pages only. Page dates are in each source label.
 
 const CHECKED = '2026-10-15';
+/** Official-source re-check of the 27 Oct 2026 research (docs/research/app-v3). */
+const RECHECKED = '2026-10-27';
 
 export const ROUTES_TR_IL_AE: RouteV2[] = [
   // ───────────────────────────── TÜRKIYE ─────────────────────────────
@@ -546,6 +548,10 @@ export const ROUTES_TR_IL_AE: RouteV2[] = [
         weight: 3,
         scoreable: true,
         test: { field: 'endorsement', op: 'true' },
+        note: {
+          en: 'An Israeli body working with early-stage tech companies under an IIA benefit track, or a private accelerator with at least 3 years’ experience, that has an agreement with you.',
+          fa: 'نهادی اسرائیلی که در یکی از مسیرهای حمایتی سازمان نوآوری با شرکت‌های فناوری نوپا کار می‌کند، یا شتاب‌دهنده‌ی خصوصی با دست‌کم ۳ سال سابقه، که با شما قرارداد داشته باشد.',
+        },
       },
       {
         key: 'living-funds',
@@ -599,24 +605,29 @@ export const ROUTES_TR_IL_AE: RouteV2[] = [
     ],
     money: [],
     pr: {
-      en: 'No permanent-residence route. The B/2 permit lasts up to 2 years and is not a work permit; founders then move to the B/1 expert visa (salary at least 2 × the average wage), capped at 63 months cumulative.',
-      fa: 'مسیری به اقامت دائم ندارد. مجوز B/2 حداکثر دو سال است و اجازه‌ی کار نیست؛ سپس بنیان‌گذار باید به ویزای متخصص B/1 (حقوق دست‌کم دو برابر میانگین دستمزد) منتقل شود که سقف آن در مجموع ۶۳ ماه است.',
+      en: 'No permanent-residence route. The B/2 stay permit lasts up to 2 years; the next step is the B/1 high-tech expert visa, granted for up to 1 year at a time and up to 5 years in total.',
+      fa: 'مسیری به اقامت دائم ندارد. اجازه‌ی اقامت B/2 حداکثر ۲ سال است؛ گام بعدی ویزای متخصص فناوری پیشرفته (B/1) است که هر بار تا ۱ سال و در مجموع تا ۵ سال داده می‌شود.',
     },
     sources: [
       {
         url: 'https://innovationisrael.org.il/en/programs/tech-innovation-visa/',
-        checked: CHECKED,
+        checked: RECHECKED,
         label: 'Israel Innovation Authority, Innovation Visa (published 2026-05-18, modified 2026-06-21)',
       },
       {
-        url: 'https://www.gov.il/BlobFolder/policy/experimental_procedure_for_visas_for_entrepreneurs_from_abroad/he/5.3.0029_eng.pdf',
-        checked: CHECKED,
-        label: 'PIBA pilot procedure 5.3.0029 (2016-08-01)',
+        url: 'https://innovationisrael.org.il/wp-content/uploads/2026/05/נוהל-ויזת-יזם-זר-טכנולוגי.pdf',
+        checked: RECHECKED,
+        label: 'IIA procedure, Hebrew (approved by the IIA council 6 Nov 2023; uploaded 2026/05)',
+      },
+      {
+        url: 'https://innovationisrael.org.il/en/programs/visas-for-foreign-high-tech-experts-incentive-program/',
+        checked: RECHECKED,
+        label: 'Israel Innovation Authority, high-tech experts (B/1 up to 5 years)',
       },
     ],
-    verified: false,
+    verified: true,
     review:
-      'CONFLICT, unresolved: IIA says the procedure was approved in 2024, but gov.il still hosts only the 2016 pilot procedure 5.3.0029 (time-limited to 3 years; says B/2 is not a work permit). The 2024 PIBA procedure text was not found. Not encoded: living-funds amount (declaration only, no figure); processing time and fees (not published). No grant comes with approval.',
+      '27 Oct 2026: the IIA procedure PDF (approved by the IIA council 6 Nov 2023, uploaded 2026/05) is cited as the procedure in force; the IIA page still says "approved in 2024". pr rewritten to the IIA wording (B/2 up to two years; next step B/1 up to 5 years, IIA expert page); dropped "63 months" and "not a work permit", both from the 2016 PIBA pilot 5.3.0029, which could not be re-read and is no longer cited (the IIA page says the procedure facilitates "entry, stay, and work authorization"). Supporting-framework definition added from the procedure. Switched to verified: no money figure depends on an unread page. Nationality: no official page read mentions Iran; PIBA decides; no block set. Not encoded: living-funds amount (declaration only, no figure); processing time and fees (not published). No grant comes with approval.',
   },
   {
     key: 'il-expert-b1',
@@ -667,11 +678,15 @@ export const ROUTES_TR_IL_AE: RouteV2[] = [
       {
         key: 'visa-exempt-citizenship',
         label: {
-          en: 'Citizenship of a visa-exempt country (fast track)',
-          fa: 'تابعیت کشوری که از ویزا معاف است (مسیر سریع)',
+          en: 'Citizenship of a country exempt from Israel’s tourist visa (a condition, not a bonus)',
+          fa: 'تابعیت کشوری که شهروندانش برای سفر توریستی به اسرائیل ویزا نمی‌خواهند (شرط لازم، نه امتیاز اضافه)',
         },
-        weight: 2,
+        weight: 3,
         scoreable: false,
+        note: {
+          en: 'The IIA lists it among the criteria the expert must meet. Not scored until the visa-exempt country list can be read on an official page.',
+          fa: 'سازمان نوآوری این مورد را جزو شرایطی آورده که متخصص باید داشته باشد. تا وقتی فهرست کشورهای معاف از ویزا در یک صفحه‌ی رسمی خوانده نشود، امتیازدهی نمی‌شود.',
+        },
       },
     ],
     money: [
@@ -695,6 +710,12 @@ export const ROUTES_TR_IL_AE: RouteV2[] = [
       },
       source: 'https://innovationisrael.org.il/en/programs/visas-for-foreign-high-tech-experts-incentive-program/',
     },
+    fees: [
+      { label: { en: 'Application fee per expert (paid by the employer)', fa: 'هزینه‌ی درخواست برای هر متخصص (پرداخت با کارفرما)' }, amount: 1340, currency: 'ILS' },
+      { label: { en: 'Annual fee per expert, full year (paid by the employer)', fa: 'هزینه‌ی سالانه برای هر متخصص، یک سال کامل (پرداخت با کارفرما)' }, amount: 10680, currency: 'ILS' },
+      { label: { en: 'B/1 licence, per year', fa: 'مجوز B/1، سالانه' }, amount: 195, currency: 'ILS' },
+      { label: { en: 'Re-entry visa, per year', fa: 'ویزای ورود مجدد، سالانه' }, amount: 195, currency: 'ILS' },
+    ],
     pr: {
       en: 'No permanent-residence route. Up to 1 year, extendable yearly up to 5 years; the 2016 PIBA procedure gives 63 months in total.',
       fa: 'مسیری به اقامت دائم ندارد. حداکثر یک سال است و هر سال تا پنج سال تمدید می‌شود؛ دستورالعمل ۲۰۱۶ اداره‌ی جمعیت و مهاجرت در مجموع ۶۳ ماه می‌دهد.',
@@ -704,6 +725,11 @@ export const ROUTES_TR_IL_AE: RouteV2[] = [
         url: 'https://innovationisrael.org.il/en/programs/visas-for-foreign-high-tech-experts-incentive-program/',
         checked: CHECKED,
         label: 'Israel Innovation Authority, high-tech experts programme (modified 2025-10-21)',
+      },
+      {
+        url: 'https://www.gov.il/he/service/working-permit-for-foreign-workers-calculator',
+        checked: RECHECKED,
+        label: 'PIBA expert fee calculator (updated 14.04.2025; fees updated each 1 January)',
       },
       {
         url: 'https://www.gov.il/BlobFolder/policy/request_for_working_permit_expert_foreign_workers_procedure/en/5.3.0041en.pdf',
@@ -718,7 +744,7 @@ export const ROUTES_TR_IL_AE: RouteV2[] = [
     ],
     verified: false,
     review:
-      'Included as entrepreneur because the notes position B/1 as the founder\'s required next step after the Innovation Visa (B/2); it is an employer-sponsored expert visa, so the founder\'s own company would need to be the IIA-authorised employer. Salary figure ILS 27,132 is calculated (2 × ILS 13,566), not published by PIBA, so verified=false. Duration conflict: IIA says up to 5 years; 2016 PIBA procedure says 63 months. Not encoded: fees (not on pages read).',
+      'Included as entrepreneur because the notes position B/1 as the founder\'s required next step after the Innovation Visa (B/2); it is an employer-sponsored expert visa, so the founder\'s own company would need to be the IIA-authorised employer. Salary figure ILS 27,132 is calculated (2 × ILS 13,566), not published by PIBA, so verified=false. Duration conflict: IIA says up to 5 years; 2016 PIBA procedure says 63 months (not re-read). 27 Oct 2026: visa-exempt citizenship corrected from a weight-2 "fast track" to a weight-3 condition (IIA lists it among the criteria the expert must meet), still unscored because the MFA visa-exemption table returned no results; fees added from the PIBA calculator (application 1,340 and annual 10,680 per expert paid by the employer, the annual fee is 1/200 per day under 6 months; B/1 licence and re-entry visa 195 a year each; page dated 14.04.2025, updated each 1 January). Salary: PIBA gives no amount; BTL lists 13,566 (art. 1) and 13,769 (art. 2), and which one PIBA uses is not stated (2 × 13,769 = 27,538). Spouse gets a work visa (IIA). Stays unverified.',
   },
   {
     key: 'il-student',
@@ -1017,6 +1043,7 @@ export const ROUTES_TR_IL_AE: RouteV2[] = [
       { label: { en: 'Innovation Dirham', fa: 'درهم نوآوری' }, amount: 10, currency: 'AED' },
       { label: { en: 'In-country application', fa: 'درخواست از داخل کشور' }, amount: 500, currency: 'AED' },
       { label: { en: 'Delivery', fa: 'ارسال' }, amount: 20, currency: 'AED' },
+      { label: { en: 'Each year beyond 2 years', fa: 'به‌ازای هر سال بیش از دو سال' }, amount: 100, currency: 'AED' },
     ],
     pr: {
       en: 'No permanent residence. A 10-year renewable residence (u.ae says 5 years for entrepreneurs).',
@@ -1036,7 +1063,7 @@ export const ROUTES_TR_IL_AE: RouteV2[] = [
     ],
     verified: false,
     review:
-      'CONFLICT, unresolved: incubator route. ICP = standalone, no revenue; GDRFAD = AED 2,000,000 income required. The 2018 decree AED 500,000 project value is outdated and on no current page; do not use it. TERM CONFLICT: ICP and GDRFAD say 10 years, u.ae says 5 for entrepreneurs; encoded as 10. Options are one anyOf criterion (revenue OR endorsement); the AED 7M sold-business option is not testable and is only in the note, so a founder qualifying that way will score low. Family = startup because this is the official UAE startup route. Abu Dhabi startup programmes (Hub71, ADIO) not checked: no page on allowed domains. u.ae is cited in the text but not in the notes\' source table for this route, so it is not listed as a source here.',
+      '27 Oct 2026: added the missing AED 100 per year beyond two years fee line (GDRFAD entrepreneurs page); GDRFAD names "Dubai Future Foundation" in the conditions but "Dubai Future Authority" in the documents. CONFLICT, unresolved: incubator route. ICP = standalone, no revenue; GDRFAD = AED 2,000,000 income required. The 2018 decree AED 500,000 project value is outdated and on no current page; do not use it. TERM CONFLICT: ICP and GDRFAD say 10 years, u.ae says 5 for entrepreneurs; encoded as 10. Options are one anyOf criterion (revenue OR endorsement); the AED 7M sold-business option is not testable and is only in the note, so a founder qualifying that way will score low. Family = startup because this is the official UAE startup route. Abu Dhabi startup programmes (Hub71, ADIO) not checked: no page on allowed domains. u.ae is cited in the text but not in the notes\' source table for this route, so it is not listed as a source here.',
   },
   {
     key: 'ae-golden-talent',
@@ -1156,8 +1183,8 @@ export const ROUTES_TR_IL_AE: RouteV2[] = [
     ],
     processing: {
       text: {
-        en: '5 days, taken from comparable GDRFAD golden services; not published separately.',
-        fa: '۵ روز، بر پایه‌ی خدمات مشابه ویزای طلایی GDRFAD؛ به‌طور جداگانه منتشر نشده است.',
+        en: '5 days (GDRFAD talents page).',
+        fa: '۵ روز (صفحه‌ی استعدادهای GDRFAD).',
       },
       source: 'https://www.gdrfad.gov.ae/en/services/2e7da546-f815-11eb-0320-0050569629e8',
     },
@@ -1165,6 +1192,9 @@ export const ROUTES_TR_IL_AE: RouteV2[] = [
       { label: { en: 'Permit', fa: 'صدور مجوز' }, amount: 1100, currency: 'AED' },
       { label: { en: 'Knowledge Dirham', fa: 'درهم دانش' }, amount: 10, currency: 'AED' },
       { label: { en: 'Innovation Dirham', fa: 'درهم نوآوری' }, amount: 10, currency: 'AED' },
+      { label: { en: 'In-country application', fa: 'درخواست از داخل کشور' }, amount: 500, currency: 'AED' },
+      { label: { en: 'Delivery', fa: 'ارسال' }, amount: 20, currency: 'AED' },
+      { label: { en: 'Each year beyond 2 years', fa: 'به‌ازای هر سال بیش از دو سال' }, amount: 100, currency: 'AED' },
     ],
     pr: {
       en: 'No permanent residence. A 10-year renewable residence.',
@@ -1178,13 +1208,13 @@ export const ROUTES_TR_IL_AE: RouteV2[] = [
       },
       {
         url: 'https://www.gdrfad.gov.ae/en/services/2e7da546-f815-11eb-0320-0050569629e8',
-        checked: CHECKED,
-        label: 'GDRFAD Golden Residence, talents (footer date only; not read in full)',
+        checked: RECHECKED,
+        label: 'GDRFAD Golden Residence, talents (footer date only)',
       },
     ],
     verified: true,
     review:
-      'GDRFAD page not read in full. Processing time (5 days) is inferred from comparable GDRFAD golden services, not published for this category. Degree, salary, MOHRE level and contract apply to the specialist category only; 5-year experience applies to culture and arts only; the app should not combine categories into one score. TERM: encoded as 10 years per ICP/GDRFAD (u.ae lists 5 years for some Golden categories).',
+      '27 Oct 2026: GDRFAD talents page read in full: 5.0 days is published (no longer inferred), and the fee list adds AED 500 in-country, AED 20 delivery and AED 100 per year beyond two years (added). That page covers culture/arts, innovators, athletes and digital talent only (no salary category); renewal = renew the nomination letter. Degree, salary, MOHRE level and contract apply to the specialist category only; 5-year experience applies to culture and arts only; the app should not combine categories into one score. TERM: encoded as 10 years per ICP/GDRFAD (u.ae lists 5 years for some Golden categories).',
   },
   {
     key: 'ae-green-freelancer',
@@ -1200,8 +1230,8 @@ export const ROUTES_TR_IL_AE: RouteV2[] = [
     },
     status: 'open',
     fact: {
-      en: 'You need AED 360,000 of freelance income and a degree; whether that income is per year or over two years combined is unclear.',
-      fa: 'به ۳۶۰٬۰۰۰ درهم درآمد فریلنسری و مدرک دانشگاهی نیاز دارید؛ روشن نیست این درآمد سالانه است یا مجموع دو سال.',
+      en: 'You need a degree and freelance income of at least AED 360,000 in each of the previous two years, or proof of financial solvency for the whole stay.',
+      fa: 'به مدرک دانشگاهی و درآمد فریلنسری دست‌کم ۳۶۰٬۰۰۰ درهم در هر یک از دو سال گذشته نیاز دارید، یا باید توانایی مالی برای کل دوره‌ی اقامت را نشان دهید.',
     },
     criteria: [
       {
@@ -1221,15 +1251,15 @@ export const ROUTES_TR_IL_AE: RouteV2[] = [
       {
         key: 'income',
         label: {
-          en: 'Freelance income of at least AED 360,000 over the previous 2 years',
-          fa: 'درآمد فریلنسری دست‌کم ۳۶۰٬۰۰۰ درهم در دو سال گذشته',
+          en: 'Freelance income of at least AED 360,000 in each of the previous 2 years',
+          fa: 'درآمد فریلنسری دست‌کم ۳۶۰٬۰۰۰ درهم در هر یک از دو سال گذشته',
         },
         weight: 3,
         scoreable: true,
         test: { field: 'income', op: 'gte', value: 360000, currency: 'AED' },
         note: {
-          en: 'Ambiguous: ICP says the annual income during the previous two years must be at least AED 360,000, without saying whether that is each year or both combined. The test uses the stricter, per-year reading. GDRFAD also accepts financial solvency throughout the stay instead.',
-          fa: 'مبهم است: ICP می‌گوید درآمد سالانه در دو سال گذشته باید دست‌کم ۳۶۰٬۰۰۰ درهم باشد، اما روشن نمی‌کند هر سال یا مجموع دو سال. آزمون برداشت سخت‌گیرانه‌تر، یعنی هر سال، را به کار می‌برد. GDRFAD توانایی مالی در طول اقامت را نیز به‌جای آن می‌پذیرد.',
+          en: 'Per year: ICP asks for annual freelance income of at least AED 360,000 in each of the previous two years. ICP and GDRFAD also accept proof of stable income or financial solvency throughout the stay instead.',
+          fa: 'سالانه: ICP درآمد فریلنسری دست‌کم ۳۶۰٬۰۰۰ درهم در هر یک از دو سال گذشته را می‌خواهد. ICP و GDRFAD به‌جای آن مدرک درآمد پایدار یا توانایی مالی در طول اقامت را هم می‌پذیرند.',
         },
       },
       {
@@ -1264,8 +1294,8 @@ export const ROUTES_TR_IL_AE: RouteV2[] = [
       {
         key: 'income',
         label: {
-          en: 'Freelance income over the past 2 years (per year or in total: unclear)',
-          fa: 'درآمد فریلنسری در دو سال گذشته (سالانه یا مجموع: نامشخص)',
+          en: 'Freelance income, in each of the past 2 years',
+          fa: 'درآمد فریلنسری، در هر یک از دو سال گذشته',
         },
         amount: 360000,
         currency: 'AED',
@@ -1288,31 +1318,26 @@ export const ROUTES_TR_IL_AE: RouteV2[] = [
         amount: 100,
         currency: 'AED',
       },
-      {
-        label: { en: 'Entry visa (plus 5% VAT)', fa: 'ویزای ورود (به‌علاوه‌ی ۵ درصد مالیات بر ارزش افزوده)' },
-        amount: 200,
-        currency: 'AED',
-      },
     ],
     pr: {
-      en: 'No permanent residence. A 5-year renewable residence that allows family sponsorship.',
-      fa: 'اقامت دائم وجود ندارد. اقامت پنج‌ساله‌ی قابل تمدید با امکان اسپانسری خانواده.',
+      en: 'No permanent residence. A 5-year renewable residence that allows family sponsorship, with a 180-day grace period after expiry or cancellation.',
+      fa: 'اقامت دائم وجود ندارد. اقامت پنج‌ساله‌ی قابل تمدید با امکان اسپانسری خانواده، و ۱۸۰ روز مهلت پس از پایان اعتبار یا لغو اقامت.',
     },
     sources: [
       {
         url: 'https://icp.gov.ae/en/services/uae-green-residency/',
-        checked: CHECKED,
+        checked: RECHECKED,
         label: 'ICP Green Residency (body dated 2026-09-12)',
       },
       {
         url: 'https://gdrfad.gov.ae/en/services/f52024d1-b812-11ed-5210-4cd98f768936',
-        checked: CHECKED,
+        checked: RECHECKED,
         label: 'GDRFAD Green Residence, freelancers (footer date only)',
       },
     ],
-    verified: false,
+    verified: true,
     review:
-      'AMBIGUOUS, unresolved: AED 360,000 income. ICP: "the annual income ... during the previous two years must not be less than AED 360,000" — each year or both years combined is unclear (combined would mean AED 180,000 a year). Encoded per year (stricter); money basis set to year. GDRFAD also accepts financial solvency for the stay as an alternative. Specialised diploma is not a profile degree value.',
+      '27 Oct 2026: income ambiguity resolved. ICP now reads "Annual freelance income in each of the previous two years of at least AED 360,000" and GDRFAD "for the two preceding years should not be less than 360,000", so per year, as encoded. Removed the AED 200 + 5% VAT entry-visa fee: it is no longer on the GDRFAD freelancer page. Added the 180-day grace period (GDRFAD). Switched to verified. MOHRE freelance-permit fee and documents still unread (no MOHRE page found). Specialised diploma is not a profile degree value.',
   },
   {
     key: 'ae-student',

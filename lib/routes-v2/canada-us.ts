@@ -110,21 +110,39 @@ const US_TRAVEL_BAN: Criterion = {
   weight: 3,
   scoreable: false,
   note: {
-    en: 'From 1 Jan 2026 immigrant and non-immigrant visas are suspended for Iranian nationals; narrow exceptions only (e.g. dual nationals on a non-listed passport). Evaluate this first.',
-    fa: 'از ۱ ژانویهٔ ۲۰۲۶ صدور ویزای مهاجرتی و غیرمهاجرتی برای اتباع ایران متوقف است؛ تنها استثناهای محدود (مثلاً دوتابعیتی‌ها با گذرنامهٔ کشور غیرمشمول). این مورد را پیش از همه بررسی کنید.',
+    en: 'From 1 Jan 2026 the entry of Iranian nationals as immigrants and non-immigrants is fully suspended for those who were outside the US without a valid visa on that date. Exceptions include green-card holders, dual nationals travelling on a non-listed passport, and immigrant visas for persecuted religious and ethnic minorities from Iran; case-by-case national-interest exceptions also exist. Evaluate this first.',
+    fa: 'از ۱ ژانویهٔ ۲۰۲۶ ورود اتباع ایران به‌عنوان مهاجر یا غیرمهاجر، برای کسانی که در آن تاریخ بیرون از آمریکا بودند و ویزای معتبر نداشتند، به‌طور کامل متوقف است. از جمله استثناها: دارندگان گرین کارت، دوتابعیتی‌هایی که با گذرنامهٔ کشوری غیرمشمول سفر می‌کنند، و ویزای مهاجرتی برای اقلیت‌های دینی و قومی که در ایران آزار می‌بینند؛ استثنای موردی به دلیل منافع ملی هم وجود دارد. این مورد را پیش از همه بررسی کنید.',
   },
+};
+
+/** IER is parole, which the proclamation does not name: same block, worded as an entry restriction. */
+const US_TRAVEL_BAN_PAROLE: Criterion = {
+  ...US_TRAVEL_BAN,
+  note: {
+    en: 'Proclamation 10998 (from 1 Jan 2026) suspends the entry of Iranian nationals as immigrants and non-immigrants if they were outside the US without a valid visa on that date. Parole is neither, and the text does not say whether it bars entrepreneur parole; entry restrictions apply and CBP and USCIS keep their discretion. Exceptions include green-card holders and dual nationals on a non-listed passport. Evaluate this first.',
+    fa: 'اعلامیهٔ ۱۰۹۹۸ (از ۱ ژانویهٔ ۲۰۲۶) ورود اتباع ایران را به‌عنوان مهاجر یا غیرمهاجر، اگر در آن تاریخ بیرون از آمریکا بوده و ویزای معتبر نداشته‌اند، متوقف کرده است. پارول هیچ‌کدام از این دو نیست و متن اعلامیه روشن نمی‌کند که پارول کارآفرین را هم دربر می‌گیرد یا نه؛ محدودیت ورود برقرار است و CBP و USCIS اختیار رد دارند. از جمله استثناها: دارندگان گرین کارت و دوتابعیتی‌هایی که با گذرنامهٔ کشوری غیرمشمول سفر می‌کنند. این مورد را پیش از همه بررسی کنید.',
+  },
+};
+
+const US_BAN_REVIEW =
+  'Travel-ban note reworded 27 Oct 2026 from the proclamation text (govinfo, FR Doc 2025-23570, 90 FR 59717): it suspends entry, not visas, only for nationals outside the US without a valid visa on 1 Jan 2026 (Sec. 6(a)); exceptions in Sec. 6(b). Block kept: the app cannot see where the user is.';
+
+const DOS_FEES_SOURCE: Source = {
+  url: 'https://www.ecfr.gov/current/title-22/chapter-I/subchapter-B/part-22/section-22.1',
+  checked: '2026-10-27',
+  label: 'eCFR 22 CFR 22.1, schedule of consular fees',
 };
 
 const USCIS_FEES_SOURCE: Source = {
   url: 'https://www.uscis.gov/g-1055',
-  checked: '2026-10-15',
-  label: 'USCIS Form G-1055 (edition 10/07/26)',
+  checked: '2026-10-27',
+  label: 'USCIS Form G-1055 (edition 10/16/26)',
 };
 
 const USCIS_PREMIUM_SOURCE = 'https://www.uscis.gov/forms/all-forms/how-do-i-request-premium-processing';
 
 const USCIS_FEE_REVIEW =
-  'USCIS fees change 16 Oct 2026 (FY 2027 inflation adjustment to H.R. 1 fees): re-read G-1055 after that date. USCIS normal processing times not captured (Cloudflare); only premium clocks are official.';
+  'G-1055 re-read 27 Oct 2026 (edition 10/16/26): the 16 Oct change touched I-131, I-589, I-765, I-821 and I-941 only; I-140, I-485, I-907 and I-129 unchanged. USCIS normal processing times not captured (Cloudflare); only premium clocks are official.';
 
 const I140_SELF_FEES = [
   { label: { en: 'I-140 (paper; 665 online)', fa: 'فرم I-140 (کاغذی؛ آنلاین ۶۶۵)' }, amount: 715, currency: 'USD' as const },
@@ -302,8 +320,21 @@ export const ROUTES_CANADA_US: RouteV2[] = [
         weight: 3,
         scoreable: false,
         note: {
-          en: 'Not required for FSW or CEC. Job-offer CRS points were removed on 25 Mar 2025.',
-          fa: 'برای FSW و CEC لازم نیست. امتیاز CRS پیشنهاد کار از ۲۵ مارس ۲۰۲۵ حذف شده است.',
+          en: 'Not required for FSW or CEC.',
+          fa: 'برای FSW و CEC لازم نیست.',
+        },
+      },
+      {
+        key: 'job-offer-points',
+        label: {
+          en: 'From 3 Nov 2026: CRS points for a job offer in a high-wage occupation',
+          fa: 'از ۳ نوامبر ۲۰۲۶: امتیاز CRS برای پیشنهاد کار در شغل پردرآمد',
+        },
+        weight: 2,
+        scoreable: false,
+        note: {
+          en: 'New Labour Market Integration factor: 50, 70 or 100 points for a job offer in a high-wage NOC paying at least 1.3×, 1.5× or 2× the average median wage, no LMIA needed; or up to 150 points (140 with a spouse) for Canadian work experience. The higher of the two counts. Rounds may pause up to 2 weeks while scores are recalculated.',
+          fa: 'عامل تازهٔ «ادغام در بازار کار»: برای پیشنهاد کار در شغلی پردرآمد با دستمزدی دست‌کم ۱٫۳، ۱٫۵ یا ۲ برابر میانگین دستمزد میانه، به‌ترتیب ۵۰، ۷۰ یا ۱۰۰ امتیاز، بدون نیاز به LMIA؛ یا تا ۱۵۰ امتیاز (با همسر ۱۴۰) برای سابقهٔ کار در کانادا. هر کدام بیشتر باشد حساب می‌شود. قرعه‌ها ممکن است تا دو هفته برای محاسبهٔ دوبارهٔ امتیازها متوقف شوند.',
         },
       },
       {
@@ -380,13 +411,14 @@ export const ROUTES_CANADA_US: RouteV2[] = [
       { url: 'https://www.canada.ca/en/immigration-refugees-citizenship/services/immigrate-canada/express-entry/check-score/crs-criteria.html', checked: '2026-10-15', label: 'CRS criteria (page date 2026-06-22)' },
       { url: 'https://www.canada.ca/en/immigration-refugees-citizenship/services/immigrate-canada/express-entry/documents/proof-funds.html', checked: '2026-10-15', label: 'Proof of funds (page date 2026-06-22)' },
       { url: 'https://www.canada.ca/content/dam/ircc/documents/json/ee_rounds_123_en.json', checked: '2026-10-15', label: 'Express Entry rounds feed' },
+      { url: 'https://www.canada.ca/en/immigration-refugees-citizenship/services/immigrate-canada/express-entry/changes.html', checked: '2026-10-27', label: 'Express Entry changes: Labour Market Integration factor from 3 Nov 2026' },
       IRCC_FEE_SOURCE,
       { url: 'https://www.canada.ca/en/immigration-refugees-citizenship/corporate/mandate/service-declaration/service-standards.html', checked: '2026-10-15', label: 'Service standards (page date 2026-07-16)' },
       { url: 'https://www.canada.ca/en/immigration-refugees-citizenship/corporate/transparency/committees/cimm-nov-18-2025/processing-times-and-service-delivery.html', checked: '2026-10-15', label: 'CIMM 18 Nov 2025 processing note' },
     ],
     verified: true,
     review:
-      'Draw cut-offs move every round: refresh from ee_rounds_123_en.json (cache server-side; ~690 KB, flaky HTTP/2). Label FSW-only profiles "no recent round", never compare them to the CEC cut-off. Settlement-funds table dated 7 Jul 2025; 2026 LICO update overdue, re-check monthly. Scoreable tests use FSW thresholds; CEC/FST variants are in notes only.',
+      'Draw cut-offs move every round: refresh from ee_rounds_123_en.json (cache server-side; ~690 KB, flaky HTTP/2). Label FSW-only profiles "no recent round", never compare them to the CEC cut-off. Settlement-funds table dated 7 Jul 2025; 2026 LICO update overdue, re-check monthly. Scoreable tests use FSW thresholds; CEC/FST variants are in notes only. 27 Oct 2026: the old note "job-offer CRS points removed 25 Mar 2025" was outdated; added the job-offer-points criterion for the Labour Market Integration factor from 3 Nov 2026 (express-entry/changes.html). Unscored: the profile cannot tell a high-wage NOC.',
   },
 
   // CA-3: PNP entrepreneur streams -----------------------------------------
@@ -584,6 +616,10 @@ export const ROUTES_CANADA_US: RouteV2[] = [
         label: { en: 'Create at least 1 full-time job for a citizen or PR', fa: 'ایجاد دست‌کم یک شغل تمام‌وقت برای شهروند یا مقیم دائم' },
         weight: 2,
         scoreable: false,
+        note: {
+          en: 'At least 30 hours a week, for a Canadian citizen or PR living in New Brunswick who is not a family member.',
+          fa: 'دست‌کم ۳۰ ساعت در هفته، برای شهروند یا مقیم دائم کانادا که در نیوبرانزویک زندگی می‌کند و از اعضای خانواده نیست.',
+        },
       },
       {
         key: 'points',
@@ -594,11 +630,15 @@ export const ROUTES_CANADA_US: RouteV2[] = [
       {
         key: 'operation',
         label: {
-          en: 'Operate the business at least 6 consecutive months (and 1 year within 2 years of arrival)',
-          fa: 'ادارهٔ کسب‌وکار دست‌کم شش ماه پیوسته (و یک سال در دو سال نخست پس از ورود)',
+          en: 'Open the business within 9 months of arrival, then operate it 6 consecutive months, all within 24 months of arrival',
+          fa: 'راه‌اندازی کسب‌وکار ظرف ۹ ماه پس از ورود و سپس ادارهٔ آن به مدت شش ماه پیوسته، همه در ۲۴ ماه نخست پس از ورود',
         },
         weight: 1,
         scoreable: false,
+        note: {
+          en: 'Report your arrival within 1 month. The Business Establishment Period is 24 months from arrival.',
+          fa: 'ورودتان را ظرف یک ماه اطلاع دهید. «دورهٔ استقرار کسب‌وکار» ۲۴ ماه از تاریخ ورود است.',
+        },
       },
     ],
     money: [
@@ -630,11 +670,11 @@ export const ROUTES_CANADA_US: RouteV2[] = [
     ],
     pr: PNP_PR,
     sources: [
-      { url: 'https://www.gnb.ca/en/topic/family-home-community/immigration/provincial-nominee-program/business-immigration-stream.html', checked: '2026-10-12', label: 'NB Business Immigration Stream' },
-      { url: 'https://www.gnb.ca/content/dam/GNB3/t/fhc-fmc/immigration/docs/nb-business-immigration-stream-guide.pdf', checked: '2026-10-12', label: 'NB Business Immigration Stream guide (Mar 2025)' },
+      { url: 'https://www.gnb.ca/en/topic/family-home-community/immigration/provincial-nominee-program/business-immigration-stream.html', checked: '2026-10-27', label: 'NB Business Immigration Stream' },
+      { url: 'https://www.gnb.ca/content/dam/GNB3/t/fhc-fmc/immigration/docs/nb-business-immigration-stream-guide.pdf', checked: '2026-10-27', label: 'NB Business Immigration Stream guide' },
     ],
     verified: true,
-    review: 'Long list of excluded business types not encoded. Provincial processing time not published.',
+    review: 'Long list of excluded business types not encoded. Provincial processing time not published. 27 Oct 2026: operation rule corrected per the NB guide (open within 9 months of arrival, 6 consecutive months, within the 24-month Business Establishment Period); the old "1 year within 2 years" rule is not in the guide. Added the 30 h/week job definition.',
   },
   {
     key: 'ca-pnp-alberta',
@@ -647,8 +687,8 @@ export const ROUTES_CANADA_US: RouteV2[] = [
     },
     status: 'open',
     fact: {
-      en: 'You need a rural community endorsement before you can enter the pool. The 2026 entrepreneur allocation is 60 nominations; 36 were issued by 7 Oct.',
-      fa: 'پیش از ورود به استخر باید تأییدیهٔ یک جامعهٔ روستایی را بگیرید. سهمیهٔ کارآفرینی ۲۰۲۶ شصت نامزدی است که تا ۷ اکتبر ۳۶ مورد آن صادر شده است.',
+      en: 'You need a rural community endorsement before you can enter the pool. The 2026 entrepreneur allocation is 60 nominations; 37 were issued by 21 Oct.',
+      fa: 'پیش از ورود به استخر باید تأییدیهٔ یک جامعهٔ روستایی را بگیرید. سهمیهٔ کارآفرینی ۲۰۲۶ شصت نامزدی است که تا ۲۱ اکتبر ۳۷ مورد آن صادر شده است.',
     },
     criteria: [
       {
@@ -714,8 +754,8 @@ export const ROUTES_CANADA_US: RouteV2[] = [
         weight: 2,
         scoreable: false,
         note: {
-          en: 'No entrepreneur draws or scores are published. Allocation: 60 nominations in 2026, 36 issued by 7 Oct.',
-          fa: 'قرعه یا امتیاز کارآفرینی منتشر نمی‌شود. سهمیه: ۶۰ نامزدی در ۲۰۲۶ که ۳۶ مورد تا ۷ اکتبر صادر شده است.',
+          en: 'Points grid out of 175; no entrepreneur draws or cut-off scores are published. Allocation (all entrepreneur streams): 60 nominations in 2026, 37 issued and 23 left at 21 Oct, 213 in process.',
+          fa: 'جدول امتیاز از ۱۷۵؛ قرعه یا حد نصاب کارآفرینی منتشر نمی‌شود. سهمیه (همهٔ مسیرهای کارآفرینی): ۶۰ نامزدی در ۲۰۲۶؛ تا ۲۱ اکتبر ۳۷ مورد صادر شده، ۲۳ مورد باقی است و ۲۱۳ پرونده در جریان است.',
         },
       },
       {
@@ -755,12 +795,12 @@ export const ROUTES_CANADA_US: RouteV2[] = [
       fa: 'مجوز کار ← ادارهٔ کسب‌وکار ← نامزدی ← درخواست کاغذی اقامت دائم در IRCC (ظرف شش ماه پس از نامزدی).',
     },
     sources: [
-      { url: 'https://www.alberta.ca/aaip-rural-entrepreneur-stream-eligibility', checked: '2026-10-12', label: 'AAIP Rural Entrepreneur eligibility' },
-      { url: 'https://www.alberta.ca/aaip-processing-information', checked: '2026-10-12', label: 'AAIP processing information' },
+      { url: 'https://www.alberta.ca/aaip-rural-entrepreneur-stream-eligibility', checked: '2026-10-27', label: 'AAIP Rural Entrepreneur eligibility' },
+      { url: 'https://www.alberta.ca/aaip-processing-information', checked: '2026-10-27', label: 'AAIP processing information (page updated 2026-10-21)' },
     ],
     verified: true,
     review:
-      'Allocation count (36 of 60 by 7 Oct) moves monthly. No age rule published. Notes suggest separate v2 rows for Alberta Graduate Entrepreneur and Foreign Graduate Entrepreneur (not encoded here).',
+      'Allocation count moves monthly: 27 Oct 2026 updated from 36 of 60 (7 Oct) to 37 of 60 (AAIP page updated 21 Oct), and added the 175-point maximum from the eligibility page. No age rule published. Notes suggest separate v2 rows for Alberta Graduate Entrepreneur and Foreign Graduate Entrepreneur (not encoded here).',
   },
   {
     key: 'ca-pnp-manitoba',
@@ -1155,8 +1195,8 @@ export const ROUTES_CANADA_US: RouteV2[] = [
     },
     status: 'open',
     fact: {
-      en: 'Degree gate first (a master’s, or a bachelor’s plus 5 years), then whether the national importance of your work can be shown beyond one employer. No job offer needed. For Iranian nationals, the visa ban decides it before any of this.',
-      fa: 'نخست شرط مدرک (کارشناسی ارشد، یا کارشناسی همراه با پنج سال سابقه)، سپس اینکه بتوان اهمیت ملی کار شما را فراتر از سود یک کارفرما نشان داد. پیشنهاد کار لازم نیست. برای اتباع ایران، ممنوعیت ویزا پیش از همهٔ این‌ها تعیین‌کننده است.',
+      en: 'Degree gate first (a master’s, or a bachelor’s plus 5 years), then whether the national importance of your work can be shown beyond one employer. No job offer needed. For Iranian nationals, the entry suspension under Proclamation 10998 decides it before any of this.',
+      fa: 'نخست شرط مدرک (کارشناسی ارشد، یا کارشناسی همراه با پنج سال سابقه)، سپس اینکه بتوان اهمیت ملی کار شما را فراتر از سود یک کارفرما نشان داد. پیشنهاد کار لازم نیست. برای اتباع ایران، توقف ورود طبق اعلامیهٔ ۱۰۹۹۸ پیش از همهٔ این‌ها تعیین‌کننده است.',
     },
     criteria: [
       US_TRAVEL_BAN,
@@ -1201,8 +1241,8 @@ export const ROUTES_CANADA_US: RouteV2[] = [
     money: [],
     processing: {
       text: {
-        en: 'Premium processing: 45 business days for the I-140. Normal times not captured. After approval the case waits on the Visa Bulletin: EB-2 Rest of World final action date 1 Jan 2025 (October 2026, unverified).',
-        fa: 'رسیدگی ویژه: ۴۵ روز کاری برای I-140. زمان عادی در دسترس نبود. پس از تأیید، پرونده منتظر بولتن ویزا می‌ماند: تاریخ اقدام نهایی EB-2 برای سایر کشورها ۱ ژانویهٔ ۲۰۲۵ (اکتبر ۲۰۲۶، تأییدنشده).',
+        en: 'Premium processing: 45 business days for the I-140. Normal times not captured. After approval the case waits until your priority date is current in the monthly Visa Bulletin (travel.state.gov).',
+        fa: 'رسیدگی ویژه: ۴۵ روز کاری برای I-140. زمان عادی در دسترس نبود. پس از تأیید، پرونده تا جاری شدن تاریخ اولویت شما در بولتن ماهانهٔ ویزا (travel.state.gov) منتظر می‌ماند.',
       },
       source: USCIS_PREMIUM_SOURCE,
     },
@@ -1212,16 +1252,15 @@ export const ROUTES_CANADA_US: RouteV2[] = [
       fa: 'I-140 تأییدشده به‌همراه تاریخ اولویت جاری به گرین کارت می‌رسد (I-485 در آمریکا یا ویزای مهاجرتی در خارج).',
     },
     sources: [
-      { url: 'https://www.uscis.gov/working-in-the-united-states/permanent-workers/employment-based-immigration-second-preference-eb-2', checked: '2026-10-15', label: 'USCIS EB-2 (last updated 01/15/2025)' },
+      { url: 'https://www.uscis.gov/working-in-the-united-states/permanent-workers/employment-based-immigration-second-preference-eb-2', checked: '2026-10-27', label: 'USCIS EB-2 (last updated 01/15/2025)' },
       { url: 'https://www.uscis.gov/policy-manual/volume-6-part-f-chapter-5', checked: '2026-10-15', label: 'USCIS Policy Manual Vol. 6, Part F, Ch. 5' },
       USCIS_FEES_SOURCE,
-      { url: USCIS_PREMIUM_SOURCE, checked: '2026-10-15', label: 'USCIS premium processing' },
-      { url: 'https://travel.state.gov/content/travel/en/legal/visa-law0/visa-bulletin/2026/visa-bulletin-for-october-2026.html', checked: '2026-10-15', label: 'Visa Bulletin October 2026 (returned 403; figures from secondary sources)' },
+      { url: USCIS_PREMIUM_SOURCE, checked: '2026-10-27', label: 'USCIS premium processing (updated 03/23/2026)' },
     ],
-    verified: false,
+    verified: true,
     blockedCitizenships: { codes: ['IR'], reason: US_TRAVEL_BAN.note! },
     review:
-      `Visa Bulletin (EB-2 ROW FAD retrogressed from Current to 1 Jan 2025; DFF 15 Mar 2026) is secondary: travel.state.gov returned 403, read in a browser. ${USCIS_FEE_REVIEW} Degree test covers master/PhD only; bachelor + 5 years and exceptional ability are notes.`,
+      `27 Oct 2026: Visa Bulletin figures removed from processing and sources (travel.state.gov blocked; the date was secondary), and the route switched to verified: degree test, prongs, 45-day premium clock and fees all read on USCIS pages. ${US_BAN_REVIEW} ${USCIS_FEE_REVIEW} Degree test covers master/PhD only; bachelor + 5 years and exceptional ability are notes.`,
   },
 
   // US-2 ------------------------------------------------------------------
@@ -1276,21 +1315,21 @@ export const ROUTES_CANADA_US: RouteV2[] = [
     money: [],
     processing: {
       text: {
-        en: 'Premium processing: 15 business days for the I-140. Normal times not captured. EB-1 Rest of World is current or near current (unverified); India and China are backlogged.',
-        fa: 'رسیدگی ویژه: ۱۵ روز کاری برای I-140. زمان عادی در دسترس نبود. EB-1 برای سایر کشورها جاری یا نزدیک به جاری است (تأییدنشده)؛ هند و چین صف دارند.',
+        en: 'Premium processing: 15 business days for the I-140. Normal times not captured. The green card then depends on your priority date in the monthly Visa Bulletin (travel.state.gov).',
+        fa: 'رسیدگی ویژه: ۱۵ روز کاری برای I-140. زمان عادی در دسترس نبود. سپس گرین کارت به تاریخ اولویت شما در بولتن ماهانهٔ ویزا (travel.state.gov) بستگی دارد.',
       },
       source: USCIS_PREMIUM_SOURCE,
     },
     fees: I140_SELF_FEES,
     pr: { en: 'Direct green card.', fa: 'گرین کارت مستقیم.' },
     sources: [
-      { url: 'https://www.uscis.gov/working-in-the-united-states/permanent-workers/employment-based-immigration-first-preference-eb-1', checked: '2026-10-15', label: 'USCIS EB-1 (last updated 01/24/2025)' },
+      { url: 'https://www.uscis.gov/working-in-the-united-states/permanent-workers/employment-based-immigration-first-preference-eb-1', checked: '2026-10-27', label: 'USCIS EB-1 (last updated 01/24/2025)' },
       USCIS_FEES_SOURCE,
-      { url: USCIS_PREMIUM_SOURCE, checked: '2026-10-15', label: 'USCIS premium processing' },
+      { url: USCIS_PREMIUM_SOURCE, checked: '2026-10-27', label: 'USCIS premium processing (updated 03/23/2026)' },
     ],
-    verified: false,
+    verified: true,
     blockedCitizenships: { codes: ['IR'], reason: US_TRAVEL_BAN.note! },
-    review: `Visa Bulletin EB-1 (ROW current or near; India 1 Feb 2023, China 1 Jul 2023) is secondary: travel.state.gov returned 403. ${USCIS_FEE_REVIEW}`,
+    review: `27 Oct 2026: removed the unverified "EB-1 Rest of World current or near current" phrase (Visa Bulletin on travel.state.gov blocked) and switched to verified: criteria, 15-day premium clock and fees read on USCIS pages. ${US_BAN_REVIEW} ${USCIS_FEE_REVIEW}`,
   },
 
   // US-3 ------------------------------------------------------------------
@@ -1344,8 +1383,8 @@ export const ROUTES_CANADA_US: RouteV2[] = [
         weight: 3,
         scoreable: false,
         note: {
-          en: 'DOL labor-market test, prevailing wage and the employer’s ability to pay are outside the profile.',
-          fa: 'آزمون بازار کار وزارت کار، دستمزد رایج و توان پرداخت کارفرما از روی پروفایل قابل سنجش نیست.',
+          en: 'DOL labor-market test, prevailing wage and the employer’s ability to pay are outside the profile. The employer may not seek or receive payment from you for the labor certification, including its attorney fees (20 CFR 656.12(b)); you may pay your own costs and your own attorney.',
+          fa: 'آزمون بازار کار وزارت کار، دستمزد رایج و توان پرداخت کارفرما از روی پروفایل قابل سنجش نیست. کارفرما نمی‌تواند هزینهٔ گواهی کار، از جمله حق‌الوکالهٔ وکیل خودش، را از شما بخواهد یا بگیرد (بند 20 CFR 656.12(b))؛ هزینه‌های خودتان و وکیل خودتان را می‌توانید بپردازید.',
         },
       },
       {
@@ -1358,8 +1397,8 @@ export const ROUTES_CANADA_US: RouteV2[] = [
     money: [],
     processing: {
       text: {
-        en: 'Premium processing: 15 business days for the I-140. DOL PERM times (flag.dol.gov) not captured. Then the Visa Bulletin: EB-2 Rest of World final action date 1 Jan 2025 (unverified).',
-        fa: 'رسیدگی ویژه: ۱۵ روز کاری برای I-140. زمان PERM وزارت کار (flag.dol.gov) در دسترس نبود. سپس بولتن ویزا: تاریخ اقدام نهایی EB-2 برای سایر کشورها ۱ ژانویهٔ ۲۰۲۵ (تأییدنشده).',
+        en: 'DOL PERM (flag.dol.gov, as of 5 Oct 2026): analyst review is on files with January 2026 priority dates, about 336 days on average (August 2026); prevailing-wage requests from June 2026 are being processed. Then premium processing: 15 business days for the I-140. The green card waits until your priority date is current in the monthly Visa Bulletin (travel.state.gov).',
+        fa: 'PERM وزارت کار (flag.dol.gov، تا ۵ اکتبر ۲۰۲۶): بررسی پرونده‌هایی با تاریخ اولویت ژانویهٔ ۲۰۲۶ در جریان است و میانگین آن حدود ۳۳۶ روز است (اوت ۲۰۲۶)؛ درخواست‌های تعیین دستمزد رایجِ ژوئن ۲۰۲۶ در حال بررسی است. سپس رسیدگی ویژه: ۱۵ روز کاری برای I-140. گرین کارت تا جاری شدن تاریخ اولویت شما در بولتن ماهانهٔ ویزا (travel.state.gov) منتظر می‌ماند.',
       },
       source: USCIS_PREMIUM_SOURCE,
     },
@@ -1374,13 +1413,15 @@ export const ROUTES_CANADA_US: RouteV2[] = [
       fa: 'PERM ← I-140 ← گرین کارت پس از جاری شدن تاریخ اولویت.',
     },
     sources: [
-      { url: 'https://www.uscis.gov/working-in-the-united-states/permanent-workers/employment-based-immigration-second-preference-eb-2', checked: '2026-10-15', label: 'USCIS EB-2 (last updated 01/15/2025)' },
+      { url: 'https://www.uscis.gov/working-in-the-united-states/permanent-workers/employment-based-immigration-second-preference-eb-2', checked: '2026-10-27', label: 'USCIS EB-2 (last updated 01/15/2025)' },
       USCIS_FEES_SOURCE,
-      { url: USCIS_PREMIUM_SOURCE, checked: '2026-10-15', label: 'USCIS premium processing' },
+      { url: USCIS_PREMIUM_SOURCE, checked: '2026-10-27', label: 'USCIS premium processing (updated 03/23/2026)' },
+      { url: 'https://flag.dol.gov/processingtimes', checked: '2026-10-27', label: 'DOL FLAG processing times (as of 10/05/2026)' },
+      { url: 'https://www.ecfr.gov/current/title-20/chapter-V/part-656/subpart-A/section-656.12', checked: '2026-10-27', label: 'eCFR 20 CFR 656.12' },
     ],
-    verified: false,
+    verified: true,
     blockedCitizenships: { codes: ['IR'], reason: US_TRAVEL_BAN.note! },
-    review: `Visa Bulletin EB-2 ROW figure is secondary (travel.state.gov 403). PERM times not captured. The rule that the worker may not pay PERM costs is a DOL rule not on the cited page. ${USCIS_FEE_REVIEW}`,
+    review: `27 Oct 2026: Visa Bulletin date removed (travel.state.gov blocked); PERM times added from flag.dol.gov (as of 10/05/2026, move monthly); PERM-payment wording corrected to 20 CFR 656.12(b) (the employer may not seek or receive payment, the worker may pay their own costs and attorney); switched to verified. ${US_BAN_REVIEW} ${USCIS_FEE_REVIEW}`,
   },
 
   // US-4 ------------------------------------------------------------------
@@ -1455,6 +1496,7 @@ export const ROUTES_CANADA_US: RouteV2[] = [
       { label: { en: 'I-129, O classification (paper; 1,005 online; 530 small employer or nonprofit)', fa: 'فرم I-129، طبقهٔ O (کاغذی؛ آنلاین ۱٬۰۰۵؛ کارفرمای کوچک یا غیرانتفاعی ۵۳۰)' }, amount: 1_055, currency: 'USD' },
       { label: { en: 'Asylum Program Fee (regular; 300 small employer, 0 nonprofit)', fa: 'هزینهٔ برنامهٔ پناهندگی (عادی؛ کارفرمای کوچک ۳۰۰، غیرانتفاعی صفر)' }, amount: 600, currency: 'USD' },
       { label: { en: 'I-907 premium processing (optional)', fa: 'رسیدگی ویژهٔ I-907 (اختیاری)' }, amount: 2_965, currency: 'USD' },
+      { label: { en: 'DOS visa application fee (H, L, O, P, Q, R)', fa: 'هزینهٔ درخواست ویزا در وزارت خارجه (طبقه‌های H، L، O، P، Q و R)' }, amount: 205, currency: 'USD' },
     ],
     pr: {
       en: 'No built-in path. The common next step is EB-1A, since the same evidence maps onto it.',
@@ -1465,10 +1507,11 @@ export const ROUTES_CANADA_US: RouteV2[] = [
       { url: 'https://www.ecfr.gov/current/title-8/chapter-I/subchapter-B/part-214/section-214.2', checked: '2026-10-15', label: 'eCFR 8 CFR 214.2(o)' },
       USCIS_FEES_SOURCE,
       { url: USCIS_PREMIUM_SOURCE, checked: '2026-10-15', label: 'USCIS premium processing' },
+      DOS_FEES_SOURCE,
     ],
     verified: true,
     blockedCitizenships: { codes: ['IR'], reason: US_TRAVEL_BAN.note! },
-    review: `DOS visa (MRV) fee not captured (travel.state.gov 403), so not listed. ${USCIS_FEE_REVIEW}`,
+    review: `27 Oct 2026: DOS visa fee 205 added from 22 CFR 22.1 item 21(b) on eCFR (travel.state.gov still blocked). ${US_BAN_REVIEW} ${USCIS_FEE_REVIEW}`,
   },
 
   // US-5 ------------------------------------------------------------------
@@ -1483,8 +1526,8 @@ export const ROUTES_CANADA_US: RouteV2[] = [
     },
     status: 'open',
     fact: {
-      en: 'Funds covering the full amount on your I-20, plus a credible intent to return home. For Iranian nationals, the visa ban applies.',
-      fa: 'تمکن مالی برابر کل مبلغ مندرج در I-20 و قصد قابل‌قبول بازگشت به کشور. برای اتباع ایران، ممنوعیت ویزا اعمال می‌شود.',
+      en: 'Funds covering the full amount on your I-20, plus a credible intent to return home. For Iranian nationals, the entry suspension under Proclamation 10998 applies.',
+      fa: 'تمکن مالی برابر کل مبلغ مندرج در I-20 و قصد قابل‌قبول بازگشت به کشور. برای اتباع ایران، توقف ورود طبق اعلامیهٔ ۱۰۹۹۸ اعمال می‌شود.',
     },
     criteria: [
       US_TRAVEL_BAN,
@@ -1533,7 +1576,10 @@ export const ROUTES_CANADA_US: RouteV2[] = [
       },
       source: USCIS_PREMIUM_SOURCE,
     },
-    fees: [{ label: { en: 'SEVIS I-901', fa: 'هزینهٔ SEVIS (فرم I-901)' }, amount: 350, currency: 'USD' }],
+    fees: [
+      { label: { en: 'SEVIS I-901', fa: 'هزینهٔ SEVIS (فرم I-901)' }, amount: 350, currency: 'USD' },
+      { label: { en: 'DOS visa application fee (MRV)', fa: 'هزینهٔ درخواست ویزا در وزارت خارجه (MRV)' }, amount: 185, currency: 'USD' },
+    ],
     pr: {
       en: 'No direct path. OPT (12 months, plus a 24-month STEM extension) leads to H-1B, O-1 or EB-2/NIW.',
       fa: 'مسیر مستقیمی ندارد. OPT (دوازده ماه، به‌علاوهٔ تمدید ۲۴ ماههٔ STEM) به H-1B، O-1 یا EB-2/NIW می‌رسد.',
@@ -1541,12 +1587,13 @@ export const ROUTES_CANADA_US: RouteV2[] = [
     sources: [
       { url: 'https://www.ecfr.gov/current/title-8/chapter-I/subchapter-B/part-214/section-214.2', checked: '2026-10-15', label: 'eCFR 8 CFR 214.2(f)' },
       { url: 'https://studyinthestates.dhs.gov/students/prepare/financial-ability', checked: '2026-10-15', label: 'Study in the States: financial ability (updated 25 May 2023)' },
-      { url: 'https://www.ice.gov/sevis/i901', checked: '2026-10-15', label: 'ICE SEVIS I-901 fee (updated 12/10/2024)' },
+      { url: 'https://www.ice.gov/sevis/i901', checked: '2026-10-27', label: 'ICE SEVIS I-901 fee (updated 12/10/2024)' },
+      DOS_FEES_SOURCE,
     ],
     verified: true,
     blockedCitizenships: { codes: ['IR'], reason: US_TRAVEL_BAN.note! },
     review:
-      'No money line: the amount is whatever the I-20 says (no fixed figure). DOS MRV fee (185) and the H.R. 1 USD 250 Visa Integrity Fee could not be read on travel.state.gov (403); not listed. eCFR now says F-1 students are "admitted for a fixed period" (up to the I-20 programme, 4-year maximum, plus 30 days): confirm the Federal Register effective date before publishing.',
+      `No money line: the amount is whatever the I-20 says (no fixed figure). 27 Oct 2026: MRV fee 185 added from 22 CFR 22.1 item 21(a) on eCFR; the H.R. 1 USD 250 Visa Integrity Fee is still not on an official page we could open, not listed. Fixed admission period confirmed: final rule FR Doc 2026-14439 (17 Jul 2026), effective 15 Sep 2026 — admission up to the programme length, not over 4 years, longer needs an extension of stay (https://www.federalregister.gov/documents/2026/07/17/2026-14439/establishing-a-fixed-time-period-of-admission-and-an-extension-of-stay-procedure-for-nonimmigrant); not yet shown to users. OPT fee PROPOSAL only: NPRM 2026-20660 (8 Oct 2026) proposes USD 70,000 for an initial OPT and 30,000 for each later OPT, comments close 9 Nov 2026 (https://www.federalregister.gov/documents/2026/10/08/2026-20660/optional-practical-training-fees); watch for a final rule. ${US_BAN_REVIEW}`,
   },
 
   // US-6 ------------------------------------------------------------------
@@ -1565,7 +1612,7 @@ export const ROUTES_CANADA_US: RouteV2[] = [
       fa: 'آمریکا ویزای استارتاپ ندارد. این پارول به ۳۱۱٬۰۷۱ دلار سرمایه از سرمایه‌گذاران واجد شرایط آمریکایی ظرف ۱۸ ماه (یا ۱۲۴٬۴۲۹ دلار کمک‌هزینهٔ دولتی) نیاز دارد. بدون آن، این مسیر وجود ندارد. تأییدها اختیاری و انگشت‌شمارند.',
     },
     criteria: [
-      US_TRAVEL_BAN,
+      US_TRAVEL_BAN_PAROLE,
       {
         key: 'funding',
         label: {
@@ -1609,7 +1656,7 @@ export const ROUTES_CANADA_US: RouteV2[] = [
         label: { en: 'Household income above 400% of the federal poverty line', fa: 'درآمد خانوار بیش از ۴۰۰٪ خط فقر فدرال' },
         weight: 1,
         scoreable: false,
-        note: { en: 'From the regulation; not on the USCIS summary page.', fa: 'برگرفته از متن مقررات؛ در صفحهٔ خلاصهٔ USCIS نیامده است.' },
+        note: { en: 'A condition of parole under 8 CFR 212.19(i).', fa: 'از شرایط پارول طبق بند 8 CFR 212.19(i).' },
       },
       {
         key: 'public-benefit',
@@ -1651,20 +1698,22 @@ export const ROUTES_CANADA_US: RouteV2[] = [
       source: 'https://www.uscis.gov/working-in-the-united-states/international-entrepreneur-rule',
     },
     fees: [
-      { label: { en: 'I-941 (plus the H.R. 1 Immigration Parole Fee if approved)', fa: 'فرم I-941 (به‌علاوهٔ هزینهٔ پارول قانون H.R. 1 در صورت تأیید)' }, amount: 1_200, currency: 'USD' },
+      { label: { en: 'I-941', fa: 'فرم I-941' }, amount: 1_200, currency: 'USD' },
+      { label: { en: 'Immigration Parole Fee (online), only if USCIS notifies you of conditional approval', fa: 'هزینهٔ پارول (آنلاین)، فقط اگر USCIS تأیید مشروط را اعلام کند' }, amount: 1_050, currency: 'USD' },
     ],
     pr: {
-      en: 'None: parole is not a status. Usual exits are EB-1A, EB-2 NIW, O-1 or EB-5.',
-      fa: 'ندارد: پارول وضعیت اقامتی نیست. راه‌های معمول ادامه EB-1A، EB-2 NIW، O-1 یا EB-5 است.',
+      en: 'None: parole is not admission, so you generally cannot adjust or change status inside the US; a later green card usually goes through a consulate abroad. Usual next routes are EB-1A, EB-2 NIW, O-1 or EB-5.',
+      fa: 'ندارد: پارول «پذیرش» به حساب نمی‌آید، پس معمولاً نمی‌توانید در داخل آمریکا وضعیت خود را تغییر دهید یا تطبیق دهید و گرین کارت بعدی معمولاً از راه کنسولگری در خارج پیش می‌رود. مسیرهای رایج بعدی EB-1A، EB-2 NIW، O-1 یا EB-5 است.',
     },
     sources: [
-      { url: 'https://www.uscis.gov/working-in-the-united-states/international-entrepreneur-rule', checked: '2026-10-15', label: 'USCIS International Entrepreneur Rule (last updated 01/25/2025)' },
+      { url: 'https://www.uscis.gov/working-in-the-united-states/international-entrepreneur-rule', checked: '2026-10-27', label: 'USCIS International Entrepreneur Rule (last updated 01/25/2025)' },
+      { url: 'https://www.ecfr.gov/current/title-8/chapter-I/subchapter-B/part-212/section-212.19', checked: '2026-10-27', label: 'eCFR 8 CFR 212.19' },
       { url: 'https://www.uscis.gov/i-941', checked: '2026-10-15', label: 'USCIS I-941 (last updated 06/01/2026)' },
       USCIS_FEES_SOURCE,
     ],
-    verified: false,
-    blockedCitizenships: { codes: ['IR'], reason: US_TRAVEL_BAN.note! },
+    verified: true,
+    blockedCitizenships: { codes: ['IR'], reason: US_TRAVEL_BAN_PAROLE.note! },
     review:
-      `Household income >400% FPL is marked [verify in 8 CFR 212.19]. I-941 Immigration Parole Fee amount is ambiguous in the G-1055 extract ("Online: $1,020, if USCIS notifies you of conditional approval"): verify on the fee calculator; not listed. Company-age rule (5 years) is from the regulation, not the summary page. ${USCIS_FEE_REVIEW} No criterion is scoreable: no profile field covers company-raised investment or ownership share.`,
+      `27 Oct 2026: household income >400% FPL verified in 8 CFR 212.19(i); Immigration Parole Fee 1,050 (online, on conditional approval) added from G-1055 ed. 10/16/26 (FY 2027 amount); company age (5 years) now on the USCIS page too; pr reworded to "parole is not admission" (USCIS); switched to verified. Processing time genuinely not published. Block reason uses the parole wording: the proclamation names entry as immigrants and non-immigrants, and does not say whether it bars parole. USCIS page FAQ still shows 528,293 for revenue; the rule figure 622,142 is used. ${USCIS_FEE_REVIEW} No criterion is scoreable: no profile field covers company-raised investment or ownership share.`,
   },
 ];

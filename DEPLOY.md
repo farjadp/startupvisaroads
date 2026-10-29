@@ -283,3 +283,56 @@ gcloud run jobs create startupvisaroads-migrate \
 
 then `gcloud run jobs execute startupvisaroads-migrate --region=europe-west1 --wait`
 as a step between Push and Deploy.
+
+## 8. Search Console and GA4 on the admin home
+
+`/en/admin` shows Search Console (clicks, impressions, CTR, position, top
+pages and queries, `/en` vs `/fa`) and GA4 (users, sessions, landing pages,
+channels, leads, AI-assistant referrals) for the last 28 complete days
+against the 28 before. The code is `lib/site-analytics/`. It reads from the
+server only, keeps results in memory for 6 hours per instance, and shows
+"not connected" until the steps below are done.
+
+Production needs **no key file**. The service runs as the default compute
+service account, which can fetch its own tokens on Cloud Run, so the setup
+is just granting that account read access to both properties. Confirm which
+account it is (it was `195891511340-compute@developer.gserviceaccount.com`
+on 26 Oct 2026):
+
+```bash
+gcloud run services describe startupvisaroads --region=europe-west1 --project=visaroads-website --format="value(spec.template.spec.serviceAccountName)"
+```
+
+**1. Turn on the GA4 Data API** (the Search Console API is already on):
+
+```bash
+gcloud services enable analyticsdata.googleapis.com searchconsole.googleapis.com --project=visaroads-website
+```
+
+**2. Search Console.** Open https://search.google.com/search-console, choose
+the `visaroads.com` domain property, then Settings → Users and permissions →
+Add user. Paste the service-account email and pick **Restricted** (read-only).
+Only the owner (farjad@visaroads.com) can add users.
+
+**3. GA4.** Open https://analytics.google.com, choose the property behind
+`G-SZ34QLY2ZV`, then Admin → Property → Property access management → + →
+Add users. Paste the same email, role **Viewer**, and untick "Notify new
+users by email" (the address has no inbox). While you are in Admin, open
+Property details and copy the **Property ID**: a number like `412345678`,
+not the `G-` measurement ID.
+
+**4. Set the two env vars** (replace the number with your property ID). This
+creates a new revision from the running image; later deploys keep the vars.
+
+```bash
+gcloud run services update startupvisaroads --region=europe-west1 --project=visaroads-website --update-env-vars=SEARCH_CONSOLE_SITE=sc-domain:visaroads.com,GA4_PROPERTY_ID=412345678
+```
+
+**5. Check.** Reload `/en/admin`. If a section shows an amber "could not be
+read" box, its message names the API's complaint and the email that needs
+access. A grant can take a few minutes to apply, and the page waits 5 minutes
+before retrying a failure.
+
+Locally the sections stay "not connected" unless `GOOGLE_SERVICE_ACCOUNT_KEY`
+holds a service-account JSON key (raw or base64) whose account has the same
+grants. That is optional; production does not use it.

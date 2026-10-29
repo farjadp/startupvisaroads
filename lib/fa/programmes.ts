@@ -68,7 +68,8 @@ export const RULES: Rule[] = [
     // Must equal lib/funds.ts (checked by mobile/src/content/funds.test.ts).
     yearlyFunds: { amount: 153240, currency: 'DKK', perFounder: true, note: 'مجرد؛ ۳۰۶٬۴۸۰ با همسر، ۳۵۶٬۹۰۴ با همسر و فرزند و ۲۰۳٬۶۶۴ با فرزند و بدون همسر' },
     unscored: ['تأیید پنل کارشناسان Start-up Denmark', 'سهمیه‌ی سالانه ۷۵ نفر، بر اساس نفر نه تیم'],
-    updated: '2026-09-08',
+    // Re-checked against SIRI on 2026-10-27: no change.
+    updated: '2026-10-27',
     source: 'https://www.nyidanmark.dk/en-GB/You-want-to-apply/Work/Start-up-Denmark',
   },
   {
@@ -90,8 +91,11 @@ export const RULES: Rule[] = [
     // Must equal 12 × lib/funds.ts (checked by mobile/src/content/funds.test.ts).
     yearlyFunds: { amount: 10560, currency: 'EUR', perFounder: true, note: '۸۸۰ یورو در ماه — چهار برابر سطح معیشت ۲۲۰ یورو' },
     venture: 'mvp',
-    unscored: ['تأیید کمیته‌ی کارشناسی وزارت کشور، ظرف ۱۰ روز کاری'],
-    updated: '2026-09-08',
+    // The Startup Committee is made up of members of the Estonian start-up
+    // community (Startup Estonia, PPA), not an Interior Ministry body
+    // (research 2026-10-27, docs/research/app-v3/ee.md).
+    unscored: ['تأیید کمیته‌ی استارتاپ استونی (Startup Committee)، ظرف ۱۰ روز کاری'],
+    updated: '2026-10-27',
     source: 'https://www.politsei.ee/en/instructions/residence-permit-for-business/for-start-up-entrepreneurs',
   },
   {
@@ -104,11 +108,14 @@ export const RULES: Rule[] = [
       // Deliberately unscored: the Dutch amount tracks the statutory minimum
       // wage and changes on 1 January AND 1 July, so a figure in this
       // quarterly-reviewed table would be wrong half the year.
-      'تمکن مالی یک سال کامل — حدود ۲۱٬۲۰۰ یورو برای یک نفر و ۳۰٬۳۰۰ برای خانواده (از ۱ ژوئیه‌ی ۲۰۲۶)، اما هر شش ماه تغییر می‌کند',
+      // No family figure: IND publishes no start-up family amount (the
+      // 2,523.96/month figure is the family-reunification sponsor amount,
+      // a different permit). Research 2026-10-27, docs/research/app-v3/nl.md.
+      'تمکن مالی یک سال کامل — حدود ۲۱٬۲۰۰ یورو برای یک نفر (از ۱ ژوئیه‌ی ۲۰۲۶)، اما هر شش ماه تغییر می‌کند. IND برای خانواده‌ی متقاضی استارتاپ رقم جداگانه‌ای اعلام نکرده است',
       'اقامت اولیه حداکثر یک سال است و تمدید نمی‌شود',
       'محصول باید برای بازار هلند واقعاً جدید باشد',
     ],
-    updated: '2026-09-08',
+    updated: '2026-10-27',
     source: 'https://ind.nl/en/residence-permits/work/start-up',
   },
   {
