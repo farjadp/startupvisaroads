@@ -31,7 +31,7 @@ export const page: FaPage = {
     { label: 'Ownership', value: '51%', note: '100% when buying an existing business' },
     { label: 'Language', value: 'CLB 4' },
     { label: 'Business experience', value: '3 years as owner-manager', note: 'or 4 years as senior manager, within the past 10 years' },
-    { label: '2026 entrepreneur allocation', value: '60 nominations', note: '36 issued by 7 October 2026' },
+    { label: '2026 entrepreneur allocation', value: '60 nominations', note: '37 issued by 21 October 2026' },
   ],
   hero: {
     eyebrow: 'Canada · Alberta · AAIP entrepreneur streams',
@@ -79,7 +79,7 @@ export const page: FaPage = {
     {
       heading: 'AAIP allocation 2026 and entrepreneur draws',
       body: [
-        'Alberta\'s total nomination allocation for 2026 is 6,603, after IRCC added 200 spaces in August. Of that, 60 nominations are for the entrepreneur streams. On 7 October 2026 Alberta reported 36 issued, 24 remaining and 214 business applications in process.',
+        'Alberta\'s total nomination allocation for 2026 is 6,603, after IRCC added 200 spaces in August. Of that, 60 nominations are for the entrepreneur streams. On 21 October 2026 Alberta reported 37 issued, 23 remaining and 213 business applications in process.',
         'Alberta publishes draw results for its worker streams, not for its entrepreneur streams: business applications are evaluated as they are received, and no entrepreneur draw dates or cut-off scores are published. If you see an "Alberta entrepreneur draw" score online, it did not come from alberta.ca.',
         'In August 2026 Alberta also published guidance on "economic establishment" for the entrepreneur streams. The eligibility criteria did not change, but Alberta now checks after approval that the business keeps meeting that test.',
       ],
@@ -112,7 +112,7 @@ export const page: FaPage = {
     },
     {
       q: 'Is the Alberta Rural Entrepreneur Stream open in 2026?',
-      a: 'Yes. Alberta says it is currently accepting Expressions of Interest under the stream. The 2026 entrepreneur allocation is 60 nominations, of which 36 had been issued by 7 October 2026.',
+      a: 'Yes. Alberta says it is currently accepting Expressions of Interest under the stream. The 2026 entrepreneur allocation is 60 nominations, of which 37 had been issued by 21 October 2026.',
     },
     {
       q: 'Does Alberta publish entrepreneur stream draw scores?',
