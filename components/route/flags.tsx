@@ -8,7 +8,7 @@
 // ============================================================================
 import React from 'react';
 
-export type FlagCode = 'fi' | 'dk' | 'it' | 'nl' | 'tr' | 'il' | 'au' | 'ca' | 'ae';
+export type FlagCode = 'fi' | 'dk' | 'it' | 'nl' | 'tr' | 'il' | 'au' | 'ca' | 'ae' | 'ee' | 'es' | 'bg';
 
 export interface FlagDef {
   name: string;
@@ -144,6 +144,42 @@ export const FLAGS: Record<FlagCode, FlagDef> = {
         <rect width="12" height="4" y="2" fill="#fff" />
         <rect width="12" height="2" y="4" fill="#000" />
         <rect width="3" height="6" fill="#c8102e" />
+      </>
+    ),
+  },
+  ee: {
+    name: 'Estonia',
+    w: 990,
+    h: 630,
+    draw: () => (
+      <>
+        <path d="m0 0h990v315H0z" fill="#0072ce" />
+        <path d="m0 210h990v315H0z" fill="#000" />
+        <path d="m0 420h990v210H0z" fill="#fff" />
+      </>
+    ),
+  },
+  // Spain: the civil flag (no coat of arms), lawful for civil use and legible at icon size.
+  es: {
+    name: 'Spain',
+    w: 750,
+    h: 500,
+    draw: () => (
+      <>
+        <rect width="750" height="500" fill="#c60b1e" />
+        <rect width="750" height="250" y="125" fill="#ffc400" />
+      </>
+    ),
+  },
+  bg: {
+    name: 'Bulgaria',
+    w: 5,
+    h: 3,
+    draw: () => (
+      <>
+        <rect width="5" height="3" fill="#fff" />
+        <rect width="5" height="2" y="1" fill="#00966E" />
+        <rect width="5" height="1" y="2" fill="#D62612" />
       </>
     ),
   },
