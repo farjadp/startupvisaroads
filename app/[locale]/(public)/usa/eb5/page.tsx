@@ -18,6 +18,7 @@ import {
   PieChart
 } from 'lucide-react';
 import type { Metadata } from 'next';
+import { setRequestLocale } from 'next-intl/server';
 
 import { metaFor } from '@/lib/pageMeta';
 
@@ -26,7 +27,12 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   return metaFor('/usa/eb5', locale);
 }
 
-export default function EB5Page() {
+// setRequestLocale before the first <Link>: without it next-intl reads
+// headers(), Next renders the route dynamically and streams <title> and
+// the meta tags into <body> instead of <head>.
+export default async function EB5Page({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  setRequestLocale(locale);
   return (
     <div className="w-full bg-[#F2F0E9] text-[#1a1a1a]">
 

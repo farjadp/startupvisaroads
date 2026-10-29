@@ -17,6 +17,7 @@ import {
   ShieldCheck
 } from 'lucide-react';
 import type { Metadata } from 'next';
+import { setRequestLocale } from 'next-intl/server';
 
 import { metaFor } from '@/lib/pageMeta';
 
@@ -25,7 +26,12 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   return metaFor('/uae/golden-visa', locale);
 }
 
-export default function UAEGoldenVisaPage() {
+// setRequestLocale before the first <Link>: without it next-intl reads
+// headers(), Next renders the route dynamically and streams <title> and
+// the meta tags into <body> instead of <head>.
+export default async function UAEGoldenVisaPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  setRequestLocale(locale);
   return (
     <div className="w-full bg-[#0a0a0a] text-[#F2F0E9]">
 

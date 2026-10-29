@@ -19,6 +19,7 @@ import {
   FileText
 } from 'lucide-react';
 import type { Metadata } from 'next';
+import { setRequestLocale } from 'next-intl/server';
 
 import { metaFor } from '@/lib/pageMeta';
 
@@ -27,7 +28,12 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   return metaFor('/usa/eb2-niw', locale);
 }
 
-export default function EB2NIWPage() {
+// setRequestLocale before the first <Link>: without it next-intl reads
+// headers(), Next renders the route dynamically and streams <title> and
+// the meta tags into <body> instead of <head>.
+export default async function EB2NIWPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  setRequestLocale(locale);
   return (
     <div className="w-full bg-[#FCFBF9] text-[#0f172a]">
 
