@@ -21,6 +21,8 @@ export type OfficialSourceId =
   | 'spain-uge'
   | 'spain-enisa'
   | 'spain-boe-ley-14-2013'
+  | 'bulgaria-mig-startup-visa'
+  | 'bulgaria-nims'
   | 'turkiye-tech-visa'
   | 'israel-innovation-authority'
   | 'israel-piba'
@@ -64,6 +66,8 @@ export const OFFICIAL_SOURCES: readonly OfficialSource[] = [
   { id: 'spain-uge', authority: 'Unidad de Grandes Empresas y Colectivos Estratégicos (UGE), Ministerio de Inclusión, Seguridad Social y Migraciones', url: 'https://www.inclusion.gob.es/web/unidadgrandesempresas/emprendedores', programmePaths: ['/europe/spain'], keywords: ['spain', 'españa', 'emprendedor', 'uge', 'ley 14/2013'] },
   { id: 'spain-enisa', authority: 'Empresa Nacional de Innovación (ENISA)', url: 'https://www.enisa.es/', programmePaths: ['/europe/spain'], keywords: ['spain', 'enisa', 'emprendedor', 'empresa emergente'] },
   { id: 'spain-boe-ley-14-2013', authority: 'Boletín Oficial del Estado — Ley 14/2013, consolidated text', url: 'https://www.boe.es/buscar/act.php?id=BOE-A-2013-10074', programmePaths: ['/europe/spain'], keywords: ['spain', 'ley 14/2013', 'boe', 'emprendedores'] },
+  { id: 'bulgaria-mig-startup-visa', authority: 'Ministry of Innovation and Growth of the Republic of Bulgaria — service 3263, Startup Visa certificate', url: 'https://www.mig.government.bg/3263-issuance-of-a-sertificate-for-a-high-tech-and-or-innovative-project-startup-visa/?lang=en', programmePaths: ['/europe/bulgaria'], keywords: ['bulgaria', 'startup visa', 'mig', 'ministry of innovation and growth', 'art. 24p'] },
+  { id: 'bulgaria-nims', authority: 'National Investments Management System (NIMS / ISUN 2020) — Startup Visa application portal', url: 'https://enims.egov.bg/en', programmePaths: ['/europe/bulgaria'], keywords: ['bulgaria', 'nims', 'isun', 'startup visa application'] },
   { id: 'turkiye-tech-visa', authority: 'Türkiye Tech Visa, Ministry of Industry and Technology', url: 'https://turkiyetechvisa.gov.tr/', programmePaths: ['/turkey-tech-visa', '/country/turkey'], keywords: ['turkey', 'türkiye', 'tech visa', 'technopark'] },
   { id: 'israel-innovation-authority', authority: 'Israel Innovation Authority', url: 'https://innovationisrael.org.il/', programmePaths: ['/country/israel', '/israel'], keywords: ['israel', 'innovation authority', 'innovation visa', 'tnufa'] },
   { id: 'israel-piba', authority: 'Population and Immigration Authority (PIBA), Israel', url: 'https://www.gov.il/', programmePaths: ['/country/israel', '/israel'], keywords: ['israel', 'piba', 'population and immigration'] },

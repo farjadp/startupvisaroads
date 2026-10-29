@@ -78,6 +78,12 @@ const SLOTS: Record<string, string> = {
   'spain-2': 'Barcelona city street architecture Spain',
   'spain-3': 'Valencia City of Arts and Sciences Spain',
 
+  // Bulgaria. Sofia first because the ministry that issues the certificate
+  // is there; Plovdiv and Varna as the two other cities founders name.
+  bulgaria: 'Sofia Alexander Nevsky Cathedral Bulgaria',
+  'bulgaria-2': 'Plovdiv old town Bulgaria',
+  'bulgaria-3': 'Sofia city street Bulgaria',
+
   estonia: 'Tallinn old town Estonia',
   'estonia-2': 'Tallinn Estonia street',
   'estonia-3': 'Tallinn rooftops Estonia',

@@ -29,6 +29,10 @@
 // twice the width of each red; the arms are optional outside official use.
 // Bands are geometry; the arms are not, so they are left out on purpose.
 //
+// Bulgaria is three equal horizontal bands, white, green, red, at 3:5
+// (colours: Constitution art. 166; ratio: Law on the State Seal and the
+// National Flag, 1998). Pure geometry.
+//
 // Australia IS here, and only because the official artwork could be had: the
 // Union Jack canton, the seven-pointed Commonwealth Star and the Southern
 // Cross are none of them geometry to attempt by eye. It is the Wikimedia
@@ -36,7 +40,7 @@
 // ids.
 // ============================================================================
 
-export type FlagCode = 'dk' | 'fi' | 'nl' | 'ee' | 'it' | 'es' | 'tr' | 'ca' | 'au';
+export type FlagCode = 'dk' | 'fi' | 'nl' | 'ee' | 'it' | 'es' | 'bg' | 'tr' | 'ca' | 'au';
 
 const BY_PATH: Record<string, FlagCode> = {
   '/europe/denmark': 'dk',
@@ -45,6 +49,7 @@ const BY_PATH: Record<string, FlagCode> = {
   '/europe/estonia': 'ee',
   '/europe/italy': 'it',
   '/europe/spain': 'es',
+  '/europe/bulgaria': 'bg',
   '/turkey-tech-visa': 'tr',
   '/australia': 'au',
   '/pnp': 'ca',
@@ -68,6 +73,7 @@ export const FLAG_NAME: Record<FlagCode, string> = {
   ee: 'استونی',
   it: 'ایتالیا',
   es: 'اسپانیا',
+  bg: 'بلغارستان',
   tr: 'ترکیه',
   au: 'استرالیا',
   ca: 'کانادا',
@@ -84,6 +90,7 @@ export const FLAG_RATIO: Record<FlagCode, { w: number; h: number }> = {
   ee: { w: 11, h: 7 },
   it: { w: 3, h: 2 }, // Legge 5 febbraio 1998, n. 22
   es: { w: 3, h: 2 }, // Ley 39/1981
+  bg: { w: 5, h: 3 }, // Law on the State Seal and National Flag, 1998
   tr: { w: 3, h: 2 }, // Türk Bayrağı Kanunu
   au: { w: 2, h: 1 }, // Flags Act 1953
   ca: { w: 2, h: 1 },

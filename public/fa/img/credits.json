@@ -394,5 +394,32 @@
     "photographerUrl": "https://www.pexels.com/@diego-f-parra-33199",
     "description": "Explore the futuristic architecture of Valencia's City of Arts and Sciences on a bright day.",
     "fetched": "2026-10-29"
+  },
+  "bulgaria": {
+    "source": "Pexels",
+    "id": 28702047,
+    "page": "https://www.pexels.com/photo/alexander-nevsky-cathedral-in-sofia-bulgaria-28702047/",
+    "photographer": "Uiliam Nörnberg",
+    "photographerUrl": "https://www.pexels.com/@uiliamnornberg",
+    "description": "The iconic domes of Alexander Nevsky Cathedral against a clear blue sky in Sofia, Bulgaria.",
+    "fetched": "2026-10-29"
+  },
+  "bulgaria-2": {
+    "source": "Pexels",
+    "id": 37707688,
+    "page": "https://www.pexels.com/photo/picturesque-street-in-old-town-plovdiv-bulgaria-37707688/",
+    "photographer": "Jocelyn Erskine-Kellie",
+    "photographerUrl": "https://www.pexels.com/@jocelyn-erskine-kellie-68266457",
+    "description": "Charming cobblestone street with colorful historic buildings in Plovdiv, Bulgaria, showcasing Bulgarian Revival architecture.",
+    "fetched": "2026-10-29"
+  },
+  "bulgaria-3": {
+    "source": "Pexels",
+    "id": 36936085,
+    "page": "https://www.pexels.com/photo/vibrant-street-life-on-vitosha-boulevard-sofia-36936085/",
+    "photographer": "Nikolay Demirev",
+    "photographerUrl": "https://www.pexels.com/@nikolaydemirev",
+    "description": "A busy day on Sofia's famous Vitosha Boulevard, showcasing city life and urban design.",
+    "fetched": "2026-10-29"
   }
 }

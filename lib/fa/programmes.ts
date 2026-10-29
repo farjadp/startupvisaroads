@@ -163,6 +163,26 @@ export const RULES: Rule[] = [
     source: 'https://www.inclusion.gob.es/web/unidadgrandesempresas/emprendedores',
   },
   {
+    key: 'bulgaria',
+    name: 'ویزای استارتاپ بلغارستان',
+    href: '/europe/bulgaria',
+    // Ordinance art. 10: the certificate names the applicant and up to two
+    // more team members.
+    founders: { min: 1, max: 3 },
+    // NOT a yearly figure: a one-off balance of three monthly minimum wages
+    // (€620.20 in 2026) held for 30 consecutive days before applying. Kept in
+    // this field because it is the closest; the note says what it is. The
+    // BGN 100,000 (€51,129) in circulation is optional, one point each.
+    yearlyFunds: { amount: 1861, currency: 'EUR', perFounder: true, note: '۱٬۸۶۰٫۶۰ یورو یک‌باره (سه حداقل دستمزد ۲۰۲۶)، ۳۰ روز پیاپی پیش از درخواست' },
+    unscored: [
+      'دست‌کم ۸ امتیاز از ۱۴ در شش معیار؛ بیزینس‌پلن تا ۵ امتیاز',
+      'امضای الکترونیکی واجد شرایط (eIDAS) برای ثبت درخواست',
+      'پس از ویزای D، دست‌کم ۵۰٪ سهم در شرکت بلغاری',
+    ],
+    updated: '2026-10-29',
+    source: 'https://www.mig.government.bg/3263-issuance-of-a-sertificate-for-a-high-tech-and-or-innovative-project-startup-visa/?lang=en',
+  },
+  {
     key: 'turkey',
     name: 'تک‌ویزای ترکیه',
     href: '/turkey-tech-visa',

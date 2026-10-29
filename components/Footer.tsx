@@ -54,6 +54,7 @@ const FA_LINKS = {
     { href: '/europe/estonia', label: 'استونی' },
     { href: '/europe/italy', label: 'ایتالیا' },
     { href: '/europe/spain', label: 'اسپانیا' },
+    { href: '/europe/bulgaria', label: 'بلغارستان' },
     { href: '/turkey-tech-visa', label: 'تک‌ویزای ترکیه' },
     { href: '/usa', label: 'آمریکا برای فاندرها' },
     { href: '/uk/innovator-founder', label: 'استارتاپ ویزای انگلیس' },
