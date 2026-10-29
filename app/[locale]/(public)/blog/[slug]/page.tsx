@@ -185,7 +185,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ local
     publishedOn: 'Published',
     updatedOn: 'Updated',
     byline: 'By',
-    author: 'Startup Visa Roads Editorial Team',
+    author: 'VisaRoads Editorial Team',
     readingTime: 'Reading Time',
     level: 'Article Level',
     suitableFor: 'Suitable For',

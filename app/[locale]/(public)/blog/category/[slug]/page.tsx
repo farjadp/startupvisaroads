@@ -30,7 +30,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
       guide?.description ??
       (isRtl
         ? `جدیدترین راهنماها و تحلیل‌های دسته‌ی «${categoryName}» در راه‌های ویزای استارتاپ.`
-        : `The latest guides and analysis in the "${categoryName}" collection from Startup Visa Roads.`),
+        : `The latest guides and analysis in the "${categoryName}" collection from VisaRoads.`),
     noindex: articles.length < MIN_INDEXABLE_CATEGORY_ARTICLES,
     nofollow: false,
   });
@@ -72,7 +72,7 @@ export default async function CategoryArchivePage({
   const categoryUrl = `${SITE_URL}/${locale}/blog/category/${category.slug}`;
   const categoryDescription = guide?.description ?? (isRtl
     ? `جدیدترین راهنماها و تحلیل‌های دسته‌ی «${categoryName}» در راه‌های ویزای استارتاپ.`
-    : `The latest guides and analysis in the "${categoryName}" collection from Startup Visa Roads.`);
+    : `The latest guides and analysis in the "${categoryName}" collection from VisaRoads.`);
 
   return (
     <div className="container mx-auto px-6 py-12 md:py-20 max-w-5xl" dir={isRtl ? 'rtl' : 'ltr'}>

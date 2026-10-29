@@ -25,7 +25,7 @@ export default async function OpengraphImage() {
         <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
           <div style={{ width: 28, height: 28, backgroundColor: '#CCFF00', borderRadius: 6 }} />
           <div style={{ color: '#F2F0E9', fontSize: 28, letterSpacing: 4, textTransform: 'uppercase', fontWeight: 700 }}>
-            Startup Visa Roads
+            VisaRoads
           </div>
         </div>
 

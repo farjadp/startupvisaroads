@@ -1,7 +1,7 @@
 // ============================================================================
 // Central SEO copy for the static marketing pages.
 // Each page calls metaFor('/path', locale) from its generateMetadata.
-// Titles are brandless — buildMetadata appends "| Startup Visa Roads".
+// Titles are brandless — buildMetadata appends "| VisaRoads".
 // ============================================================================
 
 import type { Metadata } from 'next';
@@ -84,7 +84,7 @@ export const EN_INDEXABLE_PATHS = [
 
 const META: Record<string, Entry> = {
   '/about': {
-    en: { title: 'About Us', description: 'Startup Visa Roads pairs founders with mentorship and investor-grade documents to win Startup Visa and global migration cases.' },
+    en: { title: 'About Us', description: 'VisaRoads pairs founders with mentorship and investor-grade documents to win Startup Visa and global migration cases.' },
     fa: { title: 'درباره ما', description: 'راه‌های ویزای استارتاپ بنیان‌گذاران را با منتورشیپ و اسناد سرمایه‌گذارپسند برای موفقیت در پرونده‌های استارتاپ ویزا و مهاجرت جهانی همراهی می‌کند.' },
   },
   '/services': {
@@ -104,7 +104,7 @@ const META: Record<string, Entry> = {
     fa: { title: 'تماس و مشاوره رایگان', description: 'با مشاور استراتژیک مهاجرت گفت‌وگو کنید. درخواست مشاوره رایگان برای ترسیم سریع‌ترین و کم‌ریسک‌ترین مسیر اقامت جهانی.' },
   },
   '/team': {
-    en: { title: 'Our Team — Startup Mentors & Advisors', description: 'Meet the Startup Visa Roads team: startup mentors, product managers, and operations leads who prepare founders for startup visa and entrepreneur immigration pathways.' },
+    en: { title: 'Our Team — Startup Mentors & Advisors', description: 'Meet the VisaRoads team: startup mentors, product managers, and operations leads who prepare founders for startup visa and entrepreneur immigration pathways.' },
     fa: { title: 'تیم ما — منتورهای استارتاپ و مشاوران', description: 'با تیم استارتاپ ویزا رودز آشنا شوید: منتورهای استارتاپ، پروداکت منیجرها و مسئولان عملیات که بنیان‌گذاران را برای ویزای استارتاپ و مسیرهای مهاجرت کارآفرینی آماده می‌کنند.' },
   },
   '/startup-visa-canada': {
@@ -158,8 +158,8 @@ const META: Record<string, Entry> = {
   '/country/israel': { en: { title: 'Israel Innovation Visa: The Landing Pad Is The Gate', description: 'The B/2 Innovation visa explained: two years of residence and no work permit, acceptance by an approved landing pad before the Innovation Authority will look at your file, Tnufa and incubator funding, conversion to B/1 — and who Israeli law bars from the route entirely.' }, fa: { title: 'ویزای نوآوری اسرائیل', description: 'برنامه‌ی ویزای نوآوری اسرائیل، سکوهای فرود، بودجه‌ی تنوفا — و اینکه چرا این مسیر برای دارنده‌ی پاسپورت ایرانی باز نیست.' } },
   '/country/italy': { en: { title: 'Italia Startup Visa: Thirty Days, And A Cap Nobody Mentions', description: 'The MIMIT committee decides in 30 days on documents alone — no interview. €50,000 for the whole team, €100,000 to join an existing startup, and a hard ceiling of five certificates per venture. Plus what changed under Law 193/2024, why consultancy businesses are now refused outright, and the three-month clock on the nulla osta.' }, fa: { title: 'ویزای استارتاپ ایتالیا', description: 'کمیته‌ی فنی MIMIT ظرف ۳۰ روز و فقط از روی اسناد تصمیم می‌گیرد؛ ۵۰٬۰۰۰ یورو برای کل تیم، سقف پنج بنیان‌گذار، و مهلت سه‌ماهه‌ی نولااوستا.' } },
   '/country/turkey': { en: { title: 'Türkiye Tech Visa: Three Years, And 22 Startups', description: 'A three-year work permit — the longest first permit of any route here — decided by a technopark jury rather than the Ministry. The 20% shareholding and TRY 500,000 conditions, the five-Turkish-employees question nobody answers straight, and the 22 foreign startups admitted in eighteen months.' }, fa: { title: 'تک‌ویزای ترکیه', description: 'مجوز کار تا سه سال، ارزیابی با کمیته‌ی داوران تکنوپارک — و بیست‌ودو استارتاپ در هجده ماه.' } },
-  '/privacy': { en: { title: 'Privacy Policy', description: 'How Startup Visa Roads collects, uses, and protects your personal information.' }, fa: { title: 'سیاست حریم خصوصی', description: 'نحوه جمع‌آوری، استفاده و حفاظت از اطلاعات شخصی شما توسط راه‌های ویزای استارتاپ.' } },
-  '/terms': { en: { title: 'Terms of Service', description: 'The terms and conditions governing your use of the Startup Visa Roads website and services.' }, fa: { title: 'شرایط استفاده از خدمات', description: 'شرایط و ضوابط حاکم بر استفاده شما از وب‌سایت و خدمات راه‌های ویزای استارتاپ.' } },
+  '/privacy': { en: { title: 'Privacy Policy', description: 'How VisaRoads collects, uses, and protects your personal information.' }, fa: { title: 'سیاست حریم خصوصی', description: 'نحوه جمع‌آوری، استفاده و حفاظت از اطلاعات شخصی شما توسط راه‌های ویزای استارتاپ.' } },
+  '/terms': { en: { title: 'Terms of Service', description: 'The terms and conditions governing your use of the VisaRoads website and services.' }, fa: { title: 'شرایط استفاده از خدمات', description: 'شرایط و ضوابط حاکم بر استفاده شما از وب‌سایت و خدمات راه‌های ویزای استارتاپ.' } },
   '/book-meeting': {
     en: { title: 'Book a Free Startup Consultation', description: 'Book a free 60-minute online startup consultation on Google Meet. Pick a time in the calendar; the meeting link arrives by email after booking.' },
     fa: { title: 'رزرو جلسه مشاوره رایگان استارتاپ', description: 'یک جلسه‌ی آنلاین ۶۰ دقیقه‌ای و رایگان مشاوره‌ی استارتاپ در گوگل میت رزرو کنید؛ لینک جلسه پس از رزرو به ایمیلتان می‌آید.' },
@@ -169,7 +169,7 @@ const META: Record<string, Entry> = {
     fa: { title: 'وبینار استارتاپ ویزای کانادا', description: 'دورهمی آنلاین درباره‌ی معنای توقف استارتاپ ویزای کانادا برای پرونده‌های ثبت‌شده، مسیرهایی که هنوز باز است، و پرسش و پاسخ زنده.' },
   },
   '/unsubscribe': {
-    en: { title: 'Unsubscribe from Newsletter', description: 'Confirm your email address to stop receiving marketing emails from Startup Visa Roads.' },
+    en: { title: 'Unsubscribe from Newsletter', description: 'Confirm your email address to stop receiving marketing emails from VisaRoads.' },
     fa: { title: 'لغو عضویت از خبرنامه', description: 'برای توقف دریافت ایمیل‌های بازاریابی راه‌های ویزای استارتاپ، نشانی ایمیل خود را تأیید کنید.' },
     noindex: true,
   },
@@ -181,7 +181,7 @@ const META: Record<string, Entry> = {
 };
 
 function titleFromPath(path: string): string {
-  const last = path.split('/').filter(Boolean).pop() || 'Startup Visa Roads';
+  const last = path.split('/').filter(Boolean).pop() || 'VisaRoads';
   return last.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
@@ -202,7 +202,7 @@ export function metaFor(path: string, locale: string): Metadata {
       title: titleFromPath(path),
       description: isRtl
         ? 'راه‌های ویزای استارتاپ — منتورشیپ و آمادگی استارتاپ برای ویزای استارتاپ و برنامه‌های مهاجرت جهانی.'
-        : 'Startup Visa Roads — mentorship and startup readiness for Startup Visa and global migration programs.',
+        : 'VisaRoads — mentorship and startup readiness for Startup Visa and global migration programs.',
     });
   }
   const copy = isRtl ? entry.fa : entry.en;

@@ -152,7 +152,7 @@ Rules that follow from it, and they override the keyword queue:
   }
 
   const { briefs } = await chatJson<{ briefs: RawBrief[] }>(
-    `You are the content editor of Startup Visa Roads (visaroads.com). Plan ${n} article briefs for today, to be written in ${lang}.
+    `You are the content editor of VisaRoads (visaroads.com). Plan ${n} article briefs for today, to be written in ${lang}.
 
 BRAND FACTS: ${BRAND_FACTS}
 

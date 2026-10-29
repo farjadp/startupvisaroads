@@ -57,7 +57,7 @@ export async function triageText(input: { title: string; text: string; sourceNam
   const excerpt = input.text.slice(0, MAX_INPUT_CHARS);
 
   const raw = await chatJson<Record<string, unknown>>(
-    `You are the research editor of Startup Visa Roads (visaroads.com), a site about immigration routes to Canada, the USA, the UK, Europe, Australia and the UAE — work, study, business and family — written for people planning a move, many of them Persian-speaking.
+    `You are the research editor of VisaRoads (visaroads.com), a site about immigration routes to Canada, the USA, the UK, Europe, Australia and the UAE — work, study, business and family — written for people planning a move, many of them Persian-speaking.
 
 Score ONE item a source published, for whether our writers should build an article on it.
 

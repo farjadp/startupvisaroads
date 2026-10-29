@@ -274,7 +274,7 @@ describe('clampDescription', () => {
 
 describe('brandedTitle', () => {
   it('appends the brand to a short title', () => {
-    expect(brandedTitle('Alberta PNP (AAIP)')).toBe('Alberta PNP (AAIP) | Startup Visa Roads');
+    expect(brandedTitle('Alberta PNP (AAIP)')).toBe('Alberta PNP (AAIP) | VisaRoads');
   });
 
   it('keeps a long title unbranded rather than truncated', () => {
