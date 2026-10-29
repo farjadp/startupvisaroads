@@ -14,7 +14,7 @@ import { Link } from '@/routing';
 import { ShieldAlert } from 'lucide-react';
 import { SUV_SOURCES, SUV_STATE } from '@/lib/canada-suv';
 
-const pausedOn = new Date(SUV_STATE.pausedOn).toLocaleDateString('en-CA', { day: 'numeric', month: 'long', year: 'numeric' });
+const pausedOn = new Date(SUV_STATE.pausedOn).toLocaleDateString('en-CA', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
 
 type Props = {
   /** 'band' is the full-width dark strip; 'inline' is a compact box inside prose. */
