@@ -53,6 +53,7 @@ const FA_LINKS = {
     { href: '/pnp', label: 'کارآفرینی استانی کانادا' },
     { href: '/europe/estonia', label: 'استونی' },
     { href: '/europe/italy', label: 'ایتالیا' },
+    { href: '/europe/spain', label: 'اسپانیا' },
     { href: '/turkey-tech-visa', label: 'تک‌ویزای ترکیه' },
     { href: '/usa', label: 'آمریکا برای فاندرها' },
     { href: '/uk/innovator-founder', label: 'استارتاپ ویزای انگلیس' },

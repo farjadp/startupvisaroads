@@ -367,5 +367,32 @@
     "photographerUrl": "https://www.pexels.com/@sebastian-velandia-183845690",
     "description": "Charming Covehead Harbour Lighthouse surrounded by nature at sunset in Prince Edward Island, Canada.",
     "fetched": "2026-10-13"
+  },
+  "spain": {
+    "source": "Pexels",
+    "id": 37187351,
+    "page": "https://www.pexels.com/photo/gran-via-street-with-metropolis-building-madrid-37187351/",
+    "photographer": "Lajos Kristóf Kántor",
+    "photographerUrl": "https://www.pexels.com/@lajos-kristof-kantor-2158796893",
+    "description": "Street view of the Metropolis Building and Gran Vía in Madrid on a sunny day.",
+    "fetched": "2026-10-29"
+  },
+  "spain-2": {
+    "source": "Pexels",
+    "id": 14757444,
+    "page": "https://www.pexels.com/photo/via-laietana-street-in-barcelona-spain-14757444/",
+    "photographer": "Mehmet Turgut  Kirkgoz",
+    "photographerUrl": "https://www.pexels.com/@tkirkgoz",
+    "description": "Historic street view of Barcelona's urban intersection with traditional architecture and traffic.",
+    "fetched": "2026-10-29"
+  },
+  "spain-3": {
+    "source": "Pexels",
+    "id": 24531674,
+    "page": "https://www.pexels.com/photo/cityscape-of-valencia-24531674/",
+    "photographer": "Diego F. Parra",
+    "photographerUrl": "https://www.pexels.com/@diego-f-parra-33199",
+    "description": "Explore the futuristic architecture of Valencia's City of Arts and Sciences on a bright day.",
+    "fetched": "2026-10-29"
   }
 }

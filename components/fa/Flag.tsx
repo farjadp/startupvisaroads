@@ -23,6 +23,8 @@ const C = {
   eeBlue: '#0072CE',
   itGreen: '#008C45',
   itRed: '#CD212A',
+  esRed: '#AA151B',
+  esYellow: '#F1BF00',
   trRed: '#E30A17',
   caRed: '#D52B1E',
   auBlue: '#012169',
@@ -77,6 +79,15 @@ function Shapes({ code }: { code: FlagCode }) {
           <rect width={3} height={2} fill={C.white} />
           <rect width={1} height={2} fill={C.itGreen} />
           <rect x={2} width={1} height={2} fill={C.itRed} />
+        </>
+      );
+    // Civil flag: red, yellow, red at 1:2:1, ratio 2:3 (Constitución art. 4,
+    // Ley 39/1981). No coat of arms — that is not geometry to draw by eye.
+    case 'es':
+      return (
+        <>
+          <rect width={3} height={2} fill={C.esRed} />
+          <rect y={0.5} width={3} height={1} fill={C.esYellow} />
         </>
       );
     // Official artwork (Wikimedia Commons, public domain), authored on a

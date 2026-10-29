@@ -112,6 +112,7 @@ export const FA_SITE_PAGES: FaPage[] = [
   { path: '/europe/netherlands', label: 'ویزای استارتاپ هلند', kind: 'program' },
   { path: '/europe/estonia', label: 'ویزای استارتاپ استونی', kind: 'program' },
   { path: '/europe/italy', label: 'ویزای استارتاپ ایتالیا (Italia Startup Visa)', kind: 'program' },
+  { path: '/europe/spain', label: 'ویزای استارتاپ اسپانیا (اقامت کارآفرین، قانون ۱۴/۲۰۱۳)', kind: 'program' },
   { path: '/turkey-tech-visa', label: 'تک‌ویزای ترکیه (Türkiye Tech Visa)', kind: 'program' },
   { path: '/usa-eb2-niw', label: 'ویزای EB-2 NIW آمریکا برای متخصصان ایرانی', kind: 'program' },
   { path: '/usa', label: 'مسیرهای ویزای آمریکا برای فاندرها', kind: 'page' },
