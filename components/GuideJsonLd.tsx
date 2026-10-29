@@ -9,10 +9,17 @@ import JsonLd from '@/components/JsonLd';
 import { pageCopy } from '@/lib/pageMeta';
 import { SITE_URL, breadcrumbJsonLd, webPageJsonLd } from '@/lib/seo';
 
+/** Extra WebPage fields a guide can state about itself: when its figures were last checked, who wrote it, what it cites. */
+export interface GuideFacts {
+  dateModified?: string;
+  author?: { '@id': string };
+  citation?: string[];
+}
+
 /** Section hubs a guide sits under, for the middle breadcrumb. */
 const HUBS = ['/pnp', '/country'] as const;
 
-export function guideJsonLd(path: string) {
+export function guideJsonLd(path: string, facts: GuideFacts = {}) {
   const copy = pageCopy(path, 'en');
   if (!copy) return null;
   const url = `${SITE_URL}/en${path}`;
@@ -24,12 +31,12 @@ export function guideJsonLd(path: string) {
     { name: copy.title, url },
   ];
   return [
-    webPageJsonLd({ title: copy.title, description: copy.description, url, locale: 'en' }),
+    { ...webPageJsonLd({ title: copy.title, description: copy.description, url, locale: 'en' }), ...facts },
     breadcrumbJsonLd(crumbs),
   ];
 }
 
-export default function GuideJsonLd({ path }: { path: string }) {
-  const data = guideJsonLd(path);
+export default function GuideJsonLd({ path, facts }: { path: string; facts?: GuideFacts }) {
+  const data = guideJsonLd(path, facts);
   return data ? <JsonLd data={data} /> : null;
 }

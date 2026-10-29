@@ -31,11 +31,28 @@ const config: Config = {
       },
       animation: {
         marquee: "marquee 30s linear infinite",
+        // Route guides (components/route): step cards, approval dots, the raised flag.
+        "fade-up": "fadeUp .4s ease-out both",
+        pop: "pop .6s ease-out both",
+        flutter: "flutter 2.6s ease-in-out infinite",
       },
       keyframes: {
         marquee: {
           "0%": { transform: "translateX(0)" },
           "100%": { transform: "translateX(-100%)" },
+        },
+        fadeUp: {
+          "0%": { opacity: "0.2", transform: "translateY(6px)" },
+          "100%": { opacity: "1", transform: "none" },
+        },
+        pop: {
+          "0%": { transform: "scale(.2)" },
+          "60%": { transform: "scale(1.4)" },
+          "100%": { transform: "scale(1)" },
+        },
+        flutter: {
+          "0%, 100%": { transform: "scaleX(1)" },
+          "50%": { transform: "scaleX(.94)" },
         },
       },
     },
