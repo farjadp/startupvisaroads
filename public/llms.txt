@@ -35,6 +35,9 @@ Several immigration programs have changed or closed. Always verify current statu
 - https://visaroads.com/fa/mentorship — Persian mentorship program
 - https://visaroads.com/en/tools/express-entry — Free Express Entry CRS calculator
 - https://visaroads.com/fa/which-path — Free pathway assessment (Persian)
+- https://visaroads.com/en/usa/assessment — US readiness assessment for founders (O-1A, EB-2 NIW)
+- https://visaroads.com/fa/usa/assessment — US readiness assessment (Persian)
+- https://visaroads.com/fa/faq — Persian FAQ on entrepreneur immigration routes
 
 ## Route guides
 
@@ -55,6 +58,9 @@ Canada — Entrepreneur Provincial Nominee Programs (our Canada specialty):
 Canada — Start-Up Visa status:
 - https://visaroads.com/en/startup-visa-canada — Current status of the paused Start-Up Visa
 - https://visaroads.com/fa/canada-startup-visa — Persian status guide
+- https://visaroads.com/fa/canada-startup-visa/requirements — Persian: Start-Up Visa requirements and documents
+- https://visaroads.com/fa/canada-startup-visa/designated-organizations — Persian: designated organizations
+- https://visaroads.com/fa/canada-startup-visa/cost — Persian: what the Start-Up Visa costs, and the warning signs of inflated fees
 - https://visaroads.com/en/c10-work-permit — C10, C11 and C60 significant benefit work permits (R205(a))
 
 Europe:
@@ -65,7 +71,10 @@ Europe:
 - https://visaroads.com/en/country/finland — Finland startup permit
 - https://visaroads.com/fa/europe/finland — Finland startup permit (Persian)
 - https://visaroads.com/en/country/italy — Italia Startup Visa
+- https://visaroads.com/fa/europe/italy — Italia Startup Visa (Persian)
 - https://visaroads.com/fa/europe/estonia — Estonia startup visa (Persian)
+- https://visaroads.com/fa/europe/spain — Spain entrepreneur residence, assessed by ENISA (Persian)
+- https://visaroads.com/fa/europe/bulgaria — Bulgarian Startup Visa (Persian)
 
 United States (founder routes):
 - https://visaroads.com/en/country/usa — US routes for founders
@@ -74,13 +83,25 @@ United States (founder routes):
 - https://visaroads.com/en/usa/o-1a-eb-1a-niw — O-1A vs EB-1A vs EB-2 NIW
 - https://visaroads.com/en/usa/eb2-niw — EB-2 National Interest Waiver
 - https://visaroads.com/en/usa/why-petitions-fail — Why founder petitions fail
+- https://visaroads.com/en/usa/founder-readiness — Founder petition readiness programme (O-1A, EB-1A, NIW)
+- https://visaroads.com/fa/usa — Persian: US routes for founders compared
+- https://visaroads.com/fa/usa/e-2 — Persian: E-2 treaty investor
+- https://visaroads.com/fa/usa/o-1a — Persian: O-1A
+- https://visaroads.com/fa/usa/o-1a-eb-1a-niw — Persian: O-1A vs EB-1A vs EB-2 NIW
+- https://visaroads.com/fa/usa/why-petitions-fail — Persian: why founder petitions fail
+- https://visaroads.com/fa/usa-eb2-niw — Persian: EB-2 NIW
 
 United Kingdom:
 - https://visaroads.com/en/uk/innovator-founder — Innovator Founder visa (endorsement, fees, settlement)
+- https://visaroads.com/fa/uk/innovator-founder — Innovator Founder visa (Persian)
 
 Other:
-- https://visaroads.com/en/country/australia — Australia
-- https://visaroads.com/en/country/turkey — Türkiye
+- https://visaroads.com/en/country/australia — Australia: National Innovation visa (subclass 858)
+- https://visaroads.com/fa/australia — Australia National Innovation visa (Persian)
+- https://visaroads.com/en/country/turkey — Türkiye Tech Visa
+- https://visaroads.com/fa/turkey-tech-visa — Türkiye Tech Visa (Persian)
+- https://visaroads.com/en/country/israel — Israel innovation visa
+- https://visaroads.com/fa/israel — Israel innovation visa (Persian: why it is not open to Iranian applicants)
 - https://visaroads.com/en/uae/golden-visa — UAE Golden Visa
 
 ## Official sources we reference
@@ -93,6 +114,7 @@ Other:
 - Netherlands: https://ind.nl/
 - Australia: https://immi.homeaffairs.gov.au/
 - UAE: https://u.ae/
+- United Kingdom: https://www.gov.uk/
 
 ## Feeds
 
