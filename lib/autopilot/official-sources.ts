@@ -27,7 +27,27 @@ export type OfficialSourceId =
   | 'israel-innovation-authority'
   | 'israel-piba'
   | 'australia-home-affairs'
-  | 'uae-government';
+  | 'uae-government'
+  | 'canada-quebec'
+  | 'netherlands-government'
+  | 'netherlands-study-in-nl'
+  | 'finland-infofinland'
+  | 'finland-kela'
+  | 'finland-study-in-finland'
+  | 'denmark-life-in-denmark'
+  | 'denmark-study-in-denmark'
+  | 'italy-universitaly'
+  | 'italy-visa-mfa'
+  | 'uk-gov'
+  | 'australia-study-australia'
+  | 'australia-ato'
+  | 'usa-state-dept'
+  | 'usa-study-in-the-states'
+  | 'turkiye-migration'
+  | 'turkiye-study-in-turkiye'
+  | 'estonia-study-in-estonia'
+  | 'estonia-work-in-estonia'
+  | 'estonia-police';
 
 export type OfficialSource = {
   id: OfficialSourceId;
@@ -46,10 +66,10 @@ export type OfficialSource = {
 export const OFFICIAL_SOURCES: readonly OfficialSource[] = [
   { id: 'canada-ircc', authority: 'Immigration, Refugees and Citizenship Canada (IRCC)', url: 'https://www.canada.ca/', programmePaths: ['/startup-visa-canada', '/canada-startup-visa', '/pnp', '/tools/express-entry', '/country/canada'], keywords: ['canada', 'ircc', 'express entry', 'start-up visa', 'startup visa', 'pnp'] },
   { id: 'canada-ontario', authority: 'Government of Ontario', url: 'https://www.ontario.ca/', programmePaths: ['/pnp/ontario'], keywords: ['ontario', 'oinp'] },
-  { id: 'canada-british-columbia', authority: 'WelcomeBC, Government of British Columbia', url: 'https://www.welcomebc.ca/', programmePaths: ['/pnp/bc'], keywords: ['british columbia', 'bc pnp'] },
+  { id: 'canada-british-columbia', authority: 'WelcomeBC, Government of British Columbia', url: 'https://www.welcomebc.ca/', programmePaths: ['/pnp/bc'], keywords: ['british columbia', 'bc pnp'], citationHosts: ['gov.bc.ca'] },
   { id: 'canada-alberta', authority: 'Government of Alberta', url: 'https://www.alberta.ca/', programmePaths: ['/pnp/alberta'], keywords: ['alberta', 'aaip'] },
   { id: 'canada-saskatchewan', authority: 'Government of Saskatchewan', url: 'https://www.saskatchewan.ca/', programmePaths: ['/pnp/saskatchewan'], keywords: ['saskatchewan', 'sinp'] },
-  { id: 'canada-manitoba', authority: 'Manitoba Immigration', url: 'https://immigratemanitoba.com/', programmePaths: ['/pnp/manitoba'], keywords: ['manitoba', 'mpnp'] },
+  { id: 'canada-manitoba', authority: 'Manitoba Immigration', url: 'https://immigratemanitoba.com/', programmePaths: ['/pnp/manitoba'], keywords: ['manitoba', 'mpnp'], citationHosts: ['gov.mb.ca'] },
   { id: 'canada-new-brunswick', authority: 'Government of New Brunswick', url: 'https://www2.gnb.ca/', programmePaths: ['/pnp/new-brunswick'], keywords: ['new brunswick', 'nbpnp', 'nbbis'], citationHosts: ['gnb.ca'] },
   { id: 'canada-newfoundland-labrador', authority: 'Government of Newfoundland and Labrador', url: 'https://www.gov.nl.ca/', programmePaths: ['/pnp/newfoundland'], keywords: ['newfoundland', 'labrador', 'nlpnp'] },
   { id: 'canada-nova-scotia', authority: 'Government of Nova Scotia', url: 'https://novascotia.ca/', programmePaths: ['/pnp/nova-scotia'], keywords: ['nova scotia', 'nsnp'] },
@@ -73,6 +93,36 @@ export const OFFICIAL_SOURCES: readonly OfficialSource[] = [
   { id: 'israel-piba', authority: 'Population and Immigration Authority (PIBA), Israel', url: 'https://www.gov.il/', programmePaths: ['/country/israel', '/israel'], keywords: ['israel', 'piba', 'population and immigration'] },
   { id: 'australia-home-affairs', authority: 'Australian Department of Home Affairs', url: 'https://immi.homeaffairs.gov.au/', programmePaths: ['/australia/', '/australia', '/country/australia'], keywords: ['australia', 'home affairs', 'national innovation visa', '858'] },
   { id: 'uae-government', authority: 'Official Portal of the UAE Government', url: 'https://u.ae/', programmePaths: ['/uae/', '/country/uae'], keywords: ['uae', 'united arab emirates', 'golden visa'] },
+
+  // ── Study, life and work authorities (30 Oct 2026) ─────────────────────
+  // The list above is immigration authorities only. Once the planner wrote
+  // for students, families and workers (lib/autopilot/pillars.ts), five of
+  // six life articles were held as DRAFT: schools, health cover, banking and
+  // cost of living are set by education, health and tax bodies, and a cited
+  // link to one was stripped as unofficial. Each entry is the government body
+  // or its own official portal, never an agency or a guide site. CRA lives on
+  // canada.ca and provincial health ministries on the provinces' own hosts,
+  // which are already allowed above.
+  { id: 'canada-quebec', authority: 'Gouvernement du Québec', url: 'https://www.quebec.ca/', programmePaths: [], keywords: ['quebec', 'québec', 'peq', 'csq'] },
+  { id: 'netherlands-government', authority: 'Government of the Netherlands (Rijksoverheid)', url: 'https://www.government.nl/', programmePaths: ['/europe/netherlands'], keywords: ['netherlands', 'dutch', 'amsterdam', 'rotterdam'], citationHosts: ['rijksoverheid.nl', 'belastingdienst.nl', 'duo.nl'] },
+  { id: 'netherlands-study-in-nl', authority: 'Study in NL (Nuffic, Dutch organisation for internationalisation in education)', url: 'https://www.studyinnl.org/', programmePaths: [], keywords: ['study in netherlands', 'dutch university', 'netherlands student', 'تحصیل در هلند'], citationHosts: ['nuffic.nl'] },
+  { id: 'finland-infofinland', authority: 'InfoFinland (City of Helsinki and Finnish ministries)', url: 'https://www.infofinland.fi/', programmePaths: ['/europe/finland', '/country/finland'], keywords: ['finland', 'helsinki', 'finnish', 'فنلاند', 'هلسینکی'] },
+  { id: 'finland-kela', authority: 'Kela, Social Insurance Institution of Finland', url: 'https://www.kela.fi/', programmePaths: [], keywords: ['kela', 'finland health', 'finland family benefit', 'finnish social security'] },
+  { id: 'finland-study-in-finland', authority: 'Study in Finland (Finnish National Agency for Education)', url: 'https://www.studyinfinland.fi/', programmePaths: [], keywords: ['study in finland', 'finnish university', 'تحصیل در فنلاند'], citationHosts: ['oph.fi', 'opintopolku.fi'] },
+  { id: 'denmark-life-in-denmark', authority: 'Life in Denmark (Danish Agency for Digital Government, borger.dk)', url: 'https://lifeindenmark.borger.dk/', programmePaths: ['/europe/denmark', '/country/denmark'], keywords: ['denmark', 'danish', 'copenhagen', 'دانمارک', 'کپنهاگ'], citationHosts: ['borger.dk', 'skat.dk'] },
+  { id: 'denmark-study-in-denmark', authority: 'Study in Denmark (Danish Ministry of Higher Education and Science)', url: 'https://studyindenmark.dk/', programmePaths: [], keywords: ['study in denmark', 'danish university', 'denmark student'] },
+  { id: 'italy-universitaly', authority: 'Universitaly (Italian Ministry of University and Research)', url: 'https://www.universitaly.it/', programmePaths: [], keywords: ['study in italy', 'italian university', 'universitaly', 'تحصیل در ایتالیا'] },
+  { id: 'italy-visa-mfa', authority: 'Visto per l\'Italia, Italian Ministry of Foreign Affairs', url: 'https://vistoperitalia.esteri.it/', programmePaths: [], keywords: ['italy visa', 'italian visa', 'italy study visa', 'ویزای تحصیلی ایتالیا'], citationHosts: ['esteri.it'] },
+  { id: 'uk-gov', authority: 'GOV.UK (UK Visas and Immigration and other UK government departments)', url: 'https://www.gov.uk/', programmePaths: ['/uk/'], keywords: ['uk', 'united kingdom', 'britain', 'england', 'skilled worker visa', 'graduate visa', 'innovator founder', 'انگلیس', 'بریتانیا'] },
+  { id: 'australia-study-australia', authority: 'Study Australia (Australian Government)', url: 'https://www.studyaustralia.gov.au/', programmePaths: [], keywords: ['study in australia', 'australia student', 'تحصیلی استرالیا'] },
+  { id: 'australia-ato', authority: 'Australian Taxation Office', url: 'https://www.ato.gov.au/', programmePaths: [], keywords: ['australia tax', 'australian tax'] },
+  { id: 'usa-state-dept', authority: 'U.S. Department of State, Bureau of Consular Affairs', url: 'https://travel.state.gov/', programmePaths: [], keywords: ['us visa', 'f-1', 'f1 visa', 'j-1', 'visa interview', 'consulate'], citationHosts: ['state.gov'] },
+  { id: 'usa-study-in-the-states', authority: 'Study in the States (U.S. Department of Homeland Security)', url: 'https://studyinthestates.dhs.gov/', programmePaths: [], keywords: ['f-1', 'f1', 'opt', 'stem opt', 'sevis', 'study in the us'], citationHosts: ['dhs.gov', 'ice.gov'] },
+  { id: 'turkiye-migration', authority: 'Presidency of Migration Management, Republic of Türkiye', url: 'https://www.goc.gov.tr/', programmePaths: ['/turkey-tech-visa', '/country/turkey'], keywords: ['turkey', 'türkiye', 'turkiye', 'istanbul', 'residence permit turkey', 'ترکیه', 'استانبول'] },
+  { id: 'turkiye-study-in-turkiye', authority: 'Study in Türkiye (Council of Higher Education)', url: 'https://www.studyinturkiye.gov.tr/', programmePaths: [], keywords: ['study in turkey', 'study in türkiye', 'turkish university'], citationHosts: ['yok.gov.tr'] },
+  { id: 'estonia-study-in-estonia', authority: 'Study in Estonia (Education and Youth Board of Estonia)', url: 'https://www.studyinestonia.ee/', programmePaths: [], keywords: ['study in estonia', 'estonian university'] },
+  { id: 'estonia-work-in-estonia', authority: 'Work in Estonia (Enterprise and Innovation Foundation, Estonian government)', url: 'https://www.workinestonia.com/', programmePaths: ['/europe/estonia'], keywords: ['estonia', 'tallinn', 'استونی', 'تالین'] },
+  { id: 'estonia-police', authority: 'Police and Border Guard Board of Estonia', url: 'https://www.politsei.ee/', programmePaths: ['/europe/estonia'], keywords: ['estonia', 'estonian residence permit', 'd-visa'] },
 ];
 
 export type OfficialSourceBrief = {

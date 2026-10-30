@@ -224,13 +224,28 @@ export function allowedFigureText(parts: (string | undefined | null)[]): string 
  * Factual figures in the body that appear nowhere in the allowed text.
  * Normalised through numberTokens so «۱۵٬۲۶۳» and "15,263" are one figure.
  */
-export function numbersOutsideEvidence(html: string, allowed: string): string[] {
+export function numbersOutsideEvidence(html: string, allowed: string, now: Date = new Date()): string[] {
   // Two readings of the allowed text, because they normalise differently:
   // numberTokens splits «15,263» into 15 and 263, while factualNumbers joins
   // it into 15263. The body is measured with the latter, so the permitted
   // set needs both or every grouped figure reads as invented.
-  const permitted = new Set<string>([...numberTokens(allowed), ...factualNumbers(allowed)]);
+  const permitted = new Set<string>([...numberTokens(allowed), ...factualNumbers(allowed), ...calendarYears(now)]);
   return factualNumbers(proseOf(html)).filter((n) => !permitted.has(n));
+}
+
+/**
+ * This year and next, in the Gregorian and the Persian calendar. A year is a
+ * date, not a statistic, but "any number of four digits" read it as one: a
+ * Persian article saying «سال ۱۴۰۵» and a news piece about 2027 draws were
+ * both refused as invented figures (27 Oct 2026). Only the current and the
+ * coming year pass this way; any other year still needs a source.
+ */
+export function calendarYears(now: Date = new Date()): string[] {
+  const y = now.getUTCFullYear();
+  // The Persian year turns at Nowruz, around 21 March.
+  const afterNowruz = now.getUTCMonth() > 2 || (now.getUTCMonth() === 2 && now.getUTCDate() >= 21);
+  const p = y - (afterNowruz ? 621 : 622);
+  return [y, y + 1, p, p + 1].map(String);
 }
 
 export type GateResult = { ok: boolean; violations: string[]; fatal: boolean };
