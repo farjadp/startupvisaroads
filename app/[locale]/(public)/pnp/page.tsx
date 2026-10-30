@@ -161,10 +161,10 @@ export default async function PNPPage({ params }: { params: Promise<{ locale: st
          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 border-t border-[#1a1a1a]/10">
             
             {[
-               { name: "Ontario", code: "OINP", focus: "Tech, Finance, Trades", link: "/pnp/ontario" },
-               { name: "British Columbia", code: "BC PNP", focus: "Tech, Health, Management", link: "/pnp/bc" },
+               { name: "Ontario", code: "OINP", focus: "Entrepreneur stream closed (2026)", link: "/pnp/ontario" },
+               { name: "British Columbia", code: "BC PNP", focus: "Entrepreneur Base and Regional", link: "/pnp/bc" },
                { name: "Alberta", code: "AAIP", focus: "Agri, Tech, Hospitality", link: "/pnp/alberta" },
-               { name: "Saskatchewan", code: "SINP", focus: "Hard-to-fill Skills", link: "/pnp/saskatchewan" },
+               { name: "Saskatchewan", code: "SINP", focus: "Entrepreneur and Farm closed (2025)", link: "/pnp/saskatchewan" },
                { name: "Manitoba", code: "MPNP", focus: "Strong Family Ties", link: "/pnp/manitoba" },
                { name: "Nova Scotia", code: "NSNP", focus: "Doctors, Labour Market", link: "/pnp/nova-scotia" },
                { name: "New Brunswick", code: "NBPNP", focus: "Trucking, IT, French", link: "/pnp/new-brunswick" },

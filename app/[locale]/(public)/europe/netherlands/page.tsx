@@ -19,13 +19,13 @@
 //   - IND fee €423 (2026), re-checked 2026-10-29 on ind.nl/en/fees-costs-of-an-
 //     application: "Start-up: first application €423" and "change in purpose
 //     of stay: self-employed after start up €423".
-//   - Means of support about €21,200 single / €29,700 family for twelve
-//     months. The single figure re-checked 2026-10-29: ind.nl/en/required-
-//     amounts-income-requirements gives €1,766.77 a month with holiday
-//     allowance (valid 1 Jul to 31 Dec 2026), × 12 ≈ €21,200. The family
-//     figure is the Persian module's (8 Sep 2026); that IND page shows no
-//     separate family amount, so it was not re-confirmed. The amounts follow
-//     the statutory minimum wage and change on 1 January and 1 July.
+//   - Means of support about €21,200 single / €30,300 family for twelve
+//     months, re-checked 2026-10-29 on ind.nl/en/required-amounts-income-
+//     requirements, "Application for other residence permits" (valid 1 Jul
+//     to 31 Dec 2026): €1,766.77 a month with holiday allowance single,
+//     × 12 ≈ €21,200; €2,523.96 with a partner, × 12 ≈ €30,300 (was €29,700,
+//     the first-half-2026 rate). The amounts follow the statutory minimum
+//     wage and change on 1 January and 1 July: re-check on 1 Jan 2027.
 //   - The startup permit is not extended. After a year you file a new
 //     self-employed application, scored on RVO's points system; a facilitator
 //     statement can simplify the transition (english.rvo.nl, business.gov.nl,
@@ -99,7 +99,7 @@ const rules = [
   { title: 'True Innovation', body: 'No standard cafes or grocery stores. Must be new to the Dutch market (e.g. AI, Green-Tech).' },
   { title: 'Flawless Business Plan', body: 'Clear problem, solution, and team. The Dutch invest in capable people.' },
   { title: 'KvK Registration', body: 'Commitment to legally registering the company in the Netherlands.' },
-  { title: 'Financial Solvency', body: 'Prove you have about €21,200 (single) or €29,700 (family) in a recognized bank to survive year one.' },
+  { title: 'Financial Solvency', body: 'Prove you have about €21,200 (single) or €30,300 (family) in a recognized bank to survive year one.' },
 ];
 
 // The 3 Agency Lies, verbatim.
@@ -167,7 +167,7 @@ const costs = [
   { item: 'IND application fee, start-up', amount: '€423', who: 'IND (government), 2026', note: 'The official application fee, not the tens of thousands of euros that immigration agencies claim. Revised each January.' },
   { item: 'IND fee, self-employed permit after the start-up year', amount: '€423', who: 'IND (government), 2026', note: 'A new application, not an extension.' },
   { item: 'Means of support, single', amount: '~€21,200 for 12 months', who: 'IND requirement', note: 'Follows the statutory minimum wage; changes on 1 January and 1 July.' },
-  { item: 'Means of support, family', amount: '~€29,700 for 12 months', who: 'IND requirement', note: 'Follows the statutory minimum wage; changes on 1 January and 1 July.' },
+  { item: 'Means of support, family', amount: '~€30,300 for 12 months', who: 'IND requirement', note: 'Follows the statutory minimum wage; changes on 1 January and 1 July.' },
   { item: 'Facilitator', amount: '€500–€1,000 a month', who: 'Private market range', note: 'Desk space, mentoring and administrative support. Facilitators are private organisations, so costs vary. Not a government fee, and not a VisaRoads price.' },
 ];
 
@@ -193,7 +193,7 @@ const facts = [
   { fact: 'KvK Registration', q: 'Do I have to register my startup with the KvK?', a: 'You and your facilitator must commit to registering your startup with the Dutch Chamber of Commerce (KvK) as soon as you arrive.' },
   { fact: 'No Extension: Apply as Self-Employed', q: 'Does the startup visa renew after one year?', a: 'After one year, the visa does not auto-renew, and the IND does not extend it. You file a new application for a Self-Employed permit, scored on RVO\'s points system, and you must prove tangible progress.' },
   { fact: 'Profitability is Not Expected Immediately', q: 'Do I need to be profitable to get the second-year permit?', a: 'To secure your second-year visa, you don\'t need a million-euro profit, but you must show a working prototype (MVP), active networking, or initial clients.' },
-  { fact: 'Heavy Solvency Requirements', q: 'How much money do I need to show?', a: 'You must show about €21,200 (single founder) or €29,700 (with family) in a recognized bank account to prove you can survive the first year. The amounts follow the Dutch statutory minimum wage and change on 1 January and 1 July.' },
+  { fact: 'Heavy Solvency Requirements', q: 'How much money do I need to show?', a: 'You must show about €21,200 (single founder) or €30,300 (with family) in a recognized bank account to prove you can survive the first year. The amounts follow the Dutch statutory minimum wage and change on 1 January and 1 July.' },
   { fact: 'Sanctioned Bank Issues', q: 'Can I show funds held in a bank in a sanctioned country?', a: 'The IND frequently rejects financial statements from banks in sanctioned countries (like Iran). Funds usually need to be in a third-country account.' },
   { fact: 'Third-Party Funding', q: 'Can a facilitator or third party fund my stay?', a: 'Yes. The IND accepts a facilitator or third party covering your living costs, provided the amount is paid into your Dutch bank account and covers the whole period (up to one year).' },
   { fact: 'Monthly Facilitator Costs', q: 'How much does a facilitator cost?', a: 'Expect to pay your facilitator between €500 and €1,000 monthly for desk space, mentoring, and administrative support. That is a private market range, not a government fee: facilitators are private organisations, so costs vary.' },
@@ -218,7 +218,7 @@ const sources = [
   { name: 'IND — Fees: costs of an application', href: 'https://ind.nl/en/fees-costs-of-an-application', what: '€423 for the start-up permit and for the self-employed permit after it, 2026.', checked: '29 Oct 2026' },
   { name: 'IND — Required amounts income requirements', href: 'https://ind.nl/en/required-amounts-income-requirements', what: 'The means of support, tied to the statutory minimum wage.', checked: '29 Oct 2026' },
   { name: 'IND — Residence permit for a self-employed person', href: 'https://ind.nl/en/residence-permits/work/residence-permit-self-employed-person', what: 'The permit you apply for after the start-up year.', checked: '8 Sep 2026' },
-  { name: 'IND — Permanent residence permit', href: 'https://ind.nl/en/replace-extend-renew-and-change/permanent-residency/permanent-residence-permit', what: 'Permanent residence after 5 years of legal residence.', checked: null },
+  { name: 'IND — Permanent residence permit', href: 'https://ind.nl/en/replace-extend-renew-and-change/permanent-residency/permanent-residence-permit', what: 'Permanent residence after 5 years of legal residence.', checked: '29 Oct 2026' },
   { name: 'RVO — Residence permit for foreign startups', href: 'https://english.rvo.nl/topics/residence-permit-foreign-startups', what: 'Who applies, and the facilitator statement for the self-employed permit.', checked: '29 Oct 2026' },
   { name: 'RVO — Requirements for a residence permit for foreign startups', href: 'https://english.rvo.nl/topics/residence-permit-foreign-startups/requirements', what: 'Facilitator, innovation, step-by-step plan, KVK registration, financial resources.', checked: '29 Oct 2026' },
   { name: 'Business.gov.nl (IND and RVO) — Residence permit for foreign startups', href: 'https://business.gov.nl/coming-to-the-netherlands/permits-and-visa/residence-permit-for-foreign-startups/', what: 'Who files the application, RVO\'s advice to the IND, and that facilitators are private and set their own fees.', checked: '29 Oct 2026' },
@@ -362,7 +362,7 @@ export default async function NetherlandsPage({ params }: { params: Promise<{ lo
             <p>
               The Netherlands startup visa is a strict one-year temporary residence permit for founders of an innovative business, and it is not extended.
               You need an agreement with a facilitator recognised by the RVO before you apply. The IND fee is €423 (2026), and you must show about €21,200
-              (single) or €29,700 (family) for the year.
+              (single) or €30,300 (family) for the year.
             </p>
           }
         >
@@ -371,7 +371,7 @@ export default async function NetherlandsPage({ params }: { params: Promise<{ lo
               { stat: '12 mo', label: 'Trial period', sub: 'not a permanent or multi-year permit' },
               { stat: '1', label: 'Facilitator contract', sub: 'with an approved incubator, mandatory' },
               { stat: '€423', label: 'IND fee', sub: 'the official application fee, 2026' },
-              { stat: '~€21.2k', label: 'Funds to show', sub: 'single, for 12 months; ~€29,700 with family' },
+              { stat: '~€21.2k', label: 'Funds to show', sub: 'single, for 12 months; ~€30,300 with family' },
             ].map((s) => (
               <div key={s.label} className="flex flex-col rounded-2xl border border-[#1a1a1a]/10 bg-white p-5 transition-transform hover:-translate-y-1">
                 <dt className="order-2 mt-2 font-sans text-sm font-bold">{s.label}</dt>
@@ -406,7 +406,7 @@ export default async function NetherlandsPage({ params }: { params: Promise<{ lo
           answer={
             <p>
               You qualify if you meet five rules: a signed agreement with an approved facilitator, a truly innovative business that is new to the Dutch
-              market, a clear business plan with a capable team, a commitment to register the company with the KvK, and about €21,200 (single) or €29,700
+              market, a clear business plan with a capable team, a commitment to register the company with the KvK, and about €21,200 (single) or €30,300
               (family) in a recognized bank.
             </p>
           }
@@ -525,7 +525,7 @@ export default async function NetherlandsPage({ params }: { params: Promise<{ lo
           task="Read the four figures"
           answer={
             <p>
-              The IND application fee is €423 in 2026. You must also show about €21,200 (single) or €29,700 (family) for twelve months; the amounts
+              The IND application fee is €423 in 2026. You must also show about €21,200 (single) or €30,300 (family) for twelve months; the amounts
               follow the minimum wage and change on 1 January and 1 July. Facilitators are private and typically charge €500 to €1,000 a month. Agencies
               asking for €20,000 or more are charging massive hidden fees.
             </p>

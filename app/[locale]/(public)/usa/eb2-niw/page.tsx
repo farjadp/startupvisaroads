@@ -22,6 +22,7 @@ import type { Metadata } from 'next';
 import { setRequestLocale } from 'next-intl/server';
 
 import { metaFor } from '@/lib/pageMeta';
+import OfficialSources from '@/components/OfficialSources';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
@@ -100,7 +101,7 @@ export default async function EB2NIWPage({ params }: { params: Promise<{ locale:
                <Scale className="w-12 h-12 mx-auto mb-6 text-[#0f172a]" />
                <h2 className="font-serif text-5xl mb-6">Matter of Dhanasar</h2>
                <p className="font-serif text-xl text-[#0f172a]/60 leading-relaxed">
-                  To win an NIW case, your petition must satisfy the three prongs established by the AAO decision in 2016. 
+                  To win an NIW case, your petition must satisfy the three prongs set by the Administrative Appeals Office in Matter of Dhanasar (2016), which USCIS applies today. 
                   We structure your entire business plan around this legal framework.
                </p>
             </div>
@@ -153,7 +154,7 @@ export default async function EB2NIWPage({ params }: { params: Promise<{ locale:
                {[
                   { icon: GraduationCap, title: "STEM PhDs", desc: "Researchers in critical fields." },
                   { icon: Award, title: "Entrepreneurs", desc: "Founders with US interest." },
-                  { icon: Landmark, title: "Pilots", desc: "Addressing national shortage." },
+                  { icon: Landmark, title: "Senior Professionals", desc: "A bachelor's degree plus 5 years of progressive experience." },
                   { icon: BookOpen, title: "Physicians", desc: "Working in underserved areas." }
                ].map((item, i) => {
                   const Icon = item.icon;
@@ -190,7 +191,7 @@ export default async function EB2NIWPage({ params }: { params: Promise<{ locale:
                      </div>
                      <div className="space-y-4 font-serif text-[#0f172a]/80 leading-relaxed">
                         <p className="bg-[#f3f4f6] p-4 border-l-2 border-[#0f172a]">
-                           "...the petitioner's research in <span className="font-bold">Generative AI Safety</span> aligns directly with the <span className="italic">Executive Order on Safe, Secure, and Trustworthy AI</span> issued by the White House..."
+                           "...the petitioner's research in <span className="font-bold">Generative AI Safety</span> is of national importance: it addresses a risk that reaches beyond any single employer, as the independent evidence in Exhibits C to F shows..."
                         </p>
                         <div className="h-2 bg-gray-100 w-full rounded"></div>
                         <div className="h-2 bg-gray-100 w-5/6 rounded"></div>
@@ -213,7 +214,7 @@ export default async function EB2NIWPage({ params }: { params: Promise<{ locale:
                   <ul className="space-y-4 font-serif text-lg text-[#0f172a]">
                      <li className="flex items-center gap-3">
                         <span className="w-2 h-2 bg-[#b91c1c] rounded-full"></span>
-                        Executive Order Alignment
+                        National Importance Evidence
                      </li>
                      <li className="flex items-center gap-3">
                         <span className="w-2 h-2 bg-[#b91c1c] rounded-full"></span>
@@ -250,6 +251,14 @@ export default async function EB2NIWPage({ params }: { params: Promise<{ locale:
          </div>
       </section>
 
+
+      <OfficialSources
+         checked="29 October 2026"
+         sources={[
+            { label: 'USCIS — Employment-Based Immigration: Second Preference EB-2 (last reviewed 15 Jan 2025)', url: 'https://www.uscis.gov/working-in-the-united-states/permanent-workers/employment-based-immigration-second-preference-eb-2', what: 'The three national interest waiver prongs, self-petitioning without an employer, the advanced degree and exceptional ability definitions, and what evidence supports a business plan.' },
+            { label: 'Matter of Dhanasar, 26 I&N Dec. 884 (AAO 2016) — U.S. Department of Justice', url: 'https://www.justice.gov/eoir/page/file/920996/download', what: 'The 2016 Administrative Appeals Office decision that set the three-prong test.' },
+         ]}
+      />
 
       {/* =========================================
           6. CTA

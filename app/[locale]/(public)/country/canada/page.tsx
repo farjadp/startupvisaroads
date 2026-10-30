@@ -28,12 +28,16 @@
 //    Source: lib/routes-v2/canada-us.ts, CRS criteria checked 2026-10-15. The
 //    old page promised "additional points for Canadian job".
 //  - Provincial entrepreneur streams (AB, MB, NS, NB) are open: routes-v2,
-//    provincial sites checked 2026-10-12.
+//    provincial sites checked 2026-10-12. BC (Base and Regional) and NL
+//    (International Entrepreneur) are open too: welcomebc.ca and gov.nl.ca,
+//    checked 2026-10-29. Ontario and Saskatchewan are closed.
+//  - Spousal open work permit: limited since 21 Jan 2025 (canada.ca family
+//    members page, dated 2026-06-12, checked 2026-10-29).
 //
 // NOT verified against any source (kept as the page's own claims, worded as
 // before): the ecosystem figures (#3 tech hub, AI researchers per capita,
 // USMCA "duty-free"), the three HQ city descriptions, and the ICT bullets
-// (no Letter of Support, 100% ownership, spouse work authorisation). There
+// (no Letter of Support, 100% ownership). There
 // is no ICT source in the repo. Check them before quoting them anywhere else.
 //
 // Photos: Toronto (Unsplash 1517935706615, CN Tower, Rogers Centre, the
@@ -66,7 +70,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 // ─── Data ────────────────────────────────────────────────────────────────────
 
 // The latest check date of the sources the figures rest on (routes-v2, 15 Oct).
-const UPDATED = { iso: '2026-10-15', label: '15 Oct 2026' };
+const UPDATED = { iso: '2026-10-29', label: '29 Oct 2026' };
 
 const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 /** "2026-06-30" → "30 June 2026", without a Date (a UTC parse can slip a day). */
@@ -102,13 +106,13 @@ const routeCards = [
 ];
 
 // The page's "ICT & C11" card, with C11 corrected to IRCC's own definition.
-const ictBullets = ['No Letter of Support needed.', 'Full control of your equity (100% ownership).', 'Immediate work authorization for spouse.'];
+const ictBullets = ['No Letter of Support needed.', 'Full control of your equity (100% ownership).', 'Spouse may qualify for an open work permit (limited since 21 January 2025).'];
 
 const rights = [
   { title: 'No Letter of Support', content: 'Neither route needs a designated organisation behind you. You do not wait for an incubator, an angel group or a venture fund to say yes.', positive: true },
   { title: 'Open today', content: 'Unlike the Start-up Visa, the operational work permits are open to new applications today.', positive: true },
   { title: 'Your equity stays yours', content: 'Full control of your equity (100% ownership). Under C11 you must control at least 51% of the business.', positive: true },
-  { title: 'Spouse can work', content: 'Immediate work authorization for spouse. Check the current spousal open work permit rules on canada.ca for your route before you plan on it.', positive: true },
+  { title: 'Spouse can work', content: 'Spouse may qualify for an open work permit: since 21 January 2025, only for workers in TEER 0 or 1 (or select TEER 2 and 3) occupations, or on an eligible pathway to permanent residence. Check your own occupation before you plan on it.', positive: true },
   { title: 'C11 is temporary', content: 'For owners seeking only temporary residence: at least 51% control, up to 18 months at a time. Founders who intend to stay go to the provincial streams.', positive: false },
   { title: 'Job-offer points', content: 'Express Entry job-offer CRS points were removed on 25 March 2025. A Canadian job no longer adds points on its own.', positive: false },
   { title: 'A paper company', content: 'A virtual office and a passive holding company are, in our view, the weakest case you can present to an officer.', positive: false },
@@ -182,7 +186,7 @@ const ecosystem = [
 
 const cities: HqCity[] = [
   { city: 'Toronto (GTA)', sector: 'Finance & SaaS', body: 'Highest cost, highest density. Essential for Fintech and Enterprise SaaS. Access to 6M+ population.' },
-  { city: 'Waterloo', sector: 'Deep Tech', body: '"The Quantum Valley". Home to Google HQ Canada and top engineering talent from UWaterloo. Lower rent than Toronto.' },
+  { city: 'Waterloo', sector: 'Deep Tech', body: '"The Quantum Valley". Top engineering talent from UWaterloo. Lower rent than Toronto.' },
   { city: 'Calgary', sector: 'Energy & CleanTech', body: 'Highest GDP per capita. Aggressive provincial incentives for tech. Low corporate tax.' },
 ];
 
@@ -217,7 +221,7 @@ const routeTable = [
   { route: 'Start-up Visa', status: `Paused since ${PAUSED_ON}`, who: 'Applicants who filed before the pause', own: '—', length: '—', pr: 'Was the direct PR route' },
   { route: 'Executive transfer (ICT)', status: 'Open', who: 'A founder whose company opens a Canadian branch', own: 'Full control (100%) possible', length: '—', pr: 'Later, via Express Entry' },
   { route: 'C11 business owner', status: 'Open', who: 'Owners seeking only temporary residence', own: 'At least 51%', length: 'Up to 18 months at a time', pr: 'No; IRCC points to the provincial streams' },
-  { route: 'Provincial entrepreneur (C60)', status: 'Open in Alberta, Manitoba, Nova Scotia and New Brunswick', who: 'Founders who want to settle', own: 'Set by each province', length: 'Usually up to 2 years before nomination', pr: 'Provincial nomination, then PR' },
+  { route: 'Provincial entrepreneur (C60)', status: 'Open in Alberta, Manitoba, Nova Scotia, New Brunswick, British Columbia and Newfoundland and Labrador; closed in Ontario and Saskatchewan', who: 'Founders who want to settle', own: 'Set by each province', length: 'Usually up to 2 years before nomination', pr: 'Provincial nomination, then PR' },
 ];
 
 const sources = [
@@ -230,6 +234,10 @@ const sources = [
   { name: 'Alberta — AAIP Rural Entrepreneur Stream', href: 'https://www.alberta.ca/aaip-rural-entrepreneur-stream-eligibility', what: 'Stream open.', checked: '12 Oct 2026' },
   { name: 'Manitoba — MPNP Entrepreneur Pathway', href: 'https://immigratemanitoba.com/mpnp/bis/ep/eligibility/', what: 'Stream open.', checked: '12 Oct 2026' },
   { name: 'Nova Scotia — NSNP Entrepreneur', href: 'https://liveinnovascotia.com/entrepreneur', what: 'Stream open.', checked: '12 Oct 2026' },
+  { name: 'British Columbia — BC PNP Entrepreneur Immigration', href: 'https://www.welcomebc.ca/immigrate-to-b-c/entrepreneur-immigration', what: 'Base and Regional streams.', checked: '29 Oct 2026' },
+  { name: 'Newfoundland and Labrador — International Entrepreneur', href: 'https://www.gov.nl.ca/immigration/immigrating-to-newfoundland-and-labrador/provincial-nominee-program/entrepreneurs/international-entrepreneur/', what: 'Expression of Interest system open.', checked: '29 Oct 2026' },
+  { name: 'Ontario — OINP', href: 'https://www.ontario.ca/page/ontario-immigrant-nominee-program-oinp', what: 'All streams but Ontario Workforce Priority closed; no entrepreneur stream.', checked: '29 Oct 2026' },
+  { name: 'IRCC — Open work permits for family members of foreign workers', href: 'https://www.canada.ca/en/immigration-refugees-citizenship/services/work-canada/special-instructions/spouses-dependent-children/eligibility.html', what: 'Spousal open work permits limited to select occupations since 21 January 2025 (page dated 12 Jun 2026).', checked: '29 Oct 2026' },
   { name: 'New Brunswick — Business Immigration Stream', href: 'https://www.gnb.ca/en/topic/family-home-community/immigration/provincial-nominee-program/business-immigration-stream.html', what: 'Stream open.', checked: '12 Oct 2026' },
 ];
 
@@ -572,7 +580,7 @@ export default async function CanadaPage({ params }: { params: Promise<{ locale:
           task="Find your door"
           answer={
             <p>
-              Through a provincial entrepreneur stream or Express Entry. Alberta, Manitoba, Nova Scotia and New Brunswick each approve a founder, sign a
+              Through a provincial entrepreneur stream or Express Entry. Alberta, Manitoba, Nova Scotia, New Brunswick, British Columbia and Newfoundland and Labrador each approve a founder, sign a
               performance agreement and support a C60 work permit, then decide on nomination after the operating period. An executive transferred under ICT
               can later apply through Express Entry. C11 is for temporary residence only.
             </p>

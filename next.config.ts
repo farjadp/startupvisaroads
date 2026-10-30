@@ -40,6 +40,11 @@ const nextConfig: NextConfig = {
     return [
       { source: '/australia/entrepreneur-stream', destination: '/en/country/australia', permanent: true },
       { source: '/:locale(en|fa)/australia/entrepreneur-stream', destination: '/:locale/country/australia', permanent: true },
+      // The old Golden Visa page quoted a retired AED 500,000 entrepreneur rule
+      // and told readers they would stop paying tax; /country/uae has the
+      // ICP-sourced figures. There is no Persian UAE guide, so /fa goes to /en.
+      { source: '/uae/golden-visa', destination: '/en/country/uae', permanent: true },
+      { source: '/:locale(en|fa)/uae/golden-visa', destination: '/en/country/uae', permanent: true },
     ];
   },
 

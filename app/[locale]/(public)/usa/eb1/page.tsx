@@ -21,6 +21,7 @@ import type { Metadata } from 'next';
 import { setRequestLocale } from 'next-intl/server';
 
 import { metaFor } from '@/lib/pageMeta';
+import OfficialSources from '@/components/OfficialSources';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
@@ -81,7 +82,7 @@ export default async function EB1Page({ params }: { params: Promise<{ locale: st
                <div>
                   <h2 className="font-serif text-5xl md:text-6xl mb-6">The Evidence</h2>
                   <p className="font-sans text-xs uppercase tracking-widest opacity-60">
-                     Must satisfy at least 3 of 10 USCIS criteria
+                     At least 3 of 10 USCIS criteria, or a one-time major internationally recognized award
                   </p>
                </div>
                <div className="hidden md:block">
@@ -192,7 +193,7 @@ export default async function EB1Page({ params }: { params: Promise<{ locale: st
                         <span className="font-serif text-3xl text-[#1a1a1a]/20">03</span>
                         <div>
                            <h4 className="font-bold text-xl mb-2">Expert Opinions</h4>
-                           <p className="text-sm opacity-60">Drafting detailed letters of recommendation for industry leaders to sign on your behalf.</p>
+                           <p className="text-sm opacity-60">Identifying independent experts who know your work first-hand, and briefing them so each writes, in their own words, what you achieved and why it matters.</p>
                         </div>
                      </div>
                   </div>
@@ -221,6 +222,13 @@ export default async function EB1Page({ params }: { params: Promise<{ locale: st
             </div>
          </div>
       </section>
+
+      <OfficialSources
+         checked="29 October 2026"
+         sources={[
+            { label: 'USCIS — Employment-Based Immigration: First Preference EB-1 (updated 24 Jan 2025)', url: 'https://www.uscis.gov/working-in-the-united-states/permanent-workers/employment-based-immigration-first-preference-eb-1', what: 'The 3-of-10 criteria or a one-time major achievement, the wording of each criterion, and that no job offer or labor certification is required.' },
+         ]}
+      />
 
       {/* =========================================
           5. CTA

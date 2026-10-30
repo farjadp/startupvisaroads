@@ -2,6 +2,12 @@
 // Page: app/usa/eb5/page.tsx
 // Style: Editorial / Art Gallery
 // Concept: "The Capital Route" (High Finance & Investment)
+//
+// Figures checked 29 Oct 2026 against the USCIS Policy Manual, Vol. 6, Part G,
+// Ch. 2 (current as of 27 Oct 2026): $1,050,000, or $800,000 in a TEA or an
+// infrastructure project, for petitions filed on or after 15 Mar 2022; both
+// rise with inflation on 1 Jan 2027. Re-check that day. Do not cite the main
+// USCIS EB-5 page: it still shows the vacated 2019 amounts.
 // ============================================================================
 
 import React from 'react';
@@ -21,6 +27,7 @@ import type { Metadata } from 'next';
 import { setRequestLocale } from 'next-intl/server';
 
 import { metaFor } from '@/lib/pageMeta';
+import OfficialSources from '@/components/OfficialSources';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
@@ -54,7 +61,7 @@ export default async function EB5Page({ params }: { params: Promise<{ locale: st
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-end">
              <div>
                 <p className="font-serif text-3xl md:text-5xl leading-tight">
-                   The <span className="bg-[#1a1a1a] text-[#F2F0E9] px-2">$800,000</span> bridge to the United States Green Card.
+                   The <span className="bg-[#1a1a1a] text-[#F2F0E9] px-2">$800,000</span> bridge to the United States Green Card, until 31 December 2026.
                 </p>
              </div>
              <div className="flex flex-col gap-8">
@@ -83,14 +90,14 @@ export default async function EB5Page({ params }: { params: Promise<{ locale: st
             <div className="group border-b md:border-b-0 md:border-r border-[#1a1a1a] p-12 hover:bg-[#1a1a1a] hover:text-[#F2F0E9] transition-colors duration-500">
                <span className="font-sans text-xs font-bold uppercase tracking-widest mb-4 block opacity-50">TEA Investment</span>
                <h3 className="font-serif text-6xl mb-2">$800k</h3>
-               <p className="font-sans text-xs opacity-60">Targeted Employment Area (Rural/High Unemployment)</p>
+               <p className="font-sans text-xs opacity-60">In a Targeted Employment Area (rural or high-unemployment) or an infrastructure project</p>
             </div>
 
             {/* Stat 2 */}
             <div className="group border-b md:border-b-0 md:border-r border-[#1a1a1a] p-12 hover:bg-[#1a1a1a] hover:text-[#F2F0E9] transition-colors duration-500">
                <span className="font-sans text-xs font-bold uppercase tracking-widest mb-4 block opacity-50">Standard Investment</span>
                <h3 className="font-serif text-6xl mb-2">$1.05M</h3>
-               <p className="font-sans text-xs opacity-60">Non-TEA Locations (Major Cities)</p>
+               <p className="font-sans text-xs opacity-60">Anywhere else. A city area can still be a TEA if unemployment there is high</p>
             </div>
 
             {/* Stat 3 */}
@@ -99,11 +106,17 @@ export default async function EB5Page({ params }: { params: Promise<{ locale: st
                <h3 className="font-serif text-6xl mb-2 flex items-start gap-2">
                   10 <Users className="w-6 h-6 mt-2 opacity-50" />
                </h3>
-               <p className="font-sans text-xs opacity-60">Full-time W-2 jobs for US workers</p>
+               <p className="font-sans text-xs opacity-60">Full-time positions for qualifying employees (indirect jobs count for regional centers)</p>
             </div>
 
          </div>
       </section>
+
+      <p className="px-6 py-6 font-sans text-sm text-[#1a1a1a]/70 max-w-4xl">
+         <strong className="text-[#1a1a1a]">These amounts change on 1 January 2027.</strong> USCIS says the $1,050,000 and $800,000 minimums,
+         which apply to petitions filed on or after 15 March 2022, &quot;will automatically increase January 1, 2027, and every 5 years
+         thereafter&quot;. USCIS has not yet published the new figures. A petition filed by 31 December 2026 uses today&apos;s amounts.
+      </p>
 
       {/* =========================================
           3. THE DICHOTOMY (Direct vs Regional)
@@ -140,7 +153,7 @@ export default async function EB5Page({ params }: { params: Promise<{ locale: st
                   </div>
                   <h3 className="font-serif text-4xl mb-6">Regional Center</h3>
                   <p className="font-sans text-lg text-[#1a1a1a]/70 mb-8 leading-relaxed">
-                     You loan your capital to a large developer (e.g., hotel, stadium). They handle the job creation. 
+                     You invest in a new commercial enterprise sponsored by a USCIS-designated regional center, which usually funds a large project (e.g., hotel, stadium). The project handles the job creation. 
                      Ideal for investors who want a "hands-off" Green Card.
                   </p>
                   <ul className="space-y-4 font-sans text-sm border-t border-[#1a1a1a]/10 pt-8">
@@ -222,6 +235,13 @@ export default async function EB5Page({ params }: { params: Promise<{ locale: st
             </div>
          </div>
       </section>
+
+      <OfficialSources
+         checked="29 October 2026"
+         sources={[
+            { label: 'USCIS Policy Manual, Vol. 6, Part G, Ch. 2 — Immigrant Investor Eligibility (current as of 27 Oct 2026)', url: 'https://www.uscis.gov/policy-manual/volume-6-part-g-chapter-2', what: 'The $1,050,000 and $800,000 minimums, the 1 January 2027 inflation increase, the definition of a TEA, the 10 full-time positions and the 2-year hiring window in the business plan.' },
+         ]}
+      />
 
       {/* =========================================
           6. CTA
