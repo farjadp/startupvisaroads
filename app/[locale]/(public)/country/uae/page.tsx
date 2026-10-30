@@ -26,8 +26,10 @@
 //
 // Not yet checked against an official source, kept in the old page's wording
 // and marked as such: the Blue Visa, the Green Visa's skilled-employee and
-// AED 1M investor categories, the 9% Corporate Tax, ESR, and the 3–6-month
-// banking estimate.
+// AED 1M investor categories, ESR, and the 3–6-month banking estimate.
+// Checked 29 Oct 2026 on u.ae (Corporate Tax page, updated 28 Oct 2026, and
+// Taxation page): no personal income tax; Corporate Tax 0% on taxable income
+// up to AED 375,000 and 9% above it, for financial years from 1 June 2023.
 //
 // Photos: the old page had none. The Golden Visa page's "Dubai Architecture"
 // Unsplash ID and the CountryCard UAE ID both return 404. The one image kept,
@@ -62,7 +64,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 // ─── Data ────────────────────────────────────────────────────────────────────
 
 // The date the Golden and Green figures were checked (lib/routes-v2/tr-il-ae.ts).
-const UPDATED = { iso: '2026-10-15', label: '15 Oct 2026' };
+const UPDATED = { iso: '2026-10-29', label: '29 Oct 2026' };
 
 // The old page's own palette: desert gold on paper and near-black. The gold
 // itself (#D4AF37) is only 2.1:1 on paper, so text uses #7D6310 (5.03:1 on
@@ -198,7 +200,7 @@ const steps: RouteStep[] = [
     title: 'Bank and tax',
     who: 'Corporate account, Corporate Tax',
     body: 'Open the corporate bank account (Wio, ENBD and Mashreq are the banks we introduce clients to) and register for Corporate Tax, planning any exemption at the same time.',
-    note: 'A corporate bank account can take 3–6 months if the company is structured incorrectly. Corporate Tax is 9%.',
+    note: 'A corporate bank account can take 3–6 months if the company is structured incorrectly. Corporate Tax is 0% on taxable income up to AED 375,000 and 9% above it.',
     figure: '3–6 mo',
     figureLabel: 'bank account, if structured badly',
   },
@@ -231,14 +233,14 @@ const thresholds = [
 ];
 
 const taxes = [
-  { label: 'Personal income tax', rate: '0%', note: 'Zero personal tax' },
-  { label: 'Corporate Tax', rate: '9%', note: 'Registration and exemption planning are part of the setup' },
+  { label: 'Personal income tax', rate: '0%', note: 'The UAE levies no income tax on individuals (u.ae)' },
+  { label: 'Corporate Tax', rate: '0% / 9%', note: '0% on taxable income up to AED 375,000, 9% above it, for financial years from 1 June 2023 (u.ae)' },
 ];
 
 const rights = [
   { title: 'Personal tax', content: 'Zero personal income tax.', positive: true },
   { title: 'Ownership', content: '100% foreign ownership of your company.', positive: true },
-  { title: 'Corporate Tax', content: 'Companies pay a 9% Corporate Tax. Registration and exemption planning have to be done properly.', positive: false },
+  { title: 'Corporate Tax', content: 'Companies pay 9% Corporate Tax on taxable income above AED 375,000 (0% below it). Registration and exemption planning have to be done properly.', positive: false },
   { title: 'Bank account', content: 'Setting up a corporate bank account in the UAE can take 3–6 months if the company is structured incorrectly.', positive: false },
   { title: 'Golden term', content: 'A 10-year residence, renewable while the conditions are met, with no sponsor needed.', positive: true },
   { title: 'Economic Substance', content: 'Your entity must comply with the Economic Substance Regulations (ESR), whether it is mainland or in a free zone.', positive: false },
@@ -249,7 +251,7 @@ const rights = [
 const services = [
   { title: 'Structure', body: 'LLC vs free zone entity selection based on target market.' },
   { title: 'Banking', body: 'Direct intro to Wio, ENBD and Mashreq relationship managers.' },
-  { title: 'Tax', body: 'Corporate Tax (9%) registration and exemption planning.' },
+  { title: 'Tax', body: 'Corporate Tax registration (0% up to AED 375,000, 9% above) and exemption planning.' },
   { title: 'Concierge', body: 'Emirates ID VIP processing and medical biometrics fast-track.' },
 ];
 
@@ -260,17 +262,13 @@ const sources = [
   { name: 'GDRFA Dubai — Golden Residence, entrepreneurs', href: 'https://www.gdrfad.gov.ae/en/services/8ea80da7-f43e-11eb-0320-0050569629e8', what: 'Entrepreneur routes, Dubai Future Foundation nomination, the AED 2M income asked on the incubator route.', checked: '15 Oct 2026' },
   { name: 'GDRFA Dubai — Green Residence, freelancers', href: 'https://gdrfad.gov.ae/en/services/f52024d1-b812-11ed-5210-4cd98f768936', what: 'Green Visa for freelancers in Dubai.', checked: '15 Oct 2026' },
   { name: 'u.ae — Golden Visa', href: 'https://u.ae/en/information-and-services/visa-and-emirates-id/residence-visas/golden-visa', what: 'The government portal’s Golden Visa page (updated 28 Jul 2026); it lists 5 years for some categories.', checked: '15 Oct 2026' },
+  { name: 'u.ae — Corporate Tax', href: 'https://u.ae/en/information-and-services/finance-and-investment/taxation/corporate-tax', what: '0% on taxable income up to AED 375,000, 9% above it, from financial years starting on or after 1 June 2023 (page updated 28 Oct 2026).', checked: '29 Oct 2026' },
+  { name: 'u.ae — Taxation', href: 'https://u.ae/en/information-and-services/finance-and-investment/taxation', what: '“The UAE does not levy income tax on individuals.”', checked: '29 Oct 2026' },
 ];
 
 // No English blog article about the UAE exists yet (sitemap, 29 Oct 2026), so
 // these are related guides on this site.
 const reads = [
-  {
-    href: '/uae/golden-visa',
-    stage: 'The Golden Visa',
-    title: 'UAE Golden Visa',
-    excerpt: 'Long-term UAE residency for investors, entrepreneurs, and exceptional talent.',
-  },
   {
     href: '/country/turkey',
     stage: 'Nearby route',
@@ -461,8 +459,7 @@ export default async function UAEPage({ params }: { params: Promise<{ locale: st
             </p>
             <p>
               <strong className="text-[#1a1a1a]">Not yet checked.</strong> The Blue Visa, and the Green Visa&apos;s skilled-employee and AED 1M investor
-              categories, are kept here as the page has long stated them but have not yet been checked against an official source.{' '}
-              <Link href="/uae/golden-visa" className="font-bold text-[#7D6310] underline underline-offset-2">The Golden Visa in more detail</Link>.
+              categories, are kept here as the page has long stated them but have not yet been checked against an official source.
             </p>
           </div>
         </RouteStop>
@@ -616,7 +613,7 @@ export default async function UAEPage({ params }: { params: Promise<{ locale: st
           answer={
             <p>
               You get zero personal income tax, 100% foreign ownership and, on the Golden Visa, a 10-year residence with no sponsor. The catches sit
-              around it: a 9% Corporate Tax, the Economic Substance Regulations, a corporate bank account that can take 3–6 months if the company is
+              around it: a 9% Corporate Tax on company profits above AED 375,000, the Economic Substance Regulations, a corporate bank account that can take 3–6 months if the company is
               structured incorrectly, and no permanent residence.
             </p>
           }
@@ -701,7 +698,7 @@ export default async function UAEPage({ params }: { params: Promise<{ locale: st
             </ol>
             <p className="mt-5 max-w-4xl font-sans text-sm text-[#1a1a1a]/60">
               <strong className="text-[#1a1a1a]">Not yet checked against an official source:</strong> the Blue Visa, the Green Visa&apos;s skilled-employee
-              and AED 1M investor categories, the 9% Corporate Tax, the Economic Substance Regulations, and the 3–6-month banking estimate, which comes
+              and AED 1M investor categories, the Economic Substance Regulations, and the 3–6-month banking estimate, which comes
               from our own client work. Check them at{' '}
               <a href="https://u.ae/" target="_blank" rel="noopener noreferrer" className="underline decoration-[#D4AF37] underline-offset-2 hover:text-[#7D6310]">u.ae</a>{' '}
               before you rely on them.
@@ -802,7 +799,7 @@ export default async function UAEPage({ params }: { params: Promise<{ locale: st
           <div className="flex items-start gap-4">
             <ShieldAlert className="mt-0.5 h-4 w-4 shrink-0 text-[#1a1a1a]/30" />
             <p className="font-sans text-[11px] leading-relaxed text-[#1a1a1a]/55">
-              <strong>Notice:</strong> The Golden and Green Visa figures on this page were checked on 15 October 2026 against ICP, GDRFA Dubai and u.ae;
+              <strong>Notice:</strong> The Golden and Green Visa figures on this page were checked on 15 October 2026 against ICP, GDRFA Dubai and u.ae, and the tax rates on 29 October 2026 against u.ae;
               figures marked &quot;not yet checked&quot; were not. They are provided for informational purposes only. Official sources disagree on some
               points, and rules change — always verify current requirements with ICP at{' '}
               <a href="https://icp.gov.ae/" target="_blank" rel="noopener noreferrer" className="underline transition-colors hover:text-[#7D6310]">icp.gov.ae</a>,

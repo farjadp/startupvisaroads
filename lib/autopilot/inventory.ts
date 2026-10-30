@@ -70,7 +70,6 @@ export const SITE_PAGES: Page[] = [
   { path: '/europe/finland', en: 'Finland start-up permit', kind: 'program' },
   { path: '/europe/denmark', en: 'Start-up Denmark', kind: 'program' },
   { path: '/country/italy', en: 'Italia Startup Visa', kind: 'program' },
-  { path: '/uae/golden-visa', en: 'UAE Golden Visa', kind: 'program' },
   { path: '/country/canada', en: 'Immigrate to Canada as a founder', kind: 'page' },
   { path: '/country/usa', en: 'US visa routes for startup founders, compared', kind: 'page' },
   { path: '/country/australia', en: 'The Australian National Innovation Visa (subclass 858)', kind: 'program' },

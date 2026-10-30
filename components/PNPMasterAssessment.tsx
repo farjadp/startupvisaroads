@@ -51,12 +51,11 @@ type ProvinceRule = {
 };
 
 const PROVINCES: ProvinceRule[] = [
-  { id: 'oinp-tech', name: 'Ontario (Tech Draw)', link: '/pnp/ontario', minNetWorth: 400000, minInvestment: 200000, minExperience: 3, minCLB: 6, minEducation: 3, maxAge: 99, prioritySectors: ['tech'], notes: 'Lower investment req for Tech' },
-  { id: 'oinp-gta', name: 'Ontario (General GTA)', link: '/pnp/ontario', minNetWorth: 800000, minInvestment: 600000, minExperience: 3, minCLB: 4, minEducation: 1, maxAge: 99, prioritySectors: [], notes: 'Highly Competitive' },
-  { id: 'bc-tech', name: 'BC PNP Tech', link: '/pnp/bc', minNetWorth: 600000, minInvestment: 200000, minExperience: 1, minCLB: 4, minEducation: 2, maxAge: 99, prioritySectors: ['tech'], notes: 'Weekly Draws, Fast Track' },
+  // Ontario (all OINP streams but Workforce Priority closed, 2026), BC PNP Tech
+  // (last draw 3 Dec 2024) and Saskatchewan Farm (closed 27 Mar 2025) were
+  // removed on 29 Oct 2026: a quiz must not recommend a closed stream.
   { id: 'bc-base', name: 'BC (Base Category)', link: '/pnp/bc', minNetWorth: 600000, minInvestment: 200000, minExperience: 3, minCLB: 4, minEducation: 2, maxAge: 99, prioritySectors: [], notes: 'High SIRS Score Needed' },
   { id: 'alberta', name: 'Alberta (Rural)', link: '/pnp/alberta', minNetWorth: 300000, minInvestment: 100000, minExperience: 3, minCLB: 4, minEducation: 1, maxAge: 99, prioritySectors: ['agri', 'general'], notes: 'Community Support Required' },
-  { id: 'sask-farm', name: 'Saskatchewan (Farm)', link: '/pnp/saskatchewan', minNetWorth: 500000, minInvestment: 300000, minExperience: 3, minCLB: 4, minEducation: 1, maxAge: 99, prioritySectors: ['agri'], notes: 'Young Farmer Stream avail.' },
   { id: 'manitoba', name: 'Manitoba (Rural)', link: '/pnp/manitoba', minNetWorth: 500000, minInvestment: 150000, minExperience: 3, minCLB: 5, minEducation: 1, maxAge: 55, prioritySectors: [], notes: 'Adaptability Points Key' },
   { id: 'nb', name: 'New Brunswick', link: '/pnp/new-brunswick', minNetWorth: 600000, minInvestment: 250000, minExperience: 3, minCLB: 5, minEducation: 2, maxAge: 59, prioritySectors: ['tech', 'construction'], notes: '$100k Deposit Required' },
   { id: 'pei', name: 'PEI', link: '/pnp/pei', minNetWorth: 600000, minInvestment: 150000, minExperience: 3, minCLB: 4, minEducation: 1, maxAge: 59, prioritySectors: [], notes: 'Interview Mandatory' },
