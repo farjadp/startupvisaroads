@@ -47,6 +47,9 @@ describe('official source registry', () => {
     expect(officialSourcesForBrief(brief).map((source) => source.id)).toEqual([
       'finland-migri',
       'finland-business-finland',
+      // Added 30 Oct 2026 for life-pillar articles; a Finland brief of any
+      // kind may cite it.
+      'finland-infofinland',
     ]);
     const prompt = officialSourcePromptForBrief(brief);
     expect(prompt).toContain('https://migri.fi/');
