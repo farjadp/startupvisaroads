@@ -6,7 +6,7 @@ import { FOUNDER_ID } from '@/lib/seo';
 import { SUV_SOURCES } from '@/lib/canada-suv';
 
 const FACTS = {
-  dateModified: '2026-10-15',
+  dateModified: '2026-10-29',
   author: { '@id': FOUNDER_ID },
   citation: [
     SUV_SOURCES.program,
