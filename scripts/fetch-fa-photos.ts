@@ -130,6 +130,14 @@ const SLOTS: Record<string, string> = {
   pei: 'Prince Edward Island red cliffs',
   'pei-2': 'Charlottetown Prince Edward Island',
   'pei-3': 'Prince Edward Island lighthouse',
+
+  // British Columbia. The guide is about two streams: Base (anywhere, Metro
+  // Vancouver included) and Regional (a participating community outside
+  // Metro Vancouver). The hero is the identifying harbour shot; the other two
+  // are a regional city and the capital, where the programme office sits.
+  bc: 'Vancouver skyline harbour British Columbia',
+  'bc-2': 'Kelowna Okanagan Lake British Columbia',
+  'bc-3': 'Victoria British Columbia parliament harbour',
 };
 
 type Photo = {

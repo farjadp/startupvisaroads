@@ -101,6 +101,7 @@ export type FaPage = { path: string; label: string; kind: LinkTarget['kind'] };
 export const FA_SITE_PAGES: FaPage[] = [
   { path: '/canada-startup-visa', label: 'راهنمای وضعیت ویزای استارتاپ کانادا (SUV)', kind: 'page' },
   { path: '/pnp', label: 'برنامه‌های استانی کانادا (PNP)', kind: 'program' },
+  { path: '/pnp/bc', label: 'مسیر کارآفرینی بریتیش کلمبیا (BC PNP، جریان پایه و منطقه‌ای)', kind: 'program' },
   { path: '/pnp/alberta', label: 'برنامه کارآفرینی آلبرتا (AAIP)', kind: 'program' },
   { path: '/pnp/manitoba', label: 'مسیر کارآفرینی منیتوبا (MPNP)', kind: 'program' },
   { path: '/pnp/new-brunswick', label: 'مسیر کارآفرینی نیوبرانزویک (NBBIS)', kind: 'program' },

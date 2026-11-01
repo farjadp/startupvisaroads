@@ -1,7 +1,7 @@
 // ============================================================================
 // components/fa/pnp/ProvinceCards.tsx
-// Photo cards for the Entrepreneur PNP provinces. The hub shows all five; a
-// province guide shows the other four under «استان‌های دیگر», so every guide
+// Photo cards for the Entrepreneur PNP provinces. The hub shows all six; a
+// province guide shows the other five under «استان‌های دیگر», so every guide
 // links to every sibling with a descriptive anchor — the internal-link mesh
 // is the point, the photographs make it something a reader wants to click.
 // ============================================================================
