@@ -216,6 +216,23 @@ export const RULES: Rule[] = [
     source: 'https://turkiyetechvisa.gov.tr/',
   },
   {
+    key: 'bc',
+    name: 'کارآفرینی بریتیش کلمبیا (مسیر پایه)',
+    href: '/pnp/bc',
+    netWorth: { amount: 600000, currency: 'CAD' },
+    investment: { amount: 200000, currency: 'CAD' },
+    clb: 4,
+    unscored: [
+      'مسیر منطقه‌ای: دارایی ۳۰۰ هزار و سرمایه‌گذاری ۱۰۰ هزار دلار، فقط بیرون از مترو ونکوور و با معرفی‌نامه‌ی جامعه',
+      'دست‌کم ۱۱۵ امتیاز از ۲۰۰ و ۴۰ امتیاز از ۸۰ طرح کسب‌وکار',
+      '۳ سال مالک‌مدیر یا ۴ سال مدیر ارشد در ۱۰ سال اخیر',
+      'ایجاد دست‌کم یک شغل تمام‌وقت ظرف ۴۲۰ روز',
+      '۱۸ تا ۲۰ ماه اداره‌ی فعال با مجوز کار، با ۷۵ درصد حضور در استان',
+    ],
+    updated: '2026-11-01',
+    source: 'https://www.welcomebc.ca/immigrate-to-b-c/for-entrepreneurs-and-businesses',
+  },
+  {
     key: 'new-brunswick',
     name: 'کارآفرینی نیوبرانزویک',
     href: '/pnp/new-brunswick',

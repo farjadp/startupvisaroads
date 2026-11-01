@@ -17,8 +17,11 @@ describe('comparison sorting', () => {
 
   it('orders the Canadian entrepreneur streams above the European permits on capital', () => {
     const byNetWorth = [...RULES].sort((a, b) => valueOf(a, 'netWorth') - valueOf(b, 'netWorth'));
+    // Nova Scotia and BC (Base) both sit at CAD 600,000; a stable sort keeps
+    // declaration order, so BC lands just under Nova Scotia.
     expect(byNetWorth.at(-1)!.key).toBe('nova-scotia');
-    expect(byNetWorth.at(-2)!.key).toBe('new-brunswick');
+    expect(byNetWorth.at(-2)!.key).toBe('bc');
+    expect(byNetWorth.at(-3)!.key).toBe('new-brunswick');
   });
 
   it('reports the minimum team size, defaulting to one', () => {
