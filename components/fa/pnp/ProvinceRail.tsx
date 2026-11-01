@@ -1,6 +1,6 @@
 // ============================================================================
 // components/fa/pnp/ProvinceRail.tsx
-// A slim strip under a province guide's hero: the five provinces as photo
+// A slim strip under a province guide's hero: the six provinces as photo
 // chips, the current one marked, plus the hub. Lets a reader comparing
 // provinces move sideways without going back up to the hub.
 // ============================================================================

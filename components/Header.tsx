@@ -139,6 +139,7 @@ export default function Header() {
       subLinks: [
         { header: 'کانادا · کارآفرینی استانی' },
         { href: '/pnp', label: 'مقایسه‌ی همه‌ی استان‌ها' },
+        { href: '/pnp/bc', label: 'بریتیش کلمبیا' },
         { href: '/pnp/alberta', label: 'آلبرتا' },
         { href: '/pnp/manitoba', label: 'منیتوبا' },
         { href: '/pnp/nova-scotia', label: 'نوااسکوشیا' },
