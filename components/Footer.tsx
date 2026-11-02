@@ -9,6 +9,7 @@ import { getLocale, getTranslations } from 'next-intl/server';
 import { CONTACT } from '@/content/fa/home';
 import { MAIN_CONTACT } from '@/content/contact';
 import { Link } from '@/navigation';
+import { APP_STORE_LINKS } from '@/lib/app-links';
 import { 
   ArrowUpRight, 
   Linkedin, 
@@ -16,7 +17,8 @@ import {
   Instagram,
   Youtube,
   MessageCircle,
-  Globe
+  Globe,
+  Play,
 } from 'lucide-react';
 
 // The footer's link set is locale-specific, not just locale-translated: /fa
@@ -127,6 +129,23 @@ export default async function Footer() {
                     </a>
                  ))}
               </div>
+
+              {/* The app on Google Play (lib/app-links.ts); the App Store badge joins it when that listing is live. */}
+              {APP_STORE_LINKS.googlePlay ? (
+                 <a
+                    href={APP_STORE_LINKS.googlePlay}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={isRtl ? 'دانلود اپ VisaRoads از گوگل پلی' : 'Get the VisaRoads app on Google Play'}
+                    className="mt-6 inline-flex items-center gap-3 rounded-2xl border border-[#F2F0E9]/20 px-5 py-3 hover:bg-[#CCFF00] hover:text-black hover:border-[#CCFF00] transition-all duration-300"
+                 >
+                    <Play size={18} className="fill-current" aria-hidden />
+                    <span className="flex flex-col leading-tight font-sans">
+                       <span className="text-[10px] opacity-60">{isRtl ? 'دانلود از' : 'Get it on'}</span>
+                       <span className="text-sm font-bold">{isRtl ? 'گوگل پلی' : 'Google Play'}</span>
+                    </span>
+                 </a>
+              ) : null}
            </div>
 
            {/* Navigation Grid */}

@@ -24,6 +24,7 @@ import {
 import { ArrowRight, Check, Circle, Compass, Globe2, Lock, MessageCircle, Newspaper, Play, Scale, ShieldCheck, Home } from 'lucide-react';
 import { Link } from '@/navigation';
 import { appPageCopy, toFaDigits, type ScreenKey } from '@/content/app-page';
+import { APP_STORE_LINKS } from '@/lib/app-links';
 import TiltCard from '@/components/fa/motion/TiltCard';
 import Phone, { type FundsFigure } from './Phone';
 
@@ -137,8 +138,8 @@ function Hero({ c, T, isFa, num, facts }: { c: Copy; T: Typo; isFa: boolean; num
             transition={{ duration: 0.7, delay: 0.55, ease: EASE }}
             className="mt-10 flex flex-wrap items-center gap-3"
           >
-            <StoreBadge icon={<AppleMark />} store={c.appStore} soon={c.soon} />
-            <StoreBadge icon={<Play className="h-4 w-4 fill-current" />} store={c.googlePlay} soon={c.soon} />
+            <StoreBadge icon={<AppleMark />} store={c.appStore} soon={c.soon} getIt={c.getIt} href={APP_STORE_LINKS.appStore} />
+            <StoreBadge icon={<Play className="h-4 w-4 fill-current" />} store={c.googlePlay} soon={c.soon} getIt={c.getIt} href={APP_STORE_LINKS.googlePlay} />
           </motion.div>
 
           <motion.div
@@ -205,15 +206,26 @@ function Hero({ c, T, isFa, num, facts }: { c: Copy; T: Typo; isFa: boolean; num
   );
 }
 
-function StoreBadge({ icon, store, soon }: { icon: React.ReactNode; store: string; soon: string }) {
-  return (
-    <div className="group relative inline-flex items-center gap-3 overflow-hidden rounded-2xl bg-[#1a1a1a] px-5 py-3 text-[#F2F0E9]" aria-label={`${store} — ${soon}`}>
+/** A store badge: a link to the live listing, or a "coming soon" tile when there is none yet (lib/app-links.ts). */
+function StoreBadge({ icon, store, soon, getIt, href }: { icon: React.ReactNode; store: string; soon: string; getIt: string; href: string | null }) {
+  const body = (
+    <>
       <span aria-hidden className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-[#F2F0E9]/10 to-transparent transition-transform duration-1000 group-hover:translate-x-full" />
       {icon}
       <span className="flex flex-col leading-tight">
-        <span className="text-[10px] opacity-60">{soon}</span>
+        <span className="text-[10px] opacity-60">{href ? getIt : soon}</span>
         <span className="text-[15px] font-bold">{store}</span>
       </span>
+    </>
+  );
+  const cls = 'group relative inline-flex items-center gap-3 overflow-hidden rounded-2xl bg-[#1a1a1a] px-5 py-3 text-[#F2F0E9]';
+  return href ? (
+    <a href={href} target="_blank" rel="noopener noreferrer" className={`${cls} transition-transform duration-300 hover:-translate-y-0.5`} aria-label={`${getIt} ${store}`}>
+      {body}
+    </a>
+  ) : (
+    <div className={cls} aria-label={`${store} — ${soon}`}>
+      {body}
     </div>
   );
 }
@@ -728,8 +740,8 @@ function Final({ c, T, isFa }: { c: Copy; T: Typo; isFa: boolean }) {
         <h2 className={`${T.display} mx-auto max-w-4xl text-5xl md:text-7xl ${isFa ? 'leading-[1.3]' : 'leading-[0.95]'}`}>{c.final.title}</h2>
         <p className="mx-auto mt-6 max-w-xl text-lg text-[#1a1a1a]/70">{c.final.body}</p>
         <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
-          <StoreBadge icon={<AppleMark />} store={c.appStore} soon={c.soon} />
-          <StoreBadge icon={<Play className="h-4 w-4 fill-current" />} store={c.googlePlay} soon={c.soon} />
+          <StoreBadge icon={<AppleMark />} store={c.appStore} soon={c.soon} getIt={c.getIt} href={APP_STORE_LINKS.appStore} />
+          <StoreBadge icon={<Play className="h-4 w-4 fill-current" />} store={c.googlePlay} soon={c.soon} getIt={c.getIt} href={APP_STORE_LINKS.googlePlay} />
           <Link
             href={c.primaryCta.href as never}
             className={`group inline-flex items-center gap-3 rounded-2xl bg-[#CCFF00] px-6 py-[1.05rem] text-[#1a1a1a] transition-transform duration-300 hover:-translate-y-0.5 ${T.label}`}

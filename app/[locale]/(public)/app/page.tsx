@@ -4,6 +4,7 @@
 // the page says what the app says. No store links until the listings exist.
 // ============================================================================
 import type { Metadata } from 'next';
+import { APP_STORE_LINKS } from '@/lib/app-links';
 import { setRequestLocale } from 'next-intl/server';
 import { metaFor, pageCopy } from '@/lib/pageMeta';
 import { SITE_URL, schemaLanguage } from '@/lib/seo';
@@ -60,8 +61,12 @@ export default async function AppPage({ params }: Props) {
           url,
           description: copy?.description,
           inLanguage: schemaLanguage(locale),
-          operatingSystem: 'iOS, Android',
+          // Only the platforms with a live listing (lib/app-links.ts).
+          operatingSystem: APP_STORE_LINKS.appStore ? 'iOS, Android' : 'Android',
           applicationCategory: 'ReferenceApplication',
+          installUrl: APP_STORE_LINKS.googlePlay ?? undefined,
+          downloadUrl: APP_STORE_LINKS.googlePlay ?? undefined,
+          sameAs: [APP_STORE_LINKS.googlePlay, APP_STORE_LINKS.appStore].filter(Boolean),
           offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
           publisher: { '@type': 'Organization', name: 'Ashavid Inc.' },
         }}

@@ -6,8 +6,9 @@
 // mobile/store/listing-v2.md, 15 Oct 2026). Route and country counts are not
 // written here: the page computes them from lib/routes-v2 so they cannot
 // drift. The funds figure on the phone comes from lib/funds.ts (official
-// source, dated). The app is not in the stores yet, so the page says
-// "coming soon" and never links to a store listing that does not exist.
+// source, dated). Store links come from lib/app-links.ts: a live listing is
+// linked ("Get it on"), one that is not live yet says "coming soon".
+// Android is on Google Play since Nov 2026; iOS is not on the App Store yet.
 // ============================================================================
 
 export type AppLocale = 'en' | 'fa';
@@ -19,6 +20,7 @@ export type AppPageCopy = {
   title: [string, string];
   lede: string;
   soon: string;
+  getIt: string;
   appStore: string;
   googlePlay: string;
   primaryCta: { label: string; href: string };
@@ -70,13 +72,14 @@ const en: AppPageCopy = {
   lede:
     'Ten questions, no sign-up. See how closely you match the published criteria of startup, entrepreneur, talent and study routes, what to close first, and where every rule comes from.',
   soon: 'Coming soon',
+  getIt: 'Get it on',
   appStore: 'App Store',
   googlePlay: 'Google Play',
   primaryCta: { label: 'Talk to a mentor', href: '/book-meeting' },
   secondaryCta: { label: 'See the features', href: '#features' },
   chips: { match: '82% match · 9 conditions', source: 'Source · nyidanmark.dk', lang: 'فارسی · RTL' },
   stats: { routes: 'routes', countries: 'countries', families: 'route families', languages: 'languages', questions: 'questions', signup: 'sign-ups needed' },
-  countries: ['Canada', 'United States', 'Denmark', 'Finland', 'Estonia', 'Netherlands', 'Italy', 'Türkiye', 'Israel', 'UAE'],
+  countries: ['Canada', 'United States', 'Australia', 'Denmark', 'Finland', 'Estonia', 'Netherlands', 'Italy', 'Austria', 'Ireland', 'Norway', 'Sweden', 'Türkiye', 'Israel', 'UAE'],
   doors: {
     title: 'Two ways in.',
     items: [
@@ -145,10 +148,10 @@ const en: AppPageCopy = {
     points: ['No account', 'No ads', 'No tracking', 'Delete in one tap'],
   },
   who: 'VisaRoads is a product of Ashavid Inc., based in Ontario, Canada. We are not immigration lawyers or licensed immigration consultants.',
-  final: { title: 'Start on the road that fits.', body: 'The app is on its way to the App Store and Google Play. Until then, a mentor can walk you through your routes.' },
+  final: { title: 'Start on the road that fits.', body: 'Download the app on Google Play. The iPhone version is on its way to the App Store; until then, a mentor can walk you through your routes.' },
   screens: {
     exampleTag: 'Example',
-    start: { hello: 'Where to?', choose: 'Choose a road', chooseSub: '10 countries', assess: 'Get assessed', assessSub: '10 questions · 3 min' },
+    start: { hello: 'Where to?', choose: 'Choose a road', chooseSub: '15 countries', assess: 'Get assessed', assessSub: '10 questions · 3 min' },
     assess: { progress: 'Question 3 of 10', question: 'How much can you show in personal funds?', options: ['Under $15k', '$15k – $50k', '$50k – $150k', 'Over $150k'], skip: 'Skip' },
     results: {
       title: 'Your routes',
@@ -185,13 +188,14 @@ const fa: AppPageCopy = {
   lede:
     'ده سؤال، بدون ثبت‌نام. ببینید با شرایط منتشرشده‌ی مسیرهای استارتاپی، کارآفرینی، استعداد و تحصیلی چقدر تطابق دارید، اول سراغ کدام کمبود بروید و هر قاعده از کجا آمده است.',
   soon: 'به‌زودی',
+  getIt: 'دانلود از',
   appStore: 'اپ استور',
   googlePlay: 'گوگل پلی',
   primaryCta: { label: 'ارزیابی رایگان روی سایت', href: '/which-path' },
   secondaryCta: { label: 'امکانات را ببینید', href: '#features' },
   chips: { match: '۸۲٪ تطابق · ۹ شرط', source: 'منبع · nyidanmark.dk', lang: 'English · LTR' },
   stats: { routes: 'مسیر', countries: 'کشور', families: 'خانواده‌ی مسیر', languages: 'زبان', questions: 'سؤال', signup: 'ثبت‌نام لازم' },
-  countries: ['کانادا', 'آمریکا', 'دانمارک', 'فنلاند', 'استونی', 'هلند', 'ایتالیا', 'ترکیه', 'اسرائیل', 'امارات'],
+  countries: ['کانادا', 'آمریکا', 'استرالیا', 'دانمارک', 'فنلاند', 'استونی', 'هلند', 'ایتالیا', 'اتریش', 'ایرلند', 'نروژ', 'سوئد', 'ترکیه', 'اسرائیل', 'امارات'],
   doors: {
     title: 'دو راه برای شروع.',
     items: [
@@ -260,10 +264,10 @@ const fa: AppPageCopy = {
     points: ['بدون حساب کاربری', 'بدون تبلیغ', 'بدون ردیابی', 'پاک‌کردن با یک لمس'],
   },
   who: 'VisaRoads محصولی از آشاوید است، مستقر در انتاریوی کانادا. ما وکیل مهاجرت یا مشاور رسمی مهاجرت نیستیم.',
-  final: { title: 'از مسیری شروع کنید که به شما می‌خورد.', body: 'اپلیکیشن در راه اپ استور و گوگل پلی است. تا آن موقع، ارزیابی رایگان سایت یا یک منتور همراه‌تان است.' },
+  final: { title: 'از مسیری شروع کنید که به شما می‌خورد.', body: 'نسخه‌ی اندروید را از گوگل پلی دانلود کنید. نسخه‌ی آیفون در راه اپ استور است؛ تا آن موقع، ارزیابی رایگان سایت یا یک منتور همراه‌تان است.' },
   screens: {
     exampleTag: 'نمونه',
-    start: { hello: 'کجا می‌روید؟', choose: 'انتخاب مسیر', chooseSub: '۱۰ کشور', assess: 'ارزیابی', assessSub: '۱۰ سؤال · ۳ دقیقه' },
+    start: { hello: 'کجا می‌روید؟', choose: 'انتخاب مسیر', chooseSub: '۱۵ کشور', assess: 'ارزیابی', assessSub: '۱۰ سؤال · ۳ دقیقه' },
     assess: { progress: 'سؤال ۳ از ۱۰', question: 'چقدر سرمایه‌ی شخصی می‌توانید نشان دهید؟', options: ['کمتر از ۱۵ هزار دلار', '۱۵ تا ۵۰ هزار دلار', '۵۰ تا ۱۵۰ هزار دلار', 'بیشتر از ۱۵۰ هزار دلار'], skip: 'رد شدن' },
     results: {
       title: 'مسیرهای شما',
