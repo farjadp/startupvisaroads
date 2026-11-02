@@ -24,6 +24,8 @@ import { setRequestLocale } from 'next-intl/server';
 import FaPnpHub from '@/components/fa/FaPnpHub';
 import GuideJsonLd from '@/components/GuideJsonLd';
 import EntrepreneurComparison from '@/components/pnp/EntrepreneurComparison';
+import PnpStatusBoard from '@/components/pnp/PnpStatusBoard';
+import NetWorthGate from '@/components/pnp/NetWorthGate';
 import { page as faPage } from '@/content/fa/pnp';
 import { faMeta } from '@/lib/fa/content';
 
@@ -142,6 +144,8 @@ export default async function PNPPage({ params }: { params: Promise<{ locale: st
       </section>
 
 
+      <PnpStatusBoard lang="en" />
+      <NetWorthGate lang="en" />
       <EntrepreneurComparison />
 
       {/* =========================================
@@ -161,15 +165,15 @@ export default async function PNPPage({ params }: { params: Promise<{ locale: st
          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 border-t border-[#1a1a1a]/10">
             
             {[
-               { name: "Ontario", code: "OINP", focus: "Entrepreneur stream closed (2026)", link: "/pnp/ontario" },
+               { name: "Ontario", code: "OINP", focus: "Entrepreneur closed; Workforce Priority only", link: "/pnp/ontario" },
                { name: "British Columbia", code: "BC PNP", focus: "Entrepreneur Base and Regional", link: "/pnp/bc" },
-               { name: "Alberta", code: "AAIP", focus: "Agri, Tech, Hospitality", link: "/pnp/alberta" },
+               { name: "Alberta", code: "AAIP", focus: "Rural Entrepreneur: 23 of 60 places left in 2026", link: "/pnp/alberta" },
                { name: "Saskatchewan", code: "SINP", focus: "Entrepreneur and Farm closed (2025)", link: "/pnp/saskatchewan" },
-               { name: "Manitoba", code: "MPNP", focus: "Strong Family Ties", link: "/pnp/manitoba" },
-               { name: "Nova Scotia", code: "NSNP", focus: "Doctors, Labour Market", link: "/pnp/nova-scotia" },
-               { name: "New Brunswick", code: "NBPNP", focus: "Trucking, IT, French", link: "/pnp/new-brunswick" },
-               { name: "PEI", code: "PEI PNP", focus: "Business Impact", link: "/pnp/pei" },
-               { name: "Newfoundland", code: "NLPNP", focus: "Priority Skills", link: "/pnp/newfoundland" },
+               { name: "Manitoba", code: "MPNP", focus: "Entrepreneur Pathway: no business draws", link: "/pnp/manitoba" },
+               { name: "Nova Scotia", code: "NSNP", focus: "Entrepreneur: by invitation", link: "/pnp/nova-scotia" },
+               { name: "New Brunswick", code: "NBPNP", focus: "Business Immigration Stream", link: "/pnp/new-brunswick" },
+               { name: "PEI", code: "PEI PNP", focus: "Business Work Permit: no 2026 invitations", link: "/pnp/pei" },
+               { name: "Newfoundland", code: "NLPNP", focus: "International Entrepreneur: EOI open", link: "/pnp/newfoundland" },
             ].map((prov, i) => (
                <Link href={prov.link} key={i} className="group border-b border-r border-[#1a1a1a]/10 p-10 hover:bg-[#1a1a1a] hover:text-[#F2F0E9] transition-all duration-300 relative">
                   <div className="flex justify-between items-start mb-8">
@@ -186,14 +190,14 @@ export default async function PNPPage({ params }: { params: Promise<{ locale: st
             {/* Quebec Special Note */}
             <div className="col-span-1 md:col-span-2 lg:col-span-3 border-b border-[#1a1a1a]/10 p-10 bg-[#1a1a1a] text-[#F2F0E9] flex flex-col md:flex-row items-center justify-between gap-8">
                <div>
-                  <h3 className="font-serif text-3xl mb-2 text-[#CCFF00]">Quebec (Arrima)</h3>
+                  <h3 className="font-serif text-3xl mb-2 text-[#CCFF00]">Quebec</h3>
                   <p className="font-sans text-sm opacity-70 max-w-2xl">
-                     Note: The province of Quebec does not have a PNP. It operates its own independent immigration system requiring a "Certificat de sélection du Québec" (CSQ).
+                     Quebec does not have a PNP. It selects its own business immigrants, who receive a Québec Selection Certificate (CSQ). Its entrepreneur programme needs spoken French at level 7 on the Québec scale, a CAD 600,000 net worth for a start-up, and accepts applications at any time.
                   </p>
                </div>
-               <button className="border border-[#F2F0E9] px-6 py-3 font-sans text-xs font-bold uppercase tracking-widest hover:bg-[#CCFF00] hover:text-[#1a1a1a] hover:border-[#CCFF00] transition-colors">
-                  View Quebec Programs
-               </button>
+               <a href="https://www.quebec.ca/en/immigration/permanent/immigrate-business/entrepreneurs/start-acquire-business/conditions" target="_blank" rel="noopener noreferrer" className="border border-[#F2F0E9] px-6 py-3 font-sans text-xs font-bold uppercase tracking-widest hover:bg-[#CCFF00] hover:text-[#1a1a1a] hover:border-[#CCFF00] transition-colors">
+                  Quebec&rsquo;s conditions
+               </a>
             </div>
 
          </div>
@@ -267,183 +271,14 @@ export default async function PNPPage({ params }: { params: Promise<{ locale: st
 
 
 {/* =========================================
-          SECTION: COMPARATIVE MATRIX
-          Source: Internal Analysis PDF (2025 Data)
+          SECTION: THE ACTIVE-MANAGEMENT NOTE
+          (The old 2025 investment matrix was replaced by the status board
+          and NetWorthGate above, which read from lib/pnp-status.ts.)
       ========================================= */}
       <section className="py-24 border-t border-[#1a1a1a]/10 bg-white">
         <div className="container mx-auto px-4 md:px-8">
-           
-           {/* Section Header */}
-           <div className="mb-16 max-w-3xl">
-              <span className="font-sans text-xs font-bold uppercase tracking-widest text-[#1a1a1a]/40 mb-4 block">
-                 Quantitative Analysis
-              </span>
-              <h2 className="font-serif text-5xl md:text-6xl mb-6 text-[#1a1a1a]">
-                 The Investment <br/> Matrix
-              </h2>
-              <p className="font-sans text-[#1a1a1a]/60 text-lg leading-relaxed border-l-4 border-[#CCFF00] pl-6">
-                 Warning: These numbers represent the <span className="font-bold text-black">minimum eligibility</span>, not the competitive reality. 
-                 Most streams operate on an EOI (Expression of Interest) points system where higher net worth and investment verify higher scores.
-              </p>
-           </div>
-
-           {/* The Grid */}
-           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-0 border border-[#1a1a1a]/10">
-
-              {/* 1. BRITISH COLUMBIA */}
-              <div className="group border-b border-r border-[#1a1a1a]/10 p-10 hover:bg-[#1a1a1a] hover:text-[#F2F0E9] transition-all duration-300">
-                 <div className="flex justify-between items-start mb-8">
-                    <h3 className="font-serif text-3xl">British Columbia</h3>
-                    <span className="font-sans text-xs font-bold bg-[#CCFF00] text-[#1a1a1a] px-2 py-1">High Competition</span>
-                 </div>
-                 
-                 <div className="space-y-6 font-sans text-sm">
-                    <div className="flex justify-between border-b border-current/20 pb-2">
-                       <span className="opacity-60">Min Net Worth</span>
-                       <span className="font-bold">$600,000 CAD</span>
-                    </div>
-                    <div className="flex justify-between border-b border-current/20 pb-2">
-                       <span className="opacity-60">Investment</span>
-                       <span className="font-bold">$200,000 CAD</span>
-                    </div>
-                    <div className="flex justify-between border-b border-current/20 pb-2">
-                       <span className="opacity-60">Ownership</span>
-                       <span className="font-bold">33.3% +</span>
-                    </div>
-                 </div>
-                 <p className="mt-6 text-xs opacity-50 leading-relaxed">
-                    Process: EOI → Work Permit → Execute Business → Nomination.
-                 </p>
-              </div>
-
-              {/* 2. MANITOBA */}
-              <div className="group border-b border-r border-[#1a1a1a]/10 p-10 hover:bg-[#1a1a1a] hover:text-[#F2F0E9] transition-all duration-300">
-                 <div className="flex justify-between items-start mb-8">
-                    <h3 className="font-serif text-3xl">Manitoba</h3>
-                    <span className="font-sans text-xs font-bold border border-current px-2 py-1">Tiered</span>
-                 </div>
-                 
-                 <div className="space-y-6 font-sans text-sm">
-                    <div className="flex justify-between border-b border-current/20 pb-2">
-                       <span className="opacity-60">Min Net Worth</span>
-                       <span className="font-bold">$500,000 CAD</span>
-                    </div>
-                    <div className="flex justify-between border-b border-current/20 pb-2">
-                       <span className="opacity-60">Investment</span>
-                       <div className="text-right">
-                          <span className="block font-bold">$250k (Capital)</span>
-                          <span className="block font-bold text-[#CCFF00]">$150k (Rural)</span>
-                       </div>
-                    </div>
-                 </div>
-                 <p className="mt-6 text-xs opacity-50 leading-relaxed">
-                    Requires 33% ownership or senior management role. Strong focus on "Active Management".
-                 </p>
-              </div>
-
-              {/* 3. SASKATCHEWAN */}
-              <div className="group border-b lg:border-r-0 border-[#1a1a1a]/10 p-10 hover:bg-[#1a1a1a] hover:text-[#F2F0E9] transition-all duration-300">
-                 <div className="flex justify-between items-start mb-8">
-                    <h3 className="font-serif text-3xl">Saskatchewan</h3>
-                    <span className="font-sans text-xs font-bold border border-current px-2 py-1">SINP</span>
-                 </div>
-                 
-                 <div className="space-y-6 font-sans text-sm">
-                    <div className="flex justify-between border-b border-current/20 pb-2">
-                       <span className="opacity-60">Min Net Worth</span>
-                       <span className="font-bold">$500,000 CAD</span>
-                    </div>
-                    <div className="flex justify-between border-b border-current/20 pb-2">
-                       <span className="opacity-60">Investment</span>
-                       <div className="text-right">
-                          <span className="block font-bold">$300k (City)</span>
-                          <span className="block font-bold text-[#CCFF00]">$200k (Rural)</span>
-                       </div>
-                    </div>
-                 </div>
-                 <p className="mt-6 text-xs opacity-50 leading-relaxed">
-                    Specific requirement: Must create 2 jobs if establishing in Regina or Saskatoon.
-                 </p>
-              </div>
-
-              {/* 4. NOVA SCOTIA */}
-              <div className="group border-b lg:border-b-0 border-r border-[#1a1a1a]/10 p-10 hover:bg-[#1a1a1a] hover:text-[#F2F0E9] transition-all duration-300">
-                 <div className="flex justify-between items-start mb-8">
-                    <h3 className="font-serif text-3xl">Nova Scotia</h3>
-                    <span className="font-sans text-xs font-bold border border-current px-2 py-1">Atlantic</span>
-                 </div>
-                 
-                 <div className="space-y-6 font-sans text-sm">
-                    <div className="flex justify-between border-b border-current/20 pb-2">
-                       <span className="opacity-60">Min Net Worth</span>
-                       <span className="font-bold">$600,000 CAD</span>
-                    </div>
-                    <div className="flex justify-between border-b border-current/20 pb-2">
-                       <span className="opacity-60">Investment</span>
-                       <div className="text-right">
-                          <span className="block font-bold">$150k (Halifax)</span>
-                          <span className="block font-bold text-[#CCFF00]">$100k (Outside)</span>
-                       </div>
-                    </div>
-                 </div>
-                 <p className="mt-6 text-xs opacity-50 leading-relaxed">
-                    Invitation only. Requires substantial business experience.
-                 </p>
-              </div>
-
-              {/* 5. ALBERTA (Special Case) */}
-              <div className="group border-r border-[#1a1a1a]/10 p-10 bg-[#1a1a1a] text-[#F2F0E9] relative overflow-hidden">
-                 <div className="absolute top-0 right-0 w-20 h-20 bg-[#CCFF00] opacity-10 rounded-bl-full"></div>
-                 <div className="flex justify-between items-start mb-8">
-                    <h3 className="font-serif text-3xl text-[#CCFF00]">Alberta</h3>
-                    <span className="font-sans text-xs font-bold border border-[#CCFF00] text-[#CCFF00] px-2 py-1">Rural Stream</span>
-                 </div>
-                 
-                 <div className="space-y-6 font-sans text-sm">
-                    <div className="flex justify-between border-b border-[#F2F0E9]/20 pb-2">
-                       <span className="opacity-60">Net Worth</span>
-                       <span className="font-bold italic">Community Driven</span>
-                    </div>
-                    <div className="flex justify-between border-b border-[#F2F0E9]/20 pb-2">
-                       <span className="opacity-60">Investment</span>
-                       <span className="font-bold italic">See Guide</span>
-                    </div>
-                 </div>
-                 <p className="mt-6 text-xs opacity-70 leading-relaxed border-l-2 border-[#CCFF00] pl-3">
-                    <strong>Unique Mechanism:</strong> You must first connect with a participating rural community and secure a "Community Support Letter" before applying.
-                 </p>
-              </div>
-
-              {/* 6. ATLANTIC & NORTH (Grouped) */}
-              <div className="group p-10 hover:bg-[#1a1a1a] hover:text-[#F2F0E9] transition-all duration-300">
-                 <div className="flex justify-between items-start mb-8">
-                    <h3 className="font-serif text-3xl">Other Regions</h3>
-                    <span className="font-sans text-xs font-bold border border-current px-2 py-1">PEI / NL / Yukon</span>
-                 </div>
-                 
-                 <ul className="space-y-4 font-sans text-sm">
-                    <li className="flex justify-between items-center">
-                       <span>PEI (Work Permit)</span>
-                       <span className="font-bold">$600k NW</span>
-                    </li>
-                    <li className="flex justify-between items-center">
-                       <span>Newfoundland</span>
-                       <span className="font-bold">$200k Inv</span>
-                    </li>
-                    <li className="flex justify-between items-center">
-                       <span>Yukon</span>
-                       <span className="font-bold">$300k Inv</span>
-                    </li>
-                 </ul>
-                 <p className="mt-8 text-xs font-bold uppercase tracking-widest text-[#CCFF00] bg-black inline-block px-2">
-                    Performance Agreement Required
-                 </p>
-              </div>
-
-           </div>
-           
            {/* CRITICAL NOTE: The "Trap" mentioned in PDF */}
-           <div className="mt-12 bg-[#F2F0E9] border border-[#1a1a1a] p-8 md:p-12 flex flex-col md:flex-row gap-8 items-start">
+           <div className="bg-[#F2F0E9] border border-[#1a1a1a] p-8 md:p-12 flex flex-col md:flex-row gap-8 items-start">
               <div className="shrink-0 bg-[#b91c1c] text-white p-3">
                  <span className="font-bold text-xl">!</span>
               </div>
@@ -544,9 +379,7 @@ export default async function PNPPage({ params }: { params: Promise<{ locale: st
                     </summary>
                     <div className="pt-6 animate-in slide-in-from-top-2">
                        <p className="font-sans text-[#1a1a1a]/70 leading-relaxed max-w-2xl border-l-2 border-[#CCFF00] pl-6">
-                          Suitability. The <Link href="/startup-visa-canada" className="underline decoration-[#CCFF00] font-bold text-black">Start-Up Visa</Link> is for innovative, scalable tech/IP companies. 
-                          If your business is a traditional model (e.g., manufacturing, construction, hospitality, retail) 
-                          that serves the local economy, PNP is your only viable entrepreneur pathway.
+                          Today it is less a choice than the only door. IRCC paused the federal <Link href="/startup-visa-canada" className="underline decoration-[#CCFF00] font-bold text-black">Start-Up Visa</Link> on 30 June 2026, and its 2026–2028 levels plan gives federal business immigration 500 places a year. Provincial entrepreneur streams are now the main business route to permanent residence. They suit owner-operated businesses that serve the local economy: you hold a real share, live in the province and run the business day to day.
                        </p>
                     </div>
                  </details>
