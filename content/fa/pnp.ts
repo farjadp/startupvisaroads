@@ -6,13 +6,14 @@
 //
 // The province figures repeat the province guides (content/fa/pnp-*.ts,
 // content/en/pnp-pei.ts) and components/pnp/EntrepreneurComparison.tsx, all
-// checked against official pages on CHECKED (British Columbia on 2026-11-01).
+// checked against official pages on CHECKED. The all-province status board
+// lives in lib/pnp-status.ts.
 // Change them together.
 // ============================================================================
 import type { FaPage } from '@/lib/fa/content';
 import { TELEGRAM_URL } from './home';
 
-export const CHECKED = '2026-10-12';
+export const CHECKED = '2026-11-02';
 
 export type PnpProvince = {
   name: string;
@@ -25,6 +26,8 @@ export type PnpProvince = {
   status: string;
   /** Whether the stream is actually taking entrepreneurs now. */
   open: boolean;
+  /** Overrides the card's status label. */
+  badge?: string;
   /** Basename under public/fa/img/, and its Persian description. */
   image: string;
   imageAlt: string;
@@ -42,7 +45,7 @@ export const provinces: PnpProvince[] = [
     stream: 'BC PNP Entrepreneur Immigration — Base / Regional',
     href: '/pnp/bc',
     guide: 'fa',
-    status: 'باز؛ ۱۱ دور دعوت در ۲۰۲۶، هر ماه، کمترین امتیاز ۱۱۵ تا ۱۲۱',
+    status: 'باز؛ دعوت ماهانه، دور ۲۰ اکتبر ۲۰۲۶ با کمترین امتیاز ۱۱۸',
     open: true,
     image: 'bc',
     imageAlt: 'نمای هوایی برج‌های مرکز شهر ونکوور کنار آب، با کوه‌های ساحلی در پس‌زمینه',
@@ -57,7 +60,7 @@ export const provinces: PnpProvince[] = [
     stream: 'AAIP Rural Entrepreneur',
     href: '/pnp/alberta',
     guide: 'fa',
-    status: 'باز؛ ۲۴ نامزدی از سهمیه‌ی ۶۰تایی ۲۰۲۶ باقی مانده',
+    status: 'باز؛ ۲۳ نامزدی از سهمیه‌ی ۶۰تایی ۲۰۲۶ مانده و ۲۱۳ پرونده در جریان',
     open: true,
     image: 'alberta',
     imageAlt: 'جاده‌ای خالی در آلبرتا که به سوی کوه‌های برف‌پوش راکی می‌رود',
@@ -72,8 +75,9 @@ export const provinces: PnpProvince[] = [
     stream: 'MPNP Business Investor — Entrepreneur',
     href: '/pnp/manitoba',
     guide: 'fa',
-    status: 'EOI با ایمیل، بررسی ظرف ۴ هفته؛ بدون دور دعوت',
+    status: 'EOI با ایمیل، بررسی ظرف ۴ هفته؛ دور دعوت کسب‌وکار برگزار نمی‌شود',
     open: true,
+    badge: 'پذیرش محدود',
     image: 'manitoba',
     imageAlt: 'افق شهر وینیپگ و پل راه‌آهن روی رودخانه‌ی آسینیبوین در غروب',
     tagline: 'بدون صف دعوت: EOI با ایمیل، جواب ظرف چهار هفته.',
@@ -131,10 +135,13 @@ export const provinces: PnpProvince[] = [
 
 /** Provinces we do not specialise in — English guides only, said plainly. */
 export const otherProvinces: { name: string; href: string | null; note: string }[] = [
-  { name: 'انتاریو', href: '/en/pnp/ontario', note: 'مسیرهای مهارتی وابسته به دعوت؛ راهنمای انگلیسی' },
-  { name: 'ساسکاچوان', href: '/en/pnp/saskatchewan', note: 'مسیرهای مهارتی با فهرست مشاغل؛ راهنمای انگلیسی' },
-  { name: 'نیوفاندلند و لابرادور', href: '/en/pnp/newfoundland', note: 'مسیرهای کوچک آتلانتیک؛ راهنمای انگلیسی' },
-  { name: 'کبک', href: null, note: 'برنامه‌ی نامزدی استانی ندارد و مهاجر اقتصادی را با سیستم خودش انتخاب می‌کند' },
+  { name: 'نیوفاندلند و لابرادور', href: '/en/pnp/newfoundland', note: 'مسیر کارآفرین بین‌المللی باز است؛ ۶۰۰ هزار دلار دارایی، CLB 5؛ راهنمای انگلیسی' },
+  { name: 'سرزمین‌های شمال غربی', href: null, note: 'مسیر کسب‌وکار باز و بدون صف؛ بیرون از یلونایف ۲۵۰ هزار دلار دارایی و ۱۰۰ هزار سرمایه‌گذاری' },
+  { name: 'کبک', href: null, note: 'PNP ندارد و خودش انتخاب می‌کند؛ مسیر کارآفرینی فرانسه‌ی گفتاری سطح ۷ می‌خواهد' },
+  { name: 'انتاریو', href: '/en/pnp/ontario', note: 'مسیر کارآفرینی بسته است؛ فقط مسیر Workforce Priority با پیشنهاد کار؛ راهنمای انگلیسی' },
+  { name: 'ساسکاچوان', href: '/en/pnp/saskatchewan', note: 'کارآفرینی و مزرعه از ۲۷ مارس ۲۰۲۵ برای همیشه بسته شد؛ راهنمای انگلیسی' },
+  { name: 'یوکان', href: null, note: 'صفحه‌ی برنامه هست، اما راهنمای عملیاتی ۲۰۲۶ مسیر کسب‌وکاری ندارد' },
+  { name: 'نوناووت', href: null, note: 'برنامه‌ی نامزدی ندارد' },
 ];
 
 /** The route in order. Province detail differs; each guide has its own. */

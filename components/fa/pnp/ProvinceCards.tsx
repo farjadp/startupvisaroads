@@ -25,8 +25,8 @@ function Card({ p, i, compact }: { p: PnpProvince; i: number; compact?: boolean 
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[#1a1a1a]/70 via-transparent to-transparent" />
         <span className={`absolute top-4 start-4 inline-flex items-center gap-2 px-3 py-1.5 text-xs font-bold backdrop-blur-sm ${p.open ? 'bg-[#F2F0E9]/90 text-[#1a1a1a]' : 'bg-[#C2410C]/90 text-white'}`}>
-          <span className={`h-1.5 w-1.5 rounded-full ${p.open ? 'bg-[#4D7C0F]' : 'bg-white'}`} aria-hidden />
-          {p.open ? 'پذیرش فعال' : 'بدون دعوت در ۲۰۲۶'}
+          <span className={`h-1.5 w-1.5 rounded-full ${p.badge ? 'bg-[#B45309]' : p.open ? 'bg-[#4D7C0F]' : 'bg-white'}`} aria-hidden />
+          {p.badge ?? (p.open ? 'پذیرش فعال' : 'بدون دعوت در ۲۰۲۶')}
         </span>
         <h3 className="absolute bottom-4 start-5 font-estedad font-black text-3xl md:text-4xl text-[#F2F0E9]">{p.name}</h3>
       </div>

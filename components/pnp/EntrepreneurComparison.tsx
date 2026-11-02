@@ -1,6 +1,6 @@
 // ============================================================================
 // components/pnp/EntrepreneurComparison.tsx
-// The five Entrepreneur PNP provinces side by side, on /en/pnp. The values
+// The seven Entrepreneur PNP provinces we have guides for, side by side, on /en/pnp. The values
 // are the same ones the province guides carry (content/en/pnp-*.ts), checked
 // against each province's official pages on CHECKED. When a province changes
 // a threshold, change it in its guide and here in the same commit.
@@ -8,7 +8,7 @@
 import React from 'react';
 import { Link } from '@/routing';
 
-const CHECKED = '2026-10-12';
+const CHECKED = '2026-11-02';
 
 type Row = {
   province: string;
@@ -24,10 +24,21 @@ type Row = {
 
 const ROWS: Row[] = [
   {
+    province: 'British Columbia',
+    stream: 'Entrepreneur Immigration, Base and Regional',
+    href: '/pnp/bc',
+    status: 'Monthly invitations; 20 October 2026: lowest score 118',
+    netWorth: 'CAD 600,000 (300,000 Regional)',
+    investment: 'CAD 200,000 (100,000 Regional)',
+    ownership: 'See the BC guide',
+    language: 'CLB 4',
+    beforeNomination: 'About 18 to 20 months of operation',
+  },
+  {
     province: 'Alberta',
     stream: 'Rural Entrepreneur (AAIP)',
     href: '/pnp/alberta',
-    status: 'Open; 24 of 60 entrepreneur nominations left in 2026',
+    status: 'Open; 23 of 60 entrepreneur nominations left in 2026, 213 files in process',
     netWorth: 'CAD 300,000',
     investment: 'CAD 100,000',
     ownership: '51%',
@@ -68,6 +79,17 @@ const ROWS: Row[] = [
     beforeNomination: '6 consecutive months of operation',
   },
   {
+    province: 'Newfoundland and Labrador',
+    stream: 'International Entrepreneur',
+    href: '/pnp/newfoundland',
+    status: 'Expression of Interest system open',
+    netWorth: 'CAD 600,000',
+    investment: 'CAD 200,000 (or CAD 1 million in equity)',
+    ownership: '33.3%',
+    language: 'CLB 5',
+    beforeNomination: 'See the NL guide',
+  },
+  {
     province: 'Prince Edward Island',
     stream: 'Business Work Permit Stream',
     href: '/pnp/pei',
@@ -81,7 +103,7 @@ const ROWS: Row[] = [
 ];
 
 const COLUMNS: { key: keyof Row; label: string }[] = [
-  { key: 'status', label: 'Status (October 2026)' },
+  { key: 'status', label: 'Status (November 2026)' },
   { key: 'netWorth', label: 'Minimum net worth' },
   { key: 'investment', label: 'Minimum investment' },
   { key: 'ownership', label: 'Ownership' },
@@ -94,13 +116,13 @@ const checkedOn = new Date(`${CHECKED}T12:00:00Z`).toLocaleDateString('en-CA', {
 export default function EntrepreneurComparison() {
   return (
     <section id="entrepreneur-pnp" className="py-24 border-t border-[#1a1a1a]/10 px-4 scroll-mt-28">
-      <h2 className="font-serif text-4xl md:text-6xl mb-4 max-w-[22ch]">Entrepreneur PNP: the five provinces compared</h2>
+      <h2 className="font-serif text-4xl md:text-6xl mb-4 max-w-[22ch]">Entrepreneur PNP: seven provinces compared</h2>
       <p className="font-sans text-[#1a1a1a]/65 max-w-3xl mb-10 leading-relaxed">
-        Canada&rsquo;s federal Start-up Visa is paused, so for most founders the way in is a provincial entrepreneur stream: start or buy a business, run it on a work permit, then be nominated for permanent residence. These are the five we work with. Every figure comes from the province&rsquo;s own pages, checked on <time dateTime={CHECKED}>{checkedOn}</time>; each guide links its sources.
+        Canada&rsquo;s federal Start-up Visa is paused, so for most founders the way in is a provincial entrepreneur stream: start or buy a business, run it on a work permit, then be nominated for permanent residence. These are the seven we cover in depth; the status board above has the rest. Every figure comes from the province&rsquo;s own pages, checked on <time dateTime={CHECKED}>{checkedOn}</time>; each guide links its sources.
       </p>
       <div className="overflow-x-auto border border-[#1a1a1a]">
         <table className="w-full min-w-[900px] text-left font-sans text-sm">
-          <caption className="sr-only">Entrepreneur provincial nominee streams in Alberta, Manitoba, Nova Scotia, New Brunswick and Prince Edward Island</caption>
+          <caption className="sr-only">Entrepreneur provincial nominee streams in British Columbia, Alberta, Manitoba, Nova Scotia, New Brunswick, Newfoundland and Labrador and Prince Edward Island</caption>
           <thead className="bg-[#1a1a1a] text-[#F2F0E9]">
             <tr>
               <th scope="col" className="p-4 font-bold">Province</th>

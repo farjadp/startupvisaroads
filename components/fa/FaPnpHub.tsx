@@ -33,6 +33,8 @@ import Stepper from './motion/Stepper';
 import CountUp from './motion/CountUp';
 import Flag from './Flag';
 import ProvinceCards from './pnp/ProvinceCards';
+import PnpStatusBoard from '@/components/pnp/PnpStatusBoard';
+import NetWorthGate from '@/components/pnp/NetWorthGate';
 
 const FA_DIGITS = '۰۱۲۳۴۵۶۷۸۹';
 const faNum = (n: number) => String(n).replace(/\d/g, (d) => FA_DIGITS[Number(d)]);
@@ -160,6 +162,11 @@ export default function FaPnpHub() {
       </section>
 
       <div className="px-4 md:px-8 max-w-[1400px] mx-auto pb-24 md:pb-32 space-y-24 md:space-y-32">
+        <div className="-mx-4 -mb-24 md:-mb-32">
+          <PnpStatusBoard lang="fa" />
+          <NetWorthGate lang="fa" />
+        </div>
+
         {/* PROVINCES */}
         <section>
           <SectionHead
@@ -188,11 +195,11 @@ export default function FaPnpHub() {
           <Reveal>
             <div className="overflow-x-auto border border-[#1a1a1a]">
               <table className="w-full min-w-[860px] text-start text-sm">
-                <caption className="sr-only">مقایسه‌ی مسیرهای کارآفرینی استانی آلبرتا، منیتوبا، نوااسکوشیا، نیوبرانزویک و جزیره‌ی پرنس ادوارد در اکتبر ۲۰۲۶</caption>
+                <caption className="sr-only">مقایسه‌ی مسیرهای کارآفرینی استانی بریتیش کلمبیا، آلبرتا، منیتوبا، نوااسکوشیا، نیوبرانزویک و جزیره‌ی پرنس ادوارد در نوامبر ۲۰۲۶</caption>
                 <thead className="bg-[#121417] text-[#F2F0E9]">
                   <tr>
                     <th scope="col" className="p-4 text-start font-bold">استان</th>
-                    <th scope="col" className="p-4 text-start font-bold">وضعیت (اکتبر ۲۰۲۶)</th>
+                    <th scope="col" className="p-4 text-start font-bold">وضعیت (نوامبر ۲۰۲۶)</th>
                     <th scope="col" className="p-4 text-start font-bold">حداقل دارایی خالص</th>
                     <th scope="col" className="p-4 text-start font-bold">حداقل سرمایه‌گذاری</th>
                     <th scope="col" className="p-4 text-start font-bold">زبان</th>
@@ -284,7 +291,7 @@ export default function FaPnpHub() {
 
         {/* OTHER PROVINCES */}
         <section>
-          <SectionHead id="others" title="استان‌های دیگر کانادا" lead="این استان‌ها مسیر کارآفرینی‌ای ندارند که امروز به کارآفرین ایرانی توصیه کنیم، یا مسیرشان مهارتی است. راهنمای انگلیسی‌شان را به‌روز نگه می‌داریم." />
+          <SectionHead id="others" title="استان‌های دیگر کانادا" lead="بقیه‌ی استان‌ها و سرزمین‌ها: برخی باز اما کوچک، برخی بسته. برای هر کدام وضعیت امروز را آورده‌ایم؛ هر جا راهنمای انگلیسی داریم، پیوندش هست." />
           <ul className="border-t border-[#1a1a1a]/20">
             {otherProvinces.map((o) => (
               <li key={o.name} className="border-b border-[#1a1a1a]/20">
