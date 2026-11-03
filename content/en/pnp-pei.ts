@@ -1,7 +1,8 @@
 // ============================================================================
 // content/en/pnp-pei.ts
 // /en/pnp/pei — PEI PNP Business Work Permit Stream. Checked on
-// princeedwardisland.ca on 2026-10-12 (see `sources`). The headline fact is
+// princeedwardisland.ca on 2026-10-12 (see `sources`); the draw table was
+// re-checked on 2026-11-03 (11 draws to 16 October). The headline fact is
 // the draw table: zero entrepreneur invitations in 2026. Keep that in front
 // of the requirements until PEI invites business candidates again.
 // No VisaRoads price appears here, by rule.
@@ -12,7 +13,7 @@ export const page: FaPage = {
   path: '/pnp/pei',
   title: 'PEI PNP Entrepreneur (Work Permit Stream) 2026: Zero Invitations',
   description:
-    'PEI\'s Business Work Permit Stream in 2026: no entrepreneur has been invited in any of the ten draws this year. The requirements ($600,000 net worth, $150,000 investment, CLB 4) and what to do instead.',
+    'PEI\'s Business Work Permit Stream in 2026: no entrepreneur has been invited in any of the eleven draws this year. The requirements ($600,000 net worth, $150,000 investment, CLB 4) and what to do instead.',
   keywords: [
     'pei pnp entrepreneur',
     'pei business work permit stream',
@@ -20,7 +21,7 @@ export const page: FaPage = {
     'pei entrepreneur draw 2026',
     'prince edward island entrepreneur immigration',
   ],
-  updated: '2026-10-12',
+  updated: '2026-11-03',
   entity: {
     name: 'PEI Provincial Nominee Program — Business Work Permit Stream',
     provider: 'Government of Prince Edward Island',
@@ -29,11 +30,11 @@ export const page: FaPage = {
   status: {
     tone: 'paused',
     title: 'No entrepreneur invited in 2026',
-    body: 'PEI has not announced a pause, and the stream is still listed. But its draw table shows zero business invitations in all ten draws from 15 January to 7 October 2026, against 1,319 for workers, and PEI says it is prioritising skilled workers in sectors such as healthcare and trades. Plan as if this stream were closed until a draw says otherwise.',
+    body: 'PEI has not announced a pause, and the stream is still listed. But its draw table shows zero business invitations in all eleven draws from 15 January to 16 October 2026, against 1,483 for workers, and PEI says it is prioritising skilled workers in sectors such as healthcare and trades. Plan as if this stream were closed until a draw says otherwise.',
     cta: { label: 'Compare the open provinces', href: '/pnp' },
   },
   facts: [
-    { label: 'Entrepreneur invitations in 2026', value: '0', note: '10 draws, 15 January to 7 October' },
+    { label: 'Entrepreneur invitations in 2026', value: '0', note: '11 draws, 15 January to 16 October' },
     { label: 'Minimum net worth', value: 'CAD 600,000' },
     { label: 'Investment', value: 'CAD 150,000', note: 'within 12 months of landing' },
     { label: 'Language', value: 'CLB 4' },
@@ -51,7 +52,7 @@ export const page: FaPage = {
     {
       heading: 'Is the PEI entrepreneur stream open in 2026?',
       body: [
-        'Officially, yes: the Work Permit Stream page still describes the stream with no closure or pause notice. In practice, no. PEI\'s Expression of Interest draw table has a column for business work permit entrepreneur invitations, and it reads 0 in every one of the ten draws held from 15 January to 7 October 2026. Over the same period PEI issued 1,319 invitations to workers and Express Entry candidates.',
+        'Officially, yes: the Work Permit Stream page still describes the stream with no closure or pause notice. In practice, no. PEI\'s Expression of Interest draw table has a column for business work permit entrepreneur invitations, and it reads 0 in every one of the eleven draws held from 15 January to 16 October 2026. Over the same period PEI issued 1,483 invitations to workers and Express Entry candidates.',
         'PEI says it is currently selecting and prioritising skilled workers in higher-demand sectors such as healthcare and trades, and it reserves the right to limit intake or exclude streams from draws.',
       ],
       callout: 'If someone is selling you a PEI entrepreneur file today, ask them to show you the last PEI draw that invited an entrepreneur.',
@@ -107,7 +108,7 @@ export const page: FaPage = {
   faqs: [
     {
       q: 'Is the PEI PNP entrepreneur stream open in 2026?',
-      a: 'It is still listed and PEI has not announced a pause, but it invited zero entrepreneurs in all ten 2026 draws up to 7 October. PEI says it is prioritising skilled workers.',
+      a: 'It is still listed and PEI has not announced a pause, but it invited zero entrepreneurs in all eleven 2026 draws up to 16 October. PEI says it is prioritising skilled workers.',
     },
     {
       q: 'What is the minimum net worth for the PEI Work Permit Stream?',
