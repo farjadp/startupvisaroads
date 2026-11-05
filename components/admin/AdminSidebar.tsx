@@ -3,7 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { LayoutDashboard, Users, FileText, Settings, LogOut, BookOpen, Sparkles, FolderOpen, Megaphone, Bot, Library } from 'lucide-react';
+import { LayoutDashboard, Users, FileText, Settings, LogOut, BookOpen, Sparkles, FolderOpen, Megaphone, Bot, Library, ClipboardList } from 'lucide-react';
 
 export default function AdminSidebar() {
   const router = useRouter();
@@ -60,6 +60,10 @@ export default function AdminSidebar() {
         <Link href="/en/admin/sources" className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/5 text-white/70 hover:text-white transition-colors">
           <Library className="w-5 h-5" />
           Sources
+        </Link>
+        <Link href="/en/admin/reports" className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/5 text-white/70 hover:text-white transition-colors">
+          <ClipboardList className="w-5 h-5" />
+          Agent reports
         </Link>
         <Link href="/en/admin/marketing" className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/5 text-white/70 hover:text-white transition-colors">
           <Megaphone className="w-5 h-5" />
