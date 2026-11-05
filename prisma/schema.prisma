@@ -295,3 +295,23 @@ model ArticleReview {
   @@unique([articleId, documentId])
   @@index([resolvedAt, createdAt])
 }
+
+// ─── Agent reports ───────────────────────────────────────────────────────────
+// What the local Claude agents (market-intel, seo-strategist, fact-checker,
+// ai-visibility-tracker) found, posted to /api/agent-reports. The payload is
+// the structured report the admin page draws; `summary` is what Telegram gets.
+model AgentReport {
+  id             String    @id @default(cuid())
+  agent          String
+  job            String
+  title          String
+  locale         String    @default("fa")
+  summary        String
+  payload        String    // JSON AgentReportPayload
+  createdAt      DateTime  @default(now())
+  telegramStatus String    @default("pending") // pending | sent | failed | skipped
+  telegramError  String?
+
+  @@index([agent, createdAt])
+  @@index([createdAt])
+}
