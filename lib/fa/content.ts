@@ -55,15 +55,47 @@ export type FaChecklist = {
   items: string[];
 };
 
+/** Two to four figures a section is about, shown as tiles above the prose. */
+export type FaKeyFact = { value: string; label: string };
+
+/**
+ * A picture inside a section — an infographic, a document, a map. `src` is a
+ * public path (e.g. /fa/downloads/x.webp); `ratio` is width/height so the
+ * frame is sized before the image loads. Alt text is real description.
+ */
+export type FaFigure = { src: string; alt: string; caption?: string; ratio?: number };
+
+/** A term and its explanation — a paragraph that was really a definition list. */
+export type FaTerm = { term: string; text: string };
+
+/** An if/then written as a choice: two or three options side by side. */
+export type FaChoice = {
+  question?: string;
+  options: { title: string; body: string; cta?: FaCta }[];
+};
+
+/** Dated or numbered milestones, drawn as a vertical timeline. */
+export type FaTimeline = { caption?: string; items: { when: string; what: string }[] };
+
 export type FaSection = {
   heading: string;
+  /** Figures the section is about, above the prose. */
+  keyFacts?: FaKeyFact[];
   /** Paragraphs, in order. Plain text — no HTML. */
   body: string[];
+  /** Optional picture rendered after the lead paragraph. */
+  figure?: FaFigure;
   /** Optional table rendered after the paragraphs. */
   table?: FaTable;
+  /** Optional definition rows rendered after the paragraphs. */
+  terms?: FaTerm[];
   /** Optional bullet list rendered after the paragraphs (and table). */
   bullets?: string[];
-  /** Optional checklist rendered after the bullets. */
+  /** Optional timeline rendered after the bullets. */
+  timeline?: FaTimeline;
+  /** Optional choice cards rendered after the timeline. */
+  choice?: FaChoice;
+  /** Optional checklist rendered after the choice. */
   checklist?: FaChecklist;
   /** Optional emphasised callout rendered last — a warning, a rule of thumb. */
   callout?: string;
