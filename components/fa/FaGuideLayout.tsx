@@ -28,6 +28,7 @@ import Eligibility from './Eligibility';
 import QuizEcho from './QuizEcho';
 import Downloads from './motion/Downloads';
 import DataTable from './DataTable';
+import { KeyFacts, FigureBlock, Terms, Choice, Timeline } from './Blocks';
 import Checklist from './motion/Checklist';
 import { FaStop, FaTick, FaCheck, FaSteps, FaCopy, type FaStep } from './FaRoute';
 import { themeFor } from './faThemes';
@@ -124,8 +125,11 @@ function Stop({ s, i, total, selfCheck, pagePath }: { s: FaSection; i: number; t
             {task}
           </span>
         </div>
+        {s.keyFacts && <div className="max-w-[68ch]"><KeyFacts facts={s.keyFacts} /></div>}
         {lead && <p className="mb-8 max-w-[68ch] border-s-[3px] border-[var(--ra)] ps-4 text-[1.1rem] leading-[1.95] text-[#1a1a1a]/90">{lead}</p>}
+        {s.figure && <FigureBlock figure={s.figure} />}
         {s.table && <div className="mb-8 max-w-[68ch]"><DataTable table={s.table} /></div>}
+        {s.terms && <div className="mb-8"><Terms terms={s.terms} /></div>}
         {rest.length > 0 || bullets.length > 0 ? (
           fold ? (
             <details className="group mb-6 max-w-[68ch]">
@@ -142,6 +146,8 @@ function Stop({ s, i, total, selfCheck, pagePath }: { s: FaSection; i: number; t
         ) : null}
         {steps && <FaSteps stopId={id} steps={steps} />}
         {check && s.bullets && <FaCheck stopId={id} items={s.bullets} />}
+        {s.timeline && <div className="mt-6"><Timeline timeline={s.timeline} /></div>}
+        {s.choice && <div className="mt-6"><Choice choice={s.choice} /></div>}
         {s.checklist && <div className="mt-6 max-w-[68ch]"><Checklist list={s.checklist} storageKey={`fa-checklist:${pagePath}:${s.checklist.title}`} /></div>}
         {s.callout && (
           <aside className="mt-6 max-w-[68ch] rounded-2xl bg-[var(--rd)] p-6 text-white md:p-7">
