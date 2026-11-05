@@ -7,10 +7,14 @@
 import React from 'react';
 import { Briefcase } from 'lucide-react';
 import type { CandidateProfile } from '../../../lib/express-entry/types';
+import WageSelect, { type WageSelectLabels } from '../ui/WageSelect';
 
-interface T {
+interface T extends WageSelectLabels {
   step3_title: string;
   canadian_exp_label: string;
+  high_wage_exp_label: string;
+  high_wage_exp_note: string;
+  high_wage_exp_none: string;
   foreign_exp_label: string;
   cert_label: string;
   cert_note: string;
@@ -106,6 +110,21 @@ export default function StepWorkNoc({ profile, onChange, locale, t }: StepWorkNo
           t={t}
         />
       </div>
+
+      {/* High-wage Canadian experience — Labour Market Integration, from 3 Nov 2026 */}
+      {(profile.canadianWorkExperienceYears ?? 0) >= 1 && (
+        <div className="space-y-2">
+          <label className="block text-sm font-sans font-medium text-ink">{t.high_wage_exp_label}</label>
+          <p className="text-xs text-ink/50 font-sans">{t.high_wage_exp_note}</p>
+          <WageSelect
+            name="high-wage-exp"
+            value={profile.highWageCanadianExperience}
+            onChange={(v) => onChange({ highWageCanadianExperience: v })}
+            t={t}
+            noneLabel={t.high_wage_exp_none}
+          />
+        </div>
+      )}
 
       {/* Foreign Work Experience */}
       <div className="space-y-3">

@@ -60,6 +60,13 @@ export interface OfficialLanguageProfile {
 /** Canadian education level for the additional-points section. */
 export type CanadianEducationLevel = 'none' | 'oneTwo' | 'threeOrMore';
 
+/**
+ * How an occupation's median wage compares with the median wage, as IRCC uses it
+ * for the Labour Market Integration factor (3 November 2026). 'none' = below 1.3×
+ * or not known.
+ */
+export type WageMultiple = 'none' | '1.3x' | '1.5x' | '2x';
+
 /** Complete candidate profile. All fields are required unless explicitly optional. */
 export interface CandidateProfile {
   // ——— Personal ————————————————————————————————————————————————————
@@ -87,6 +94,12 @@ export interface CandidateProfile {
   canadianWorkExperienceYears: 0 | 1 | 2 | 3 | 4 | 5;
   /** Years of skilled foreign work experience outside Canada. 3 = "3 or more". */
   foreignWorkExperienceYears: 0 | 1 | 2 | 3;
+  /**
+   * At least 12 months (combined) of the Canadian experience was in occupations
+   * whose median wage is at least this multiple of the median wage.
+   * Scores only with 1+ year of Canadian work experience.
+   */
+  highWageCanadianExperience: WageMultiple;
 
   // ——— Spouse Factors (only scored when spouseComingToCanada === true) ——
   spouseEducation?: EducationLevel;
@@ -103,12 +116,11 @@ export interface CandidateProfile {
   /** Has received a provincial nomination. Adds 600 points. */
   provincialNomination: boolean;
   /**
-   * Has a Canadian job offer (arranged employment).
-   * IMPORTANT: This field is kept for UI display with an inline note.
-   * Per IRCC policy effective March 25, 2025, this awards ZERO points.
-   * DO NOT change the engine to award points for this field.
+   * Job offer, by the wage level of its occupation. From 3 November 2026 a job offer
+   * in a high-wage occupation scores 50 / 70 / 100 in the core Labour Market
+   * Integration factor; no LMIA needed. 'none' = no offer, or below 1.3×.
    */
-  jobOffer: boolean;
+  jobOfferWage: WageMultiple;
   /** Post-secondary education completed in Canada. */
   canadianEducation: CanadianEducationLevel;
   /** Has a sibling (brother or sister) who is a Canadian citizen or permanent resident. */
@@ -128,8 +140,22 @@ export interface CrsBreakdown {
     education: number;
     firstLanguage: number;
     secondLanguage: number;
-    canadianWorkExperience: number;
+    /** Labour Market Integration: the higher of the experience path and the job offer. */
+    labourMarketIntegration: number;
     subtotal: number;
+  };
+  /** Detail of the Labour Market Integration factor (inside the core subtotal). */
+  labourMarketIntegration: {
+    /** Canadian work-length points (experience path). */
+    workLength: number;
+    /** High-wage Canadian experience points (experience path). */
+    highWageExperience: number;
+    /** workLength + highWageExperience. */
+    experiencePath: number;
+    /** High-wage job offer points. */
+    jobOfferPath: number;
+    /** Which path was counted. 'none' when both are 0. */
+    applied: 'experience' | 'jobOffer' | 'none';
   };
   spouseFactors: {
     education: number;
@@ -151,8 +177,6 @@ export interface CrsBreakdown {
     frenchLanguage: number;
     canadianEducation: number;
     sibling: number;
-    /** Always 0 — job offer no longer awards CRS points (effective March 25, 2025). */
-    jobOffer: 0;
     subtotal: number;
   };
 }
