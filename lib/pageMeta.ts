@@ -58,6 +58,7 @@ export const EN_INDEXABLE_PATHS = [
   '/europe/estonia',
   '/europe/spain',
   '/europe/bulgaria',
+  '/europe/belgium',
   '/startup-visa-canada/requirements',
   '/startup-visa-canada/cost',
   '/startup-visa-canada/designated-organizations',

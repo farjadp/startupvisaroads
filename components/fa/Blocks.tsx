@@ -11,13 +11,13 @@
 // ============================================================================
 import React from 'react';
 import Image from 'next/image';
-import { ArrowLeft, Send } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Send } from 'lucide-react';
 import { Link } from '@/navigation';
 import type { FaChoice, FaFigure, FaKeyFact, FaTerm, FaTimeline } from '@/lib/fa/content';
 
-export function KeyFacts({ facts }: { facts: FaKeyFact[] }) {
+export function KeyFacts({ facts, lang = 'fa' }: { facts: FaKeyFact[]; lang?: 'fa' | 'en' }) {
   return (
-    <ul className="mb-7 grid grid-cols-2 gap-3 md:grid-cols-4" aria-label="اعداد کلیدی این بخش">
+    <ul className="mb-7 grid grid-cols-2 gap-3 md:grid-cols-4" aria-label={lang === 'en' ? 'Key figures in this section' : 'اعداد کلیدی این بخش'}>
       {facts.map((f, i) => (
         <li key={i} className="rounded-2xl border border-[#1a1a1a]/12 bg-white px-4 py-4">
           <p className="font-estedad text-2xl font-black leading-none text-[var(--rd,#1a1a1a)] md:text-[1.7rem]">{f.value}</p>
@@ -53,22 +53,22 @@ export function Terms({ terms }: { terms: FaTerm[] }) {
   );
 }
 
-function ChoiceCta({ cta }: { cta: NonNullable<FaChoice['options'][number]['cta']> }) {
+function ChoiceCta({ cta, lang = 'fa' }: { cta: NonNullable<FaChoice['options'][number]['cta']>; lang?: 'fa' | 'en' }) {
   const ext = /^https?:\/\//.test(cta.href) || cta.href.startsWith('/en/');
   const cls = 'mt-3 inline-flex items-center gap-2 text-sm font-bold text-[var(--ra-text,#1a1a1a)] hover:underline';
   const inner = (
     <>
       {cta.label}
-      {/^https?:/.test(cta.href) ? <Send className="h-3.5 w-3.5" /> : <ArrowLeft className="h-3.5 w-3.5" />}
+      {/^https?:/.test(cta.href) ? <Send className="h-3.5 w-3.5" /> : lang === 'en' ? <ArrowRight className="h-3.5 w-3.5" /> : <ArrowLeft className="h-3.5 w-3.5" />}
     </>
   );
   return ext ? <a href={cta.href} className={cls}>{inner}</a> : <Link href={cta.href} className={cls}>{inner}</Link>;
 }
 
-export function Choice({ choice }: { choice: FaChoice }) {
+export function Choice({ choice, lang = 'fa' }: { choice: FaChoice; lang?: 'fa' | 'en' }) {
   const n = choice.options.length;
   return (
-    <section className="my-2 max-w-[68ch]" aria-label={choice.question ?? 'انتخاب'}>
+    <section className="my-2 max-w-[68ch]" aria-label={choice.question ?? (lang === 'en' ? 'Choice' : 'انتخاب')}>
       {choice.question && (
         <p className="mb-3 flex items-center gap-3 font-estedad text-lg font-bold">
           <span className="h-2 w-2 bg-[var(--ra,#CCFF00)] border border-[#1a1a1a]" aria-hidden />
@@ -80,7 +80,7 @@ export function Choice({ choice }: { choice: FaChoice }) {
           <div key={i} className="flex flex-col rounded-2xl border border-[#1a1a1a]/12 bg-white p-5">
             <p className="font-estedad text-lg font-black leading-snug text-[var(--rd,#1a1a1a)]">{o.title}</p>
             <p className="mt-2 flex-1 text-base leading-[1.9] text-[#1a1a1a]/80">{o.body}</p>
-            {o.cta && <ChoiceCta cta={o.cta} />}
+            {o.cta && <ChoiceCta cta={o.cta} lang={lang} />}
           </div>
         ))}
       </div>

@@ -36,6 +36,7 @@ const EN_LINKS = {
     { href: '/uk/innovator-founder', label: 'UK (Innovator Founder)' },
     { href: '/europe/spain', label: 'Spain (Entrepreneur)' },
     { href: '/europe/bulgaria', label: 'Bulgaria (Startup Visa)' },
+    { href: '/europe/belgium', label: 'Belgium (Startup Permit)' },
     { href: '/europe/estonia', label: 'Estonia (Startup Visa)' },
     { href: '/country/turkey', label: 'Türkiye (Tech Visa)' },
     { href: '/country/australia', label: 'Australia (NIV 858)' },
@@ -68,6 +69,7 @@ const FA_LINKS = {
     { href: '/turkey-tech-visa', label: 'تک‌ویزای ترکیه' },
     { href: '/usa', label: 'آمریکا برای فاندرها' },
     { href: '/uk/innovator-founder', label: 'استارتاپ ویزای انگلیس' },
+    { href: '/australia', label: 'استرالیا (NIV 858)' },
   ],
   strategy: [
     { href: '/which-path', label: 'ارزیابی رایگان مسیر' },

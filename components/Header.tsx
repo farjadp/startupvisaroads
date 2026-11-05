@@ -160,6 +160,7 @@ export default function Header() {
 
         { header: 'آمریکا و مقصدهای دیگر' },
         { href: '/usa', label: 'آمریکا: مسیرهای فاندر' },
+        { href: '/usa/o-1a', label: 'آمریکا: O-1A' },
         { href: '/usa-eb2-niw', label: 'آمریکا: EB-2 NIW' },
         { href: '/australia', label: 'استرالیا' },
         { href: '/turkey-tech-visa', label: 'ترکیه' },
@@ -196,6 +197,7 @@ export default function Header() {
         { href: '/country/canada', label: t('canada_profile') },
         { href: '/startup-visa-canada', label: t('suv') },
         { href: '/pnp', label: t('pnp') },
+        { href: '/pnp/bc', label: 'British Columbia' },
         { href: '/pnp/alberta', label: 'Alberta' },
         { href: '/pnp/manitoba', label: 'Manitoba' },
         { href: '/pnp/nova-scotia', label: 'Nova Scotia' },
@@ -215,6 +217,7 @@ export default function Header() {
         { href: '/country/italy', label: t('italy') },
         { href: '/europe/spain', label: 'Spain' },
         { href: '/europe/bulgaria', label: 'Bulgaria' },
+        { href: '/europe/belgium', label: 'Belgium' },
         { href: '/europe/estonia', label: 'Estonia' },
         { href: '/uk/innovator-founder', label: 'UK Innovator Founder' },
 

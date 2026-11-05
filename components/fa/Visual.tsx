@@ -125,7 +125,7 @@ function Bars({ v }: { v: Extract<FaVisual, { type: 'bars' }> }) {
   );
 }
 
-function Phases({ v }: { v: Extract<FaVisual, { type: 'phases' }> }) {
+function Phases({ v, lang }: { v: Extract<FaVisual, { type: 'phases' }>; lang: 'fa' | 'en' }) {
   let n = 0;
   return (
     <Frame caption={v.caption} note={v.note}>
@@ -140,7 +140,7 @@ function Phases({ v }: { v: Extract<FaVisual, { type: 'phases' }> }) {
                 return (
                   <li key={si} className="flex items-start gap-2.5 text-sm leading-relaxed text-[#1a1a1a]/85">
                     <span className="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full text-[11px] font-bold text-white" style={{ background: SERIES[pi % SERIES.length] }} aria-hidden>
-                      {n.toLocaleString('fa-IR')}
+                      {lang === 'en' ? n : n.toLocaleString('fa-IR')}
                     </span>
                     {s}
                   </li>
@@ -154,8 +154,8 @@ function Phases({ v }: { v: Extract<FaVisual, { type: 'phases' }> }) {
   );
 }
 
-export default function Visual({ visual }: { visual: FaVisual }) {
+export default function Visual({ visual, lang = 'fa' }: { visual: FaVisual; lang?: 'fa' | 'en' }) {
   if (visual.type === 'columns') return <Columns v={visual} />;
   if (visual.type === 'bars') return <Bars v={visual} />;
-  return <Phases v={visual} />;
+  return <Phases v={visual} lang={lang} />;
 }
