@@ -5,16 +5,17 @@
 'use client';
 
 import React from 'react';
-import { Sparkles, AlertCircle } from 'lucide-react';
+import { Sparkles, Info } from 'lucide-react';
 import CLBTooltip from '../ui/CLBTooltip';
 import type { CandidateProfile } from '../../../lib/express-entry/types';
+import WageSelect, { type WageSelectLabels } from '../ui/WageSelect';
 
-interface T {
+interface T extends WageSelectLabels {
   step4_title: string;
   pnp_label: string;
   pnp_note: string;
   job_offer_label: string;
-  job_offer_removed_note: string;
+  job_offer_lmi_note: string;
   canadian_edu_label: string;
   edu_none: string;
   edu_one_two: string;
@@ -135,22 +136,20 @@ export default function StepExtras({ profile, onChange, locale, t }: StepExtrasP
         />
       </div>
 
-      {/* Job Offer — UI field with IRCC policy note */}
+      {/* Job Offer — Labour Market Integration factor, from 3 Nov 2026 */}
       <div className="space-y-2">
         <label className="block text-sm font-sans font-medium text-ink">{t.job_offer_label}</label>
 
-        {/* Prominent policy notice — always visible */}
-        <div className="flex gap-3 p-3 border border-amber-400/50 bg-amber-50/50" role="note">
-          <AlertCircle size={16} className="text-amber-600 shrink-0 mt-0.5" />
-          <p className="text-xs text-amber-800 font-sans">{t.job_offer_removed_note}</p>
+        <div className="flex gap-3 p-3 border border-ink/15 bg-ink/[0.03]" role="note">
+          <Info size={16} className="text-ink/60 shrink-0 mt-0.5" />
+          <p className="text-xs text-ink/70 font-sans">{t.job_offer_lmi_note}</p>
         </div>
 
-        <YesNoToggle
+        <WageSelect
           name="job-offer"
-          value={profile.jobOffer}
-          onChange={(v) => onChange({ jobOffer: v })}
-          yesLabel={t.yes}
-          noLabel={t.no}
+          value={profile.jobOfferWage}
+          onChange={(v) => onChange({ jobOfferWage: v })}
+          t={t}
         />
       </div>
 

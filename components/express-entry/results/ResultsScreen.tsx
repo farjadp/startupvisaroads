@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import type { DiagnosticResult, PathwayType, CrsBreakdown } from '../../../lib/express-entry/types';
 import { Link } from '@/navigation';
+import crsPoints from '../../../config/crs-points.json';
 
 // ——— i18n labels ——————————————————————————————————————————————
 interface T {
@@ -23,6 +24,9 @@ interface T {
   first_lang: string;
   second_lang: string;
   canadian_exp: string;
+  lmi_pts: string;
+  lmi_from_experience: string;
+  lmi_from_job_offer: string;
   spouse_factors: string;
   transferability: string;
   additional: string;
@@ -30,8 +34,6 @@ interface T {
   french_pts: string;
   can_edu_pts: string;
   sibling_pts: string;
-  job_offer_pts: string;
-  job_offer_zero_note: string;
   total: string;
   categories_title: string;
   eligible: string;
@@ -59,8 +61,8 @@ interface ResultsScreenProps {
 // ——— Score Gauge ————————————————————————————————————————————
 
 function ScoreGauge({ score }: { score: number }) {
-  // Max realistic CRS without PNP is ~1200 (PNP adds 600); display cap 1200
-  const displayMax = score >= 600 ? 1200 : 1200;
+  // Highest possible CRS (sum of the IRCC section maximums), from the config.
+  const displayMax = crsPoints.maxTotal;
   const pct = Math.min((score / displayMax) * 100, 100);
 
   return (
@@ -103,12 +105,12 @@ function ScoreGauge({ score }: { score: number }) {
 
 // ——— Breakdown Row ——————————————————————————————————————————
 
-function BRow({ label, pts, note }: { label: string; pts: number; note?: string }) {
+function BRow({ label, pts, note, noteTone = 'warn' }: { label: string; pts: number; note?: string; noteTone?: 'warn' | 'muted' }) {
   return (
     <div className="flex items-baseline justify-between py-2 border-b border-ink/5 gap-4">
       <div>
         <span className="text-sm font-sans text-ink">{label}</span>
-        {note && <p className="text-[11px] text-amber-600 font-sans mt-0.5">{note}</p>}
+        {note && <p className={`text-[11px] font-sans mt-0.5 ${noteTone === 'warn' ? 'text-amber-600' : 'text-ink/50'}`}>{note}</p>}
       </div>
       <span className={`font-mono text-sm font-bold shrink-0 ${pts > 0 ? 'text-ink' : 'text-ink/30'}`}>
         +{pts}
@@ -143,7 +145,18 @@ function BreakdownAccordion({ breakdown, t }: { breakdown: CrsBreakdown; t: T })
             <BRow label={t.education} pts={breakdown.coreHumanCapital.education} />
             <BRow label={t.first_lang} pts={breakdown.coreHumanCapital.firstLanguage} />
             <BRow label={t.second_lang} pts={breakdown.coreHumanCapital.secondLanguage} />
-            <BRow label={t.canadian_exp} pts={breakdown.coreHumanCapital.canadianWorkExperience} />
+            <BRow
+              label={t.lmi_pts}
+              pts={breakdown.coreHumanCapital.labourMarketIntegration}
+              noteTone="muted"
+              note={
+                breakdown.labourMarketIntegration.applied === 'jobOffer'
+                  ? t.lmi_from_job_offer
+                  : breakdown.labourMarketIntegration.applied === 'experience'
+                    ? t.lmi_from_experience
+                    : undefined
+              }
+            />
             <div className="flex justify-between pt-2 font-semibold text-sm">
               <span>{t.total}</span>
               <span className="font-mono">{breakdown.coreHumanCapital.subtotal}</span>
@@ -185,11 +198,6 @@ function BreakdownAccordion({ breakdown, t }: { breakdown: CrsBreakdown; t: T })
             <BRow label={t.french_pts} pts={breakdown.additionalPoints.frenchLanguage} />
             <BRow label={t.can_edu_pts} pts={breakdown.additionalPoints.canadianEducation} />
             <BRow label={t.sibling_pts} pts={breakdown.additionalPoints.sibling} />
-            <BRow
-              label={t.job_offer_pts}
-              pts={0}
-              note={t.job_offer_zero_note}
-            />
             <div className="flex justify-between pt-2 font-semibold text-sm">
               <span>{t.total}</span>
               <span className="font-mono">{breakdown.additionalPoints.subtotal}</span>
@@ -342,7 +350,7 @@ export default function ResultsScreen({ result, locale, t, onRestart }: ResultsS
           {isRtl ? 'امتیاز تخمینی CRS شما' : 'Your Estimated CRS Score'}
         </p>
         <ScoreGauge score={crsResult.total} />
-        <p className="text-sm text-ink/50 font-sans">{t.out_of} 1,200</p>
+        <p className="text-sm text-ink/50 font-sans">{t.out_of} {crsPoints.maxTotal.toLocaleString(locale === 'fa' ? 'fa-IR' : 'en-CA')}</p>
       </div>
 
       {/* ——— Score Breakdown Accordion ————————————————————— */}

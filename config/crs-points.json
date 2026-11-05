@@ -1,45 +1,48 @@
 {
-  "rulesVersion": "2026.1",
-  "lastVerified": "2025-03-25",
-  "source": "https://www.canada.ca/en/immigration-refugees-citizenship/services/immigrate-canada/express-entry/eligibility/criteria-comprehensive-ranking-system/grid.html",
+  "rulesVersion": "2026.2",
+  "lastVerified": "2026-11-05",
+  "source": "https://www.canada.ca/en/immigration-refugees-citizenship/services/immigrate-canada/express-entry/check-score/crs-criteria.html",
 
-  "_note": "All point values are sourced from the official IRCC CRS criteria grid. Values marked TODO:VERIFY must be confirmed against the source URL above. The job offer field is included for UI purposes but awards 0 points effective March 25, 2025 (IRCC policy change).",
+  "_note": "Every value was checked against the IRCC CRS criteria page (date modified 2026-11-03) on 2026-11-05. From 3 November 2026 Canadian work experience and high-wage job offers are scored together in the core Labour Market Integration factor: either the experience path or the job offer, not both.",
+
+  "maxTotal": 1270,
+  "_maxTotalNote": "Sum of the section maximums on the IRCC page since 3 Nov 2026: core 570 (single) or core 530 + spouse 40, + transferability 100 + additional 600. The page itself states no grand total.",
 
   "coreHumanCapital": {
     "_note": "Section A: Core/human capital factors. Two tables: withSpouse (when spouse/CL partner is coming to Canada) and withoutSpouse.",
 
     "age": {
-      "_note": "Points for age. withSpouse table has lower maximums. Key: age as string (exact year). 17-or-under and 45-plus are boundary keys.",
+      "_note": "Points for age. withSpouse table has lower maximums. Key: age as string (exact year). 17-or-under and 45-or-more score 0. Peak 110 / 100 at ages 20 to 29.",
       "withoutSpouse": {
         "17": 0,
         "18": 99,
         "19": 105,
         "20": 110,
-        "21": 115,
-        "22": 120,
-        "23": 124,
-        "24": 127,
-        "25": 129,
-        "26": 130,
-        "27": 130,
-        "28": 130,
-        "29": 130,
-        "30": 129,
-        "31": 128,
-        "32": 126,
-        "33": 123,
-        "34": 119,
-        "35": 114,
-        "36": 109,
-        "37": 103,
-        "38": 97,
-        "39": 91,
-        "40": 85,
-        "41": 75,
-        "42": 65,
-        "43": 55,
-        "44": 45,
-        "45": 35,
+        "21": 110,
+        "22": 110,
+        "23": 110,
+        "24": 110,
+        "25": 110,
+        "26": 110,
+        "27": 110,
+        "28": 110,
+        "29": 110,
+        "30": 105,
+        "31": 99,
+        "32": 94,
+        "33": 88,
+        "34": 83,
+        "35": 77,
+        "36": 72,
+        "37": 66,
+        "38": 61,
+        "39": 55,
+        "40": 50,
+        "41": 39,
+        "42": 28,
+        "43": 17,
+        "44": 6,
+        "45": 0,
         "46plus": 0
       },
       "withSpouse": {
@@ -47,31 +50,31 @@
         "18": 90,
         "19": 95,
         "20": 100,
-        "21": 105,
-        "22": 108,
-        "23": 111,
-        "24": 113,
-        "25": 115,
-        "26": 116,
-        "27": 116,
-        "28": 116,
-        "29": 116,
-        "30": 115,
-        "31": 114,
-        "32": 112,
-        "33": 109,
-        "34": 106,
-        "35": 102,
-        "36": 98,
-        "37": 93,
-        "38": 88,
-        "39": 83,
-        "40": 78,
-        "41": 69,
-        "42": 59,
-        "43": 49,
-        "44": 39,
-        "45": 29,
+        "21": 100,
+        "22": 100,
+        "23": 100,
+        "24": 100,
+        "25": 100,
+        "26": 100,
+        "27": 100,
+        "28": 100,
+        "29": 100,
+        "30": 95,
+        "31": 90,
+        "32": 85,
+        "33": 80,
+        "34": 75,
+        "35": 70,
+        "36": 65,
+        "37": 60,
+        "38": 55,
+        "39": 50,
+        "40": 45,
+        "41": 35,
+        "42": 25,
+        "43": 15,
+        "44": 5,
+        "45": 0,
         "46plus": 0
       }
     },
@@ -116,11 +119,11 @@
       "withoutSpouse": {
         "clb4": { "perAbility": 6 },
         "clb5": { "perAbility": 6 },
-        "clb6": { "perAbility": 8 },
-        "clb7": { "perAbility": 16 },
-        "clb8": { "perAbility": 22 },
-        "clb9": { "perAbility": 29 },
-        "clb10plus": { "perAbility": 32 }
+        "clb6": { "perAbility": 9 },
+        "clb7": { "perAbility": 17 },
+        "clb8": { "perAbility": 23 },
+        "clb9": { "perAbility": 31 },
+        "clb10plus": { "perAbility": 34 }
       },
       "withSpouse": {
         "clb4": { "perAbility": 6 },
@@ -138,8 +141,7 @@
     },
 
     "secondOfficialLanguage": {
-      "_note": "Points per CLB level per ability for second official language. Lower points than first language. CLB 5+ threshold to begin scoring. Max 24 pts total (6 per ability × 4 abilities). TODO:VERIFY exact per-ability values against source.",
-      "_todoVerify": "TODO:VERIFY — confirm per-ability points for second language CLB 5–9 against canada.ca grid",
+      "_note": "Points per CLB level per ability for second official language. Lower points than first language. CLB 5+ threshold to begin scoring. Combined maximum 24 without a spouse, 22 with a spouse.",
       "withoutSpouse": {
         "clb1to4": { "perAbility": 0 },
         "clb5": { "perAbility": 1 },
@@ -156,11 +158,12 @@
         "clb8": { "perAbility": 3 },
         "clb9plus": { "perAbility": 6 }
       },
-      "maxPoints": 24
+      "maxPoints": 24,
+      "maxPointsWithSpouse": 22
     },
 
     "canadianWorkExperience": {
-      "_note": "Years of skilled Canadian work experience. 5+ years treated as 5.",
+      "_note": "Work-length points of the Labour Market Integration factor (Canadian work experience path); values unchanged on 3 Nov 2026. 5+ years treated as 5.",
       "withoutSpouse": {
         "0": 0,
         "1": 40,
@@ -177,6 +180,28 @@
         "4": 63,
         "5plus": 70
       }
+    },
+
+    "labourMarketIntegration": {
+      "_note": "New 3 November 2026. Points for EITHER Canadian work experience (work length above + high-wage experience) OR a high-wage job offer, not both. The page does not say how the two are compared; this engine applies the higher. Maximum 150 without a spouse, 140 with. No LMIA is needed for job-offer points.",
+      "effective": "2026-11-03",
+      "highWageExperience": {
+        "_note": "At least 12 months (combined) of Canadian work experience in occupations whose median wage is at least this multiple of the median wage. Same with or without a spouse. Needs at least 1 year of Canadian work experience.",
+        "none": 0,
+        "1.3x": 20,
+        "1.5x": 40,
+        "2x": 70
+      },
+      "jobOffer": {
+        "_note": "Job offer in an occupation whose median wage is at least this multiple of the median wage. Same with or without a spouse.",
+        "none": 0,
+        "1.3x": 50,
+        "1.5x": 70,
+        "2x": 100
+      },
+      "maxWithoutSpouse": 150,
+      "maxWithSpouse": 140,
+      "source": "https://www.canada.ca/en/immigration-refugees-citizenship/services/immigrate-canada/express-entry/check-score/crs-criteria.html"
     }
   },
 
@@ -230,12 +255,11 @@
     "maxTotal": 100,
 
     "educationLanguage": {
-      "_note": "Education × First official language proficiency (CLB). Requires minimum education level AND minimum CLB across all 4 abilities.",
-      "_todoVerify": "TODO:VERIFY — confirm point values for educationLanguage brackets against canada.ca",
+      "_note": "Education × First official language (CLB). A bachelor's alone sits in the post-secondary row (13/25); the 25/50 row is two or more credentials with one of 3+ years, a master's or entry-to-practice professional degree, or a doctorate.",
       "postSecondaryAndCLB7to8": 13,
       "postSecondaryAndCLB9plus": 25,
-      "bachelorOrHigherAndCLB7to8": 25,
-      "bachelorOrHigherAndCLB9plus": 50,
+      "twoPlusOrMastersOrHigherAndCLB7to8": 25,
+      "twoPlusOrMastersOrHigherAndCLB9plus": 50,
       "_conditions": {
         "minimumEducation": "oneYearPostSecondary",
         "minimumCLBForLowerBracket": 7,
@@ -246,11 +270,10 @@
 
     "educationCanadianExperience": {
       "_note": "Education × Canadian work experience.",
-      "_todoVerify": "TODO:VERIFY — confirm values against canada.ca grid",
       "postSecondaryAnd1Year": 13,
       "postSecondaryAnd2YearPlus": 25,
-      "bachelorOrHigherAnd1Year": 25,
-      "bachelorOrHigherAnd2YearPlus": 50,
+      "twoPlusOrMastersOrHigherAnd1Year": 25,
+      "twoPlusOrMastersOrHigherAnd2YearPlus": 50,
       "_conditions": {
         "minimumEducation": "oneYearPostSecondary",
         "minimumCanadianExp": 1
@@ -259,7 +282,6 @@
 
     "foreignExpLanguage": {
       "_note": "Foreign work experience × First official language CLB.",
-      "_todoVerify": "TODO:VERIFY — confirm values against canada.ca grid",
       "foreignExp1to2YearsAndCLB7to8": 13,
       "foreignExp1to2YearsAndCLB9plus": 25,
       "foreignExp3plusYearsAndCLB7to8": 25,
@@ -274,7 +296,6 @@
 
     "foreignExpCanadianExp": {
       "_note": "Foreign work experience × Canadian work experience.",
-      "_todoVerify": "TODO:VERIFY — confirm values against canada.ca grid",
       "foreignExp1to2YearsAndCanadian1Year": 13,
       "foreignExp1to2YearsAndCanadian2YearPlus": 25,
       "foreignExp3plusYearsAndCanadian1Year": 25,
@@ -287,9 +308,8 @@
 
     "certificateLanguage": {
       "_note": "Certificate of qualification (trades) × First official language CLB.",
-      "_todoVerify": "TODO:VERIFY — confirm values against canada.ca grid",
-      "certAndCLB5to6": 13,
-      "certAndCLB7plus": 25,
+      "certAndCLB5to6": 25,
+      "certAndCLB7plus": 50,
       "_conditions": {
         "requiresCertificate": true,
         "minimumCLBForLowerBracket": 5,
@@ -300,7 +320,7 @@
   },
 
   "additionalPoints": {
-    "_note": "Section D: Additional points. Includes provincial nomination, French, Canadian education, sibling, and job offer (0 pts post March 2025).",
+    "_note": "Section D: Additional points. Provincial nomination, French, Canadian education, sibling. Job offers moved to the core Labour Market Integration factor on 3 November 2026.",
 
     "provincialNomination": {
       "points": 600,
@@ -309,7 +329,6 @@
 
     "frenchLanguage": {
       "_note": "NCLC 7+ in all 4 French abilities required. Two tiers based on English ability. Effective since 2023 French-stream expansion.",
-      "_todoVerify": "TODO:VERIFY — confirm NCLC 7 threshold and both point tiers (25 and 50) against canada.ca",
       "minimumNCLC": 7,
       "minimumNCLCAbilities": ["speaking", "listening", "reading", "writing"],
       "tier1_noEnglishOrEnglishCLB4orBelow": 25,
@@ -329,13 +348,6 @@
       "_note": "Sibling who is a Canadian citizen or permanent resident.",
       "points": 15,
       "source": "https://www.canada.ca/en/immigration-refugees-citizenship/services/immigrate-canada/express-entry/eligibility/criteria-comprehensive-ranking-system/grid.html"
-    },
-
-    "jobOffer": {
-      "_note": "IMPORTANT: Arranged employment / job offer was removed from CRS effective March 25, 2025 (IRCC policy change). This field is kept in the UI with an explanatory note but ALWAYS awards 0 points. Do NOT change this value.",
-      "points": 0,
-      "removedEffective": "2025-03-25",
-      "source": "https://www.canada.ca/en/immigration-refugees-citizenship/news/notices/removal-job-offer-points-express-entry.html"
     }
   }
 }

@@ -7,11 +7,11 @@
 // Output: CrsResult
 //
 // All point values come from /config/crs-points.json — NEVER hardcoded here.
-// Accuracy protocol: values that could not be 100% verified are flagged with
-// TODO:VERIFY in crs-points.json and will appear in the `flags` array of the result.
+// The config was checked against the IRCC CRS criteria page (date modified
+// 2026-11-03) on 2026-11-05. Re-check it whenever IRCC changes the grid.
 // ============================================================================
 
-import type { CandidateProfile, CrsResult, CrsBreakdown, LanguageAbilityScores } from './types';
+import type { CandidateProfile, CrsResult, CrsBreakdown, LanguageAbilityScores, WageMultiple } from './types';
 import { EducationLevel } from './types';
 import crsPoints from '../../config/crs-points.json';
 
@@ -106,9 +106,13 @@ function isPostSecondary(edu: EducationLevel): boolean {
   return edu >= EducationLevel.OneYearPostSecondary;
 }
 
-/** True if education is bachelor's or higher (enum >= 4). */
-function isBachelorOrHigher(edu: EducationLevel): boolean {
-  return edu >= EducationLevel.BachelorsDegree;
+/**
+ * True for the top skill-transferability education row: two or more credentials
+ * (one of 3+ years), a master's / entry-to-practice professional degree, or a
+ * doctorate (enum >= 5). A bachelor's alone is in the post-secondary row.
+ */
+function isTopTransferabilityEducation(edu: EducationLevel): boolean {
+  return edu >= EducationLevel.TwoPlusDegrees;
 }
 
 // ---------------------------------------------------------------------------
@@ -146,7 +150,10 @@ function calcSecondLanguage(p: CandidateProfile, withSpouse: boolean): number {
     : crsPoints.coreHumanCapital.secondOfficialLanguage.withoutSpouse;
   const resolver = (clb: number) => resolveSecondLangCLBPoints(clb, table);
   const raw = sumAbilityPoints(p.secondLanguage.scores, resolver);
-  return Math.min(raw, crsPoints.coreHumanCapital.secondOfficialLanguage.maxPoints);
+  const max = withSpouse
+    ? crsPoints.coreHumanCapital.secondOfficialLanguage.maxPointsWithSpouse
+    : crsPoints.coreHumanCapital.secondOfficialLanguage.maxPoints;
+  return Math.min(raw, max);
 }
 
 function calcCanadianWorkExp(p: CandidateProfile, withSpouse: boolean): number {
@@ -156,6 +163,30 @@ function calcCanadianWorkExp(p: CandidateProfile, withSpouse: boolean): number {
   const years = p.canadianWorkExperienceYears;
   const key = years >= 5 ? '5plus' : String(years);
   return (table[key as keyof typeof table] as number) ?? 0;
+}
+
+/**
+ * Labour Market Integration (IRCC, from 3 November 2026): points for EITHER the
+ * Canadian work experience path (work length + high-wage experience) OR a
+ * high-wage job offer, never both. IRCC does not say how the two are compared;
+ * this engine applies the higher and flags it when both score.
+ */
+function calcLabourMarketIntegration(p: CandidateProfile, withSpouse: boolean): CrsBreakdown['labourMarketIntegration'] {
+  const lmi = crsPoints.coreHumanCapital.labourMarketIntegration;
+  const wage = (v: WageMultiple | undefined): WageMultiple => v ?? 'none';
+
+  const workLength = calcCanadianWorkExp(p, withSpouse);
+  const highWageExperience = p.canadianWorkExperienceYears >= 1
+    ? lmi.highWageExperience[wage(p.highWageCanadianExperience)]
+    : 0;
+  const max = withSpouse ? lmi.maxWithSpouse : lmi.maxWithoutSpouse;
+  const experiencePath = Math.min(workLength + highWageExperience, max);
+  const jobOfferPath = lmi.jobOffer[wage(p.jobOfferWage)];
+
+  const applied: CrsBreakdown['labourMarketIntegration']['applied'] =
+    experiencePath === 0 && jobOfferPath === 0 ? 'none' : jobOfferPath > experiencePath ? 'jobOffer' : 'experience';
+
+  return { workLength, highWageExperience, experiencePath, jobOfferPath, applied };
 }
 
 // ---------------------------------------------------------------------------
@@ -236,12 +267,12 @@ function calcSkillTransferability(p: CandidateProfile): {
   // ——— 1. Education × First Official Language ———————————————————
   let educationLanguage = 0;
   if (isPostSecondary(p.education)) {
-    if (isBachelorOrHigher(p.education)) {
-      // Bachelor or higher
-      if (firstLangMin >= 9) educationLanguage = st.educationLanguage.bachelorOrHigherAndCLB9plus;
-      else if (firstLangMin >= 7) educationLanguage = st.educationLanguage.bachelorOrHigherAndCLB7to8;
+    if (isTopTransferabilityEducation(p.education)) {
+      // Two+ credentials, master's or doctorate
+      if (firstLangMin >= 9) educationLanguage = st.educationLanguage.twoPlusOrMastersOrHigherAndCLB9plus;
+      else if (firstLangMin >= 7) educationLanguage = st.educationLanguage.twoPlusOrMastersOrHigherAndCLB7to8;
     } else {
-      // One- or two-year post-secondary
+      // One-year or longer post-secondary, including a bachelor's
       if (firstLangMin >= 9) educationLanguage = st.educationLanguage.postSecondaryAndCLB9plus;
       else if (firstLangMin >= 7) educationLanguage = st.educationLanguage.postSecondaryAndCLB7to8;
     }
@@ -250,9 +281,9 @@ function calcSkillTransferability(p: CandidateProfile): {
   // ——— 2. Education × Canadian Work Experience ——————————————————
   let educationCanadianExperience = 0;
   if (isPostSecondary(p.education) && canadianExp >= 1) {
-    if (isBachelorOrHigher(p.education)) {
-      if (canadianExp >= 2) educationCanadianExperience = st.educationCanadianExperience.bachelorOrHigherAnd2YearPlus;
-      else educationCanadianExperience = st.educationCanadianExperience.bachelorOrHigherAnd1Year;
+    if (isTopTransferabilityEducation(p.education)) {
+      if (canadianExp >= 2) educationCanadianExperience = st.educationCanadianExperience.twoPlusOrMastersOrHigherAnd2YearPlus;
+      else educationCanadianExperience = st.educationCanadianExperience.twoPlusOrMastersOrHigherAnd1Year;
     } else {
       if (canadianExp >= 2) educationCanadianExperience = st.educationCanadianExperience.postSecondaryAnd2YearPlus;
       else educationCanadianExperience = st.educationCanadianExperience.postSecondaryAnd1Year;
@@ -315,15 +346,11 @@ function calcAdditionalPoints(p: CandidateProfile): {
   frenchLanguage: number;
   canadianEducation: number;
   sibling: number;
-  jobOffer: 0;
 } {
   const add = crsPoints.additionalPoints;
 
   // Provincial Nomination
   const provincialNomination = p.provincialNomination ? add.provincialNomination.points : 0;
-
-  // Job Offer — always 0 per IRCC policy change March 25, 2025
-  const jobOffer = 0 as const;
 
   // French Language Bonus
   let frenchLanguage = 0;
@@ -347,7 +374,7 @@ function calcAdditionalPoints(p: CandidateProfile): {
   // Sibling in Canada
   const sibling = p.siblingInCanada ? add.siblingInCanada.points : 0;
 
-  return { provincialNomination, frenchLanguage, canadianEducation, sibling, jobOffer };
+  return { provincialNomination, frenchLanguage, canadianEducation, sibling };
 }
 
 // ---------------------------------------------------------------------------
@@ -372,9 +399,10 @@ export function calculateCRS(profile: CandidateProfile): CrsResult {
   const education = calcEducation(profile, withSpouse);
   const firstLanguage = calcFirstLanguage(profile, withSpouse);
   const secondLanguage = calcSecondLanguage(profile, withSpouse);
-  const canadianWorkExperience = calcCanadianWorkExp(profile, withSpouse);
+  const lmi = calcLabourMarketIntegration(profile, withSpouse);
+  const labourMarketIntegration = Math.max(lmi.experiencePath, lmi.jobOfferPath);
 
-  const coreSubtotal = age + education + firstLanguage + secondLanguage + canadianWorkExperience;
+  const coreSubtotal = age + education + firstLanguage + secondLanguage + labourMarketIntegration;
 
   // ——— Section B ————————————————————————————————————————————————
   const spouseCalc = calcSpouseFactors(profile);
@@ -386,21 +414,13 @@ export function calculateCRS(profile: CandidateProfile): CrsResult {
   // ——— Section D ————————————————————————————————————————————————
   const additional = calcAdditionalPoints(profile);
   const additionalSubtotal = additional.provincialNomination + additional.frenchLanguage +
-    additional.canadianEducation + additional.sibling + additional.jobOffer;
+    additional.canadianEducation + additional.sibling;
 
   // ——— Total ————————————————————————————————————————————————————
   const total = coreSubtotal + spouseSubtotal + transferability.subtotal + additionalSubtotal;
 
-  // ——— Add TODO:VERIFY flag if relevant config entries were used ——
-  // These correspond to values flagged in crs-points.json.
-  if (profile.secondLanguage) {
-    flags.push('TODO:VERIFY — second language per-ability points from config should be manually verified against canada.ca CRS grid');
-  }
-  if (profile.foreignWorkExperienceYears > 0 || profile.canadianWorkExperienceYears > 0 || profile.education > 0) {
-    flags.push('TODO:VERIFY — all skill transferability point values should be verified against canada.ca CRS grid');
-  }
-  if (profile.frenchSkills && (profile.frenchSkills.speaking > 0 || profile.frenchSkills.listening > 0)) {
-    flags.push('TODO:VERIFY — French bonus tiers (25/50 pts) should be verified against canada.ca CRS grid');
+  if (lmi.experiencePath > 0 && lmi.jobOfferPath > 0) {
+    flags.push('Labour Market Integration: IRCC awards the Canadian work experience path or a high-wage job offer, not both. This estimate counts the higher one.');
   }
 
   const breakdown: CrsBreakdown = {
@@ -409,9 +429,10 @@ export function calculateCRS(profile: CandidateProfile): CrsResult {
       education,
       firstLanguage,
       secondLanguage,
-      canadianWorkExperience,
+      labourMarketIntegration,
       subtotal: coreSubtotal,
     },
+    labourMarketIntegration: lmi,
     spouseFactors: {
       education: spouseCalc.education,
       language: spouseCalc.language,
@@ -431,7 +452,6 @@ export function calculateCRS(profile: CandidateProfile): CrsResult {
       frenchLanguage: additional.frenchLanguage,
       canadianEducation: additional.canadianEducation,
       sibling: additional.sibling,
-      jobOffer: 0,
       subtotal: additionalSubtotal,
     },
   };
