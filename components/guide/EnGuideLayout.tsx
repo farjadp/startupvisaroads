@@ -14,7 +14,12 @@ import { ArrowRight, ShieldAlert } from 'lucide-react';
 import { Link } from '@/navigation';
 import JsonLd from '@/components/JsonLd';
 import { SITE_URL, WEBSITE_ID, ORGANIZATION_ID, breadcrumbJsonLd, faqJsonLd } from '@/lib/seo';
+import Image from 'next/image';
 import type { FaPage, FaCta, FaSection } from '@/lib/fa/content';
+import DataTable from '@/components/fa/DataTable';
+import Checklist from '@/components/fa/motion/Checklist';
+import Visual from '@/components/fa/Visual';
+import { KeyFacts, FigureBlock, Terms, Choice, Timeline } from '@/components/fa/Blocks';
 
 const isExternal = (href: string) => /^https?:\/\//.test(href);
 
@@ -37,13 +42,18 @@ function Cta({ cta, primary, dark }: { cta: FaCta; primary?: boolean; dark?: boo
   );
 }
 
-function Section({ s, i }: { s: FaSection; i: number }) {
+function Section({ s, i, pagePath }: { s: FaSection; i: number; pagePath: string }) {
   return (
     <section id={`s${i + 1}`} className="scroll-mt-28">
       <div className="h-px w-12 bg-[#1a1a1a] mb-5" aria-hidden />
       <h2 className="font-serif text-3xl md:text-4xl leading-tight mb-6 max-w-3xl [text-wrap:balance]">{s.heading}</h2>
       <div className="space-y-5 text-lg leading-relaxed text-[#1a1a1a]/80 max-w-[70ch]">
+        {s.keyFacts && <KeyFacts facts={s.keyFacts} lang="en" />}
         {s.body.map((p, j) => <p key={j}>{p}</p>)}
+        {s.figure && <FigureBlock figure={s.figure} />}
+        {s.visual && <Visual visual={s.visual} lang="en" />}
+        {s.table && <DataTable table={s.table} />}
+        {s.terms && <Terms terms={s.terms} />}
         {s.bullets && (
           <ul className="space-y-3 pt-1">
             {s.bullets.map((b, j) => (
@@ -54,6 +64,9 @@ function Section({ s, i }: { s: FaSection; i: number }) {
             ))}
           </ul>
         )}
+        {s.timeline && <Timeline timeline={s.timeline} />}
+        {s.choice && <Choice choice={s.choice} lang="en" />}
+        {s.checklist && <Checklist list={s.checklist} storageKey={`en-checklist:${pagePath}:${s.checklist.title}`} lang="en" />}
         {s.callout && (
           <aside className="mt-4 bg-[#1a1a1a] text-[#F2F0E9] p-7 md:p-8 border-t-2 border-[#CCFF00]">
             <p className="font-serif text-xl md:text-2xl leading-snug [text-wrap:pretty]">{s.callout}</p>
@@ -154,6 +167,11 @@ export default function EnGuideLayout({
               <Cta cta={page.hero.cta} primary />
             </div>
           </div>
+          {page.image && (
+            <div className="relative mb-10 aspect-[21/9] w-full overflow-hidden">
+              <Image src={`/fa/img/${page.image}.webp`} alt={page.imageAlt ?? ''} fill priority sizes="(min-width: 1400px) 1400px, 100vw" className="object-cover" />
+            </div>
+          )}
           <div className="border-t border-[#F2F0E9]/15 py-4 text-xs text-[#F2F0E9]/55">
             Last reviewed: <time dateTime={page.updated}>{longDate(page.updated)}</time>
           </div>
@@ -203,24 +221,45 @@ export default function EnGuideLayout({
           </aside>
 
           <div className="lg:col-span-9 space-y-16 md:space-y-24">
-            {page.sections.map((s, i) => <Section key={i} s={s} i={i} />)}
+            {page.sections.map((s, i) => {
+              const gap = page.gallery && page.gallery.length > 0 ? Math.ceil(page.sections.length / (page.gallery.length + 1)) : 0;
+              const g = gap && (i + 1) % gap === 0 ? page.gallery?.[(i + 1) / gap - 1] : undefined;
+              return (
+                <React.Fragment key={i}>
+                  <Section s={s} i={i} pagePath={page.path} />
+                  {g && (
+                    <figure className="max-w-[70ch]">
+                      <div className="relative aspect-[16/9] overflow-hidden border border-[#1a1a1a]/15">
+                        <Image src={`/fa/img/${g.src}.webp`} alt={g.alt} fill sizes="(min-width: 1024px) 70ch, 100vw" className="object-cover" />
+                      </div>
+                      {g.caption && <figcaption className="mt-2 text-sm text-[#1a1a1a]/60 leading-relaxed">{g.caption}</figcaption>}
+                    </figure>
+                  )}
+                </React.Fragment>
+              );
+            })}
 
             {extra}
 
             {page.faqs.length > 0 && (
               <section id="faq" className="scroll-mt-28">
                 <h2 className="font-serif text-3xl md:text-4xl mb-10">Frequently asked questions</h2>
-                <div className="border-t border-[#1a1a1a]/20">
-                  {page.faqs.map((f) => (
-                    <details key={f.q} className="group border-b border-[#1a1a1a]/20">
-                      <summary className="cursor-pointer list-none py-6 flex items-start justify-between gap-6">
-                        <span className="font-serif text-xl leading-snug">{f.q}</span>
-                        <span aria-hidden className="shrink-0 mt-1 w-8 h-8 border border-[#1a1a1a] grid place-items-center text-lg group-open:rotate-45 group-open:bg-[#1a1a1a] group-open:text-[#CCFF00] transition-transform">+</span>
-                      </summary>
-                      <p className="pb-6 text-lg leading-relaxed text-[#1a1a1a]/75 max-w-[70ch]">{f.a}</p>
-                    </details>
-                  ))}
-                </div>
+                {(page.faqGroups ?? [{ heading: '', faqs: page.faqs }]).map((g) => (
+                  <div key={g.heading || 'all'} className="mb-12 last:mb-0">
+                    {g.heading && <h3 className="mb-4 text-xs font-bold uppercase tracking-widest text-[#1a1a1a]/55">{g.heading}</h3>}
+                    <div className="border-t border-[#1a1a1a]/20">
+                      {g.faqs.map((f) => (
+                        <details key={f.q} className="group border-b border-[#1a1a1a]/20">
+                          <summary className="cursor-pointer list-none py-6 flex items-start justify-between gap-6">
+                            <span className="font-serif text-xl leading-snug">{f.q}</span>
+                            <span aria-hidden className="shrink-0 mt-1 w-8 h-8 border border-[#1a1a1a] grid place-items-center text-lg group-open:rotate-45 group-open:bg-[#1a1a1a] group-open:text-[#CCFF00] transition-transform">+</span>
+                          </summary>
+                          <p className="pb-6 text-lg leading-relaxed text-[#1a1a1a]/75 max-w-[70ch]">{f.a}</p>
+                        </details>
+                      ))}
+                    </div>
+                  </div>
+                ))}
               </section>
             )}
 

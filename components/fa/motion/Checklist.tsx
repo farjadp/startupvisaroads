@@ -17,7 +17,9 @@ import { Check, RotateCcw } from 'lucide-react';
 import type { FaChecklist } from '@/lib/fa/content';
 import { toPersianDigits } from '@/lib/fa/format';
 
-export default function Checklist({ list, storageKey }: { list: FaChecklist; storageKey: string }) {
+export default function Checklist({ list, storageKey, lang = 'fa' }: { list: FaChecklist; storageKey: string; lang?: 'fa' | 'en' }) {
+  const en = lang === 'en';
+  const num = (n: number) => (en ? String(n) : toPersianDigits(n));
   const [done, setDone] = useState<boolean[]>(() => list.items.map(() => false));
   const [loaded, setLoaded] = useState(false);
   const reduced = useReducedMotion();
@@ -64,7 +66,7 @@ export default function Checklist({ list, storageKey }: { list: FaChecklist; sto
             className={`font-estedad font-bold text-sm px-3 py-1 border transition-colors ${all ? 'bg-[var(--ra,#CCFF00)] border-transparent text-[var(--ra-ink,#1a1a1a)]' : 'border-[#1a1a1a]/30 text-[#1a1a1a]/70'}`}
             aria-live="polite"
           >
-            {toPersianDigits(count)} از {toPersianDigits(list.items.length)}
+            {en ? `${num(count)} of ${num(list.items.length)}` : `${num(count)} از ${num(list.items.length)}`}
           </span>
           {count > 0 && (
             <button
@@ -73,7 +75,7 @@ export default function Checklist({ list, storageKey }: { list: FaChecklist; sto
               className="inline-flex items-center gap-1.5 text-sm text-[#1a1a1a]/60 hover:text-[#1a1a1a] transition-colors"
             >
               <RotateCcw className="w-3.5 h-3.5" aria-hidden />
-              از نو
+              {en ? 'Reset' : 'از نو'}
             </button>
           )}
         </div>
@@ -100,7 +102,7 @@ export default function Checklist({ list, storageKey }: { list: FaChecklist; sto
           );
         })}
       </ol>
-      <p className="px-5 py-3 text-xs text-[#1a1a1a]/50 border-t border-[#1a1a1a]/15">تیک‌ها فقط در مرورگر خودتان ذخیره می‌شوند و برای ما فرستاده نمی‌شوند.</p>
+      <p className="px-5 py-3 text-xs text-[#1a1a1a]/50 border-t border-[#1a1a1a]/15">{en ? 'Ticks are saved in your own browser only and never sent to us.' : 'تیک‌ها فقط در مرورگر خودتان ذخیره می‌شوند و برای ما فرستاده نمی‌شوند.'}</p>
     </section>
   );
 }
