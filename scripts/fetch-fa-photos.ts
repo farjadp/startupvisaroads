@@ -84,6 +84,14 @@ const SLOTS: Record<string, string> = {
   'bulgaria-2': 'Plovdiv old town Bulgaria',
   'bulgaria-3': 'Sofia city street Bulgaria',
 
+  // Belgium. The guide is about the Flemish Innovation & Startup Permit, so
+  // the hero is Antwerp, the largest Flemish city; Ghent and Leuven are the
+  // two other places the Access Point list clusters around. Brussels is a
+  // separate region with its own card, so it is not the identifying shot.
+  belgium: 'Antwerp city Belgium Scheldt river skyline',
+  'belgium-2': 'Ghent canal houses Belgium Graslei',
+  'belgium-3': 'Leuven Belgium town hall square',
+
   estonia: 'Tallinn old town Estonia',
   'estonia-2': 'Tallinn Estonia street',
   'estonia-3': 'Tallinn rooftops Estonia',

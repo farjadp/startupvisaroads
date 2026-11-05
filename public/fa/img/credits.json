@@ -448,5 +448,32 @@
     "photographerUrl": "https://www.pexels.com/@jack-borno-2159592889",
     "description": "Scenic view of British Columbia's Parliament Buildings with yachts in the harbor.",
     "fetched": "2026-11-01"
+  },
+  "belgium": {
+    "source": "Pexels",
+    "id": 34855097,
+    "page": "https://www.pexels.com/photo/scenic-view-of-antwerp-city-skyline-and-cathedral-34855097/",
+    "photographer": "Willy  De Laet",
+    "photographerUrl": "https://www.pexels.com/@willy-de-laet-173186488",
+    "description": "Capture of Antwerp city skyline featuring the Cathedral of Our Lady on a sunny day.",
+    "fetched": "2026-11-05"
+  },
+  "belgium-2": {
+    "source": "Pexels",
+    "id": 14983025,
+    "page": "https://www.pexels.com/photo/waterfront-buildings-graslei-ghent-belgium-14983025/",
+    "photographer": "Gonzalo Facello",
+    "photographerUrl": "https://www.pexels.com/@gonchifacello",
+    "description": "Beautiful traditional buildings on the waterfront in Ghent, Belgium.",
+    "fetched": "2026-11-05"
+  },
+  "belgium-3": {
+    "source": "Pexels",
+    "id": 7353333,
+    "page": "https://www.pexels.com/photo/town-hall-of-leuven-in-belgium-7353333/",
+    "photographer": "Frank Barning",
+    "photographerUrl": "https://www.pexels.com/@frank-barning-744539",
+    "description": "Panoramic view of the Gothic town hall in Leuven's historic Grote Markt square.",
+    "fetched": "2026-11-05"
   }
 }

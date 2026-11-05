@@ -8,7 +8,7 @@
 // ============================================================================
 import React from 'react';
 
-export type FlagCode = 'fi' | 'dk' | 'it' | 'nl' | 'tr' | 'au' | 'ca' | 'ae' | 'ee' | 'es' | 'bg';
+export type FlagCode = 'fi' | 'dk' | 'it' | 'nl' | 'tr' | 'au' | 'ca' | 'ae' | 'ee' | 'es' | 'bg' | 'be';
 
 export interface FlagDef {
   name: string;
@@ -167,6 +167,20 @@ export const FLAGS: Record<FlagCode, FlagDef> = {
         <rect width="5" height="3" fill="#fff" />
         <rect width="5" height="2" y="1" fill="#00966E" />
         <rect width="5" height="1" y="2" fill="#D62612" />
+      </>
+    ),
+  },
+  // Belgium: black, yellow, red vertical bands (Constitution art. 193), at
+  // the 13:15 civil ratio.
+  be: {
+    name: 'Belgium',
+    w: 15,
+    h: 13,
+    draw: () => (
+      <>
+        <rect width="5" height="13" fill="#000" />
+        <rect width="5" height="13" x="5" fill="#FDDA24" />
+        <rect width="5" height="13" x="10" fill="#EF3340" />
       </>
     ),
   },
