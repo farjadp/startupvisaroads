@@ -1354,17 +1354,6 @@ export const page: FaPage = {
     { heading: 'جدول‌های امتیاز، سرمایه‌گذاری، شغل، بازبینی — با جزئیات راهنمای رسمی', faqs: DEEP_DIVE_FAQS },
   ],
 
-  // Files live in public/fa/downloads/. Page counts and sizes are from the
-  // files themselves — update both if a file is replaced.
-  downloads: [
-    {
-      title: 'پرونده‌ی استراتژیک مهاجرت کارآفرینی بریتیش کلمبیا ۲۰۲۶',
-      description: 'نقشه‌ی راه کامل هر دو مسیر در پانزده اسلاید: شرایط، امتیازبندی، مدارک دارایی، قرارداد عملکرد و مسیر تا اقامت دائم. برای خواندن آفلاین و فرستادن برای شریک یا خانواده.',
-      file: 'bc-entrepreneur-blueprint-2026.pdf',
-      kind: 'pdf',
-      meta: ['PDF', '۱۵ اسلاید', '۱۸ مگابایت', 'فارسی'],
-    },
-  ],
 
   videos: ['KuAR_P2xJlI'],
 
