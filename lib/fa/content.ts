@@ -29,13 +29,109 @@ export type FaEntity = {
   type?: 'GovernmentService' | 'Service';
 };
 
+/**
+ * A small comparison or reference table. Rendered between the paragraphs and
+ * the bullets. Plain strings only; the first column is the row label and is
+ * set in bold. Keep it to what fits on a phone — four columns at most.
+ */
+export type FaTable = {
+  /** Short label above the table, e.g. «مقایسه‌ی دو مسیر». */
+  caption?: string;
+  head: string[];
+  rows: string[][];
+  /** One line under the table — a source note or a caveat. */
+  note?: string;
+};
+
+/**
+ * A checklist the reader ticks off. State lives in the reader's browser only
+ * (localStorage, keyed by page path and title) — never sent anywhere, never
+ * seen by us. Rendered after the bullets, before the callout.
+ */
+export type FaChecklist = {
+  title: string;
+  /** One line on when to use it. */
+  intro?: string;
+  items: string[];
+};
+
+/** Two to four figures a section is about, shown as tiles above the prose. */
+export type FaKeyFact = { value: string; label: string };
+
+/**
+ * A picture inside a section — an infographic, a document, a map. `src` is a
+ * public path (e.g. /fa/downloads/x.webp); `ratio` is width/height so the
+ * frame is sized before the image loads. Alt text is real description.
+ */
+export type FaFigure = { src: string; alt: string; caption?: string; ratio?: number };
+
+/**
+ * A chart drawn in code from the page's own figures (components/fa/Visual.tsx).
+ * Never an image file. `series` index 0 is blue, 1 is red (validated pair).
+ */
+export type FaVisual =
+  | {
+      type: 'columns';
+      caption?: string;
+      note?: string;
+      /** Series colour index for the columns; default 1 (red). */
+      series?: number;
+      items: { label: string; value: number; display?: string; sub?: string; tip?: string }[];
+      /** What the `sub` line under each column means. */
+      subLabel?: string;
+    }
+  | {
+      type: 'bars';
+      caption?: string;
+      note?: string;
+      /** Legend names, by series index. */
+      series?: string[];
+      /** One scale for all groups (true) or each group on its own (false). */
+      shared?: boolean;
+      groups: { label: string; values: { value: number; display: string; series?: number; tip?: string }[] }[];
+    }
+  | {
+      type: 'phases';
+      caption?: string;
+      note?: string;
+      phases: { title: string; note?: string; steps: string[] }[];
+    };
+
+/** A term and its explanation — a paragraph that was really a definition list. */
+export type FaTerm = { term: string; text: string };
+
+/** An if/then written as a choice: two or three options side by side. */
+export type FaChoice = {
+  question?: string;
+  options: { title: string; body: string; cta?: FaCta }[];
+};
+
+/** Dated or numbered milestones, drawn as a vertical timeline. */
+export type FaTimeline = { caption?: string; items: { when: string; what: string }[] };
+
 export type FaSection = {
   heading: string;
+  /** Figures the section is about, above the prose. */
+  keyFacts?: FaKeyFact[];
   /** Paragraphs, in order. Plain text — no HTML. */
   body: string[];
-  /** Optional bullet list rendered after the paragraphs. */
+  /** Optional picture rendered after the lead paragraph. */
+  figure?: FaFigure;
+  /** Optional chart rendered after the lead paragraph (after the figure). */
+  visual?: FaVisual;
+  /** Optional table rendered after the paragraphs. */
+  table?: FaTable;
+  /** Optional definition rows rendered after the paragraphs. */
+  terms?: FaTerm[];
+  /** Optional bullet list rendered after the paragraphs (and table). */
   bullets?: string[];
-  /** Optional emphasised callout rendered after the bullets — a warning, a rule of thumb. */
+  /** Optional timeline rendered after the bullets. */
+  timeline?: FaTimeline;
+  /** Optional choice cards rendered after the timeline. */
+  choice?: FaChoice;
+  /** Optional checklist rendered after the choice. */
+  checklist?: FaChecklist;
+  /** Optional emphasised callout rendered last — a warning, a rule of thumb. */
   callout?: string;
 };
 

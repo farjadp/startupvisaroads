@@ -36,6 +36,10 @@ import ScrollProgress from './motion/ScrollProgress';
 import Stepper, { type Step } from './motion/Stepper';
 import Faq from './motion/Faq';
 import Downloads from './motion/Downloads';
+import DataTable from './DataTable';
+import { KeyFacts, FigureBlock, Terms, Choice, Timeline } from './Blocks';
+import Visual from './Visual';
+import Checklist from './motion/Checklist';
 import FaGuideLayout from './FaGuideLayout';
 
 // Absolute URLs and explicit /en/ paths render as plain anchors; everything
@@ -86,14 +90,19 @@ function stepsOf(s: FaSection): Step[] | null {
   return parsed.every(Boolean) ? (parsed as Step[]) : null;
 }
 
-function Section({ s, i }: { s: FaSection; i: number }) {
+function Section({ s, i, pagePath }: { s: FaSection; i: number; pagePath: string }) {
   const steps = stepsOf(s);
   return (
     <Reveal as="section" id={`s${i + 1}`} className="scroll-mt-28">
       <Rule className="mb-5" />
       <MaskText as="h2" text={s.heading} className="font-estedad font-black text-3xl md:text-4xl leading-tight mb-6 max-w-3xl [text-wrap:balance]" />
       <div className="space-y-5 text-lg leading-[1.9] text-[#1a1a1a]/80 max-w-[70ch]">
+        {s.keyFacts && <KeyFacts facts={s.keyFacts} />}
         {s.body.map((p, j) => <p key={j}>{p}</p>)}
+        {s.figure && <FigureBlock figure={s.figure} />}
+        {s.visual && <Visual visual={s.visual} />}
+        {s.table && <DataTable table={s.table} />}
+        {s.terms && <Terms terms={s.terms} />}
         {steps ? (
           <div className="pt-2"><Stepper steps={steps} /></div>
         ) : s.bullets ? (
@@ -106,6 +115,9 @@ function Section({ s, i }: { s: FaSection; i: number }) {
             ))}
           </ul>
         ) : null}
+        {s.timeline && <Timeline timeline={s.timeline} />}
+        {s.choice && <Choice choice={s.choice} />}
+        {s.checklist && <Checklist list={s.checklist} storageKey={`fa-checklist:${pagePath}:${s.checklist.title}`} />}
         {s.callout && (
           <aside className="mt-4 bg-[#1a1a1a] text-[#F2F0E9] p-7 md:p-8 border-t-2 border-[#CCFF00]">
             <p className="font-estedad font-bold text-xl md:text-2xl leading-relaxed [text-wrap:pretty]">{s.callout}</p>
@@ -253,7 +265,7 @@ export default function FaPageLayout({
           </aside>
 
           <div className="lg:col-span-9 space-y-16 md:space-y-24">
-            {before.map((s, i) => <Section key={i} s={s} i={i} />)}
+            {before.map((s, i) => <Section key={i} s={s} i={i} pagePath={page.path} />)}
 
             {/* mid-page breather: a different photograph, with the positioning line */}
             {gallery[0] && after.length > 0 && (
@@ -274,7 +286,7 @@ export default function FaPageLayout({
               const shot = gallery.slice(1).find((_, k) => slotFor(k + 1) === idx + 1);
               return (
                 <React.Fragment key={idx}>
-                  <Section s={s} i={idx} />
+                  <Section s={s} i={idx} pagePath={page.path} />
                   {shot && (
                     <Reveal as="figure" className="-mx-4 md:mx-0">
                       <div className="relative aspect-[16/9] bg-[#1a1a1a] overflow-hidden">
