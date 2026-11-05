@@ -12,6 +12,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { runPendingJobs } from '@/lib/knowledge/ingest';
 import { authorisedCron } from '@/lib/cron-auth';
+import { releaseScheduled } from '@/lib/agent-articles';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 300;
@@ -22,6 +23,12 @@ export async function GET(req: NextRequest) {
   const limit = Math.min(20, Math.max(1, Number(q.get('limit') ?? 5) || 5));
   const sourceId = q.get('source') || undefined;
   const started = Date.now();
-  const result = await runPendingJobs({ limit, sourceId, budgetMs: 240_000 });
-  return NextResponse.json({ ok: true, seconds: Math.round((Date.now() - started) / 1000), ...result });
+  // Held agent articles ride on this 15-minute tick (lib/agent-articles.ts).
+  // A failure here must never stop the ingest.
+  const released = await releaseScheduled().catch((e) => {
+    console.error('[sources] releaseScheduled', e);
+    return [] as string[];
+  });
+  const result = await runPendingJobs({ limit, sourceId, budgetMs: 200_000 });
+  return NextResponse.json({ ok: true, seconds: Math.round((Date.now() - started) / 1000), released, ...result });
 }
