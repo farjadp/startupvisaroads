@@ -29,13 +29,43 @@ export type FaEntity = {
   type?: 'GovernmentService' | 'Service';
 };
 
+/**
+ * A small comparison or reference table. Rendered between the paragraphs and
+ * the bullets. Plain strings only; the first column is the row label and is
+ * set in bold. Keep it to what fits on a phone — four columns at most.
+ */
+export type FaTable = {
+  /** Short label above the table, e.g. «مقایسه‌ی دو مسیر». */
+  caption?: string;
+  head: string[];
+  rows: string[][];
+  /** One line under the table — a source note or a caveat. */
+  note?: string;
+};
+
+/**
+ * A checklist the reader ticks off. State lives in the reader's browser only
+ * (localStorage, keyed by page path and title) — never sent anywhere, never
+ * seen by us. Rendered after the bullets, before the callout.
+ */
+export type FaChecklist = {
+  title: string;
+  /** One line on when to use it. */
+  intro?: string;
+  items: string[];
+};
+
 export type FaSection = {
   heading: string;
   /** Paragraphs, in order. Plain text — no HTML. */
   body: string[];
-  /** Optional bullet list rendered after the paragraphs. */
+  /** Optional table rendered after the paragraphs. */
+  table?: FaTable;
+  /** Optional bullet list rendered after the paragraphs (and table). */
   bullets?: string[];
-  /** Optional emphasised callout rendered after the bullets — a warning, a rule of thumb. */
+  /** Optional checklist rendered after the bullets. */
+  checklist?: FaChecklist;
+  /** Optional emphasised callout rendered last — a warning, a rule of thumb. */
   callout?: string;
 };
 
