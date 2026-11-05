@@ -29,6 +29,7 @@ import QuizEcho from './QuizEcho';
 import Downloads from './motion/Downloads';
 import DataTable from './DataTable';
 import { KeyFacts, FigureBlock, Terms, Choice, Timeline } from './Blocks';
+import Visual from './Visual';
 import Checklist from './motion/Checklist';
 import { FaStop, FaTick, FaCheck, FaSteps, FaCopy, type FaStep } from './FaRoute';
 import { themeFor } from './faThemes';
@@ -128,6 +129,7 @@ function Stop({ s, i, total, selfCheck, pagePath }: { s: FaSection; i: number; t
         {s.keyFacts && <div className="max-w-[68ch]"><KeyFacts facts={s.keyFacts} /></div>}
         {lead && <p className="mb-8 max-w-[68ch] border-s-[3px] border-[var(--ra)] ps-4 text-[1.1rem] leading-[1.95] text-[#1a1a1a]/90">{lead}</p>}
         {s.figure && <FigureBlock figure={s.figure} />}
+        {s.visual && <Visual visual={s.visual} />}
         {s.table && <div className="mb-8 max-w-[68ch]"><DataTable table={s.table} /></div>}
         {s.terms && <div className="mb-8"><Terms terms={s.terms} /></div>}
         {rest.length > 0 || bullets.length > 0 ? (
