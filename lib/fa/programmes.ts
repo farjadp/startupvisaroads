@@ -190,6 +190,20 @@ export const RULES: Rule[] = [
     source: 'https://www.mig.government.bg/3263-issuance-of-a-sertificate-for-a-high-tech-and-or-innovative-project-startup-visa/?lang=en',
   },
   {
+    key: 'belgium',
+    name: 'مجوز نوآوری و استارتاپ فلاندرز (بلژیک)',
+    href: '/europe/belgium',
+    yearlyFunds: { amount: 28905, currency: 'EUR', perFounder: true, note: '۱۱۰٪ حداقل دستمزد: ۲٬۴۰۸٫۷۹ یورو در ماه از آوریل ۲۰۲۶، برای هر دارنده‌ی کارت' },
+    unscored: [
+      'مدرک تحصیلی دست‌کم سطح ۴ (معادل دیپلم)',
+      'یکی از سه معیار ارزش نوآورانه؛ برای مسیر ۳۰ روزه نامه‌ی همکاری یک Access Point تأییدشده',
+      'سرمایه‌ی ثابت فقط در دسته‌ی ارزش اقتصادی (۲۲٬۸۳۸ یورو)، نه در دسته‌ی نوآورانه',
+      'کارت شخصی است: هر بنیان‌گذار پرونده، هزینه و معاش خودش',
+    ],
+    updated: '2026-11-05',
+    source: 'https://www.vlaanderen.be/en/working-enterprise-and-investment/working/professional-card-for-foreign-entrepreneurs/requirements-for-a-professional-card',
+  },
+  {
     key: 'turkey',
     name: 'تک‌ویزای ترکیه',
     href: '/turkey-tech-visa',

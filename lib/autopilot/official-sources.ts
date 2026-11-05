@@ -23,6 +23,9 @@ export type OfficialSourceId =
   | 'spain-boe-ley-14-2013'
   | 'bulgaria-mig-startup-visa'
   | 'bulgaria-nims'
+  | 'belgium-flanders-professional-card'
+  | 'belgium-startup-flanders'
+  | 'belgium-ibz'
   | 'turkiye-tech-visa'
   | 'israel-innovation-authority'
   | 'israel-piba'
@@ -87,6 +90,9 @@ export const OFFICIAL_SOURCES: readonly OfficialSource[] = [
   { id: 'spain-enisa', authority: 'Empresa Nacional de Innovación (ENISA)', url: 'https://www.enisa.es/', programmePaths: ['/europe/spain'], keywords: ['spain', 'enisa', 'emprendedor', 'empresa emergente'] },
   { id: 'spain-boe-ley-14-2013', authority: 'Boletín Oficial del Estado — Ley 14/2013, consolidated text', url: 'https://www.boe.es/buscar/act.php?id=BOE-A-2013-10074', programmePaths: ['/europe/spain'], keywords: ['spain', 'ley 14/2013', 'boe', 'emprendedores'] },
   { id: 'bulgaria-mig-startup-visa', authority: 'Ministry of Innovation and Growth of the Republic of Bulgaria — service 3263, Startup Visa certificate', url: 'https://www.mig.government.bg/3263-issuance-of-a-sertificate-for-a-high-tech-and-or-innovative-project-startup-visa/?lang=en', programmePaths: ['/europe/bulgaria'], keywords: ['bulgaria', 'startup visa', 'mig', 'ministry of innovation and growth', 'art. 24p'] },
+  { id: 'belgium-flanders-professional-card', authority: 'Government of Flanders (WEWIS) — professional card for foreign entrepreneurs', url: 'https://www.vlaanderen.be/en/working-enterprise-and-investment/working/professional-card-for-foreign-entrepreneurs', programmePaths: ['/europe/belgium'], keywords: ['belgium', 'flanders', 'professional card', 'beroepskaart', 'innovation & startup permit'] },
+  { id: 'belgium-startup-flanders', authority: 'Startup.Flanders (Flanders Investment & Trade) — Innovation & Startup Permit', url: 'https://www.startupflanders.com/en/permits', programmePaths: ['/europe/belgium'], keywords: ['belgium', 'startup flanders', 'access point', 'innovation & startup permit'] },
+  { id: 'belgium-ibz', authority: 'Belgian Immigration Office (IBZ) — residence, D visa, long-term resident', url: 'https://dofi.ibz.be/en', programmePaths: ['/europe/belgium'], keywords: ['belgium', 'immigration office', 'ibz', 'visa d', 'long-term resident'] },
   { id: 'bulgaria-nims', authority: 'National Investments Management System (NIMS / ISUN 2020) — Startup Visa application portal', url: 'https://enims.egov.bg/en', programmePaths: ['/europe/bulgaria'], keywords: ['bulgaria', 'nims', 'isun', 'startup visa application'] },
   { id: 'turkiye-tech-visa', authority: 'Türkiye Tech Visa, Ministry of Industry and Technology', url: 'https://turkiyetechvisa.gov.tr/', programmePaths: ['/turkey-tech-visa', '/country/turkey'], keywords: ['turkey', 'türkiye', 'tech visa', 'technopark'] },
   { id: 'israel-innovation-authority', authority: 'Israel Innovation Authority', url: 'https://innovationisrael.org.il/', programmePaths: ['/country/israel', '/israel'], keywords: ['israel', 'innovation authority', 'innovation visa', 'tnufa'] },

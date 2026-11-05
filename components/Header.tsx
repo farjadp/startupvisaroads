@@ -154,6 +154,7 @@ export default function Header() {
         { href: '/europe/italy', label: 'ایتالیا' },
         { href: '/europe/spain', label: 'اسپانیا' },
         { href: '/europe/bulgaria', label: 'بلغارستان' },
+        { href: '/europe/belgium', label: 'بلژیک' },
         { href: '/europe/estonia', label: 'استونی' },
         { href: '/uk/innovator-founder', label: 'انگلیس' },
 

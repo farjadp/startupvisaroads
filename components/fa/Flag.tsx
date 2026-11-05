@@ -28,6 +28,9 @@ const C = {
   bgWhite: '#FFFFFF',
   bgGreen: '#00966E',
   bgRed: '#D62612',
+  beBlack: '#000000',
+  beYellow: '#FDDA24',
+  beRed: '#EF3340',
   trRed: '#E30A17',
   caRed: '#D52B1E',
   auBlue: '#012169',
@@ -100,6 +103,16 @@ function Shapes({ code }: { code: FlagCode }) {
           <rect width={5} height={1} fill={C.bgWhite} />
           <rect y={1} width={5} height={1} fill={C.bgGreen} />
           <rect y={2} width={5} height={1} fill={C.bgRed} />
+        </>
+      );
+    // Black, yellow, red in equal vertical bands (Constitution art. 193),
+    // drawn at the 13:15 civil ratio.
+    case 'be':
+      return (
+        <>
+          <rect width={5} height={13} fill={C.beBlack} />
+          <rect x={5} width={5} height={13} fill={C.beYellow} />
+          <rect x={10} width={5} height={13} fill={C.beRed} />
         </>
       );
     // Official artwork (Wikimedia Commons, public domain), authored on a

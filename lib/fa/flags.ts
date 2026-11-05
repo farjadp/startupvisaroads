@@ -40,7 +40,7 @@
 // ids.
 // ============================================================================
 
-export type FlagCode = 'dk' | 'fi' | 'nl' | 'ee' | 'it' | 'es' | 'bg' | 'tr' | 'ca' | 'au';
+export type FlagCode = 'dk' | 'fi' | 'nl' | 'ee' | 'it' | 'es' | 'bg' | 'be' | 'tr' | 'ca' | 'au';
 
 const BY_PATH: Record<string, FlagCode> = {
   '/europe/denmark': 'dk',
@@ -50,6 +50,7 @@ const BY_PATH: Record<string, FlagCode> = {
   '/europe/italy': 'it',
   '/europe/spain': 'es',
   '/europe/bulgaria': 'bg',
+  '/europe/belgium': 'be',
   '/turkey-tech-visa': 'tr',
   '/australia': 'au',
   '/pnp': 'ca',
@@ -75,6 +76,7 @@ export const FLAG_NAME: Record<FlagCode, string> = {
   it: 'ایتالیا',
   es: 'اسپانیا',
   bg: 'بلغارستان',
+  be: 'بلژیک',
   tr: 'ترکیه',
   au: 'استرالیا',
   ca: 'کانادا',
@@ -92,6 +94,7 @@ export const FLAG_RATIO: Record<FlagCode, { w: number; h: number }> = {
   it: { w: 3, h: 2 }, // Legge 5 febbraio 1998, n. 22
   es: { w: 3, h: 2 }, // Ley 39/1981
   bg: { w: 5, h: 3 }, // Law on the State Seal and National Flag, 1998
+  be: { w: 15, h: 13 }, // Constitution art. 193; 13:15 is the civil ratio
   tr: { w: 3, h: 2 }, // Türk Bayrağı Kanunu
   au: { w: 2, h: 1 }, // Flags Act 1953
   ca: { w: 2, h: 1 },
