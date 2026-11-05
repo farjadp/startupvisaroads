@@ -27,6 +27,8 @@ import VideoRail from './VideoRail';
 import Eligibility from './Eligibility';
 import QuizEcho from './QuizEcho';
 import Downloads from './motion/Downloads';
+import DataTable from './DataTable';
+import Checklist from './motion/Checklist';
 import { FaStop, FaTick, FaCheck, FaSteps, FaCopy, type FaStep } from './FaRoute';
 import { themeFor } from './faThemes';
 
@@ -85,7 +87,7 @@ function Cta({ cta, className }: { cta: FaCta; className: string }) {
 const PRIMARY = 'inline-flex items-center gap-2 rounded-full bg-[var(--ra)] px-6 py-3 text-sm font-bold text-[var(--ra-ink)] transition-transform hover:-translate-y-0.5';
 const GHOST = 'inline-flex items-center gap-2 rounded-full border border-white/30 px-6 py-3 text-sm font-bold text-white transition-colors hover:bg-white/10';
 
-function Stop({ s, i, total, selfCheck }: { s: FaSection; i: number; total: number; selfCheck: boolean }) {
+function Stop({ s, i, total, selfCheck, pagePath }: { s: FaSection; i: number; total: number; selfCheck: boolean; pagePath: string }) {
   const id = `s${i + 1}`;
   const steps = stepsOf(s);
   const [lead, ...rest] = s.body;
@@ -123,6 +125,7 @@ function Stop({ s, i, total, selfCheck }: { s: FaSection; i: number; total: numb
           </span>
         </div>
         {lead && <p className="mb-8 max-w-[68ch] border-s-[3px] border-[var(--ra)] ps-4 text-[1.1rem] leading-[1.95] text-[#1a1a1a]/90">{lead}</p>}
+        {s.table && <div className="mb-8 max-w-[68ch]"><DataTable table={s.table} /></div>}
         {rest.length > 0 || bullets.length > 0 ? (
           fold ? (
             <details className="group mb-6 max-w-[68ch]">
@@ -139,6 +142,7 @@ function Stop({ s, i, total, selfCheck }: { s: FaSection; i: number; total: numb
         ) : null}
         {steps && <FaSteps stopId={id} steps={steps} />}
         {check && s.bullets && <FaCheck stopId={id} items={s.bullets} />}
+        {s.checklist && <div className="mt-6 max-w-[68ch]"><Checklist list={s.checklist} storageKey={`fa-checklist:${pagePath}:${s.checklist.title}`} /></div>}
         {s.callout && (
           <aside className="mt-6 max-w-[68ch] rounded-2xl bg-[var(--rd)] p-6 text-white md:p-7">
             <p className="font-estedad text-lg font-bold leading-relaxed md:text-xl [text-wrap:pretty]">{s.callout}</p>
@@ -254,7 +258,7 @@ export default function FaGuideLayout({
           const shot = gallery.find((_, k) => slotFor(k) === i + 1);
           return (
             <React.Fragment key={i}>
-              <Stop s={s} i={i} total={page.sections.length} selfCheck={selfCheck} />
+              <Stop s={s} i={i} total={page.sections.length} selfCheck={selfCheck} pagePath={page.path} />
               {shot && (
                 <figure className="relative m-0 flex min-h-[340px] items-end overflow-hidden bg-[var(--rd)] text-white">
                   <Image src={`/fa/img/${shot.src}.webp`} alt={shot.alt} fill sizes="100vw" className="object-cover" />
