@@ -37,6 +37,7 @@ import Stepper, { type Step } from './motion/Stepper';
 import Faq from './motion/Faq';
 import Downloads from './motion/Downloads';
 import DataTable from './DataTable';
+import { KeyFacts, FigureBlock, Terms, Choice, Timeline } from './Blocks';
 import Checklist from './motion/Checklist';
 import FaGuideLayout from './FaGuideLayout';
 
@@ -95,8 +96,11 @@ function Section({ s, i, pagePath }: { s: FaSection; i: number; pagePath: string
       <Rule className="mb-5" />
       <MaskText as="h2" text={s.heading} className="font-estedad font-black text-3xl md:text-4xl leading-tight mb-6 max-w-3xl [text-wrap:balance]" />
       <div className="space-y-5 text-lg leading-[1.9] text-[#1a1a1a]/80 max-w-[70ch]">
+        {s.keyFacts && <KeyFacts facts={s.keyFacts} />}
         {s.body.map((p, j) => <p key={j}>{p}</p>)}
+        {s.figure && <FigureBlock figure={s.figure} />}
         {s.table && <DataTable table={s.table} />}
+        {s.terms && <Terms terms={s.terms} />}
         {steps ? (
           <div className="pt-2"><Stepper steps={steps} /></div>
         ) : s.bullets ? (
@@ -109,6 +113,8 @@ function Section({ s, i, pagePath }: { s: FaSection; i: number; pagePath: string
             ))}
           </ul>
         ) : null}
+        {s.timeline && <Timeline timeline={s.timeline} />}
+        {s.choice && <Choice choice={s.choice} />}
         {s.checklist && <Checklist list={s.checklist} storageKey={`fa-checklist:${pagePath}:${s.checklist.title}`} />}
         {s.callout && (
           <aside className="mt-4 bg-[#1a1a1a] text-[#F2F0E9] p-7 md:p-8 border-t-2 border-[#CCFF00]">
