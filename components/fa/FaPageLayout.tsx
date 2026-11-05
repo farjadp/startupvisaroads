@@ -38,6 +38,7 @@ import Faq from './motion/Faq';
 import Downloads from './motion/Downloads';
 import DataTable from './DataTable';
 import { KeyFacts, FigureBlock, Terms, Choice, Timeline } from './Blocks';
+import Visual from './Visual';
 import Checklist from './motion/Checklist';
 import FaGuideLayout from './FaGuideLayout';
 
@@ -99,6 +100,7 @@ function Section({ s, i, pagePath }: { s: FaSection; i: number; pagePath: string
         {s.keyFacts && <KeyFacts facts={s.keyFacts} />}
         {s.body.map((p, j) => <p key={j}>{p}</p>)}
         {s.figure && <FigureBlock figure={s.figure} />}
+        {s.visual && <Visual visual={s.visual} />}
         {s.table && <DataTable table={s.table} />}
         {s.terms && <Terms terms={s.terms} />}
         {steps ? (

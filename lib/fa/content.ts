@@ -65,6 +65,38 @@ export type FaKeyFact = { value: string; label: string };
  */
 export type FaFigure = { src: string; alt: string; caption?: string; ratio?: number };
 
+/**
+ * A chart drawn in code from the page's own figures (components/fa/Visual.tsx).
+ * Never an image file. `series` index 0 is blue, 1 is red (validated pair).
+ */
+export type FaVisual =
+  | {
+      type: 'columns';
+      caption?: string;
+      note?: string;
+      /** Series colour index for the columns; default 1 (red). */
+      series?: number;
+      items: { label: string; value: number; display?: string; sub?: string; tip?: string }[];
+      /** What the `sub` line under each column means. */
+      subLabel?: string;
+    }
+  | {
+      type: 'bars';
+      caption?: string;
+      note?: string;
+      /** Legend names, by series index. */
+      series?: string[];
+      /** One scale for all groups (true) or each group on its own (false). */
+      shared?: boolean;
+      groups: { label: string; values: { value: number; display: string; series?: number; tip?: string }[] }[];
+    }
+  | {
+      type: 'phases';
+      caption?: string;
+      note?: string;
+      phases: { title: string; note?: string; steps: string[] }[];
+    };
+
 /** A term and its explanation — a paragraph that was really a definition list. */
 export type FaTerm = { term: string; text: string };
 
@@ -85,6 +117,8 @@ export type FaSection = {
   body: string[];
   /** Optional picture rendered after the lead paragraph. */
   figure?: FaFigure;
+  /** Optional chart rendered after the lead paragraph (after the figure). */
+  visual?: FaVisual;
   /** Optional table rendered after the paragraphs. */
   table?: FaTable;
   /** Optional definition rows rendered after the paragraphs. */
