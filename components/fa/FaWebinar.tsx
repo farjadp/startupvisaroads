@@ -15,7 +15,7 @@
 import { useEffect, useRef, useState, useTransition } from 'react';
 import Image from 'next/image';
 import { AnimatePresence, motion, useReducedMotion, type Variants } from 'motion/react';
-import { ArrowLeft, ArrowRight, Check, Clock, Play, Send, Youtube } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Check, Clock, Instagram, Linkedin, Play, Radio, Send, Video, Youtube } from 'lucide-react';
 import { registerWebinar } from '@/app/[locale]/(public)/webinar/actions';
 import {
   webinar,
@@ -24,6 +24,7 @@ import {
   MEETUP_ZONES,
   PAST_MEETUPS,
   PLAYLIST_URL,
+  LIVE_LINKS,
 } from '@/content/fa/webinar';
 import { toPersianDigits } from '@/lib/fa/format';
 import { trackLead } from '@/lib/analytics';
@@ -193,6 +194,66 @@ function RouteMap({ mounted }: { mounted: boolean }) {
         </motion.g>
       ))}
     </svg>
+  );
+}
+
+
+function XMark({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} aria-hidden fill="currentColor">
+      <path d="M18.9 2H22l-7.2 8.2L23.3 22h-6.6l-5.2-6.8L5.5 22H2.4l7.7-8.8L1.9 2h6.8l4.7 6.2L18.9 2Zm-1.2 18h1.8L7.4 3.9H5.5L17.7 20Z" />
+    </svg>
+  );
+}
+
+const LIVE_ICON = { youtube: Youtube, linkedin: Linkedin, instagram: Instagram } as const;
+
+function LiveSection() {
+  const l = webinar.live;
+  const links = LIVE_LINKS.filter((x) => x.href);
+  if (links.length === 0) return null;
+  return (
+    <section className="py-16 md:py-20 border-b border-[#1a1a1a]/10 grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+      <Reveal className="lg:col-span-6">
+        <h2 className="font-estedad font-black text-3xl md:text-4xl mb-4 flex items-center gap-3">
+          <span className="relative flex h-3 w-3">
+            <span className="absolute inline-flex h-full w-full rounded-full bg-[#e11d48] opacity-75 motion-safe:animate-ping"></span>
+            <span className="relative inline-flex h-3 w-3 rounded-full bg-[#e11d48]"></span>
+          </span>
+          {l.heading}
+        </h2>
+        <p className="text-[#1a1a1a]/70 leading-loose max-w-xl">{l.body}</p>
+      </Reveal>
+      <Reveal delay={0.1} className="lg:col-span-6">
+        <div className="grid grid-cols-2 gap-3">
+          {links.map((x) => {
+            const Icon = x.key === 'x' ? null : LIVE_ICON[x.key];
+            return (
+              <a
+                key={x.key}
+                href={x.href as string}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group flex items-center justify-between gap-3 border-2 border-[#1a1a1a] px-5 py-4 font-bold transition-colors hover:bg-[#1a1a1a] hover:text-[#CCFF00]"
+              >
+                <span className="flex items-center gap-3">
+                  {Icon ? <Icon className="w-5 h-5" /> : <XMark className="w-4 h-4" />}
+                  {x.label}
+                </span>
+                <Radio className="w-4 h-4 opacity-50 group-hover:opacity-100" />
+              </a>
+            );
+          })}
+          <a href="#register" className="col-span-2 flex items-center justify-between gap-3 bg-[#1a1a1a] text-[#F2F0E9] px-5 py-4 font-bold transition-colors hover:bg-[#CCFF00] hover:text-black">
+            <span className="flex items-center gap-3">
+              <Video className="w-5 h-5" />
+              {l.meet}
+            </span>
+            <ArrowLeft className="w-4 h-4" />
+          </a>
+        </div>
+      </Reveal>
+    </section>
   );
 }
 
@@ -381,6 +442,9 @@ export default function FaWebinar() {
             </div>
           </section>
         )}
+
+        {/* ============================================================== LIVE */}
+        <LiveSection />
 
         {/* ===================================================== AGENDA + FORM */}
         <section className="py-16 md:py-24 grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">

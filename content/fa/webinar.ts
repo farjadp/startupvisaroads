@@ -26,6 +26,20 @@ export const MEETUP_ZONES = [
   { city: 'ونکوور', region: 'غرب کانادا', tz: 'America/Vancouver' },
 ] as const;
 
+/** Poster, 1200×675, used as the page's share image. Full size and story versions sit beside it. */
+export const WEBINAR_POSTER = '/img/fa/meetups/meetup-25-og.jpg';
+
+/**
+ * Where the meetup is streamed, scheduled from Riverside on 2026-11-06.
+ * Null means not scheduled; the page hides that button.
+ */
+export const LIVE_LINKS: { key: 'youtube' | 'x' | 'linkedin' | 'instagram'; label: string; href: string | null }[] = [
+  { key: 'youtube', label: 'یوتیوب', href: 'https://www.youtube.com/watch?v=K2AK_Ujj0a0' },
+  { key: 'x', label: 'ایکس', href: 'https://x.com/i/broadcasts/2zkAWNQWKjdQjj' },
+  { key: 'linkedin', label: 'لینکدین', href: null },
+  { key: 'instagram', label: 'اینستاگرام', href: null },
+];
+
 export const PLAYLIST_URL = 'https://www.youtube.com/playlist?list=PLCMZ6fZQA3876e9Yc9RQvvoGdVUKcdP1Y';
 
 export type PastMeetup = { n: number; id: string; length: string; note?: string; part?: string };
@@ -80,6 +94,12 @@ export const webinar = {
     live: 'دورهمی همین حالا در جریان است. اگر ثبت‌نام کرده‌اید، از لینک دعوت‌نامه‌ی تقویم وارد شوید.',
     none: 'زمان دورهمی بعدی به‌زودی اعلام می‌شود. ثبت‌نام کنید تا اول از همه خبردار شوید.',
     expired: 'این دورهمی برگزار شده. ضبط آن به‌زودی در یوتیوب قرار می‌گیرد. برای دورهمی بعدی ثبت‌نام کنید.',
+  },
+  live: {
+    heading: 'پخش زنده',
+    body: 'دورهمی هم‌زمان در این شبکه‌ها پخش زنده می‌شود. اگر فقط می‌خواهید تماشا کنید، ثبت‌نام لازم نیست. برای پرسیدن سؤال با تصویر و صدا، ثبت‌نام کنید تا لینک Google Meet برایتان بیاید.',
+    meet: 'Google Meet برای ثبت‌نام‌کنندگان',
+    reminder: 'یادآوری در یوتیوب',
   },
   routes: ['کانادا', 'هلند', 'دانمارک', 'فنلاند', 'بلژیک', 'استونی', 'اسپانیا', 'ایتالیا', 'بلغارستان'],
   agenda: {
