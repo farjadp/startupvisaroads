@@ -8,7 +8,9 @@ vi.mock('../sources', async (importOriginal) => {
   return { ...real, createSource: mocks.createSource };
 });
 
-import { ensurePinnedOfficialSources, PINNED_OFFICIAL_SOURCES } from '../pinned';
+import { ensurePinnedOfficialSources, PINNED_OFFICIAL_SOURCES, PINNED_REPORTING_SOURCES } from '../pinned';
+
+const TOTAL = PINNED_OFFICIAL_SOURCES.length + PINNED_REPORTING_SOURCES.length;
 import { officialCitationUrl } from '@/lib/autopilot/official-sources';
 import { SourceError } from '../sources';
 
@@ -22,13 +24,23 @@ describe('pinned official sources', () => {
     for (const s of PINNED_OFFICIAL_SOURCES) expect(officialCitationUrl(s.url), s.url).not.toBeNull();
   });
 
+  it('never lets a press or commentary page be filed as official', async () => {
+    mocks.findUnique.mockResolvedValue(null);
+    mocks.createSource.mockResolvedValue({});
+    await ensurePinnedOfficialSources();
+    for (const s of PINNED_REPORTING_SOURCES) {
+      expect(mocks.createSource).toHaveBeenCalledWith(expect.objectContaining({ url: s.url, trust: s.trust, pinned: true }));
+      expect(officialCitationUrl(s.url), s.url).toBeNull();
+    }
+  });
+
   it('registers a missing page as a pinned official one-off', async () => {
     mocks.findUnique.mockResolvedValue(null);
     mocks.createSource.mockResolvedValue({});
 
     const created = await ensurePinnedOfficialSources();
 
-    expect(created).toHaveLength(PINNED_OFFICIAL_SOURCES.length);
+    expect(created).toHaveLength(TOTAL);
     expect(mocks.createSource).toHaveBeenCalledWith(
       expect.objectContaining({ kind: 'html', cadence: 'once', trust: 'official', pinned: true, url: PINNED_OFFICIAL_SOURCES[0].url }),
     );
@@ -45,6 +57,6 @@ describe('pinned official sources', () => {
     mocks.findUnique.mockResolvedValue(null);
     mocks.createSource.mockRejectedValueOnce(new SourceError('dup', 409)).mockRejectedValueOnce(new Error('db')).mockResolvedValue({});
 
-    await expect(ensurePinnedOfficialSources()).resolves.toHaveLength(PINNED_OFFICIAL_SOURCES.length - 2);
+    await expect(ensurePinnedOfficialSources()).resolves.toHaveLength(TOTAL - 2);
   });
 });

@@ -1,5 +1,6 @@
 export type OfficialSourceId =
   | 'canada-ircc'
+  | 'canada-gazette'
   | 'canada-ontario'
   | 'canada-british-columbia'
   | 'canada-alberta'
@@ -67,7 +68,8 @@ export type OfficialSource = {
 };
 
 export const OFFICIAL_SOURCES: readonly OfficialSource[] = [
-  { id: 'canada-ircc', authority: 'Immigration, Refugees and Citizenship Canada (IRCC)', url: 'https://www.canada.ca/', programmePaths: ['/startup-visa-canada', '/canada-startup-visa', '/pnp', '/tools/express-entry', '/country/canada'], keywords: ['canada', 'ircc', 'express entry', 'start-up visa', 'startup visa', 'pnp'] },
+  { id: 'canada-ircc', authority: 'Immigration, Refugees and Citizenship Canada (IRCC)', url: 'https://www.canada.ca/', programmePaths: ['/startup-visa-canada', '/canada-startup-visa', '/high-impact-startup-pilot', '/pnp', '/tools/express-entry', '/country/canada'], keywords: ['canada', 'ircc', 'express entry', 'start-up visa', 'startup visa', 'high impact start-up pilot', 'high impact startup pilot', 'pnp'] },
+  { id: 'canada-gazette', authority: 'Canada Gazette (Government of Canada) — Ministerial Instructions and regulations', url: 'https://gazette.gc.ca/', programmePaths: ['/startup-visa-canada', '/canada-startup-visa', '/high-impact-startup-pilot'], keywords: ['canada gazette', 'ministerial instructions', 'start-up business class', 'self-employed persons class'] },
   { id: 'canada-ontario', authority: 'Government of Ontario', url: 'https://www.ontario.ca/', programmePaths: ['/pnp/ontario'], keywords: ['ontario', 'oinp'] },
   { id: 'canada-british-columbia', authority: 'WelcomeBC, Government of British Columbia', url: 'https://www.welcomebc.ca/', programmePaths: ['/pnp/bc'], keywords: ['british columbia', 'bc pnp'], citationHosts: ['gov.bc.ca'] },
   { id: 'canada-alberta', authority: 'Government of Alberta', url: 'https://www.alberta.ca/', programmePaths: ['/pnp/alberta'], keywords: ['alberta', 'aaip'] },
