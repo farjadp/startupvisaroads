@@ -5,13 +5,15 @@
  * farjad@visaroads.com (script.google.com → New project), then:
  *
  *   1. Services (+) → add "Google Calendar API" (identifier: Calendar).
- *   2. Project Settings → Script Properties → add SECRET = a long random string.
- *      Put the same string in MEETUP_CALENDAR_WEBHOOK_SECRET on Cloud Run.
+ *   2. Run setup() from the editor and authorize. It creates the SECRET script
+ *      property and prints it to the execution log; put that value in
+ *      MEETUP_CALENDAR_WEBHOOK_SECRET on Cloud Run.
  *   3. Deploy → New deployment → Web app.
  *        Execute as: Me (farjad@visaroads.com)
  *        Who has access: Anyone
  *      Authorize when asked. Copy the /exec URL into
- *      MEETUP_CALENDAR_WEBHOOK_URL on Cloud Run.
+ *      MEETUP_CALENDAR_WEBHOOK_URL on Cloud Run. Test with curl --data (not
+ *      -X POST): Apps Script answers with a 302 that must be followed as GET.
  *   4. Run testAdd() once from the editor with your own second address to
  *      confirm an invitation arrives.
  *
@@ -70,4 +72,22 @@ function json_(obj) {
 /** Editor-only check. Replace the address before running. */
 function testAdd() {
   Logger.log(addGuest_('52lpnmt3vqqni6c1ae5rgkjcr7', 'your-second-address@example.com', 'Test'));
+}
+
+/**
+ * Run once from the editor. Creates the shared SECRET if it does not exist
+ * and prints it to the execution log, so it can be copied into
+ * MEETUP_CALENDAR_WEBHOOK_SECRET on Cloud Run without typing it anywhere.
+ */
+function setup() {
+  var props = PropertiesService.getScriptProperties();
+  var secret = props.getProperty('SECRET');
+  if (!secret) {
+    secret = Utilities.getUuid().replace(/-/g, '') + Utilities.getUuid().replace(/-/g, '');
+    props.setProperty('SECRET', secret);
+  }
+  // Touch the event so the Calendar scope is granted and the id is checked.
+  var event = Calendar.Events.get(CALENDAR_ID, '52lpnmt3vqqni6c1ae5rgkjcr7');
+  Logger.log('Event: ' + event.summary);
+  Logger.log('SECRET=' + secret);
 }
