@@ -12,8 +12,8 @@
 import type { FaCta, FaFaq } from '@/lib/fa/content';
 import { FOUNDER, MAIN_CONTACT } from '@/content/contact';
 
-export const TELEGRAM_URL = 'https://t.me/farjadtalks';
-export const TELEGRAM_CHANNEL_URL = 'https://t.me/Heros_Journey';
+export const TELEGRAM_URL = 'https://t.me/ashavidsupport';
+export const TELEGRAM_CHANNEL_URL = 'https://t.me/visaroads';
 
 /** Main contact details come from content/contact.ts. Telegram stays first everywhere. */
 export const CONTACT = {
@@ -211,7 +211,7 @@ export const home = {
     name: 'فرجاد',
     role: 'بنیان‌گذار · Startup Visa Roads',
     telegram: TELEGRAM_URL,
-    telegramLabel: '@farjadtalks در تلگرام',
+    telegramLabel: '@ashavidsupport در تلگرام',
   },
 
   faqs: [
@@ -255,7 +255,7 @@ export const home = {
       {
         title: 'تلگرام',
         body: 'سریع‌ترین راه. سؤال کوتاه‌تان را همان‌جا بپرسید.',
-        cta: { label: '@farjadtalks', href: TELEGRAM_URL },
+        cta: { label: '@ashavidsupport', href: TELEGRAM_URL },
         external: true,
       },
       {

@@ -357,11 +357,11 @@ export default function WebinarPage() {
                                 </div>
                                 <div className="flex justify-between items-center bg-[#F2F0E9]/50 p-2.5 rounded-xl border border-[#1a1a1a]/5">
                                     <span className="text-[#1a1a1a]/50">ارتباط تلگرام:</span>
-                                    <a href="https://t.me/farjadtalks" target="_blank" rel="noopener noreferrer" className="font-sans font-bold text-blue-600 hover:underline">@farjadtalks</a>
+                                    <a href="https://t.me/ashavidsupport" target="_blank" rel="noopener noreferrer" className="font-sans font-bold text-blue-600 hover:underline">@ashavidsupport</a>
                                 </div>
                                 <div className="flex justify-between items-center bg-[#F2F0E9]/50 p-2.5 rounded-xl border border-[#1a1a1a]/5">
                                     <span className="text-[#1a1a1a]/50">کانال تلگرام:</span>
-                                    <a href="https://t.me/Heros_Journey" target="_blank" rel="noopener noreferrer" className="font-sans font-bold text-blue-600 hover:underline">@Heros_Journey</a>
+                                    <a href="https://t.me/visaroads" target="_blank" rel="noopener noreferrer" className="font-sans font-bold text-blue-600 hover:underline">@visaroads</a>
                                 </div>
                             </div>
                         </div>
