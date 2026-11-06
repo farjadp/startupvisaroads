@@ -53,6 +53,7 @@ const BY_PATH: Record<string, FlagCode> = {
   '/europe/belgium': 'be',
   '/turkey-tech-visa': 'tr',
   '/australia': 'au',
+  '/high-impact-startup-pilot': 'ca',
   '/pnp': 'ca',
   '/pnp/bc': 'ca',
   '/pnp/alberta': 'ca',

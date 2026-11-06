@@ -146,6 +146,7 @@ export default function Header() {
         { href: '/pnp/new-brunswick', label: 'نیوبرانزویک' },
         { href: '/pnp/pei', label: 'جزیره‌ی پرنس ادوارد' },
         { href: '/canada-startup-visa', label: 'استارتاپ ویزا (متوقف)' },
+        { href: '/high-impact-startup-pilot', label: 'پایلوت High Impact (اعلام‌شده)' },
 
         { header: 'اروپا' },
         { href: '/europe/denmark', label: 'دانمارک' },
@@ -196,6 +197,7 @@ export default function Header() {
         { header: t('canada') },
         { href: '/country/canada', label: t('canada_profile') },
         { href: '/startup-visa-canada', label: t('suv') },
+        { href: '/high-impact-startup-pilot', label: 'High Impact Start-up Pilot' },
         { href: '/pnp', label: t('pnp') },
         { href: '/pnp/bc', label: 'British Columbia' },
         { href: '/pnp/alberta', label: 'Alberta' },

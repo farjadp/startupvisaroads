@@ -475,5 +475,32 @@
     "photographerUrl": "https://www.pexels.com/@frank-barning-744539",
     "description": "Panoramic view of the Gothic town hall in Leuven's historic Grote Markt square.",
     "fetched": "2026-11-05"
+  },
+  "high-impact": {
+    "source": "Pexels",
+    "id": 40323046,
+    "page": "https://www.pexels.com/photo/peace-tower-with-canadian-flag-on-blue-sky-40323046/",
+    "photographer": "RUIQING BI",
+    "photographerUrl": "https://www.pexels.com/@ruiqing-bi-1624301131",
+    "description": "Close-up of the Peace Tower in Ottawa with a Canadian flag against a clear blue sky.",
+    "fetched": "2026-11-06"
+  },
+  "high-impact-2": {
+    "source": "Pexels",
+    "id": 16669433,
+    "page": "https://www.pexels.com/photo/cityscape-of-toronto-16669433/",
+    "photographer": "Isnar Silva",
+    "photographerUrl": "https://www.pexels.com/@isnar-silva-547930172",
+    "description": "Scenic view of Toronto city skyline featuring the CN Tower and waterfront under a clear blue sky.",
+    "fetched": "2026-11-06"
+  },
+  "high-impact-3": {
+    "source": "Pexels",
+    "id": 18802091,
+    "page": "https://www.pexels.com/photo/modern-high-rise-buildings-in-downtown-vancouver-canada-18802091/",
+    "photographer": "Luke Miller",
+    "photographerUrl": "https://www.pexels.com/@bylukemiller",
+    "description": "A stunning view of Vancouver's skyline featuring modern high-rise buildings and skyscrapers.",
+    "fetched": "2026-11-06"
   }
 }

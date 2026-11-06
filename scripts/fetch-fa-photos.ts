@@ -92,6 +92,13 @@ const SLOTS: Record<string, string> = {
   'belgium-2': 'Ghent canal houses Belgium Graslei',
   'belgium-3': 'Leuven Belgium town hall square',
 
+  // High Impact Start-up Pilot. A federal programme with nothing published
+  // yet: the hero is Parliament Hill, where the decision sits; the other two
+  // are the cities where the old programme's admissions concentrated.
+  'high-impact': 'Parliament Hill Ottawa Canada Peace Tower',
+  'high-impact-2': 'Toronto skyline CN Tower downtown',
+  'high-impact-3': 'Vancouver downtown office towers Canada',
+
   estonia: 'Tallinn old town Estonia',
   'estonia-2': 'Tallinn Estonia street',
   'estonia-3': 'Tallinn rooftops Estonia',
