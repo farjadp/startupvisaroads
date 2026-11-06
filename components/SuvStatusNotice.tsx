@@ -27,7 +27,7 @@ type Props = {
 export default function SuvStatusNotice({ variant = 'band', showRoutesLink = true, className = '' }: Props) {
   const body = (
     <>
-      <span className="font-bold">The Canada Start-up Visa is paused.</span> IRCC stopped accepting new applications on {pausedOn}. Applications filed before that date are still being processed, and if you are eligible you can still apply for an open work permit while yours is assessed. IRCC says a targeted entrepreneur pilot will replace the programme, but has not published its criteria, its cap or an opening date.{' '}
+      <span className="font-bold">The Canada Start-up Visa is paused.</span> IRCC stopped accepting new applications on {pausedOn}. Applications filed before that date are still being processed, and if you are eligible you can still apply for an open work permit while yours is assessed. IRCC says a targeted entrepreneur pilot will replace the programme, but has not published its criteria, its cap or an opening date (<Link href="/high-impact-startup-pilot" className="underline">what we know about the High Impact Start-up Pilot</Link>).{' '}
       <a href={SUV_SOURCES.program} target="_blank" rel="noreferrer" className="underline">
         IRCC, Start-up Visa Program
       </a>

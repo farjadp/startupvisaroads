@@ -47,6 +47,7 @@ type Page = { path: string; en: string; kind: LinkTarget['kind'] };
 /** English static pages. Keep in step with EN_PATHS in app/sitemap.ts. */
 export const SITE_PAGES: Page[] = [
   { path: '/startup-visa-canada', en: 'Canada Start-up Visa (SUV) status guide', kind: 'page' },
+  { path: '/high-impact-startup-pilot', en: 'High Impact Start-up Pilot: Canada’s announced Start-up Visa replacement', kind: 'program' },
   { path: '/c10-work-permit', en: 'C10 significant benefit work permit (C10, C11, C60)', kind: 'page' },
   { path: '/uk/innovator-founder', en: 'UK Innovator Founder visa', kind: 'program' },
   { path: '/pnp', en: 'Provincial Nominee Programs overview', kind: 'program' },
@@ -99,6 +100,7 @@ export type FaPage = { path: string; label: string; kind: LinkTarget['kind'] };
  * out of Persian mid-article.
  */
 export const FA_SITE_PAGES: FaPage[] = [
+  { path: '/high-impact-startup-pilot', label: 'پایلوت High Impact Start-up کانادا (جایگزین اعلام‌شده‌ی ویزای استارتاپ)', kind: 'program' },
   { path: '/canada-startup-visa', label: 'راهنمای وضعیت ویزای استارتاپ کانادا (SUV)', kind: 'page' },
   { path: '/pnp', label: 'برنامه‌های استانی کانادا (PNP)', kind: 'program' },
   { path: '/pnp/bc', label: 'مسیر کارآفرینی بریتیش کلمبیا (BC PNP، جریان پایه و منطقه‌ای)', kind: 'program' },

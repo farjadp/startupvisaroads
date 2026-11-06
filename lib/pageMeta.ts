@@ -33,6 +33,7 @@ export const EN_INDEXABLE_PATHS = [
   '/team',
   '/blog',
   '/startup-visa-canada',
+  '/high-impact-startup-pilot',
   '/c10-work-permit',
   '/uk/innovator-founder',
   '/pnp',
