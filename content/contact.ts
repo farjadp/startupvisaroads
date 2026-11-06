@@ -16,8 +16,10 @@ export const MAIN_CONTACT = {
   email: 'farjad@visaroads.com',
   /** Partnerships and account questions go to the COO. */
   b2bEmail: 'mohsen@visaroads.com',
-  telegram: 'https://t.me/farjadtalks',
-  telegramHandle: '@farjadtalks',
+  telegram: 'https://t.me/ashavidsupport',
+  telegramHandle: '@ashavidsupport',
+  telegramChannel: 'https://t.me/visaroads',
+  telegramChannelHandle: '@visaroads',
   youtube: 'https://www.youtube.com/@ashavidgroup',
   youtubeHandle: '@ashavidgroup',
 };

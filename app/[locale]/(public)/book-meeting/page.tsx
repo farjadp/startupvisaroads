@@ -124,7 +124,7 @@ export default function BookMeetingPage() {
                         </a>
                      ))}
                      <a href={MAIN_CONTACT.telegram} target="_blank" rel="noreferrer" className="flex items-center gap-4 hover:text-[#CCFF00] transition-colors">
-                        <Send size={20} /> <span>t.me/farjadtalks (Telegram)</span>
+                        <Send size={20} /> <span>t.me/ashavidsupport (Telegram)</span>
                      </a>
                      <a href={MAIN_CONTACT.youtube} target="_blank" rel="noreferrer" className="flex items-center gap-4 hover:text-[#CCFF00] transition-colors">
                         <Youtube size={20} /> <span>YouTube {MAIN_CONTACT.youtubeHandle}</span>

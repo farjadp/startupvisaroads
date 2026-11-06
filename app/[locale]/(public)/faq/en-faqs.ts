@@ -263,7 +263,7 @@ const us: EnFaq[] = [
   },
   {
     q: 'How do I contact VisaRoads?',
-    a: 'The fastest way is Telegram (@farjadtalks). The main number, +1 (613) 515-0727, works for calls and WhatsApp, and the email addresses are farjad@visaroads.com and mohsen@visaroads.com. You can also take the free route assessment on the site, book a free online consultation, or register for the free webinar.',
+    a: 'The fastest way is Telegram (@ashavidsupport). The main number, +1 (613) 515-0727, works for calls and WhatsApp, and the email addresses are farjad@visaroads.com and mohsen@visaroads.com. You can also take the free route assessment on the site, book a free online consultation, or register for the free webinar.',
   },
   {
     q: 'Where do I start?',

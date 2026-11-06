@@ -41,7 +41,7 @@ export default function Mentor() {
         </View>
       ) : null}
       <Button label={t('mentor.book')} icon="external" hint={t('common.opensBrowser')} onPress={() => void WebBrowser.openBrowserAsync(bookUrl)} />
-      <Button kind="secondary" label={t('mentor.telegram')} icon="external" onPress={() => void Linking.openURL('https://t.me/farjadtalks')} />
+      <Button kind="secondary" label={t('mentor.telegram')} icon="external" onPress={() => void Linking.openURL('https://t.me/ashavidsupport')} />
       <T variant="caption" tone="fgMuted">
         {t('mentor.promise')}
       </T>

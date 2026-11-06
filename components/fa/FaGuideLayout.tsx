@@ -377,7 +377,7 @@ export default function FaGuideLayout({
                 <span className="col-start-2 row-span-2 row-start-1 flex gap-1.5">
                   <a href={TELEGRAM_URL} target="_blank" rel="noopener noreferrer" className="rounded-full border border-white/30 px-3 py-1.5 text-xs transition-colors hover:bg-white/10">باز کردن</a>
                 </span>
-                <span className="text-lg" dir="ltr">@farjadtalks</span>
+                <span className="text-lg" dir="ltr">@ashavidsupport</span>
               </div>
               <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-0.5 rounded-2xl border border-white/15 bg-white/5 px-4 py-3.5">
                 <span className="text-[11px] font-bold text-white/55">واتساپ و تماس</span>

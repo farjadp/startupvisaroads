@@ -30,8 +30,8 @@ export const contact = {
       n: '۰۱',
       title: 'تلگرام',
       body: 'سریع‌ترین راه. سؤالتان را همان‌جا بپرسید؛ معمولاً همان روز پاسخ می‌گیرید. برای اطلاع از وبینارها و به‌روزرسانی‌ها، کانال را دنبال کنید.',
-      cta: { label: '@farjadtalks', href: TELEGRAM_URL },
-      secondary: { label: 'کانال Heros_Journey', href: TELEGRAM_CHANNEL_URL },
+      cta: { label: '@ashavidsupport', href: TELEGRAM_URL },
+      secondary: { label: 'کانال @visaroads', href: TELEGRAM_CHANNEL_URL },
     },
     {
       n: '۰۲',
