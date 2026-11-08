@@ -1,0 +1,26 @@
+{
+  "publishAt": "2026-12-22T14:00:00Z",
+  "locale": "en",
+  "slug": "why-canada-paused-the-start-up-visa-what-the-numbers-show",
+  "title": "Why Canada Paused the Start-up Visa: What the Numbers Show, and Who Reported Them",
+  "excerpt": "IRCC says it paused the Start-up Visa to address a backlog. Reported admissions rose from 55 in 2015 to 5,605 in 2024, in a table IRCC has not published. Here is how to read it.",
+  "category": "Canada Startup Visa",
+  "tags": [
+    "Start-up Visa",
+    "High Impact Start-up Pilot",
+    "immigration data"
+  ],
+  "keyTakeaway": "IRCC's stated reason is a backlog. The admissions figures that illustrate it come from immigration.ca without a named source, so treat them as reported, not official.",
+  "summaryEn": "What IRCC says about why the Start-up Visa was paused, and how to read the reported admissions figures and the RBC critique.",
+  "faq": [
+    {
+      "q": "Why did IRCC pause the Start-up Visa?",
+      "a": "To address the application backlog and wait times: more applications arrived than there were admission spaces."
+    }
+  ],
+  "internalLinks": [
+    "/en/high-impact-startup-pilot",
+    "/en/startup-visa-canada"
+  ],
+  "content": "\n<p>The Start-up Visa pause is easier to understand with numbers, and harder to trust with them. The reason IRCC gives is plain. The numbers people quote to illustrate it mostly are not IRCC's. This piece separates the two. Checked 5 November 2026.</p>\n\n<h2>What IRCC says</h2>\n<p>IRCC's Start-up Visa page says the programme is paused to address its backlog and client wait times, and lists it among programmes where application intake outran the admission spaces available. IRCC's binder adds that it is still working on an inventory management strategy. <a href=\"https://www.canada.ca/en/immigration-refugees-citizenship/services/immigrate-canada/start-visa/about.html\" target=\"_blank\" rel=\"noopener noreferrer\">IRCC, Start-up Visa Program</a> · <a href=\"https://www.canada.ca/en/immigration-refugees-citizenship/corporate/transparency/transition-binders/deputy-minister-2026/economic-immigration.html\" target=\"_blank\" rel=\"noopener noreferrer\">IRCC transition binder</a></p>\n<p>The one official figure in the binder is forward-looking: the 2026 admissions target for all federal business programs together is 500.</p>\n\n<h2>What was reported</h2>\n<p>immigration.ca, without naming its source, gives Start-up Visa admissions of 55 in 2015, 5,605 in 2024 and 1,425 in 2025, and reads the 2025 drop as tightening ahead of the pause. <a href=\"https://immigration.ca/canada-plans-high-impact-start-up-visa-pilot-after-pausing-existing-program/\" target=\"_blank\" rel=\"noopener noreferrer\">immigration.ca</a> They are plausible and they fit IRCC's story, but they are not an IRCC table, so we cite them as reported.</p>\n\n<h2>What a think-tank argues</h2>\n<p>RBC's September 2026 report argues that the programme gave permanent residence on the strength of capital or incubator backing, without testing whether the business was real or succeeded, and suggests Canada pilot a temporary entrepreneurship pathway for founders with a track record. <a href=\"https://www.rbc.com/en/thought-leadership/wp-content/uploads/sites/27/2026/09/A-Smarter-Immigration-Strategy-Report-EN.pdf\" target=\"_blank\" rel=\"noopener noreferrer\">RBC Thought Leadership</a> It is a recommendation, not policy.</p>\n\n<h2>What this does and does not tell a founder</h2>\n<p>It suggests why IRCC wants a more selective replacement. It does not tell you what the replacement will require. The pilot's criteria, cap and date are unpublished, and a reason for a change is not a specification for it.</p>\n\n<h2>Three questions to ask of any number about the pilot</h2>\n<ol>\n<li><strong>Who published it?</strong> IRCC, or someone describing IRCC? A figure with no named source, however plausible, is not evidence.</li>\n<li><strong>What does it measure?</strong> The 500 target is for all federal business programs together. It is not the pilot's cap. Mixing the two is the most common mistake we see.</li>\n<li><strong>Would the decision change if it were wrong?</strong> If a number would move money or time, it needs an official source. If it would not, it can stay an interesting rumour.</li>\n</ol>\n\n<h2>Why the distinction matters</h2>\n<p>A pause is a fact. A reason for the pause is IRCC's account. A table of admissions is someone else's compilation. A critique is an argument. A pilot's criteria are, so far, nothing. Treating all five as the same kind of thing is how a rumour about a cap becomes a plan.</p>\n\n<p>Our <a href=\"/en/high-impact-startup-pilot\">pilot page</a> keeps official, reported and unpublished apart, so you can see which is which at a glance.</p>\n"
+}

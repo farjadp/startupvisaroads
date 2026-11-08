@@ -1,5 +1,6 @@
 export type OfficialSourceId =
   | 'canada-ircc'
+  | 'canada-gazette'
   | 'canada-ontario'
   | 'canada-british-columbia'
   | 'canada-alberta'
@@ -21,6 +22,8 @@ export type OfficialSourceId =
   | 'spain-uge'
   | 'spain-enisa'
   | 'spain-boe-ley-14-2013'
+  | 'spain-mjusticia'
+  | 'spain-fnmt'
   | 'bulgaria-mig-startup-visa'
   | 'bulgaria-nims'
   | 'belgium-flanders-professional-card'
@@ -67,7 +70,8 @@ export type OfficialSource = {
 };
 
 export const OFFICIAL_SOURCES: readonly OfficialSource[] = [
-  { id: 'canada-ircc', authority: 'Immigration, Refugees and Citizenship Canada (IRCC)', url: 'https://www.canada.ca/', programmePaths: ['/startup-visa-canada', '/canada-startup-visa', '/pnp', '/tools/express-entry', '/country/canada'], keywords: ['canada', 'ircc', 'express entry', 'start-up visa', 'startup visa', 'pnp'] },
+  { id: 'canada-ircc', authority: 'Immigration, Refugees and Citizenship Canada (IRCC)', url: 'https://www.canada.ca/', programmePaths: ['/startup-visa-canada', '/canada-startup-visa', '/high-impact-startup-pilot', '/pnp', '/tools/express-entry', '/country/canada'], keywords: ['canada', 'ircc', 'express entry', 'start-up visa', 'startup visa', 'high impact start-up pilot', 'high impact startup pilot', 'pnp'] },
+  { id: 'canada-gazette', authority: 'Canada Gazette (Government of Canada) — Ministerial Instructions and regulations', url: 'https://gazette.gc.ca/', programmePaths: ['/startup-visa-canada', '/canada-startup-visa', '/high-impact-startup-pilot'], keywords: ['canada gazette', 'ministerial instructions', 'start-up business class', 'self-employed persons class'] },
   { id: 'canada-ontario', authority: 'Government of Ontario', url: 'https://www.ontario.ca/', programmePaths: ['/pnp/ontario'], keywords: ['ontario', 'oinp'] },
   { id: 'canada-british-columbia', authority: 'WelcomeBC, Government of British Columbia', url: 'https://www.welcomebc.ca/', programmePaths: ['/pnp/bc'], keywords: ['british columbia', 'bc pnp'], citationHosts: ['gov.bc.ca'] },
   { id: 'canada-alberta', authority: 'Government of Alberta', url: 'https://www.alberta.ca/', programmePaths: ['/pnp/alberta'], keywords: ['alberta', 'aaip'] },
@@ -89,6 +93,8 @@ export const OFFICIAL_SOURCES: readonly OfficialSource[] = [
   { id: 'spain-uge', authority: 'Unidad de Grandes Empresas y Colectivos Estratégicos (UGE), Ministerio de Inclusión, Seguridad Social y Migraciones', url: 'https://www.inclusion.gob.es/web/unidadgrandesempresas/emprendedores', programmePaths: ['/europe/spain'], keywords: ['spain', 'españa', 'emprendedor', 'uge', 'ley 14/2013'] },
   { id: 'spain-enisa', authority: 'Empresa Nacional de Innovación (ENISA)', url: 'https://www.enisa.es/', programmePaths: ['/europe/spain'], keywords: ['spain', 'enisa', 'emprendedor', 'empresa emergente'] },
   { id: 'spain-boe-ley-14-2013', authority: 'Boletín Oficial del Estado — Ley 14/2013, consolidated text', url: 'https://www.boe.es/buscar/act.php?id=BOE-A-2013-10074', programmePaths: ['/europe/spain'], keywords: ['spain', 'ley 14/2013', 'boe', 'emprendedores'] },
+  { id: 'spain-mjusticia', authority: 'Ministerio de la Presidencia, Justicia y Relaciones con las Cortes — digital certificates and Cl@ve', url: 'https://www.mjusticia.gob.es/', programmePaths: ['/europe/spain'], keywords: ['spain', 'certificado digital', 'digital certificate', 'vídeo identificación', 'cl@ve'] },
+  { id: 'spain-fnmt', authority: 'Fábrica Nacional de Moneda y Timbre (FNMT-RCM) — electronic certificates', url: 'https://www.fnmt.gob.es/', programmePaths: ['/europe/spain'], keywords: ['spain', 'fnmt', 'certificado digital', 'digital certificate', 'acreditar identidad'], citationHosts: ['sede.fnmt.gob.es'] },
   { id: 'bulgaria-mig-startup-visa', authority: 'Ministry of Innovation and Growth of the Republic of Bulgaria — service 3263, Startup Visa certificate', url: 'https://www.mig.government.bg/3263-issuance-of-a-sertificate-for-a-high-tech-and-or-innovative-project-startup-visa/?lang=en', programmePaths: ['/europe/bulgaria'], keywords: ['bulgaria', 'startup visa', 'mig', 'ministry of innovation and growth', 'art. 24p'] },
   { id: 'belgium-flanders-professional-card', authority: 'Government of Flanders (WEWIS) — professional card for foreign entrepreneurs', url: 'https://www.vlaanderen.be/en/working-enterprise-and-investment/working/professional-card-for-foreign-entrepreneurs', programmePaths: ['/europe/belgium'], keywords: ['belgium', 'flanders', 'professional card', 'beroepskaart', 'innovation & startup permit'] },
   { id: 'belgium-startup-flanders', authority: 'Startup.Flanders (Flanders Investment & Trade) — Innovation & Startup Permit', url: 'https://www.startupflanders.com/en/permits', programmePaths: ['/europe/belgium'], keywords: ['belgium', 'startup flanders', 'access point', 'innovation & startup permit'] },
