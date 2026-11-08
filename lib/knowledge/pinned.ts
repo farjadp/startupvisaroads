@@ -19,6 +19,9 @@ export type PinnedSource = { url: string; title: string; topics: string[]; kind?
 /** Topics every High Impact Start-up Pilot article is written against. */
 const PILOT_TOPICS = ['high impact start-up pilot', 'high impact startup pilot', 'start-up visa replacement', 'start-up visa paused', 'suv', 'پایلوت high impact', 'جایگزین ویزای استارتاپ کانادا', 'ویزای استارتاپ کانادا'];
 
+/** Topics every Spain filing article is written against. */
+const SPAIN_FILING_TOPICS = ['spain', 'españa', 'spain startup visa', 'entrepreneur residence permit', 'ley 14/2013', 'uge', 'enisa', 'sede electrónica', 'digital certificate', 'certificado digital', 'fnmt', 'tasa 790 038', 'اسپانیا', 'ویزای استارتاپ اسپانیا', 'اقامت کارآفرینی اسپانیا', 'گواهی دیجیتال اسپانیا'];
+
 export const PINNED_OFFICIAL_SOURCES: PinnedSource[] = [
   {
     url: 'https://migri.fi/en/start-up-entrepreneur',
@@ -34,6 +37,45 @@ export const PINNED_OFFICIAL_SOURCES: PinnedSource[] = [
     url: 'https://www.nyidanmark.dk/en-GB/You-want-to-apply/Work/Start-up-Denmark',
     title: 'SIRI — Start-up Denmark',
     topics: ['denmark', 'start-up denmark', 'دانمارک'],
+  },
+
+  // ── Spain: filing the Ley 14/2013 entrepreneur permit ─────────────────────
+  // Read 8 Nov 2026 for the Spain filing series. The sede page names the
+  // procedure (SIA 202099), the MI-T / MI-F models, tasa 790-038 and the NRC;
+  // the UGE page says every filing is electronic; the Justice and FNMT pages
+  // say who can get a certificate and how; the two BOE documents are the
+  // original texts of Ley 14/2013 and of Ley 28/2022, which rewrote its
+  // entrepreneur chapter. Pinned so the writer cannot invent a paper route,
+  // a fee amount or a certificate for someone without a NIE.
+  {
+    url: 'https://sede.inclusion.gob.es/en/w/presentacion-solicitudes-autorizacion-residencia',
+    title: 'Sede electrónica, Ministerio de Inclusión — Presentation of applications for residence authorization, international mobility (Ley 14/2013)',
+    topics: SPAIN_FILING_TOPICS,
+  },
+  {
+    url: 'https://www.inclusion.gob.es/en/web/unidadgrandesempresas/solicitudes',
+    title: 'UGE — Solicitudes: how to submit an application under Ley 14/2013 (electronic only)',
+    topics: SPAIN_FILING_TOPICS,
+  },
+  {
+    url: 'https://www.mjusticia.gob.es/es/certificados-digitales-clave/obtencion-certificado-video',
+    title: 'Ministerio de Justicia — Obtaining an FNMT certificate by video identification',
+    topics: [...SPAIN_FILING_TOPICS, 'video identification', 'ویدئو شناسایی'],
+  },
+  {
+    url: 'https://www.sede.fnmt.gob.es/certificados/persona-fisica/obtener-certificado-software/acreditar-identidad',
+    title: 'FNMT — Acreditar identidad: documents and offices for the natural-person certificate',
+    topics: [...SPAIN_FILING_TOPICS, 'nie', 'acreditación de identidad', 'oficina de acreditación'],
+  },
+  {
+    url: 'https://www.boe.es/buscar/doc.php?id=BOE-A-2022-21739',
+    title: 'BOE — Ley 28/2022 (Startups Law), original text: definition of an emerging company and the amendments to Ley 14/2013',
+    topics: [...SPAIN_FILING_TOPICS, 'ley 28/2022', 'startups law', 'empresa emergente', 'قانون استارتاپ اسپانیا'],
+  },
+  {
+    url: 'https://www.boe.es/buscar/doc.php?id=BOE-A-2013-10074',
+    title: 'BOE — Ley 14/2013, original text as published (arts. 61–76, international mobility)',
+    topics: [...SPAIN_FILING_TOPICS, 'ley 14/2013'],
   },
 
   // ── Canada: the Start-up Visa pause and its announced replacement ─────────
