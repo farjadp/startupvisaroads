@@ -2,8 +2,12 @@
 // lib/case-studies/public.ts
 // Read-only queries behind the public Case Studies pages and the sitemap.
 //
-// "Published" means all three: status PUBLISHED, publishedAt in the past, and
-// never withdrawn. Seeded sample rows (`sample: true`) are invisible in
+// "Published" means all four: status PUBLISHED, publishedAt in the past,
+// never withdrawn, and the case type's publishing switch currently ON
+// (lib/case-studies/settings.ts). The switches are kill switches: turning one
+// OFF hides every page of that type from every read here, the sitemap
+// included, without touching the rows; turning it back ON restores them. A
+// failed settings read counts as both switches OFF. Seeded sample rows (`sample: true`) are invisible in
 // production, whatever their status: they exist for dev screenshots only.
 //
 // Every query fails soft. A database outage gives an empty list or a null
@@ -14,7 +18,9 @@
 // (style of cause, internal notes) cannot reach the page by accident.
 // ============================================================================
 import type { Prisma } from '@prisma/client';
+import { cache } from 'react';
 import prisma from '@/lib/prisma';
+import { enabledCaseTypes, getCaseStudySettings, type CaseStudySettings } from '@/lib/case-studies/settings';
 
 export type CaseLocale = 'en' | 'fa';
 export type CaseType = 'FC_DECISION' | 'CLIENT_CASE';
@@ -91,8 +97,24 @@ function hideSamples(): boolean {
   return process.env.NODE_ENV === 'production';
 }
 
-export function publishedWhere(now: Date = new Date()): Prisma.CaseStudyWhereInput {
+const ALL_OFF: CaseStudySettings = { courtPagesClearedByCounsel: false, clientCasesEnabled: false };
+
+/**
+ * The switches, read once per request (React `cache` dedupes within one server
+ * render; outside a render each call reads afresh). Fails closed.
+ */
+const readSwitches = cache(async (): Promise<CaseStudySettings> => {
+  try {
+    return await getCaseStudySettings();
+  } catch (e) {
+    console.error('case-studies/public: settings read failed; treating every switch as off', e);
+    return ALL_OFF;
+  }
+});
+
+export function publishedWhere(settings: CaseStudySettings, now: Date = new Date()): Prisma.CaseStudyWhereInput {
   return {
+    type: { in: enabledCaseTypes(settings) },
     status: 'PUBLISHED',
     publishedAt: { lte: now },
     withdrawnAt: null,
@@ -304,9 +326,10 @@ export function toPublicCase(r: PageRow): PublicCase {
 export async function listPublished(opts: { locale: string; route?: string | null; outcome?: string | null }): Promise<CaseListItem[]> {
   const outcome = asOutcome(opts.outcome ?? null);
   try {
+    const live = publishedWhere(await readSwitches());
     const rows = await prisma.caseStudy.findMany({
       where: {
-        ...publishedWhere(),
+        ...live,
         locale: asLocale(opts.locale),
         ...(opts.route ? { route: opts.route } : {}),
         ...(outcome ? { outcome } : {}),
@@ -324,7 +347,7 @@ export async function listPublished(opts: { locale: string; route?: string | nul
 export async function getPublished(locale: string, slug: string): Promise<PublicCase | null> {
   try {
     const row = await prisma.caseStudy.findFirst({
-      where: { ...publishedWhere(), locale: asLocale(locale), slug },
+      where: { ...publishedWhere(await readSwitches()), locale: asLocale(locale), slug },
       select: PAGE_SELECT,
     });
     return row ? toPublicCase(row) : null;
@@ -338,7 +361,7 @@ export async function getPublished(locale: string, slug: string): Promise<Public
 export async function getPair(groupKey: string): Promise<{ locale: CaseLocale; slug: string }[]> {
   try {
     const rows = await prisma.caseStudy.findMany({
-      where: { ...publishedWhere(), groupKey },
+      where: { ...publishedWhere(await readSwitches()), groupKey },
       select: { locale: true, slug: true },
     });
     return rows.map((r) => ({ locale: asLocale(r.locale), slug: r.slug }));
@@ -358,6 +381,7 @@ export async function findRedirectTarget(locale: string, slug: string): Promise<
   const here = asLocale(locale);
   const other: CaseLocale = here === 'en' ? 'fa' : 'en';
   try {
+    const live = publishedWhere(await readSwitches());
     const own = await prisma.caseStudy.findFirst({
       where: { locale: here, slug, ...(hideSamples() ? { sample: false } : {}) },
       select: { groupKey: true, withdrawnAt: true, supersededById: true },
@@ -365,7 +389,7 @@ export async function findRedirectTarget(locale: string, slug: string): Promise<
 
     if (own?.withdrawnAt && own.supersededById) {
       const next = await prisma.caseStudy.findFirst({
-        where: { ...publishedWhere(), id: own.supersededById },
+        where: { ...live, id: own.supersededById },
         select: { locale: true, slug: true },
       });
       if (next) return `/${asLocale(next.locale)}/case-studies/${next.slug}`;
@@ -374,7 +398,7 @@ export async function findRedirectTarget(locale: string, slug: string): Promise<
     if (own?.withdrawnAt) return null;
 
     const twin = await prisma.caseStudy.findFirst({
-      where: { ...publishedWhere(), locale: other, ...(own ? { groupKey: own.groupKey } : { slug }) },
+      where: { ...live, locale: other, ...(own ? { groupKey: own.groupKey } : { slug }) },
       select: { slug: true },
     });
     return twin ? `/${other}/case-studies/${twin.slug}` : null;
@@ -386,7 +410,7 @@ export async function findRedirectTarget(locale: string, slug: string): Promise<
 
 export async function countPublished(locale: string): Promise<number> {
   try {
-    return await prisma.caseStudy.count({ where: { ...publishedWhere(), locale: asLocale(locale) } });
+    return await prisma.caseStudy.count({ where: { ...publishedWhere(await readSwitches()), locale: asLocale(locale) } });
   } catch (e) {
     console.error('case-studies/public: countPublished failed', e);
     return 0;
@@ -396,7 +420,7 @@ export async function countPublished(locale: string): Promise<number> {
 export async function listForSitemap(): Promise<SitemapCase[]> {
   try {
     const rows = await prisma.caseStudy.findMany({
-      where: publishedWhere(),
+      where: publishedWhere(await readSwitches()),
       select: { locale: true, slug: true, groupKey: true, updatedAt: true },
       orderBy: { updatedAt: 'desc' },
     });

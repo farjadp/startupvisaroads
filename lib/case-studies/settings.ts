@@ -5,6 +5,7 @@
 //   caseStudies.clientCasesEnabled         — CLIENT_CASE pages may publish
 // (spec §12a: counsel review is still open; no client case publishes yet.)
 // ============================================================================
+import type { Prisma } from '@prisma/client';
 import prisma from '@/lib/prisma';
 
 export const COURT_PAGES_KEY = 'caseStudies.courtPagesClearedByCounsel';
@@ -15,10 +16,22 @@ export type CaseStudySettings = {
   clientCasesEnabled: boolean;
 };
 
-export async function getCaseStudySettings(): Promise<CaseStudySettings> {
-  const rows = await prisma.setting.findMany({ where: { key: { in: [COURT_PAGES_KEY, CLIENT_CASES_KEY] } } });
+/** The prisma client or an interactive-transaction client; only `setting` is used. */
+type SettingsReader = { setting: Pick<Prisma.TransactionClient['setting'], 'findMany'> };
+
+/** Pass the `tx` of an interactive transaction to read the switches inside it. */
+export async function getCaseStudySettings(db: SettingsReader = prisma): Promise<CaseStudySettings> {
+  const rows = await db.setting.findMany({ where: { key: { in: [COURT_PAGES_KEY, CLIENT_CASES_KEY] } } });
   const on = (key: string) => rows.find((r) => r.key === key)?.value === 'true';
   return { courtPagesClearedByCounsel: on(COURT_PAGES_KEY), clientCasesEnabled: on(CLIENT_CASES_KEY) };
+}
+
+/** The case types whose switch is currently ON. Public reads show only these. */
+export function enabledCaseTypes(s: CaseStudySettings): ('FC_DECISION' | 'CLIENT_CASE')[] {
+  const out: ('FC_DECISION' | 'CLIENT_CASE')[] = [];
+  if (s.courtPagesClearedByCounsel) out.push('FC_DECISION');
+  if (s.clientCasesEnabled) out.push('CLIENT_CASE');
+  return out;
 }
 
 export async function setCaseStudySettings(patch: Partial<CaseStudySettings>): Promise<CaseStudySettings> {
