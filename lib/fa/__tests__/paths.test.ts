@@ -50,13 +50,13 @@ describe('FA_PAIRED', () => {
     expect(FA_PAIRED['/blog']).toBe('/blog');
   });
 
-  it('pairs Denmark with the English country page, and leaves Estonia unpaired', () => {
+  it('pairs Denmark with the English country page, and Estonia with its English twin', () => {
     expect(FA_PAIRED['/europe/denmark']).toBe('/country/denmark');
-    expect(FA_PAIRED['/europe/estonia']).toBeNull();
+    expect(FA_PAIRED['/europe/estonia']).toBe('/europe/estonia');
   });
 
-  it('leaves Persian-only pages unpaired', () => {
-    expect(FA_PAIRED['/canada-startup-visa/cost']).toBeNull();
-    expect(FA_PAIRED['/which-path']).toBeNull();
+  it('pairs the formerly Persian-only cost and which-path pages with their English twins', () => {
+    expect(FA_PAIRED['/canada-startup-visa/cost']).toBe('/startup-visa-canada/cost');
+    expect(FA_PAIRED['/which-path']).toBe('/which-path');
   });
 });
