@@ -23,7 +23,9 @@ function actionBlockers(action: Action, d: CaseDetail): string[] {
       return [...(s === 'IN_REVIEW' ? [] : ['Only a case IN REVIEW can be approved.']), ...d.approval.reasons];
     case 'schedule':
     case 'publish':
-      return [...(s === 'APPROVED' ? [] : [`Only an APPROVED case can be ${action === 'schedule' ? 'scheduled' : 'published'}.`]), ...d.publish.reasons];
+      // The server's list already names a wrong status when there is one.
+      if (d.publish.reasons.length) return d.publish.reasons;
+      return s === 'APPROVED' ? [] : [`Only an APPROVED case can be ${action === 'schedule' ? 'scheduled' : 'published'}.`];
     case 'reopen':
       return s === 'APPROVED' || s === 'SCHEDULED' ? [] : ['Only APPROVED or SCHEDULED cases can be reopened.'];
     case 'withdraw':
