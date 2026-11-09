@@ -3,7 +3,8 @@
 // (emoji flags differ by vendor and are missing on some Android builds).
 // The US stars are expanded from the source's SVG marker, which
 // react-native-svg does not draw. Israel's is redrawn without its clip path
-// (same stripes and star).
+// (same stripes and star). Spain's is the civil flag without the coat of arms
+// (flag-icons' arms are 540 paths, 91 KB, for a flag drawn at 24 px).
 import type { Country } from '@/content/routes';
 
 export const FLAG_SVG: Record<Country, string> = {
@@ -22,4 +23,6 @@ export const FLAG_SVG: Record<Country, string> = {
   NO: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 480"><path fill="#ed2939" d="M0 0h640v480H0z"/><path fill="#fff" d="M180 0h120v480H180z"/><path fill="#fff" d="M0 180h640v120H0z"/><path fill="#002664" d="M210 0h60v480h-60z"/><path fill="#002664" d="M0 210h640v60H0z"/></svg>',
   IE: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 480"><g fill-rule="evenodd" stroke-width="1pt"><path fill="#fff" d="M0 0h640v480H0z"/><path fill="#009A49" d="M0 0h213.3v480H0z"/><path fill="#FF7900" d="M426.7 0H640v480H426.7z"/></g></svg>',
   SE: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 480"><path fill="#005293" d="M0 0h640v480H0z"/><path fill="#fecb00" d="M176 0v192H0v96h176v192h96V288h368v-96H272V0z"/></svg>',
+  ES: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 480"><path fill="#AA151B" d="M0 0h640v480H0z"/><path fill="#F1BF00" d="M0 120h640v240H0z"/></svg>',
+  BG: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 480"><path fill="#fff" d="M0 0h640v160H0z"/><path fill="#00966e" d="M0 160h640v160H0z"/><path fill="#d62612" d="M0 320h640v160H0z"/></svg>',
 };

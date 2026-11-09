@@ -97,8 +97,8 @@ const META: Record<string, Entry> = {
     fa: { title: 'منتورشیپ و آمادگی استارتاپ', description: 'منتورشیپ اختصاصی برای اعتبارسنجی ایده، تقویت مدل کسب‌وکار و آماده‌سازی استارتاپ قابل سرمایه‌گذاری و مهاجرت‌پذیر.' },
   },
   '/app': {
-    en: { title: 'VisaRoads App — Immigration Routes for iOS & Android', description: 'Ten questions, no sign-up: see how you match the published criteria of startup, entrepreneur, talent and study routes in 15 countries, with an official source on every figure. On Google Play now.' },
-    fa: { title: 'اپلیکیشن VisaRoads — مسیرهای مهاجرت برای iOS و اندروید', description: 'با ده سؤال و بدون ثبت‌نام ببینید با شرایط منتشرشده‌ی مسیرهای استارتاپی، کارآفرینی، استعداد و تحصیلی در ۱۵ کشور چقدر تطابق دارید؛ با منبع رسمی کنار هر عدد. هم‌اکنون در گوگل پلی.' },
+    en: { title: 'VisaRoads App — Immigration Routes for iOS & Android', description: 'Ten questions, no sign-up: see how you match the published criteria of startup, entrepreneur, talent and study routes in 17 countries, with an official source on every figure. On Google Play now.' },
+    fa: { title: 'اپلیکیشن VisaRoads — مسیرهای مهاجرت برای iOS و اندروید', description: 'با ده سؤال و بدون ثبت‌نام ببینید با شرایط منتشرشده‌ی مسیرهای استارتاپی، کارآفرینی، استعداد و تحصیلی در ۱۷ کشور چقدر تطابق دارید؛ با منبع رسمی کنار هر عدد. هم‌اکنون در گوگل پلی.' },
   },
   '/contact': {
     en: { title: 'Contact & Free Advisory', description: 'Talk to a strategic immigration advisor. Request a free advisory to map your fastest, lowest-risk path to global residency.' },

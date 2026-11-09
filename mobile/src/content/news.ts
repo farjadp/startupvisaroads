@@ -25,6 +25,8 @@ const KEYWORDS: Record<Country, RegExp> = {
   NO: /norw(ay|egian)|oslo|\budi\b|نروژ/i,
   IE: /ireland|irish|dublin|ایرلند/i,
   SE: /swed(en|ish)|stockholm|migrationsverket|سوئد/i,
+  ES: /\bspain\b|madrid|barcelona|\benisa\b|اسپانیا|مادرید|بارسلون/i,
+  BG: /bulgaria|بلغارستان/i,
 };
 
 const decode = (s: string) =>

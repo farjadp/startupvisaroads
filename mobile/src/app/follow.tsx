@@ -1,6 +1,6 @@
 // Roads to follow (onboarding 3B, on ink like the language step): every v2
 // route, one card per country in the app's country order with its flag faded
-// behind it, each road with its family icon. 59 roads in 15 countries is long,
+// behind it, each road with its family icon. 68 roads in 17 countries is long,
 // so each card folds: closed by default, its header saying how many of its
 // roads are followed. Optional and skippable. Followed roads lead Home and the
 // News "My roads" filter; they are never a match, never ranked, never scored

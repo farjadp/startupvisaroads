@@ -9,7 +9,7 @@
 //   the rest are always listed. Weights are 1 (minor) to 3 (deciding).
 // - Text is English plus Persian; fr/zh/ar readers see English, labelled.
 
-export type V2Country = 'CA' | 'US' | 'DK' | 'FI' | 'EE' | 'NL' | 'IT' | 'TR' | 'IL' | 'AE' | 'AU' | 'AT' | 'NO' | 'IE' | 'SE';
+export type V2Country = 'CA' | 'US' | 'DK' | 'FI' | 'EE' | 'NL' | 'IT' | 'TR' | 'IL' | 'AE' | 'AU' | 'AT' | 'NO' | 'IE' | 'SE' | 'ES' | 'BG';
 export type V2Family = 'startup' | 'entrepreneur' | 'study' | 'talent' | 'express';
 export type V2Currency = 'CAD' | 'USD' | 'EUR' | 'DKK' | 'TRY' | 'ILS' | 'AED' | 'AUD' | 'NOK' | 'SEK';
 
