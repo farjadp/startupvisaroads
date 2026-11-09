@@ -13,7 +13,9 @@ export async function POST(req: NextRequest, { params }: Ctx) {
   const username = await adminUser(req);
   if (!username) return unauthorized();
   const { id } = await params;
-  const body = await readJsonObject(req);
+  const parsedBody = await readJsonObject(req);
+  if (!parsedBody.ok) return parsedBody.response;
+  const body = parsedBody.body;
   const action = body?.action;
   if (!body || typeof action !== 'string' || !(TRANSITIONS as readonly string[]).includes(action)) {
     return NextResponse.json({ error: `action must be one of ${TRANSITIONS.join(', ')}`, reasons: [] }, { status: 400 });

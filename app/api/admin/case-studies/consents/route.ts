@@ -29,7 +29,9 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   const username = await adminUser(req);
   if (!username) return unauthorized();
-  const body = await readJsonObject(req);
+  const parsedBody = await readJsonObject(req);
+  if (!parsedBody.ok) return parsedBody.response;
+  const body = parsedBody.body;
   if (!body) return NextResponse.json({ error: 'Body must be a JSON object' }, { status: 400 });
   const parsed = parseConsentInput(body);
   if (!parsed.ok) return NextResponse.json({ error: parsed.error }, { status: 400 });

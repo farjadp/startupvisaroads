@@ -50,7 +50,8 @@ const fcBody = (over: Record<string, unknown> = {}) => ({
 const req = (url: string, init: { method?: string; body?: unknown; headers?: Record<string, string> } = {}) =>
   new NextRequest(`http://localhost${url}`, {
     method: init.method ?? 'GET',
-    headers: init.headers,
+    // The admin UI's fetch helper sends JSON with this header; mirror it by default.
+    headers: init.body === undefined ? init.headers : { 'content-type': 'application/json', ...init.headers },
     body: init.body === undefined ? undefined : typeof init.body === 'string' ? init.body : JSON.stringify(init.body),
   });
 const bearer = (t: string) => ({ authorization: `Bearer ${t}` });

@@ -13,7 +13,9 @@ export async function POST(req: NextRequest, { params }: Ctx) {
   const username = await adminUser(req);
   if (!username) return unauthorized();
   const { id } = await params;
-  const body = await readJsonObject(req);
+  const parsedBody = await readJsonObject(req);
+  if (!parsedBody.ok) return parsedBody.response;
+  const body = parsedBody.body;
   const reason = typeof body?.reason === 'string' ? body.reason.trim() : '';
   if (!reason || reason.length > 1000) {
     return NextResponse.json({ error: 'reason is required (at most 1000 characters)', reasons: [] }, { status: 400 });

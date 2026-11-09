@@ -22,7 +22,9 @@ export async function GET(req: NextRequest) {
 export async function PUT(req: NextRequest) {
   const username = await adminUser(req);
   if (!username) return unauthorized();
-  const body = await readJsonObject(req);
+  const parsedBody = await readJsonObject(req);
+  if (!parsedBody.ok) return parsedBody.response;
+  const body = parsedBody.body;
   if (!body) return NextResponse.json({ error: 'Body must be a JSON object' }, { status: 400 });
   const patch: Partial<CaseStudySettings> = {};
   for (const [k, v] of Object.entries(body)) {

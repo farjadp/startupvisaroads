@@ -12,7 +12,9 @@ export async function PATCH(req: NextRequest, { params }: Ctx) {
   const username = await adminUser(req);
   if (!username) return unauthorized();
   const { id } = await params;
-  const body = await readJsonObject(req);
+  const parsedBody = await readJsonObject(req);
+  if (!parsedBody.ok) return parsedBody.response;
+  const body = parsedBody.body;
   if (!body || typeof body.claimId !== 'string' || !body.claimId || typeof body.verified !== 'boolean') {
     return NextResponse.json({ error: 'Body must be { claimId: string, verified: boolean }' }, { status: 400 });
   }
