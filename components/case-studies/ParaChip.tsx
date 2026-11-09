@@ -36,7 +36,8 @@ export default function ParaChip({ label, ariaLabel, heading, quote, originalLab
       >
         {label}
       </button>
-      <span id={id} hidden={!open} className="my-3 block border-s-[3px] border-ink bg-acid px-4 py-3 text-sm text-ink">
+      {/* `block` would override the hidden attribute, so display follows state. */}
+      <span id={id} hidden={!open} className={`${open ? 'block' : 'hidden'} my-3 border-s-[3px] border-ink bg-acid px-4 py-3 text-sm text-ink`}>
         <span className="mb-1 block text-xs font-bold">
           {heading}
           {originalLabel ? ` · ${originalLabel}` : ''}
