@@ -144,11 +144,40 @@ function parseFaq(raw: unknown[]): FaqItem[] {
   });
 }
 
-/** sanitizeHtml (lib/sanitize.ts) plus: no style attributes and no inline SVG on case pages. */
+const URL_ATTRS = ['href', 'src', 'xlink:href', 'action', 'formaction', 'poster', 'background', 'cite', 'data'];
+const SAFE_SCHEMES = new Set(['https', 'http', 'mailto']);
+
+/**
+ * Scheme allowlist for one URL attribute value. Browsers drop ASCII tab/newline
+ * anywhere in a URL and C0 controls/space at its ends before reading the scheme,
+ * so `java\tscript:` and `\x01javascript:` run as javascript:. Strip the same
+ * characters first, then allow only relative URLs and http(s)/mailto
+ * (plus data:image/ in img src).
+ */
+export function isSafeCaseUrl(value: string, attr: string, tag: string): boolean {
+  const s = value.replace(/[\u0000- \u007f-\u009f]/g, '').toLowerCase();
+  const m = /^([a-z][a-z0-9+.-]*):/.exec(s);
+  if (!m) return true; // relative path, #fragment or //host
+  if (m[1] === 'data') return attr === 'src' && tag === 'img' && s.startsWith('data:image/');
+  return SAFE_SCHEMES.has(m[1]);
+}
+
+/** sanitizeHtml (lib/sanitize.ts) plus: no style, no inline SVG, no srcset, URL scheme allowlist. */
 export function sanitiseCaseHtml(html: string): string {
   const $ = cheerio.load(sanitizeHtml(html), null, false);
   $('svg').remove();
   $('[style]').removeAttr('style');
+  $('[srcset]').removeAttr('srcset');
+  $('*').each((_, node) => {
+    const el = node as unknown as { tagName?: string; attribs?: Record<string, string> };
+    const attribs = el.attribs ?? {};
+    for (const attr of Object.keys(attribs)) {
+      const lower = attr.toLowerCase();
+      if (URL_ATTRS.includes(lower) && !isSafeCaseUrl(attribs[attr], lower, (el.tagName ?? '').toLowerCase())) {
+        $(node).removeAttr(attr);
+      }
+    }
+  });
   return $.html().trim();
 }
 
