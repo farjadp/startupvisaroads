@@ -386,6 +386,14 @@ Critical path: phase 0 eval → phase 1 admin gate → first publish. Phase 0 an
 7. **Socials.** **Recommend:** no auto-share; type A shared manually; type B never on socials or in ads in v1.
 8. **Raw client notes.** **Recommend:** file-only intake (never pasted into chat), deleted 7 days after you approve the redacted version.
 
+## 12a. Decided (2026-11-09)
+
+- **Visual direction: A "Docket"** — chosen by Farjad.
+- **Party names:** neutral citation only; no applicant names in body, slugs, titles or structured data (recommended default, adopted).
+- **Client cases:** consent model built in phase 1; no client case published until counsel has reviewed the consent form and the first client has signed the final text (adopted).
+- **Counsel review spend:** OPEN — Farjad's call. Building proceeds; publishing the first court-decision page stays blocked until the reproduction question is answered.
+- Decisions 5–8: recommended defaults adopted unless Farjad says otherwise.
+
 ## 13. Risks and adjacent issues
 
 **Top risks.**
