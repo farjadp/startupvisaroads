@@ -13,9 +13,15 @@ describe('localeSwitchTarget', () => {
     expect(localeSwitchTarget('/usa/eb5', 'fa')).toBe('');
   });
 
-  it('sends a Persian-only page to the English home', () => {
-    expect(localeSwitchTarget('/which-path', 'en')).toBe('');
-    expect(localeSwitchTarget('/canada-startup-visa/cost', 'en')).toBe('');
+  it('switches the formerly Persian-only pages to their English twins', () => {
+    expect(localeSwitchTarget('/which-path', 'en')).toBe('/which-path');
+    expect(localeSwitchTarget('/canada-startup-visa/cost', 'en')).toBe('/startup-visa-canada/cost');
+  });
+
+  it('sends a path with no English twin to the English home', () => {
+    // Every Persian page is paired today, so there is no real Persian-only
+    // example; an unknown path exercises the same fallback.
+    expect(localeSwitchTarget('/no-such-page', 'en')).toBe('');
   });
 
   it('keeps home as home', () => {
