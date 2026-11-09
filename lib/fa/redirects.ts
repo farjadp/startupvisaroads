@@ -7,7 +7,7 @@
 import { isFaPath } from './paths';
 
 /** Persian sub-trees that exist but are not in the static allowlist. */
-const DYNAMIC_PREFIXES = ['/blog/', '/admin'];
+const DYNAMIC_PREFIXES = ['/blog/', '/case-studies/', '/admin'];
 
 /** `/fa/<retired>` -> `/en/<retired>`; null when the request should proceed. */
 export function faRedirectTarget(pathname: string): string | null {
