@@ -16,9 +16,9 @@ import { useEffect, useRef, useState } from 'react';
 import { AccessibilityInfo, Platform, Pressable, ScrollView, View, useWindowDimensions } from 'react-native';
 import { FX, convert, toUsdExact, type FxCurrency } from '@shared/fx';
 import { routeV2 } from '@shared/routes-v2';
-import { extrasOf } from '@shared/routes-v2/extras';
-import { match, type CriterionState } from '@shared/routes-v2/match';
-import type { Criterion, MoneyLine } from '@shared/routes-v2/types';
+import { PROFILES, extrasOf } from '@shared/routes-v2/extras';
+import { match } from '@shared/routes-v2/match';
+import type { MoneyLine, V2Country } from '@shared/routes-v2/types';
 import { HOME_CURRENCY, toProfile, type Residence } from '@/content/assessment';
 import { FX_OLD, FX_TOO_OLD } from '@/engine/fx-age';
 import { statusByKey, tally, type Tally } from '@/engine/tally';
@@ -36,6 +36,7 @@ import { Banner, Button, Disclaimer, Heading, Label, LinkRow, Ruled, Screen, Sou
 import { CheckWhatYouKnow, Documents, Realities, TeamMoney, ToCitizenship, YourRoad } from '@/ui/road';
 import { Segments } from '@/ui/Segments';
 import { T } from '@/ui/T';
+import { ConditionRow, CountTiles, CountryAtAGlance, LongText } from '@/ui/visual';
 
 /** Label beside amount; stacked at accessibility text sizes so the label never breaks word by word (HIG Dynamic Type). */
 function useAmountRow() {
@@ -50,39 +51,6 @@ const HIT = Platform.OS === 'android' ? size.touchMinAndroid : size.touchMin;
 /** First letter up where the script has case ("based on…" opens a spoken label). */
 function upFirst(s: string, locale: string): string {
   return s.charAt(0).toLocaleUpperCase(locale) + s.slice(1);
-}
-
-/** A condition, with what the assessment found for it when there is one (the same states as the tally). */
-function CriterionRow({ c, status }: { c: Criterion; status?: CriterionState }) {
-  const { t, pick } = useI18n();
-  const { c: col } = useTheme();
-  const row = useAmountRow();
-  const label = pick(c.label);
-  const word = status ? (status === 'unscored' ? t('route2.notChecked') : t(`status.${status}`)) : null;
-  const note = c.note ? pick(c.note).text : null;
-  return (
-    <View
-      accessible={!!word}
-      accessibilityLabel={word ? [`${label.text}: ${word}`, note].filter(Boolean).join('. ') : undefined}
-      style={{ paddingVertical: space.s3, borderBottomWidth: 1, borderBottomColor: col.rule, gap: space.s1 }}
-    >
-      <View style={word ? row : undefined}>
-        <T variant="row" weight={c.weight === 3 ? 'bold' : 'medium'} lang={label.lang} style={{ flexShrink: 1 }}>
-          {label.text}
-        </T>
-        {word ? (
-          <T variant="row" weight="bold">
-            {word}
-          </T>
-        ) : null}
-      </View>
-      {c.note ? (
-        <T variant="caption" tone="fgMuted" lang={pick(c.note).lang}>
-          {pick(c.note).text}
-        </T>
-      ) : null}
-    </View>
-  );
 }
 
 /** The extra currency chosen in the Funds tool (older installs: the USD switch); none past 90 days. */
@@ -165,7 +133,7 @@ function StatusTally({ counts, coverage, onPress }: { counts: Tally; coverage: s
 
 export default function RoutePage() {
   const { key, tab: tabParam } = useLocalSearchParams<{ key: string; tab?: string }>();
-  const { t, pick, money, date, count } = useI18n();
+  const { t, pick, money, date, count, locale } = useI18n();
   const { state, openedSource } = useStore();
   const row = useAmountRow();
   const reduce = useReduceMotion();
@@ -198,6 +166,7 @@ export default function RoutePage() {
   const route = routeV2(routeKey);
   if (!route) return null;
   const extras = extrasOf(route.key) ?? {};
+  const profile = (PROFILES as Partial<Record<V2Country, (typeof PROFILES)[V2Country]>>)[route.country as V2Country];
   const about = () => setAboutOpen(true);
   // The passport gate (v2 flow §3): a route closed to the user's passport carries no journey, quiz or offer.
   const passport = state.assess.citizenship && state.assess.citizenship !== 'skip' ? state.assess.citizenship : null;
@@ -317,7 +286,8 @@ export default function RoutePage() {
       {route.status !== 'open' ? <Banner text={t(`route2.status.${route.status}`)} /> : null}
       {blocked ? <Banner text={t('road.notForYou', { reason: pick(blocked.reason).text })} /> : null}
 
-      {scored ? (
+      {/* On Rules the count tiles already say this, so the line is shown on the other tabs only. */}
+      {scored && tab !== 'rules' ? (
         <StatusTally
           counts={tally(scored.results)}
           coverage={t('assess2.coverage', { n: count(scored.coverage.scored), total: count(scored.coverage.of) })}
@@ -343,26 +313,25 @@ export default function RoutePage() {
 
           {tab === 'rules' ? (
             <>
+              {scored ? <CountTiles counts={tally(scored.results)} coverage={upFirst(t('assess2.coverage', { n: count(scored.coverage.scored), total: count(scored.coverage.of) }), locale)} /> : null}
               {checkable.length ? (
                 <View ref={conditions} collapsable={false}>
                   <View ref={conditionsHead} accessible accessibilityRole="header">
                     <Label>{t('route2.checkable')}</Label>
                   </View>
-                  <Ruled>{checkable.map((c) => <CriterionRow key={c.key} c={c} status={statuses?.get(c.key)} />)}</Ruled>
+                  <Ruled>{checkable.map((c) => <ConditionRow key={c.key} c={c} status={statuses?.get(c.key)} section={t('route2.checkable')} />)}</Ruled>
                 </View>
               ) : null}
               {authority.length ? (
                 <View>
                   <Label>{t('route2.authority')}</Label>
-                  <Ruled>{authority.map((c) => <CriterionRow key={c.key} c={c} />)}</Ruled>
+                  <Ruled>{authority.map((c) => <ConditionRow key={c.key} c={c} status={scored ? 'unscored' : undefined} section={t('route2.authority')} />)}</Ruled>
                 </View>
               ) : null}
               {route.processing ? (
                 <View style={{ gap: space.s2 }}>
                   <Label>{t('route4.time')}</Label>
-                  <T variant="body" lang={pick(route.processing.text).lang}>
-                    {pick(route.processing.text).text}
-                  </T>
+                  <LongText text={route.processing.text} title={t('route4.time')} />
                 </View>
               ) : null}
             </>
@@ -408,12 +377,11 @@ export default function RoutePage() {
             <>
               <View style={{ gap: space.s2 }}>
                 <Label>{t('route2.pr')}</Label>
-                <T variant="body" lang={pick(route.pr).lang}>
-                  {pick(route.pr).text}
-                </T>
+                <LongText text={route.pr} title={t('route2.pr')} />
               </View>
               {extras.realities ? <Realities items={extras.realities} /> : null}
               {extras.timeline ? <ToCitizenship timeline={extras.timeline} /> : null}
+              {profile ? <CountryAtAGlance profile={profile} /> : null}
               <Ruled>
                 <LinkRow icon="globe" label={t('road.aboutCountry', { country: pick(COUNTRY_NAMES[route.country as Country]).text })} onPress={() => router.push(`/(tabs)/countries/country/${route.country}`)} />
               </Ruled>
