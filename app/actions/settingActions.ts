@@ -2,6 +2,7 @@
 
 import prisma from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
+import { requireAdmin, UnauthorizedError } from '@/lib/admin-guard';
 
 const ALLOWED_SETTING_KEYS = [
   'LINKEDIN_ACCESS_TOKEN',
@@ -23,6 +24,7 @@ const SENSITIVE_KEYS = [
 
 export async function saveSettings(formData: FormData) {
   try {
+    await requireAdmin();
     for (const key of ALLOWED_SETTING_KEYS) {
       const value = formData.get(key) as string;
 
@@ -46,6 +48,7 @@ export async function saveSettings(formData: FormData) {
     revalidatePath('/fa/admin/settings');
     return { success: true };
   } catch (error: any) {
+    if (error instanceof UnauthorizedError) return { success: false, error: 'Unauthorized' };
     console.error('Error saving settings:', error);
     return { success: false, error: error.message };
   }

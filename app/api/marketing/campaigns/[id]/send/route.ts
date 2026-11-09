@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { getSessionFromRequest } from '@/lib/auth';
-import { getMarketingSettings, sendEmail, sendSms, getTodaySentCount } from '@/lib/marketing';
+import { getMarketingSettings, sendEmail, sendSms, getTodaySentCount, selectRecipients } from '@/lib/marketing';
 import * as cheerio from 'cheerio';
+import { assertLinkSigningConfigured, buildUnsubscribeUrl, clickSignature } from '@/lib/signed-links';
 
 async function checkAuth(req: NextRequest) {
   const session = await getSessionFromRequest(req);
@@ -75,6 +76,15 @@ export async function POST(
   const maxSmsPerDay = parseInt(settings['marketing_max_sms_per_day'] || '1000');
   const unsubscribeUrl = settings['marketing_unsubscribe_url'] || '';
 
+  // Unsubscribe and external click links are HMAC-signed; without a key the
+  // recipients could not unsubscribe, so refuse to send at all.
+  try {
+    assertLinkSigningConfigured();
+  } catch (e) {
+    console.error('Campaign send blocked:', e);
+    return NextResponse.json({ error: 'Link signing secret not configured' }, { status: 500 });
+  }
+
   // ── Test send mode ──────────────────────────────────────────────────────────
   if (testEmail || testPhone) {
     let emailResult = null;
@@ -84,11 +94,7 @@ export async function POST(
       if (!resendKey) return NextResponse.json({ error: 'Resend API Key not configured' }, { status: 422 });
       
       const unsubBase = unsubscribeUrl || `${siteUrl}/unsubscribe`;
-      const unsubUrl = unsubBase
-        ? (unsubBase.includes('?') 
-            ? `${unsubBase}&email=${encodeURIComponent(testEmail)}` 
-            : `${unsubBase}?email=${encodeURIComponent(testEmail)}`)
-        : '';
+      const unsubUrl = buildUnsubscribeUrl(unsubBase, testEmail);
       let html = appendUnsubscribeFooter(campaign.body, unsubUrl);
       
       html = trackifyHtml(html, 'test-log-id', siteUrl);
@@ -128,13 +134,7 @@ export async function POST(
   }
 
   // ── Full send (Background execution) ──────────────────────────────────────────
-  const contactMap = new Map<string, { id: string; email: string | null; phone: string | null }>();
-  for (const cg of campaign.groups) {
-    for (const contact of cg.group.contacts) {
-      contactMap.set(contact.id, contact);
-    }
-  }
-  const contacts = Array.from(contactMap.values());
+  const contacts = selectRecipients(campaign.groups);
 
   if (campaign.type === 'EMAIL' || campaign.type === 'BOTH') {
     const todayEmails = await getTodaySentCount('EMAIL');
@@ -205,11 +205,7 @@ async function processCampaignInBackground({
           logId = logRecord.id;
 
           const unsubBase = unsubscribeUrl || `${siteUrl}/unsubscribe`;
-          const unsubUrl = unsubBase
-            ? (unsubBase.includes('?') 
-                ? `${unsubBase}&email=${encodeURIComponent(contact.email)}` 
-                : `${unsubBase}?email=${encodeURIComponent(contact.email)}`)
-            : '';
+          const unsubUrl = buildUnsubscribeUrl(unsubBase, contact.email);
           let html = appendUnsubscribeFooter(campaign.body, unsubUrl);
           
           html = trackifyHtml(html, logId, siteUrl);
@@ -293,7 +289,7 @@ function trackifyHtml(html: string, logId: string, siteUrl: string): string {
     const href = $(elem).attr('href');
     if (href && !href.startsWith('#') && !href.startsWith('mailto:') && !href.startsWith('tel:')) {
       if (!href.includes('/unsubscribe') && !href.includes('/track/')) {
-        const trackingUrl = `${siteUrl}/api/marketing/track/click?logId=${logId}&url=${encodeURIComponent(href)}`;
+        const trackingUrl = `${siteUrl}/api/marketing/track/click?logId=${logId}&url=${encodeURIComponent(href)}&sig=${clickSignature(href)}`;
         $(elem).attr('href', trackingUrl);
       }
     }
