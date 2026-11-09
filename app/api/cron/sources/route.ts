@@ -13,6 +13,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { runPendingJobs } from '@/lib/knowledge/ingest';
 import { authorisedCron } from '@/lib/cron-auth';
 import { releaseScheduled } from '@/lib/agent-articles';
+import { releaseDueCaseStudies } from '@/lib/case-studies/workflow';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 300;
@@ -29,6 +30,17 @@ export async function GET(req: NextRequest) {
     console.error('[sources] releaseScheduled', e);
     return [] as string[];
   });
+  // Held case studies too (lib/case-studies/workflow.ts); the gate is re-checked at release.
+  let caseStudies: string[] = [];
+  try {
+    const cs = await releaseDueCaseStudies();
+    caseStudies = cs.released;
+    if (cs.released.length || cs.held.length) {
+      console.info(`[sources] case studies released ${cs.released.length}, held ${cs.held.length}`, cs.held);
+    }
+  } catch (e) {
+    console.error('[sources] releaseDueCaseStudies', e);
+  }
   const result = await runPendingJobs({ limit, sourceId, budgetMs: 200_000 });
-  return NextResponse.json({ ok: true, seconds: Math.round((Date.now() - started) / 1000), released, ...result });
+  return NextResponse.json({ ok: true, seconds: Math.round((Date.now() - started) / 1000), released, caseStudies, ...result });
 }
