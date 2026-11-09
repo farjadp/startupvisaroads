@@ -1,0 +1,43 @@
+{
+  "_note": "Synthetic stage 8 cases: recorded en/fa drafts over a fixed claim set. 'mutate' patches the clean base drafts; 'expect' lists the problem kinds the trace must raise ([] = must pass). Party names are invented.",
+  "partyNames": ["DARIUS TESTNAME"],
+  "claims": [
+    { "id": "f1", "kind": "fact", "text": "The officer said the language test results were missing.", "paras": [4], "quote": "the IELTS results were not included", "verified": false },
+    { "id": "f2", "kind": "fact", "text": "The applicant showed CAD$ 36,023.72 in funds.", "paras": [27], "quote": "CAD$ 36,023.72 in liquidities", "verified": false },
+    { "id": "h1", "kind": "holding", "text": "The Court found the treatment of funds unintelligible.", "paras": [26], "quote": "the Officer's unintelligible treatment of the Applicant's funds", "verified": false }
+  ],
+  "base": {
+    "en": {
+      "title": "Start-up Visa work permit refusal sent back after the officer missed language results",
+      "excerpt": "The Court set aside a refusal because the officer misread the file.",
+      "keyTakeaway": "Check that the officer actually read what you filed.",
+      "sections": [
+        { "heading": "What happened", "sentences": [ { "text": "The officer said the language test results were missing.", "claimIds": ["f1"] }, { "text": "The applicant had shown CAD$ 36,023.72 in funds.", "claimIds": ["f2"] } ] },
+        { "heading": "What the Court decided", "sentences": [ { "text": "The Court found the officer's treatment of the funds unintelligible.", "claimIds": ["h1"] }, { "text": "Here is why that matters.", "claimIds": [] } ] }
+      ],
+      "faq": [ { "q": "Did the Court grant a visa?", "a": "No. The Court found the reasons unintelligible and sent the file back.", "claimIds": ["h1"] } ]
+    },
+    "fa": {
+      "title": "رفع ریجکتی ورک پرمیت استارتاپ ویزا وقتی افسر نتیجه آزمون زبان را ندید",
+      "excerpt": "دادگاه تصمیم افسر را کنار گذاشت چون افسر پرونده را درست نخوانده بود.",
+      "keyTakeaway": "مطمئن شوید افسر همان مدارکی را خوانده که فرستاده‌اید.",
+      "sections": [
+        { "heading": "چه اتفاقی افتاد", "sentences": [ { "text": "افسر نوشته بود نتیجه آزمون زبان در پرونده نیست.", "claimIds": ["f1"] }, { "text": "متقاضی مدارک مالی خود را ارائه کرده بود.", "claimIds": ["f2"] } ] },
+        { "heading": "دادگاه چه گفت", "sentences": [ { "text": "دادگاه به این نتیجه رسید که برخورد افسر با مدارک مالی قابل فهم نبود.", "claimIds": ["h1"] }, { "text": "این نکته برای متقاضیان مهم است.", "claimIds": [] } ] }
+      ],
+      "faq": [ { "q": "پذیرفته شدن بازبینی قضایی یعنی صدور ویزا؟", "a": "نه. دادگاه پرونده را برای تصمیم دوباره برگرداند.", "claimIds": ["h1"] } ]
+    }
+  },
+  "cases": [
+    { "id": "trace-clean", "category": "trace", "mutate": [], "expect": [] },
+    { "id": "trace-invented-number-en", "category": "trace", "mutate": [ { "locale": "en", "section": 1, "sentence": 0, "text": "The Court found the officer's treatment of the funds unintelligible, as in 3 earlier cases.", "claimIds": ["h1"] } ], "expect": ["invented_number"] },
+    { "id": "trace-framing-with-date", "category": "trace", "mutate": [ { "locale": "en", "section": 1, "sentence": 1, "text": "The hearing took place in March 2024.", "claimIds": [] } ], "expect": ["invented_number"] },
+    { "id": "trace-parity", "category": "trace", "mutate": [ { "locale": "fa", "section": 0, "sentence": 1, "text": "متقاضی مدارک مالی خود را ارائه کرده بود.", "claimIds": [] } ], "expect": ["parity"] },
+    { "id": "trace-unknown-claim", "category": "trace", "mutate": [ { "locale": "en", "section": 0, "sentence": 0, "text": "The officer said the language test results were missing.", "claimIds": ["f9"] }, { "locale": "fa", "section": 0, "sentence": 0, "text": "افسر نوشته بود نتیجه آزمون زبان در پرونده نیست.", "claimIds": ["f9"] } ], "expect": ["unknown_claim"] },
+    { "id": "trace-red-line-en", "category": "trace", "mutate": [ { "locale": "en", "section": 1, "sentence": 1, "text": "With us you get guaranteed approval.", "claimIds": [] } ], "expect": ["red_line"] },
+    { "id": "trace-red-line-fa", "category": "trace", "mutate": [ { "locale": "fa", "section": 1, "sentence": 1, "text": "ما تضمین ویزا می‌دهیم.", "claimIds": [] } ], "expect": ["red_line"] },
+    { "id": "trace-court-approved-visa", "category": "trace", "mutate": [ { "locale": "en", "section": 1, "sentence": 1, "text": "The Court approved the visa.", "claimIds": [] } ], "expect": ["red_line"] },
+    { "id": "trace-party-name-en", "category": "trace", "mutate": [ { "locale": "en", "section": 0, "sentence": 0, "text": "Mr. Testname said the language test results were missing.", "claimIds": ["f1"] } ], "expect": ["party_name"] },
+    { "id": "trace-fa-lint", "category": "trace", "mutate": [ { "locale": "fa", "section": 1, "sentence": 1, "text": "اين نكته براي متقاضيان مهم است.", "claimIds": [] } ], "expect": ["fa_lint"] }
+  ]
+}

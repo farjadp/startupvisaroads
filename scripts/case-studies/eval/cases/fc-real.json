@@ -1,0 +1,10 @@
+{
+  "_note": "Labels for the 5 fetched decisions (spec §10). Short quotes only: the repo is public and never holds decision texts. Offline checks run against the private cache (~/VisaRoads-private/case-studies) and skip when it is absent. Drafted by llm-engineer 9 Nov 2026; Farjad spot-check pending.",
+  "cases": [
+    { "id": "fc-2025-12", "category": "fc-real", "citation": "2025 FC 12", "route": "start-up-visa", "labels": { "disposition": "allowed", "remitted": true, "certified": "none", "decisionDate": "2025-01-02", "holding": { "para": 26, "quote": "I find that the Officer's unintelligible treatment of the Applicant's funds" } } },
+    { "id": "fc-2025-1599", "category": "fc-real", "citation": "2025 FC 1599", "route": "start-up-visa", "labels": { "disposition": "dismissed", "remitted": false, "certified": "none", "decisionDate": "2025-09-29", "holding": { "para": 38, "quote": "I find that the PFL provided a transparent and intelligible explanation for the Applicant" } } },
+    { "id": "fc-2026-146", "category": "fc-real", "citation": "2026 FC 146", "route": "start-up-visa", "labels": { "disposition": "allowed", "remitted": true, "certified": "none", "decisionDate": "2026-01-30", "holding": { "para": 12, "quote": "the Decision is unreasonable as the Officer failed to properly justify their conclusion" } } },
+    { "id": "fc-2026-158", "category": "fc-real", "citation": "2026 FC 158", "route": "work-permit-c11", "labels": { "disposition": "dismissed", "remitted": false, "certified": "none", "decisionDate": "2026-02-04", "holding": { "para": 18, "quote": "The officer reasonably found that the Applicant's proposed business plan would not provide significant economic, social or cultural benefits to Canada." } } },
+    { "id": "fc-2026-255", "category": "fc-real", "citation": "2026 FC 255", "route": "study-permit", "labels": { "disposition": "allowed", "remitted": true, "certified": "none", "decisionDate": "2026-02-23", "holding": { "para": 15, "quote": "Having regard to the noted standard of review, I find that the Decision was not reasonable." } } }
+  ]
+}
