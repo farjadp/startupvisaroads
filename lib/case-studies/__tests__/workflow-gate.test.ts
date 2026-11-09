@@ -3,11 +3,14 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 const db = vi.hoisted(() => {
   const fn = () => vi.fn(async (..._args: unknown[]): Promise<any> => null);
-  return {
+  const d = {
     caseStudy: { findMany: fn(), updateMany: fn() },
     consentRecord: { findUnique: fn() },
     setting: { findMany: fn() },
+    // Interactive transaction: run the callback against the same mock client.
+    $transaction: async (cb: (tx: unknown) => unknown): Promise<unknown> => cb(d),
   };
+  return d;
 });
 vi.mock('@/lib/prisma', () => ({ default: db }));
 
@@ -95,7 +98,7 @@ describe('publishBlockers', () => {
 describe('releaseDueCaseStudies', () => {
   const row = { ...fc({ status: 'SCHEDULED', approvedAt: new Date('2026-11-01') }), id: 'r1', locale: 'en', slug: 'start-up-visa-2025-fc-12' };
   beforeEach(() => {
-    Object.values(db).forEach((m) => Object.values(m).forEach((f) => f.mockReset()));
+    [db.caseStudy, db.consentRecord, db.setting].forEach((m) => Object.values(m).forEach((f) => f.mockReset()));
     db.caseStudy.findMany.mockResolvedValue([row]);
     db.caseStudy.updateMany.mockResolvedValue({ count: 1 });
   });

@@ -296,11 +296,22 @@ export async function transitionCaseStudy(
       break;
     }
     case 'publish': {
-      const reasons = publishBlockers(row, await getCaseStudySettings(), consent, 'now');
-      if (reasons.length) return fail(409, 'Cannot publish', reasons);
-      where = { id, status: 'APPROVED', approvedAt: { not: null }, updatedAt: row.updatedAt };
-      data = { status: 'PUBLISHED', publishedAt: now };
-      break;
+      // The switches are re-read inside the same transaction as the conditional
+      // update, so a switch turned off after the first check is honoured.
+      const outcome = await prisma.$transaction(
+        async (tx): Promise<Failure | null> => {
+          const reasons = publishBlockers(row, await getCaseStudySettings(tx), consent, 'now');
+          if (reasons.length) return fail(409, 'Cannot publish', reasons);
+          const { count } = await tx.caseStudy.updateMany({
+            where: { id, status: 'APPROVED', approvedAt: { not: null }, updatedAt: row.updatedAt },
+            data: { status: 'PUBLISHED', publishedAt: now },
+          });
+          return count ? null : fail(409, STALE, [STALE]);
+        },
+        { isolationLevel: 'Serializable' },
+      );
+      if (outcome) return outcome;
+      return finishTransition(id, action, row.status, opts.username);
     }
     case 'reopen': {
       if (row.status !== 'APPROVED' && row.status !== 'SCHEDULED') {
@@ -323,7 +334,11 @@ export async function transitionCaseStudy(
 
   const { count } = await prisma.caseStudy.updateMany({ where, data });
   if (!count) return fail(409, STALE, [STALE]);
-  console.info(`[case-studies] ${action} ${id} (${row.status}) by ${opts.username}`);
+  return finishTransition(id, action, row.status, opts.username);
+}
+
+async function finishTransition(id: string, action: TransitionAction, from: string, username: string): Promise<TransitionResult> {
+  console.info(`[case-studies] ${action} ${id} (${from}) by ${username}`);
   const updated = await prisma.caseStudy.findUniqueOrThrow({ where: { id } });
   return { ok: true, item: serialiseCaseStudy(updated) };
 }
@@ -366,21 +381,27 @@ export async function releaseDueCaseStudies(now = new Date(), limit = 10): Promi
   });
   const out: ReleaseResult = { released: [], held: [] };
   if (!due.length) return out;
-  const settings = await getCaseStudySettings();
   for (const row of due) {
-    const consent = row.consentRecordId
-      ? await prisma.consentRecord.findUnique({ where: { id: row.consentRecordId } })
-      : null;
-    const reasons = publishBlockers(row, settings, consent, 'release');
-    if (reasons.length) {
-      out.held.push({ id: row.id, reasons });
-      continue;
-    }
-    const { count } = await prisma.caseStudy.updateMany({
-      where: { id: row.id, status: 'SCHEDULED', approvedAt: { not: null }, publishAt: { lte: now } },
-      data: { status: 'PUBLISHED', publishedAt: now },
-    });
-    if (count) out.released.push(`${row.locale}/${row.slug}`);
+    // Settings, consent and the conditional update share one transaction, so a
+    // switch turned off (or a consent revoked) mid-run is honoured for this row.
+    const step = await prisma.$transaction(
+      async (tx): Promise<{ released: boolean; reasons: string[] }> => {
+        const settings = await getCaseStudySettings(tx);
+        const consent = row.consentRecordId
+          ? await tx.consentRecord.findUnique({ where: { id: row.consentRecordId } })
+          : null;
+        const reasons = publishBlockers(row, settings, consent, 'release');
+        if (reasons.length) return { released: false, reasons };
+        const { count } = await tx.caseStudy.updateMany({
+          where: { id: row.id, status: 'SCHEDULED', approvedAt: { not: null }, publishAt: { lte: now } },
+          data: { status: 'PUBLISHED', publishedAt: now },
+        });
+        return { released: count > 0, reasons: [] };
+      },
+      { isolationLevel: 'Serializable' },
+    );
+    if (step.reasons.length) out.held.push({ id: row.id, reasons: step.reasons });
+    else if (step.released) out.released.push(`${row.locale}/${row.slug}`);
   }
   return out;
 }
