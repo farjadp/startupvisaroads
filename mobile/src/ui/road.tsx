@@ -561,7 +561,8 @@ export function TeamMoney({ funds, authority, home, onAbout, founderRange }: { f
 
 // ------------------------------------------------------------- what no one tells you
 
-const KIND_ICON: Record<Reality['kind'], IconName> = { challenge: 'alert', tip: 'speech', myth: 'shield' };
+// A myth is a claim people repeat, so it gets the speech mark, never the shield (which reads as "verified").
+const KIND_ICON: Record<Reality['kind'], IconName> = { challenge: 'alert', tip: 'compass', myth: 'speech' };
 
 export function Realities({ items }: { items: Reality[] }) {
   const { t, pick } = useI18n();

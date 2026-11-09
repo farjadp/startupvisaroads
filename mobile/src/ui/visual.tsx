@@ -7,7 +7,7 @@ import { useRef, useState, type ReactNode } from 'react';
 import { AccessibilityInfo, Platform, Pressable, View, findNodeHandle, useWindowDimensions } from 'react-native';
 import type { CountryProfile, Indicator } from '@shared/routes-v2/extras-types';
 import type { CriterionState } from '@shared/routes-v2/match';
-import type { Criterion, L10n } from '@shared/routes-v2/types';
+import type { Criterion, L10n, Source } from '@shared/routes-v2/types';
 import type { Tally } from '@/engine/tally';
 import { toPersianDigits } from '@/i18n/format';
 import { useI18n } from '@/i18n/I18nProvider';
@@ -195,7 +195,7 @@ export function LongText({ text, title, variant = 'body', tone }: { text: L10n; 
 // ------------------------------------------------------------------ conditions
 
 /** A condition: its mark and word when the assessment scored it, label on one line, the note in the sheet. */
-export function ConditionRow({ c, status, section }: { c: Criterion; status?: CriterionState; section: string }) {
+export function ConditionRow({ c, status, section, sources }: { c: Criterion; status?: CriterionState; section: string; sources?: Source[] }) {
   const { t, pick } = useI18n();
   const word = useStatusWord();
   const label = pick(c.label);
@@ -226,6 +226,8 @@ export function ConditionRow({ c, status, section }: { c: Criterion; status?: Cr
           {note.text}
         </T>
       ) : null}
+      {/* Every figure carries its source and checked date, in the sheet too (trust rule). */}
+      {sources?.map((src) => <SourceLine key={src.url} url={src.url} updated={src.checked} />)}
     </FoldRow>
   );
 }

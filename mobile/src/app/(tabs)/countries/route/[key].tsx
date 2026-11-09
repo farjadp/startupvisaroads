@@ -319,13 +319,13 @@ export default function RoutePage() {
                   <View ref={conditionsHead} accessible accessibilityRole="header">
                     <Label>{t('route2.checkable')}</Label>
                   </View>
-                  <Ruled>{checkable.map((c) => <ConditionRow key={c.key} c={c} status={statuses?.get(c.key)} section={t('route2.checkable')} />)}</Ruled>
+                  <Ruled>{checkable.map((c) => <ConditionRow key={c.key} c={c} status={statuses?.get(c.key)} section={t('route2.checkable')} sources={route.sources} />)}</Ruled>
                 </View>
               ) : null}
               {authority.length ? (
                 <View>
                   <Label>{t('route2.authority')}</Label>
-                  <Ruled>{authority.map((c) => <ConditionRow key={c.key} c={c} status={scored ? 'unscored' : undefined} section={t('route2.authority')} />)}</Ruled>
+                  <Ruled>{authority.map((c) => <ConditionRow key={c.key} c={c} status={scored ? 'unscored' : undefined} section={t('route2.authority')} sources={route.sources} />)}</Ruled>
                 </View>
               ) : null}
               {route.processing ? (
