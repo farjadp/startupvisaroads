@@ -24,8 +24,9 @@ import { useStore } from '@/state/store';
 import { useTheme } from '@/theme/ThemeProvider';
 import { motion, space, size, typeSpec } from '@/theme/tokens';
 import { Flag } from '@/ui/Flag';
-import { Banner, Button, Chip, Disclaimer, Heading, Label, SourceLine, Screen } from '@/ui/kit';
+import { Banner, Button, Chip, Heading, Label, SourceLine, Screen } from '@/ui/kit';
 import { T } from '@/ui/T';
+import { DisclaimerWithAbout } from '@/ui/InfoSheets';
 
 /** Countries with a funds entry, in the app's country order. */
 const FUNDS_ORDER = COUNTRY_ORDER.filter((k): k is FundsCountry => k in FUNDS);
@@ -520,7 +521,7 @@ export default function Funds() {
         {/* Rates over 90 days old are not offered at all rather than shown stale. */}
         {FX_TOO_OLD ? null : <CurrencyChips official={official} value={chosen} onChange={(v) => set({ fundsCurrency: v })} />}
         <AltCtx.Provider value={chosen}>{country === 'CA' ? <CanadaFunds /> : <CountryFunds country={country} />}</AltCtx.Provider>
-        <Disclaimer onAbout={() => router.navigate('/(tabs)/me/about')} />
+        <DisclaimerWithAbout />
       </Screen>
     </View>
   );

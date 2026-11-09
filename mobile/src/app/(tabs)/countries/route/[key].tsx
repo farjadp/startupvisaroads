@@ -7,11 +7,12 @@
 // realities, the timeline to citizenship and the country, for routes this user
 // can run; routes closed to them keep only the facts and the reason.
 // Trimmed after the UX review (27 Oct 2026): a status tally for assessed
-// users, the drawn road, then three folding chapters (Do, The rules, After
-// you arrive). Nothing is dropped; the mentor, sources and disclaimer stay
-// unfolded at the end.
+// users, the drawn road, then three folding chapters. v4 stage 2 (spec
+// 2026-11-09 §3): the chapters become segments, Do · Rules · Money · After,
+// remembered per route; ?tab= selects one. The mentor, sources and disclaimer
+// stay under every segment; About and Mentor open as sheets in place.
 import { Stack, router, useLocalSearchParams } from 'expo-router';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { AccessibilityInfo, Platform, Pressable, ScrollView, View, useWindowDimensions } from 'react-native';
 import { FX, convert, toUsdExact, type FxCurrency } from '@shared/fx';
 import { routeV2 } from '@shared/routes-v2';
@@ -24,12 +25,16 @@ import { statusByKey, tally, type Tally } from '@/engine/tally';
 import { COUNTRY_NAMES, type Country } from '@/content/routes';
 import { useI18n } from '@/i18n/I18nProvider';
 import { useStore } from '@/state/store';
+import { cachedRouteTab, loadRouteTabs, saveRouteTab } from '@/state/routeTab';
+import { parseTab, pickTab, type RouteTab } from '@/state/routeTabParse';
 import { useTheme } from '@/theme/ThemeProvider';
 import { size, space } from '@/theme/tokens';
 import { Flag } from '@/ui/Flag';
 import { Icon } from '@/ui/Icon';
-import { Banner, Button, Chapter, Disclaimer, Heading, Label, LinkRow, Ruled, Screen, SourceLine, useReduceMotion } from '@/ui/kit';
+import { AboutSheet, MentorSheet } from '@/ui/InfoSheets';
+import { Banner, Button, Disclaimer, Heading, Label, LinkRow, Ruled, Screen, SourceLine, useReduceMotion } from '@/ui/kit';
 import { CheckWhatYouKnow, Documents, Realities, TeamMoney, ToCitizenship, YourRoad } from '@/ui/road';
+import { Segments } from '@/ui/Segments';
 import { T } from '@/ui/T';
 
 /** Label beside amount; stacked at accessibility text sizes so the label never breaks word by word (HIG Dynamic Type). */
@@ -158,25 +163,42 @@ function StatusTally({ counts, coverage, onPress }: { counts: Tally; coverage: s
   );
 }
 
-type ChapterKey = 'do' | 'rules' | 'after';
-
 export default function RoutePage() {
-  const { key } = useLocalSearchParams<{ key: string }>();
-  const { t, pick, money, date, count, locale } = useI18n();
-  const { c: col } = useTheme();
+  const { key, tab: tabParam } = useLocalSearchParams<{ key: string; tab?: string }>();
+  const { t, pick, money, date, count } = useI18n();
   const { state, openedSource } = useStore();
   const row = useAmountRow();
   const reduce = useReduceMotion();
-  // Chapters start folded and stay as the user leaves them for this visit only.
-  const [open, setOpen] = useState<Record<ChapterKey, boolean>>({ do: false, rules: false, after: false });
+  const routeKey = String(key);
+  // The segment chosen on this route, remembered across sessions (amendment 3); a ?tab= link wins on arrival.
+  const [chosen, setChosen] = useState<RouteTab | null | undefined>(() => parseTab(tabParam) ?? cachedRouteTab(routeKey));
+  const [aboutOpen, setAboutOpen] = useState(false);
+  const [mentorOpen, setMentorOpen] = useState(false);
   const scroll = useRef<ScrollView>(null);
+  const segmentsRef = useRef<View>(null);
   const conditions = useRef<View>(null);
   const conditionsHead = useRef<View>(null);
   const seeking = useRef(false);
-  const route = routeV2(String(key));
+  const switched = useRef(false);
+
+  useEffect(() => {
+    if (chosen !== undefined) return;
+    let live = true;
+    void loadRouteTabs().then(() => live && setChosen(cachedRouteTab(routeKey) ?? null));
+    return () => {
+      live = false;
+    };
+  }, [chosen, routeKey]);
+  // A later link to the same page (Home's "see what to close first") selects its tab too.
+  useEffect(() => {
+    const linked = parseTab(tabParam);
+    if (linked) setChosen(linked);
+  }, [tabParam]);
+
+  const route = routeV2(routeKey);
   if (!route) return null;
   const extras = extrasOf(route.key) ?? {};
-  const about = () => router.navigate('/(tabs)/me/about');
+  const about = () => setAboutOpen(true);
   // The passport gate (v2 flow §3): a route closed to the user's passport carries no journey, quiz or offer.
   const passport = state.assess.citizenship && state.assess.citizenship !== 'skip' ? state.assess.citizenship : null;
   const blocked = passport && route.blockedCitizenships?.codes.includes(passport) ? route.blockedCitizenships : null;
@@ -201,13 +223,43 @@ export default function RoutePage() {
   const scored = found && found.pct !== null ? found : null;
   const statuses = scored ? statusByKey(scored.results) : null;
 
-  const toggle = (k: ChapterKey) => setOpen((o) => ({ ...o, [k]: !o[k] }));
+  const quiz = runnable && !!extras.quiz?.length;
+  const docs = runnable && !!extras.documents?.length;
+  const team = calculator && !!extras.funds;
+  const officialMoney = route.money.length > 0 && !calculator;
+  const fees = !!route.fees?.length;
+  // Do exists only for a route this user can run; Money only when there is a figure to show.
+  const available: RouteTab[] = [
+    ...(quiz || docs || team ? (['do'] as const) : []),
+    'rules',
+    ...(team || officialMoney || fees ? (['money'] as const) : []),
+    'after',
+  ];
+  const tab = pickTab({ link: null, stored: chosen, available });
+
+  /** Puts the segmented control at the top of the screen (amendment 3), after the new segment has laid out. */
+  const controlToTop = () => {
+    const node = segmentsRef.current;
+    const sv = scroll.current;
+    // getInnerViewRef is on every ScrollView at runtime but missing from the legacy typings; Fabric's measureLayout
+    // takes a host ref, never the node number getInnerViewNode returns.
+    const inner = (sv as unknown as { getInnerViewRef?: () => View | null } | null)?.getInnerViewRef?.();
+    if (!node || !sv || !inner) return;
+    // A gap above it: on iOS 26 the native header takes taps a little below its drawn edge, which made the
+    // top half of a control flush against it dead (simulator pass, 9 Nov 2026).
+    node.measureLayout(inner, (_x, y) => sv.scrollTo({ y: Math.max(0, y - space.s10), animated: reduce === false }), () => {});
+  };
+  const select = (id: string) => {
+    const next = parseTab(id);
+    if (!next) return;
+    saveRouteTab(route.key, next);
+    switched.current = true;
+    setChosen(next);
+  };
   /** Scroll to the conditions once they are laid out, and move a screen reader there too. */
   const reachConditions = () => {
     const node = conditions.current;
     const sv = scroll.current;
-    // getInnerViewRef is on every ScrollView at runtime but missing from the legacy typings; Fabric's measureLayout
-    // takes a host ref, never the node number getInnerViewNode returns.
     const inner = (sv as unknown as { getInnerViewRef?: () => View | null } | null)?.getInnerViewRef?.();
     if (!node || !sv || !inner) return;
     seeking.current = false;
@@ -221,27 +273,20 @@ export default function RoutePage() {
     );
   };
   const seekConditions = () => {
-    if (open.rules) return reachConditions();
+    if (tab === 'rules') return reachConditions();
     seeking.current = true;
-    setOpen((o) => ({ ...o, rules: true }));
+    select('rules');
+    switched.current = false;
+  };
+  const onBodyLayout = () => {
+    if (seeking.current) return reachConditions();
+    if (switched.current) {
+      switched.current = false;
+      controlToTop();
+    }
   };
 
-  const quiz = runnable && !!extras.quiz?.length;
-  const docs = runnable && !!extras.documents?.length;
-  const team = calculator && !!extras.funds;
-  const officialMoney = route.money.length > 0 && !calculator;
-  const timeFees = !!route.processing || !!route.fees?.length;
-  const sub = (keys: (string | false)[]) =>
-    upFirst(
-      keys
-        .filter((k): k is string => !!k)
-        .map((k) => t(`route2.parts.${k}`))
-        .join(t('route2.sep')),
-      locale,
-    );
-  const doSub = sub([quiz && 'quiz', docs && 'documents', team && 'teamMoney']);
-  const rulesSub = sub([checkable.length > 0 && 'conditions', authority.length > 0 && 'authority', officialMoney && 'money', timeFees && 'timeFees', 'pr']);
-  const afterSub = sub([!!extras.realities?.length && 'realities', !!extras.timeline && 'citizenship', 'country']);
+  const tabs = available.map((id) => ({ id, label: t(`route4.tabs.${id}`) }));
 
   return (
     <Screen edges={[]} scrollRef={scroll}>
@@ -282,86 +327,108 @@ export default function RoutePage() {
 
       {runnable && extras.steps ? <YourRoad routeKey={route.key} steps={extras.steps} authority={route.agency} /> : null}
 
-      <View style={{ borderBottomWidth: 1, borderBottomColor: col.rule }}>
-        {doSub ? (
-          <Chapter title={t('route2.chapters.do')} sub={doSub} open={open.do} onToggle={() => toggle('do')}>
-            {quiz && extras.quiz ? <CheckWhatYouKnow routeKey={route.key} questions={extras.quiz.length} onQuiz={() => router.push(`/(tabs)/countries/quiz/${route.key}`)} /> : null}
-            {docs && extras.documents ? <Documents routeKey={route.key} docs={extras.documents} /> : null}
-            {/* Paused, closed or passport-blocked routes show the official figures only, no calculator (Farjad, 27-28 Oct 2026). */}
-            {team && extras.funds ? <TeamMoney funds={extras.funds} authority={route.agency} home={home} onAbout={about} founderRange={extras.founders} /> : null}
-          </Chapter>
-        ) : null}
-
-        <Chapter title={t('route2.chapters.rules')} sub={rulesSub} open={open.rules} onToggle={() => toggle('rules')}>
-          {checkable.length ? (
-            <View ref={conditions} onLayout={() => (seeking.current ? reachConditions() : undefined)}>
-              <View ref={conditionsHead} accessible accessibilityRole="header">
-                <Label>{t('route2.checkable')}</Label>
-              </View>
-              <Ruled>{checkable.map((c) => <CriterionRow key={c.key} c={c} status={statuses?.get(c.key)} />)}</Ruled>
-            </View>
-          ) : null}
-          {authority.length ? (
-            <View>
-              <Label>{t('route2.authority')}</Label>
-              <Ruled>{authority.map((c) => <CriterionRow key={c.key} c={c} />)}</Ruled>
-            </View>
-          ) : null}
-
-          {officialMoney ? (
-            <View>
-              <Label>{t('route2.money')}</Label>
-              <Ruled>{route.money.map((m) => <MoneyRow key={m.key} m={m} />)}</Ruled>
-              {moneyAlt && route.money.some((m) => m.currency !== moneyAlt) ? (
-                <T variant="caption" tone="fgMuted" style={{ marginTop: space.s2 }}>
-                  {`${t('funds.rates', { date: date(FX.date) })}${FX_OLD ? ` ${t('funds.usdOld')}` : ''}`}
-                </T>
-              ) : null}
-              <T variant="caption" tone="fgMuted" style={{ marginTop: space.s2 }}>
-                {t('funds.notApproval')}
-              </T>
-            </View>
-          ) : null}
-
-          {timeFees ? (
-            <View style={{ gap: space.s2 }}>
-              <Label>{t('route2.timeAndFees')}</Label>
-              {route.processing ? <T variant="body" lang={pick(route.processing.text).lang}>{pick(route.processing.text).text}</T> : null}
-              {route.fees?.map((f, i) => (
-                <View key={i} style={row}>
-                  <T variant="row" tone="fgMuted" lang={pick(f.label).lang} style={{ flexShrink: 1 }}>
-                    {pick(f.label).text}
-                  </T>
-                  <T variant="row" weight="bold">
-                    {money(f.amount, f.currency)}
-                  </T>
-                </View>
-              ))}
-            </View>
-          ) : null}
-
-          <View style={{ gap: space.s2 }}>
-            <Label>{t('route2.pr')}</Label>
-            <T variant="body" lang={pick(route.pr).lang}>
-              {pick(route.pr).text}
-            </T>
-          </View>
-        </Chapter>
-
-        <Chapter title={t('route2.chapters.after')} sub={afterSub} open={open.after} onToggle={() => toggle('after')}>
-          {extras.realities ? <Realities items={extras.realities} /> : null}
-          {extras.timeline ? <ToCitizenship timeline={extras.timeline} /> : null}
-          <Ruled>
-            <LinkRow icon="globe" label={t('road.aboutCountry', { country: pick(COUNTRY_NAMES[route.country as Country]).text })} onPress={() => router.push(`/(tabs)/countries/country/${route.country}`)} />
-          </Ruled>
-        </Chapter>
+      <View ref={segmentsRef} collapsable={false}>
+        <Segments items={tabs} value={tab} onChange={select} label={t('route4.tabsLabel')} />
       </View>
 
-      {runnable ? <Button kind="secondary" label={t('route2.talk')} onPress={() => router.navigate('/(tabs)/me/mentor')} /> : null}
+      {/* Waits for the stored choice (a few ms at most) so the page never flashes the wrong segment. */}
+      {chosen === undefined ? null : (
+        <View key={tab} onLayout={onBodyLayout} style={{ gap: space.s5 }}>
+          {tab === 'do' ? (
+            <>
+              {quiz && extras.quiz ? <CheckWhatYouKnow routeKey={route.key} questions={extras.quiz.length} onQuiz={() => router.push(`/(tabs)/countries/quiz/${route.key}`)} /> : null}
+              {docs && extras.documents ? <Documents routeKey={route.key} docs={extras.documents} /> : null}
+            </>
+          ) : null}
+
+          {tab === 'rules' ? (
+            <>
+              {checkable.length ? (
+                <View ref={conditions} collapsable={false}>
+                  <View ref={conditionsHead} accessible accessibilityRole="header">
+                    <Label>{t('route2.checkable')}</Label>
+                  </View>
+                  <Ruled>{checkable.map((c) => <CriterionRow key={c.key} c={c} status={statuses?.get(c.key)} />)}</Ruled>
+                </View>
+              ) : null}
+              {authority.length ? (
+                <View>
+                  <Label>{t('route2.authority')}</Label>
+                  <Ruled>{authority.map((c) => <CriterionRow key={c.key} c={c} />)}</Ruled>
+                </View>
+              ) : null}
+              {route.processing ? (
+                <View style={{ gap: space.s2 }}>
+                  <Label>{t('route4.time')}</Label>
+                  <T variant="body" lang={pick(route.processing.text).lang}>
+                    {pick(route.processing.text).text}
+                  </T>
+                </View>
+              ) : null}
+            </>
+          ) : null}
+
+          {tab === 'money' ? (
+            <>
+              {/* Paused, closed or passport-blocked routes show the official figures only, no calculator (Farjad, 27-28 Oct 2026). */}
+              {team && extras.funds ? <TeamMoney funds={extras.funds} authority={route.agency} home={home} onAbout={about} founderRange={extras.founders} /> : null}
+              {officialMoney ? (
+                <View>
+                  <Label>{t('route2.money')}</Label>
+                  <Ruled>{route.money.map((m) => <MoneyRow key={m.key} m={m} />)}</Ruled>
+                  {moneyAlt && route.money.some((m) => m.currency !== moneyAlt) ? (
+                    <T variant="caption" tone="fgMuted" style={{ marginTop: space.s2 }}>
+                      {`${t('funds.rates', { date: date(FX.date) })}${FX_OLD ? ` ${t('funds.usdOld')}` : ''}`}
+                    </T>
+                  ) : null}
+                  <T variant="caption" tone="fgMuted" style={{ marginTop: space.s2 }}>
+                    {t('funds.notApproval')}
+                  </T>
+                </View>
+              ) : null}
+              {fees ? (
+                <View style={{ gap: space.s2 }}>
+                  <Label>{t('route4.fees')}</Label>
+                  {route.fees?.map((f, i) => (
+                    <View key={i} style={row}>
+                      <T variant="row" tone="fgMuted" lang={pick(f.label).lang} style={{ flexShrink: 1 }}>
+                        {pick(f.label).text}
+                      </T>
+                      <T variant="row" weight="bold">
+                        {money(f.amount, f.currency)}
+                      </T>
+                    </View>
+                  ))}
+                </View>
+              ) : null}
+            </>
+          ) : null}
+
+          {tab === 'after' ? (
+            <>
+              <View style={{ gap: space.s2 }}>
+                <Label>{t('route2.pr')}</Label>
+                <T variant="body" lang={pick(route.pr).lang}>
+                  {pick(route.pr).text}
+                </T>
+              </View>
+              {extras.realities ? <Realities items={extras.realities} /> : null}
+              {extras.timeline ? <ToCitizenship timeline={extras.timeline} /> : null}
+              <Ruled>
+                <LinkRow icon="globe" label={t('road.aboutCountry', { country: pick(COUNTRY_NAMES[route.country as Country]).text })} onPress={() => router.push(`/(tabs)/countries/country/${route.country}`)} />
+              </Ruled>
+            </>
+          ) : null}
+        </View>
+      )}
+
+      {runnable ? <Button kind="secondary" label={t('route2.talk')} onPress={() => setMentorOpen(true)} /> : null}
       {sources.map((s) => (
         <SourceLine key={s.url} url={s.url} updated={s.checked} onOpen={() => openedSource(route.key)} />
       ))}
-      <Disclaimer onAbout={() => router.navigate('/(tabs)/me/about')} />
+      <Disclaimer onAbout={about} />
+      <AboutSheet open={aboutOpen} onClose={() => setAboutOpen(false)} />
+      <MentorSheet open={mentorOpen} onClose={() => setMentorOpen(false)} />
     </Screen>
   );
 }

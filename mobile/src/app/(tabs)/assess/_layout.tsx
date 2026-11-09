@@ -16,6 +16,7 @@ export default function AssessStack() {
       <Stack.Screen name="results" options={{ title: t('assess.result') }} />
       <Stack.Screen name="funds" options={{ title: t('funds.title') }} />
       <Stack.Screen name="check" options={{ title: t('check.title') }} />
+      <Stack.Screen name="express-entry" options={{ title: t('crs.title') }} />
     </Stack>
   );
 }

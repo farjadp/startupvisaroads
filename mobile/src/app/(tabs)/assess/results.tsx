@@ -18,8 +18,9 @@ import { useTheme } from '@/theme/ThemeProvider';
 import { space } from '@/theme/tokens';
 import { CountryPicture } from '@/ui/CountryPicture';
 import { Flag } from '@/ui/Flag';
-import { Button, Disclaimer, Heading, Label, LinkRow, Ruled, Screen } from '@/ui/kit';
+import { Button, Heading, Label, LinkRow, Ruled, Screen } from '@/ui/kit';
 import { T } from '@/ui/T';
+import { DisclaimerWithAbout, MentorSheet } from '@/ui/InfoSheets';
 
 function ResultCard({ m, lead }: { m: MatchResult; lead?: boolean }) {
   const { t, pick, count } = useI18n();
@@ -93,6 +94,7 @@ export default function Results() {
   const { t, pick, count } = useI18n();
   const { state } = useStore();
   const [all, setAll] = useState(false);
+  const [mentor, setMentor] = useState(false);
 
   if (!state.assessAt) {
     return (
@@ -147,7 +149,8 @@ export default function Results() {
       ) : null}
 
       {top[0] ? <Button label={t('assess2.closeFirst')} onPress={() => router.push(`/(tabs)/countries/route/${top[0].route}`)} /> : null}
-      <Button kind="secondary" label={t('assess2.mentor')} onPress={() => router.navigate('/(tabs)/me/mentor')} />
+      <Button kind="secondary" label={t('assess2.mentor')} onPress={() => setMentor(true)} />
+      <MentorSheet open={mentor} onClose={() => setMentor(false)} />
 
       {rest.length ? (
         <View>
@@ -192,7 +195,7 @@ export default function Results() {
       ) : null}
 
       <Button kind="link" icon={null} label={t('assess2.retake')} onPress={() => router.push('/assessment')} />
-      <Disclaimer onAbout={() => router.navigate('/(tabs)/me/about')} />
+      <DisclaimerWithAbout />
     </Screen>
   );
 }

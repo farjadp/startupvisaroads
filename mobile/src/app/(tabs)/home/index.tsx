@@ -20,7 +20,8 @@ import { useTheme } from '@/theme/ThemeProvider';
 import { space } from '@/theme/tokens';
 import { Flag } from '@/ui/Flag';
 import { Icon } from '@/ui/Icon';
-import { Button, Disclaimer, Heading, Label, LinkRow, Ruled, Screen } from '@/ui/kit';
+import { DisclaimerWithAbout } from '@/ui/InfoSheets';
+import { Button, Heading, Label, LinkRow, Ruled, Screen } from '@/ui/kit';
 import { RoadStack } from '@/ui/RoadStack';
 import { T } from '@/ui/T';
 
@@ -121,7 +122,7 @@ export default function Home() {
           <RoadNews countries={newsCountries} />
         </>
       )}
-      <Disclaimer onAbout={() => router.navigate('/(tabs)/me/about')} />
+      <DisclaimerWithAbout />
     </Screen>
   );
 }

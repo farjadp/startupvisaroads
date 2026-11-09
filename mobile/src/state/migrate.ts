@@ -48,3 +48,8 @@ export function normaliseAssessStep(step: unknown): -1 | 0 | 1 {
   if (typeof step !== 'number' || !Number.isFinite(step) || step < 0) return -1;
   return step >= 1 ? 1 : 0;
 }
+
+/** crsAt (9 Nov 2026): an ISO time, or null for blobs from before the Express Entry screen. */
+export function normaliseCrsAt(at: unknown): string | null {
+  return typeof at === 'string' && !Number.isNaN(Date.parse(at)) ? at : null;
+}

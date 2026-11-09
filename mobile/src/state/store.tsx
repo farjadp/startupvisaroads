@@ -8,7 +8,8 @@ import type { StoredAnswers } from '@/engine/readiness';
 import type { Locale } from '@/i18n/locales';
 import type { AssessAnswers } from '@/content/assessment';
 import type { FxCurrency } from '@shared/fx';
-import { migrate, normaliseAssessStep } from './migrate';
+import { cleanInputs, type CrsInputs } from '@/engine/crs';
+import { migrate, normaliseAssessStep, normaliseCrsAt } from './migrate';
 
 export type ModePref = 'system' | 'paper' | 'night';
 
@@ -46,6 +47,9 @@ export type AppState = {
   quizBest: Record<string, { right: number; of: number }>;
   /** Who the money is counted for on team routes. */
   team: { founders: number; spouse: boolean; children: number };
+  /** Express Entry calculator rows (picker ids, phone only) and when they last changed (9 Nov 2026). */
+  crs: Partial<CrsInputs>;
+  crsAt: string | null;
 };
 
 const KEY = 'vr.state.v1';
@@ -74,6 +78,8 @@ export const INITIAL: AppState = {
   docs: {},
   quizBest: {},
   team: { founders: 1, spouse: false, children: 0 },
+  crs: {},
+  crsAt: null,
 };
 
 type Actions = {
@@ -107,7 +113,8 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         const parsed = migrate<AppState>(JSON.parse(raw));
         if (parsed) {
           // The assessment went from ten screens to two (9 Nov 2026): a stored step folds onto them.
-          setState({ ...INITIAL, ...parsed, assessStep: normaliseAssessStep(parsed.assessStep) });
+          // Express Entry rows (9 Nov 2026): older blobs have none; unknown values are dropped.
+          setState({ ...INITIAL, ...parsed, assessStep: normaliseAssessStep(parsed.assessStep), crs: cleanInputs(parsed.crs), crsAt: normaliseCrsAt(parsed.crsAt) });
           setIntroSeenAtLaunch(!!parsed.introSeen);
         }
       })
