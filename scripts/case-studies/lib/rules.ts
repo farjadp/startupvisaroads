@@ -128,12 +128,19 @@ export function traceCheck(input: TraceInput): { ok: boolean; problems: TracePro
     const ids = usedClaimIds(d);
     if (ids.size === 0) problems.push({ kind: 'empty', locale });
     for (const id of ids) if (!byId.has(id)) problems.push({ kind: 'unknown_claim', locale, id });
-    for (const s of sentencesOf(d)) {
+    const units: Sentence[] = [...sentencesOf(d), ...d.sections.map((s) => ({ text: s.heading, claimIds: [] })), ...d.faq.map((f) => ({ text: f.q, claimIds: [] }))];
+    for (const s of units) {
       const inv = inventedNumbers(s, byId);
       if (inv.length) problems.push({ kind: 'invented_number', locale, sentence: s.text, numbers: inv });
+      for (const hit of scanRedLines(s.text, locale)) {
+        // Rule 11 is about company prices. An amount the decision states
+        // (e.g. the applicant's funds), backed by the sentence's claims, is a
+        // cited figure, not a price. Every other red line has no exemption.
+        if (hit.rule === 11 && s.claimIds.length > 0 && inv.length === 0) continue;
+        problems.push({ kind: 'red_line', locale, hit });
+      }
     }
     const text = draftPlainText(d);
-    for (const hit of scanRedLines(text, locale)) problems.push({ kind: 'red_line', locale, hit });
     const allow = input.judge ? [`Justice ${input.judge}`, `Judge ${input.judge}`, input.judge] : [];
     for (const f of findPii(text, { mode: 'A', names: input.partyNames, allow })) {
       if (f.kind === 'name' || f.kind === 'initials') problems.push({ kind: 'party_name', locale, finding: f });

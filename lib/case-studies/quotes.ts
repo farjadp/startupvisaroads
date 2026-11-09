@@ -25,7 +25,8 @@ import { allClaims, CASE_A_SECTIONS, COURT_ONLY_KINDS, type CaseA, type CaseASec
 import { certifiedQuestionFrom, dispositionFromJudgment, remittedFromJudgment, type Disposition } from './fc-parser';
 
 export const MIN_QUOTE_WORDS = 3;
-export const MAX_QUOTE_WORDS = 60;
+// Short quotes only (spec §5 Reproduction): 40 words, matching the extract prompt.
+export const MAX_QUOTE_WORDS = 40;
 
 export function normaliseForQuote(s: string): string {
   return s
