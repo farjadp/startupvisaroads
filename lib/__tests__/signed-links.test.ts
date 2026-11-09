@@ -128,10 +128,16 @@ describe('POST /api/unsubscribe', () => {
   const post = (body: unknown) =>
     unsubscribe(new NextRequest('http://localhost/api/unsubscribe', { method: 'POST', body: JSON.stringify(body) }));
 
-  it('refuses a request without a token and deletes nothing', async () => {
-    const res = await post({ email: 'victim@example.com' });
-    expect(res.status).toBe(403);
-    expect(db.marketingContact.deleteMany).not.toHaveBeenCalled();
+  it('refuses a request without a token after the CASL grace cutoff', async () => {
+    vi.useFakeTimers({ toFake: ['Date'] });
+    vi.setSystemTime(new Date('2027-01-09T00:00:00Z'));
+    try {
+      const res = await post({ email: 'victim@example.com' });
+      expect(res.status).toBe(403);
+      expect(db.marketingContact.deleteMany).not.toHaveBeenCalled();
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
   it('refuses a token for another address', async () => {
