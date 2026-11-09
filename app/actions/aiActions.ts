@@ -4,8 +4,10 @@ import prisma from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
 import fs from 'fs';
 import path from 'path';
+import { requireAdmin, UnauthorizedError } from '@/lib/admin-guard';
 
 export async function addAiKeywords(formData: FormData) {
+  await requireAdmin();
   const rawKeywords = formData.get('keywords') as string;
   if (!rawKeywords) return;
 
@@ -20,6 +22,7 @@ export async function addAiKeywords(formData: FormData) {
 }
 
 export async function clearCompletedKeywords() {
+  await requireAdmin();
   await prisma.aiKeyword.deleteMany({
     where: { status: 'COMPLETED' }
   });
@@ -29,6 +32,7 @@ export async function clearCompletedKeywords() {
 
 export async function importKeywordStrategy() {
   try {
+    await requireAdmin();
     const filePath = path.join(process.cwd(), 'prisma', 'keywords.json');
     const fileContent = fs.readFileSync(filePath, 'utf8');
     const keywords: string[] = JSON.parse(fileContent);
@@ -51,6 +55,7 @@ export async function importKeywordStrategy() {
     revalidatePath('/fa/admin/ai-writer');
     return { success: true, count: newKeywords.length };
   } catch (e: any) {
+    if (e instanceof UnauthorizedError) return { success: false, error: 'Unauthorized' };
     console.error('Import error:', e);
     return { success: false, error: e.message };
   }
