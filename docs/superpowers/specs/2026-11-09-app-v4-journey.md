@@ -201,3 +201,49 @@ Push notifications for draws, sign-in, the case file backend, video.
 
 Site endpoints ship first (they are harmless without the app) so each app PR can be tested
 against production.
+
+## Amendments from the UX pre-build review (9 Nov 2026, PASS WITH CHANGES)
+
+These override the sections above where they differ.
+
+1. **Sheet.** Square top corners (`radius.none`), 1.5 pt `c.fg` top rule, a visible Done/Close
+   button in the header; swipe-down is a shortcut, never the only way to close; `onRequestClose`
+   handles Android Back; `onAccessibilityEscape` closes on iOS; the drag handle is hidden from
+   screen readers; focus moves to the title in `onShow`, and returns to the opening row on close;
+   options are a `radiogroup` with `selected` state. A sheet with a text input (NOC search) is
+   measured above the keyboard.
+2. **Auto-advance.** Never on a timer. After a choice the sheet closes and the next empty row
+   scrolls into view and takes focus; it opens only when tapped. Exception, assessment only: with
+   no screen reader on and Reduce Motion off, the next sheet opens after the previous one has
+   fully dismissed (`onDismiss`). No auto-advance in Express Entry.
+3. **Segments.** Labels never below `caption` size; at fontScale > 1.3 or when any label wraps,
+   the control renders as a `PickerRow` ("Section: Rules ›"); each tab's label includes its
+   position ("Rules, 2 of 4"); after a switch the scroll puts the control at the top. The chosen
+   segment persists per route across sessions.
+4. **Express Entry.** The animated total is hidden from screen readers; a separate accessible text
+   "412 of 1,270, up 38" is announced once after the sheet closes (`announceForAccessibility` on
+   iOS, `accessibilityLiveRegion="polite"` on Android). A compact total pins to the top once the
+   score block scrolls away. "Closest gain" is titled **"What adds the most points on this grid"**
+   with the line "Arithmetic on IRCC's grid, not advice."; only language, education and work are
+   tried (never age, marital status, spouse, sibling). Categories block is titled **"Category
+   draws that list your NOC"** with "other conditions apply". Draws: compare like with like only:
+   "Last general draw, {date}: {cutoff}. Your score: {n}. Cut-offs change every round and do not
+   predict the next." The grid date comes from `rulesVersion` / `lastVerified`, never a literal.
+5. **News reader.** h2/h3 have `role=header`; links are nested Text with `role=link` and the
+   article ends with a "Links in this article" list; only https opens via `Linking.openURL`;
+   visaroads.com article links open in the reader when cached. `alt` is the image label, empty alt
+   = decorative; the API drops images without alt and sends width/height. Table rows read as
+   "Header: value". Text direction follows the article's locale, not the UI locale.
+6. **Home.** No % anywhere on Home. Best-match card: route name and "{n} conditions close"; never a
+   blocked route; if every followed route is blocked, say so and make no offer. Express Entry
+   card: "Your score {n} · last general draw {cutoff} ({date}) · not a prediction." A "usually 10
+   working days" line carries its source and checked date or links to them on the route page. The
+   step text is a header.
+7. **Me case card.** No "You'll be told" state (nothing can tell them). Copy: "Your case file:
+   coming later." Button "How you'll hear about it" → Sheet: "We announce it on our Telegram
+   channel." → `https://t.me/visaroads`. Any date comes from config and the card hides once it has
+   passed. Mentor wording stays neutral. Drop `caseInterest`.
+8. **AX and RTL.** Above fontScale 1.3 `PickerRow` stacks label over value; signed and ratio
+   figures are bidi-isolated (U+2066–2069); in fa, CRS totals, cut-offs and draw dates use Persian
+   digits and Jalali dates while programme codes and NOC stay Latin; `figure` keeps its `maxScale`
+   cap; draw rows stack.
