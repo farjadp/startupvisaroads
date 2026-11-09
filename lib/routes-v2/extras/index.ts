@@ -6,9 +6,11 @@ import type { V2Country } from '../types';
 import { EXTRAS_AE, PROFILE_AE } from './ae';
 import { EXTRAS_AT, PROFILE_AT } from './at';
 import { EXTRAS_AU, PROFILE_AU } from './au';
+import { EXTRAS_BG, PROFILE_BG } from './bg';
 import { EXTRAS_CA, PROFILE_CA } from './ca';
 import { EXTRAS_DK, PROFILE_DK } from './dk';
 import { EXTRAS_EE, PROFILE_EE } from './ee';
+import { EXTRAS_ES, PROFILE_ES } from './es';
 import { EXTRAS_FI, PROFILE_FI } from './fi';
 import { EXTRAS_IE, PROFILE_IE } from './ie';
 import { EXTRAS_IL, PROFILE_IL } from './il';
@@ -37,6 +39,8 @@ const EXTRAS: Record<string, RouteExtras> = {
   ...EXTRAS_NO,
   ...EXTRAS_IE,
   ...EXTRAS_SE,
+  ...EXTRAS_ES,
+  ...EXTRAS_BG,
 };
 
 export const PROFILES: Record<V2Country, CountryProfile> = {
@@ -55,6 +59,8 @@ export const PROFILES: Record<V2Country, CountryProfile> = {
   NO: PROFILE_NO,
   IE: PROFILE_IE,
   SE: PROFILE_SE,
+  ES: PROFILE_ES,
+  BG: PROFILE_BG,
 };
 
 export const extrasOf = (routeKey: string): RouteExtras | undefined => EXTRAS[routeKey];

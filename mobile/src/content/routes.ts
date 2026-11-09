@@ -17,7 +17,7 @@ export type RouteKey =
   | 'nova-scotia'
   | 'eb2niw';
 
-export type Country = 'CA' | 'DK' | 'FI' | 'EE' | 'NL' | 'IT' | 'TR' | 'US' | 'IL' | 'AE' | 'AU' | 'AT' | 'NO' | 'IE' | 'SE';
+export type Country = 'CA' | 'DK' | 'FI' | 'EE' | 'NL' | 'IT' | 'TR' | 'US' | 'IL' | 'AE' | 'AU' | 'AT' | 'NO' | 'IE' | 'SE' | 'ES' | 'BG';
 
 export type Photo = { source: ImageSourcePropType; alt: Text; credit: string; page: string };
 
@@ -192,8 +192,8 @@ export const ROUTES: Record<RouteKey, RouteContent> = {
   },
 };
 
-/** The countries of v2 (Farjad, 15 Oct 2026) and the five added on 27 Oct, in the order the Countries tab shows them. */
-export const COUNTRY_ORDER: Country[] = ['CA', 'US', 'AU', 'DK', 'FI', 'EE', 'NL', 'IT', 'AT', 'IE', 'NO', 'SE', 'TR', 'IL', 'AE'];
+/** The countries of v2 (Farjad, 15 Oct 2026), the five added on 27 Oct and Spain and Bulgaria (9 Nov), in the order the Countries tab shows them. */
+export const COUNTRY_ORDER: Country[] = ['CA', 'US', 'AU', 'DK', 'FI', 'EE', 'NL', 'IT', 'ES', 'AT', 'IE', 'NO', 'SE', 'BG', 'TR', 'IL', 'AE'];
 
 /** v2 route families (spec 2026-10-15). */
 export type RouteFamily = 'startup' | 'entrepreneur' | 'study' | 'talent' | 'express';
@@ -218,6 +218,8 @@ export const COUNTRY_HERO: Record<Country, Photo | null> = {
   NO: null,
   IE: null,
   SE: null,
+  ES: null,
+  BG: null,
 };
 
 export const ROUTE_ORDER: RouteKey[] = ['nova-scotia', 'new-brunswick', 'denmark', 'finland', 'estonia', 'netherlands', 'italy', 'turkey', 'eb2niw'];
@@ -242,6 +244,8 @@ export const COUNTRY_NAMES: Record<Country, Text> = {
   NO: { en: 'Norway', fa: 'نروژ', fr: 'Norvège', zh: '挪威', ar: 'النرويج' },
   IE: { en: 'Ireland', fa: 'ایرلند', fr: 'Irlande', zh: '爱尔兰', ar: 'أيرلندا' },
   SE: { en: 'Sweden', fa: 'سوئد', fr: 'Suède', zh: '瑞典', ar: 'السويد' },
+  ES: { en: 'Spain', fa: 'اسپانیا', fr: 'Espagne', zh: '西班牙', ar: 'إسبانيا' },
+  BG: { en: 'Bulgaria', fa: 'بلغارستان', fr: 'Bulgarie', zh: '保加利亚', ar: 'بلغاريا' },
 };
 
 // Filled after ROUTES exists: Canada shows Nova Scotia's Peggy's Cove.

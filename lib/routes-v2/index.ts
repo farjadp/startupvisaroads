@@ -8,6 +8,8 @@ import { ROUTES_AT } from './at';
 import { ROUTES_NO } from './no';
 import { ROUTES_IE } from './ie';
 import { ROUTES_SE } from './se';
+import { ROUTES_BG } from './bg';
+import { ROUTES_ES } from './es';
 import type { RouteV2, V2Country, V2Family } from './types';
 
 export type { RouteV2, V2Country, V2Family } from './types';
@@ -22,6 +24,9 @@ export const ROUTES_V2: RouteV2[] = [
   ...ROUTES_NO,
   ...ROUTES_IE,
   ...ROUTES_SE,
+  // Added 9 Nov 2026.
+  ...ROUTES_ES,
+  ...ROUTES_BG,
 ];
 
 const BY_KEY = new Map(ROUTES_V2.map((r) => [r.key, r]));
