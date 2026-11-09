@@ -17,12 +17,14 @@ Counts: Critical 0, High 1 (fixed), Medium 1, Low 4, Info 5. One adjacent High s
 ### Adjacent High, out of scope and not fixed: the same bypass on public article pages
 `lib/sanitize.ts:24-31` has the same weakness, and every Article body goes through it. Those bodies come from admin server actions and `/api/agent-articles` and are rendered publicly with `dangerouslySetInnerHTML`. That makes it a click-to-run stored XSS on visaroads.com. Fix `isSafeUrl` the same way: strip control characters and whitespace, then use a scheme allowlist. Owner: cto.
 
-### M1. Turning a publishing switch off does not unpublish
+### M1. Turning a publishing switch off does not unpublish — FIXED in 6f3617a
+- Status: fixed. Every public read (`listPublished`, `getPublished`, `getPair`, `countPublished`, `listForSitemap`, `findRedirectTarget`) filters on `type in [types whose switch is ON]`, read once per request via React `cache`, failing closed. Rows keep their status, so switching back ON restores the pages. Samples stay hidden in production. In dev, sample FC pages now 404 unless the counsel switch is ON. Tests: `lib/case-studies/__tests__/security-fixes.test.ts`.
 - Evidence: `lib/case-studies/public.ts:94-101`. `publishedWhere` filters on status, `publishedAt` and `withdrawnAt` only. The switches (`lib/case-studies/settings.ts`) are checked only at publish and release (`workflow.ts:105-110`).
 - Exploit/impact: counsel withdraws clearance, and Farjad sets `courtPagesClearedByCounsel` to false. Every FC_DECISION page that is already published stays live and stays in the sitemap. The same applies to CLIENT_CASE pages with `clientCasesEnabled`. Spec §12a treats the switch as the legal kill switch.
 - Fix: make `publishedWhere` async, or pass settings into it, and add `type: { in: [...enabled types] }`. The same change covers `listForSitemap` and `findRedirectTarget`. Alternatively, have a switch-off withdraw the affected rows in a transaction.
 
-### L1. Admin JSON handlers accept any Content-Type
+### L1. Admin JSON handlers accept any Content-Type — FIXED in fa9088d
+- Status: fixed. `readJsonObject` returns 415 unless the Content-Type is `application/json`, and 403 when an `Origin` header names a host other than the request's (`x-forwarded-host`, else `Host`). GET is untouched. The admin fetch helper already sends `Content-Type: application/json` with every body.
 - Evidence: `lib/case-studies/admin-http.ts:19-28` (`readJsonObject` uses `req.text()`).
 - Exploit: a `text/plain` form can carry a JSON body. `admin_session` is `SameSite=Lax` (`app/api/admin/login/route.ts:58-61`), so a cross-site POST arrives without the cookie. Only a same-site origin can do this, for example any subdomain of visaroads.com.
 - Fix: return 415 unless the Content-Type is `application/json`, and check `Origin` against `SITE_URL` on PUT, POST and PATCH.
@@ -37,7 +39,8 @@ Counts: Critical 0, High 1 (fixed), Medium 1, Low 4, Info 5. One adjacent High s
 - Exploit: the check misses in two cases. One is running from a subdirectory or another checkout. The other is a `CASE_STUDIES_DIR` that is a symlink into the repo. In both cases full decision texts can land in the tree, and a broad `git add` would commit them.
 - Fix: compare `realpathSync(dir)` against `realpathSync(git rev-parse --show-toplevel)`. Also add a `.gitignore` guard for `raw.html`, `raw.pdf` and `raw.md`.
 
-### L4. Publish/release reads the settings outside the conditional update
+### L4. Publish/release reads the settings outside the conditional update — FIXED in 43e36ac
+- Status: fixed. Publish and scheduled release re-read the switches (and, for release, the consent) inside a Serializable interactive `$transaction` together with the conditional `updateMany`. On Postgres a concurrent switch write can make the transaction fail with a serialization error, which surfaces as a 500 on publish or an error on that cron run. Retrying is safe.
 - Evidence: `workflow.ts:299-302` and `:369-382`.
 - Impact: a switch-off made in the milliseconds between the settings read and the `updateMany` does not stop that one publish. This is a TOCTOU race with a narrow window.
 - Fix: run the read and the update in one `$transaction`. M1's read-time filter also covers this.
