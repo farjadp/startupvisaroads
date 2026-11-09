@@ -3,8 +3,10 @@
 // Spain-shaped games for /en/europe/spain.
 //  - MeansCalculator: the IPREM criterion for entrepreneurs (100% for the
 //    holder, 150% for a two-person household, +50% per further member), IPREM
-//    2026 = €600 a month. The monthly figure is the administration's; the
-//    multi-month totals are our arithmetic and are labelled as such.
+//    = €600 a month (set for 2023 by Ley 31/2022, unchanged since). The
+//    monthly criterion is the one the Oficina Nacional de Emprendimiento and
+//    consulates publish, not a figure in the law; the multi-month totals are
+//    our arithmetic and are labelled as such.
 //  - SpainSteps: the shared StepWalker, laid out for six steps (the shared one
 //    is a fixed five-column grid).
 // All copy arrives as props or is rendered on the server-visible markup.
@@ -86,12 +88,12 @@ export function MeansCalculator({ stopId, rule }: { stopId: string; rule: MeansR
         </p>
         <p>
           <span className="block font-serif text-5xl tabular-nums">{eur(monthly)}</span>
-          <span className="font-sans text-sm text-white/70">a month: the administration&apos;s IPREM criterion, 2026</span>
+          <span className="font-sans text-sm text-white/70">a month: the published IPREM criterion, 2026</span>
         </p>
         <p className="border-t border-white/15 pt-3">
           <span className="block font-serif text-3xl tabular-nums text-[var(--ra-dark)]">{eur(monthly * months)}</span>
           <span className="font-sans text-sm text-white/70">
-            over {months} months. Our multiplication, not a published UGE figure.
+            over {months} months. Our multiplication, not a published figure.
           </span>
         </p>
         <p className="font-sans text-xs text-white/60">

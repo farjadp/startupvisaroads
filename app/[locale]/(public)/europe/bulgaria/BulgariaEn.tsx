@@ -168,8 +168,8 @@ const steps: TrailStep[] = [
     who: 'Migration authority',
     body: 'Apply to the migration authority for a long-term residence permit, with the D visa, the certificate and your shareholding.',
     note: 'The certificate is one condition for this permit, not the permit itself.',
-    figure: '1 + 2',
-    figureLabel: 'years: certificate, then extension',
+    figure: '≤ 1',
+    figureLabel: 'year per permit, renewed while the conditions hold',
   },
 ];
 
@@ -204,8 +204,7 @@ const optionalDocs = [
 ];
 
 const costs = [
-  { item: 'Proof of personal funds', amount: '€1,860.60', status: 'Mandatory', note: '3 × €620.20, the 2026 monthly minimum wage, held 30 consecutive days before filing. A little over US$2,000.' },
-  { item: 'Proof of funds if the 2027 draft is adopted', amount: '€1,980', status: 'From Jan 2027, if adopted', note: 'A draft decree proposes a €660 minimum wage from 1 January 2027. The wage on your filing day is what counts.' },
+  { item: 'Proof of personal funds', amount: '€1,860.60', status: 'Mandatory', note: '3 × €620.20, the 2026 monthly minimum wage, held 30 consecutive days before filing. A little over US$2,000. The minimum wage is set each year by decree, so check the figure for the year you apply.' },
   { item: 'Minimum investment', amount: 'None', status: '—', note: 'The scheme sets no investment threshold.' },
   { item: 'Sales over the last two years', amount: 'BGN 100,000 = €51,129.19', status: 'Optional, 1 point', note: 'Customer-network criterion. Converted at the fixed rate of 1.95583.' },
   { item: 'Venture capital contract or letter of intent', amount: 'BGN 100,000 = €51,129.19', status: 'Optional, 1 point', note: 'Investment criterion.' },
@@ -270,7 +269,7 @@ const commonFaqs = [
 const deepFaqs = [
   {
     q: 'Exactly how much is the proof of funds in euros and dollars?',
-    a: 'Bulgaria’s monthly minimum wage from 1 January 2026 is €620.20 (the former BGN 1,213). Three times that is €1,860.60; in US dollars a little over $2,000, depending on the day’s rate. One warning: the government has put forward a draft of €660 for 2027; if adopted, the amount needed from January 2027 is €1,980. What counts is the minimum wage on the day you file, and we suggest keeping somewhat more than the minimum in the account to be safe.',
+    a: 'Bulgaria’s monthly minimum wage from 1 January 2026 is €620.20 (the former BGN 1,213). Three times that is €1,860.60; in US dollars a little over $2,000, depending on the day’s rate. The minimum wage is set each year by decree, so check the figure for the year you apply. The Ordinance asks for at least three minimum wages held for the 30 days before you apply, and we suggest keeping somewhat more than the minimum in the account to be safe.',
   },
   {
     q: 'If the funds are mandatory, why do they also score points?',
@@ -322,7 +321,7 @@ const deepFaqs = [
   },
   {
     q: 'Can a traditional business use this route?',
-    a: 'No. A café, restaurant, shop or ordinary consulting service does not fit the Ordinance’s definition of a technology or innovative project. Bulgaria’s Foreigners Act has other routes for investors and ordinary business owners, with much higher financial conditions.',
+    a: 'No. A café, restaurant, shop or ordinary consulting service does not fit the Ordinance’s definition of a technology or innovative project. Bulgaria’s Foreigners Act has other routes. The ordinary business route sets no money threshold, but it needs at least 10 full-time jobs for Bulgarian citizens for each foreign partner or manager (Article 24(1)(2)). The investor routes start at BGN 250,000 (€127,822.97) and BGN 500,000 (€255,645.94).',
   },
 ];
 
@@ -389,8 +388,8 @@ export default function BulgariaEn() {
                 </span>
               </h1>
               <p className="mt-3 max-w-[56ch] font-sans text-base leading-relaxed text-white/70">
-                Bulgaria’s Ministry of Innovation and Growth scores your project on six criteria and 14 points, and issues a certificate at 8, free and
-                within 30 days. The only money required is three minimum wages: €1,860. The €51,000 in the infographics is optional and worth one
+                Bulgaria’s Ministry of Innovation and Growth scores your project on six criteria and 14 points. A score of at least 8
+                is needed for a positive proposal, and the minister decides on the council’s report, free and within 30 days. The only money required is three minimum wages: €1,860. The €51,000 in the infographics is optional and worth one
                 point. The hard parts are elsewhere: the electronic signature, the translations, and getting the visa and the company in the right order.
               </p>
               <p className="mt-4 flex flex-wrap gap-x-4 gap-y-1 font-sans text-xs text-white/60">
@@ -433,8 +432,8 @@ export default function BulgariaEn() {
           message="Snapshot read"
           answer={
             <p>
-              The Bulgaria startup visa is a certificate, not a visa. The Ministry of Innovation and Growth issues it, free and within 30 days, to a
-              technology or innovative project scoring 8 of 14 points. It is one condition for a long-term residence permit, alongside a D visa and at
+              The Bulgaria startup visa is a certificate, not a visa. The Ministry of Innovation and Growth decides on it, free and within 30 days, for a
+              technology or innovative project; at least 8 of 14 points are needed for a positive proposal. It is one condition for a long-term residence permit, alongside a D visa and at
               least 50% of a Bulgarian company acquired after that visa.
             </p>
           }
@@ -464,7 +463,8 @@ export default function BulgariaEn() {
             </p>
           </div>
           <p className="mt-6 max-w-[68ch] rounded-xl bg-[#DCF1E9] px-4 py-3 font-sans text-sm leading-relaxed">
-            Bulgaria has been a full Schengen member since January 2025 and in the euro area since January 2026. The Ordinance was written before the
+            Bulgaria has been in Schengen for air and sea travel since 31 March 2024, with land border checks lifted on 1 January 2025, and in
+            the euro area since January 2026. The Ordinance was written before the
             euro and states every figure in leva; this page converts them at the fixed rate of 1.95583.
           </p>
         </RouteStop>
@@ -729,9 +729,8 @@ export default function BulgariaEn() {
           message="Company basics read"
           answer={
             <p>
-              The usual vehicle is a limited liability company: an EOOD for a single owner or an OOD for several partners, with a token legal minimum
-              capital that is no obstacle. Corporate income tax in Bulgaria is 10%, among the lowest in the EU, and dividend tax is 5%, for every
-              Bulgarian company, not only startup visa holders.
+              The usual vehicle is a limited liability company: an EOOD for a single owner or an OOD for several partners. Corporate and personal income
+              tax in Bulgaria are both a flat 10%, for every Bulgarian company and taxpayer, not only startup visa holders.
             </p>
           }
         >
@@ -749,9 +748,9 @@ export default function BulgariaEn() {
                 {[
                   ['Company form, one owner', 'EOOD', 'Limited liability company with a sole owner'],
                   ['Company form, several partners', 'OOD', 'Limited liability company'],
-                  ['Legal minimum capital', 'Token', 'No real obstacle'],
-                  ['Corporate income tax', '10%', 'Among the lowest in the EU; applies to every Bulgarian company'],
-                  ['Dividend tax', '5%', 'Applies to every Bulgarian company'],
+                  ['Corporate income tax', '10%', 'Flat rate; applies to every Bulgarian company'],
+                  ['Personal income tax', '10%', 'Flat rate'],
+                  ['Withholding tax on dividends', '5%', 'On dividends paid to companies outside the EU/EEA'],
                 ].map(([i, f, n]) => (
                   <tr key={i} className="border-b border-[#1a1a1a]/10 last:border-0">
                     <th scope="row" className="px-4 py-3 text-left font-normal">{i}</th>
@@ -836,7 +835,7 @@ export default function BulgariaEn() {
                   presentations and videos.
                 </li>
                 <li>
-                  <strong className="text-[#1a1a1a]">A small home market.</strong> Bulgaria has about six and a half million people; the export-potential
+                  <strong className="text-[#1a1a1a]">A small home market.</strong> Bulgaria has about 6.4 million people; the export-potential
                   question in the business plan is not a formality.
                 </li>
               </ul>
