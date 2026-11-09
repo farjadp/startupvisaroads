@@ -8,7 +8,7 @@ import type { StoredAnswers } from '@/engine/readiness';
 import type { Locale } from '@/i18n/locales';
 import type { AssessAnswers } from '@/content/assessment';
 import type { FxCurrency } from '@shared/fx';
-import { migrate } from './migrate';
+import { migrate, normaliseAssessStep } from './migrate';
 
 export type ModePref = 'system' | 'paper' | 'night';
 
@@ -32,7 +32,7 @@ export type AppState = {
   /** Funds tool: family size last set, and the currency to show figures in besides the official one ('none'; null = not chosen yet). */
   fundsPeople: number;
   fundsCurrency: FxCurrency | 'none' | null;
-  /** v2 assessment answers (phone only), the screen reached (-1 = intro), and when it was finished. */
+  /** v2 assessment answers (phone only), the screen reached (-1 = intro, 0 "You", 1 "Money and plan"), and when it was finished. */
   assess: AssessAnswers;
   assessStep: number;
   assessAt: string | null;
@@ -106,7 +106,8 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         // A v1 blob is brought up to v2 on read; the next write stores it as v2.
         const parsed = migrate<AppState>(JSON.parse(raw));
         if (parsed) {
-          setState({ ...INITIAL, ...parsed });
+          // The assessment went from ten screens to two (9 Nov 2026): a stored step folds onto them.
+          setState({ ...INITIAL, ...parsed, assessStep: normaliseAssessStep(parsed.assessStep) });
           setIntroSeenAtLaunch(!!parsed.introSeen);
         }
       })

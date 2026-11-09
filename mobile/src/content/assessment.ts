@@ -154,3 +154,68 @@ export function topGaps(m: MatchResult, n = 2): string[] {
  * qualify", which the trust rules forbid (auditor, 15 Oct 2026).
  */
 export const metCount = (m: MatchResult): number => m.results.filter((r) => r.state === 'met').length;
+
+// ---- Two-screen flow (spec 2026-11-09 §2): picker rows instead of ten screens ----
+
+export type AssessField = keyof AssessAnswers;
+
+/** Screen 0 "You" (goal … language) and screen 1 "Money and plan" (money … extras), cut from ASSESS_ORDER. */
+export const ASSESS_SCREENS: readonly (readonly AssessKey[])[] = [ASSESS_ORDER.slice(0, 6), ASSESS_ORDER.slice(6)];
+
+/** Whether the revenue band is asked (only once a business earns). */
+export const asksRevenue = (a: AssessAnswers): boolean => a.businessStage === 'revenue' || a.businessStage === 'established';
+
+/** The fields a question key asks for, in row order. Talent signals are optional and never required. */
+export function fieldsOf(key: AssessKey, a: AssessAnswers): AssessField[] {
+  switch (key) {
+    case 'goal':
+      return ['goal'];
+    case 'where':
+      return ['residence', 'citizenship'];
+    case 'age':
+      return ['age'];
+    case 'degree':
+      return ['degree'];
+    case 'work':
+      return ['work'];
+    case 'language':
+      return ['english', 'french'];
+    case 'money':
+      return ['liquid', 'netWorth'];
+    case 'earning':
+      return ['income', 'investment'];
+    case 'business':
+      return asksRevenue(a) ? ['businessStage', 'revenue'] : ['businessStage'];
+    case 'extras':
+      return ['admission', 'jobOffer', 'endorsement'];
+  }
+}
+
+/** Every required field of a screen (0 or 1), in row order. */
+export const screenFields = (screen: number, a: AssessAnswers): AssessField[] => (ASSESS_SCREENS[screen] ?? []).flatMap((k) => fieldsOf(k, a));
+
+/** A field has a value once it holds an answer or 'skip'. */
+export const hasValue = (a: AssessAnswers, f: AssessField): boolean => a[f] !== undefined;
+
+/** Fields of the screen still without a value. */
+export const missingFields = (screen: number, a: AssessAnswers): AssessField[] => screenFields(screen, a).filter((f) => !hasValue(a, f));
+
+/**
+ * The next empty field after `after` on the same screen, or null when none
+ * follows (auto-advance never wraps and never crosses a screen).
+ */
+export function nextEmptyField(screen: number, a: AssessAnswers, after: AssessField): AssessField | null {
+  const fields = screenFields(screen, a);
+  const i = fields.indexOf(after);
+  if (i < 0) return null;
+  return fields.slice(i + 1).find((f) => !hasValue(a, f)) ?? null;
+}
+
+/** "{n} of {total} answered" across both screens; total moves with the answers (revenue appears when a business earns). */
+export function answeredCount(a: AssessAnswers): { n: number; total: number } {
+  const all = ASSESS_SCREENS.flatMap((_, i) => screenFields(i, a));
+  return { n: all.filter((f) => hasValue(a, f)).length, total: all.length };
+}
+
+/** Every screen complete: results may be shown. */
+export const allAnswered = (a: AssessAnswers): boolean => ASSESS_SCREENS.every((_, i) => missingFields(i, a).length === 0);

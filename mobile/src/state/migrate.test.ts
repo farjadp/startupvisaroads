@@ -6,7 +6,7 @@ import assert from 'node:assert/strict';
 import { ROUTES_CANADA_US } from '../../../lib/routes-v2/canada-us.ts';
 import { ROUTES_EUROPE } from '../../../lib/routes-v2/europe.ts';
 import { ROUTES_TR_IL_AE } from '../../../lib/routes-v2/tr-il-ae.ts';
-import { V1_TO_V2, migrate, toV2Keys } from './migrate.ts';
+import { V1_TO_V2, migrate, normaliseAssessStep, toV2Keys } from './migrate.ts';
 
 const ALL = [...ROUTES_CANADA_US, ...ROUTES_EUROPE, ...ROUTES_TR_IL_AE];
 // The v1 roads' countries (src/content/routes.ts), so a key never moves country.
@@ -54,4 +54,14 @@ test('v2 passes unchanged; unknown or broken blobs are refused', () => {
   assert.equal(migrate({ v: 9 }), null);
   assert.equal(migrate(null), null);
   assert.equal(migrate('x'), null);
+});
+
+test('a stored assessment step is folded onto the two screens', () => {
+  assert.equal(normaliseAssessStep(-1), -1);
+  assert.equal(normaliseAssessStep(0), 0);
+  assert.equal(normaliseAssessStep(1), 1);
+  assert.equal(normaliseAssessStep(7), 1);
+  assert.equal(normaliseAssessStep(9), 1);
+  assert.equal(normaliseAssessStep(undefined), -1);
+  assert.equal(normaliseAssessStep(NaN), -1);
 });
