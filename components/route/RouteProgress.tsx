@@ -244,6 +244,7 @@ export function RouteStop({
   tone = 'paper',
   completeOn,
   message,
+  lead,
   children,
 }: {
   id: string;
@@ -255,6 +256,8 @@ export function RouteStop({
   tone?: Tone;
   completeOn?: 'view' | 'click';
   message?: string;
+  /** A visual shown between the question and the answer ("visual first"). */
+  lead?: React.ReactNode;
   children: React.ReactNode;
 }) {
   const { done, complete } = useRoute();
@@ -290,7 +293,7 @@ export function RouteStop({
       id={id}
       aria-labelledby={`${id}-q`}
       onClickCapture={completeOn === 'click' ? () => complete(id, message ?? 'Checkpoint reached') : undefined}
-      className={`scroll-mt-32 border-b border-[#1a1a1a]/10 px-6 py-16 md:py-20 ${t.section}`}
+      className={`scroll-mt-32 border-b border-[#1a1a1a]/10 px-6 pb-16 pt-10 md:py-20 ${t.section}`}
     >
       <div className="container mx-auto">
         <div className="mb-6 grid grid-cols-[auto_minmax(0,1fr)] gap-x-5 gap-y-2">
@@ -312,6 +315,7 @@ export function RouteStop({
             {task}
           </span>
         </div>
+        {lead && <div className="mb-8">{lead}</div>}
         <div className={`mb-8 max-w-[68ch] border-l-[3px] border-[var(--ra)] pl-4 font-sans text-[1.05rem] leading-relaxed ${t.answer}`}>{answer}</div>
         {children}
       </div>

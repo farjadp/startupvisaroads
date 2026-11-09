@@ -13,7 +13,9 @@ import React from 'react';
 import Image from 'next/image';
 import { ArrowLeft, ArrowRight, Send } from 'lucide-react';
 import { Link } from '@/navigation';
-import type { FaChoice, FaFigure, FaKeyFact, FaTerm, FaTimeline } from '@/lib/fa/content';
+import type { FaChoice, FaFigure, FaKeyFact, FaLead, FaTerm, FaTimeline } from '@/lib/fa/content';
+import Flag, { FLAGS, type FlagCode } from '@/components/route/flags';
+import { CheckRows, CompareCards, MoneyBar, NumberTiles, StepLine, WhyWatch, YearsLine, type Surface } from '@/components/guide/visual';
 
 export function KeyFacts({ facts, lang = 'fa' }: { facts: FaKeyFact[]; lang?: 'fa' | 'en' }) {
   return (
@@ -108,4 +110,35 @@ export function Timeline({ timeline }: { timeline: FaTimeline }) {
       </ol>
     </figure>
   );
+}
+
+/** The visual a section opens with, drawn by the shared guide visual kit. */
+export function Lead({ lead, surface = 'paper' }: { lead: FaLead; surface?: Surface }) {
+  switch (lead.type) {
+    case 'tiles':
+      return <NumberTiles lang="fa" surface={surface} label={lead.label} tiles={lead.tiles} />;
+    case 'steps':
+      return <StepLine lang="fa" caption={lead.caption} steps={lead.steps} />;
+    case 'money':
+      return <MoneyBar lang="fa" surface={surface} caption={lead.caption} note={lead.note} legend={lead.legend} rows={lead.rows} />;
+    case 'checks':
+      return <CheckRows lang="fa" surface={surface} label={lead.label} icon={lead.icon} columns={lead.columns} items={lead.items} />;
+    case 'whyWatch':
+      return <WhyWatch lang="fa" why={lead.why} watch={lead.watch} />;
+    case 'years':
+      return <YearsLine lang="fa" surface={surface} caption={lead.caption} milestones={lead.milestones} />;
+    case 'compare':
+      return (
+        <CompareCards
+          lang="fa"
+          surface={surface}
+          caption={lead.caption}
+          heads={lead.heads}
+          rows={lead.rows.map((r) => ({
+            ...r,
+            flag: r.code in FLAGS ? <Flag code={r.code as FlagCode} uid={`cmp-${r.code}`} width={22} /> : null,
+          }))}
+        />
+      );
+  }
 }

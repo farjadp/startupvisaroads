@@ -28,7 +28,8 @@ import Eligibility from './Eligibility';
 import QuizEcho from './QuizEcho';
 import Downloads from './motion/Downloads';
 import DataTable from './DataTable';
-import { KeyFacts, FigureBlock, Terms, Choice, Timeline } from './Blocks';
+import { KeyFacts, FigureBlock, Terms, Choice, Timeline, Lead } from './Blocks';
+import { Detail } from '@/components/guide/visual';
 import Visual from './Visual';
 import Checklist from './motion/Checklist';
 import { FaStop, FaTick, FaCheck, FaSteps, FaCopy, type FaStep } from './FaRoute';
@@ -89,6 +90,16 @@ function Cta({ cta, className }: { cta: FaCta; className: string }) {
 const PRIMARY = 'inline-flex items-center gap-2 rounded-full bg-[var(--ra)] px-6 py-3 text-sm font-bold text-[var(--ra-ink)] transition-transform hover:-translate-y-0.5';
 const GHOST = 'inline-flex items-center gap-2 rounded-full border border-white/30 px-6 py-3 text-sm font-bold text-white transition-colors hover:bg-white/10';
 
+function FactTile({ f, className = '' }: { f: NonNullable<FaPage['facts']>[number]; className?: string }) {
+  return (
+    <div className={`flex flex-col rounded-2xl border border-[#1a1a1a]/10 bg-white p-5 transition-transform hover:-translate-y-1 ${className}`}>
+      <dt className="order-2 mt-2 text-sm font-bold">{f.label}</dt>
+      <dd className="order-1 font-estedad text-xl font-black leading-snug text-[var(--rp)] [text-wrap:balance] md:text-2xl">{f.value}</dd>
+      {f.note && <dd className="order-3 mt-1 text-xs leading-relaxed text-[#1a1a1a]/55">{f.note}</dd>}
+    </div>
+  );
+}
+
 function Stop({ s, i, total, selfCheck, pagePath }: { s: FaSection; i: number; total: number; selfCheck: boolean; pagePath: string }) {
   const id = `s${i + 1}`;
   const steps = stepsOf(s);
@@ -97,7 +108,7 @@ function Stop({ s, i, total, selfCheck, pagePath }: { s: FaSection; i: number; t
   const bullets = !steps && !check && s.bullets ? s.bullets : [];
   const restWords = words(rest.join(' ')) + words(bullets.join(' '));
   const fold = restWords > 60;
-  const task = check ? 'شرایط را با خودتان بسنجید' : steps ? 'مراحل را تا آخر مرور کنید' : 'این بخش را بخوانید';
+  const task = s.lead ? 'این بخش را ببینید' : check ? 'شرایط را با خودتان بسنجید' : steps ? 'مراحل را تا آخر مرور کنید' : 'این بخش را بخوانید';
   const detail = (
     <div className="max-w-[68ch] space-y-4 text-base leading-[1.95] text-[#1a1a1a]/75">
       {rest.map((p, j) => <p key={j}>{p}</p>)}
@@ -115,7 +126,7 @@ function Stop({ s, i, total, selfCheck, pagePath }: { s: FaSection; i: number; t
   );
   const white = i % 2 === 1;
   return (
-    <FaStop id={id} message={`خواندید: ${shortLabel(s.heading)}`} className={`scroll-mt-40 border-b border-[#1a1a1a]/10 px-4 py-16 md:px-8 md:py-20 ${white ? 'bg-white' : 'bg-[#F2F0E9]'}`}>
+    <FaStop id={id} message={`خواندید: ${shortLabel(s.heading)}`} className={`scroll-mt-40 border-b border-[#1a1a1a]/10 px-4 pb-16 pt-10 md:px-8 md:py-20 ${white ? 'bg-white' : 'bg-[#F2F0E9]'}`}>
       <div className="mx-auto max-w-[1200px]">
         <div className="mb-6 grid grid-cols-[auto_minmax(0,1fr)] gap-x-5 gap-y-2">
           <span className="row-span-3 mt-1 h-fit rounded-lg border border-[#1a1a1a]/15 px-2 py-1 font-estedad text-xs font-black text-[#1a1a1a]/50">{fa(String(i + 1).padStart(2, '0'))}</span>
@@ -126,35 +137,64 @@ function Stop({ s, i, total, selfCheck, pagePath }: { s: FaSection; i: number; t
             {task}
           </span>
         </div>
-        {s.keyFacts && <div className="max-w-[68ch]"><KeyFacts facts={s.keyFacts} /></div>}
-        {lead && <p className="mb-8 max-w-[68ch] border-s-[3px] border-[var(--ra)] ps-4 text-[1.1rem] leading-[1.95] text-[#1a1a1a]/90">{lead}</p>}
-        {s.figure && <FigureBlock figure={s.figure} />}
-        {s.visual && <Visual visual={s.visual} />}
-        {s.table && <div className="mb-8 max-w-[68ch]"><DataTable table={s.table} /></div>}
-        {s.terms && <div className="mb-8"><Terms terms={s.terms} /></div>}
-        {rest.length > 0 || bullets.length > 0 ? (
-          fold ? (
-            <details className="group mb-6 max-w-[68ch]">
-              <summary className="flex cursor-pointer list-none items-center gap-3 font-bold text-[#1a1a1a] [&::-webkit-details-marker]:hidden">
-                <span className="grid h-7 w-7 place-items-center rounded-full bg-[var(--rs)] text-base text-[var(--ra-text)] transition-transform group-open:rotate-45" aria-hidden>+</span>
-                <span className="group-open:hidden">ادامه‌ی این بخش · حدود {fa(Math.max(1, Math.round(restWords / 200)))} دقیقه</span>
-                <span className="hidden group-open:inline">بستن</span>
-              </summary>
-              <div className="pt-5">{detail}</div>
-            </details>
-          ) : (
-            <div className="mb-6">{detail}</div>
-          )
-        ) : null}
-        {steps && <FaSteps stopId={id} steps={steps} />}
-        {check && s.bullets && <FaCheck stopId={id} items={s.bullets} />}
-        {s.timeline && <div className="mt-6"><Timeline timeline={s.timeline} /></div>}
-        {s.choice && <div className="mt-6"><Choice choice={s.choice} /></div>}
-        {s.checklist && <div className="mt-6 max-w-[68ch]"><Checklist list={s.checklist} storageKey={`fa-checklist:${pagePath}:${s.checklist.title}`} /></div>}
-        {s.callout && (
-          <aside className="mt-6 max-w-[68ch] rounded-2xl bg-[var(--rd)] p-6 text-white md:p-7">
-            <p className="font-estedad text-lg font-bold leading-relaxed md:text-xl [text-wrap:pretty]">{s.callout}</p>
-          </aside>
+        {s.lead ? (
+          <>
+            <div className="mb-8"><Lead lead={s.lead} surface={white ? 'white' : 'paper'} /></div>
+            {lead && <p className="mb-8 max-w-[68ch] border-s-[3px] border-[var(--ra)] ps-4 text-[1.1rem] leading-[1.95] text-[#1a1a1a]/90">{lead}</p>}
+            {(rest.length > 0 || bullets.length > 0 || steps || check || s.keyFacts || s.figure || s.visual || s.table || s.terms || s.timeline || s.choice || s.checklist || s.callout) && (
+              <Detail lang="fa" minutes={(restWords + words(s.callout ?? '')) / 200}>
+                {s.keyFacts && <div className="max-w-[68ch]"><KeyFacts facts={s.keyFacts} /></div>}
+                {s.figure && <FigureBlock figure={s.figure} />}
+                {s.visual && <Visual visual={s.visual} />}
+                {s.table && <div className="mb-8 max-w-[68ch]"><DataTable table={s.table} /></div>}
+                {s.terms && <div className="mb-8"><Terms terms={s.terms} /></div>}
+                {(rest.length > 0 || bullets.length > 0) && <div className="mb-6">{detail}</div>}
+                {steps && <FaSteps stopId={id} steps={steps} />}
+                {check && s.bullets && <FaCheck stopId={id} items={s.bullets} />}
+                {s.timeline && <div className="mt-6"><Timeline timeline={s.timeline} /></div>}
+                {s.choice && <div className="mt-6"><Choice choice={s.choice} /></div>}
+                {s.checklist && <div className="mt-6 max-w-[68ch]"><Checklist list={s.checklist} storageKey={`fa-checklist:${pagePath}:${s.checklist.title}`} /></div>}
+                {s.callout && (
+                  <aside className="mt-6 max-w-[68ch] rounded-2xl bg-[var(--rd)] p-6 text-white md:p-7">
+                    <p className="font-estedad text-lg font-bold leading-relaxed md:text-xl [text-wrap:pretty]">{s.callout}</p>
+                  </aside>
+                )}
+              </Detail>
+            )}
+          </>
+        ) : (
+          <>
+          {s.keyFacts && <div className="max-w-[68ch]"><KeyFacts facts={s.keyFacts} /></div>}
+          {lead && <p className="mb-8 max-w-[68ch] border-s-[3px] border-[var(--ra)] ps-4 text-[1.1rem] leading-[1.95] text-[#1a1a1a]/90">{lead}</p>}
+          {s.figure && <FigureBlock figure={s.figure} />}
+          {s.visual && <Visual visual={s.visual} />}
+          {s.table && <div className="mb-8 max-w-[68ch]"><DataTable table={s.table} /></div>}
+          {s.terms && <div className="mb-8"><Terms terms={s.terms} /></div>}
+          {rest.length > 0 || bullets.length > 0 ? (
+            fold ? (
+              <details className="group mb-6 max-w-[68ch]">
+                <summary className="flex cursor-pointer list-none items-center gap-3 font-bold text-[#1a1a1a] [&::-webkit-details-marker]:hidden">
+                  <span className="grid h-7 w-7 place-items-center rounded-full bg-[var(--rs)] text-base text-[var(--ra-text)] transition-transform group-open:rotate-45" aria-hidden>+</span>
+                  <span className="group-open:hidden">ادامه‌ی این بخش · حدود {fa(Math.max(1, Math.round(restWords / 200)))} دقیقه</span>
+                  <span className="hidden group-open:inline">بستن</span>
+                </summary>
+                <div className="pt-5">{detail}</div>
+              </details>
+            ) : (
+              <div className="mb-6">{detail}</div>
+            )
+          ) : null}
+          {steps && <FaSteps stopId={id} steps={steps} />}
+          {check && s.bullets && <FaCheck stopId={id} items={s.bullets} />}
+          {s.timeline && <div className="mt-6"><Timeline timeline={s.timeline} /></div>}
+          {s.choice && <div className="mt-6"><Choice choice={s.choice} /></div>}
+          {s.checklist && <div className="mt-6 max-w-[68ch]"><Checklist list={s.checklist} storageKey={`fa-checklist:${pagePath}:${s.checklist.title}`} /></div>}
+          {s.callout && (
+            <aside className="mt-6 max-w-[68ch] rounded-2xl bg-[var(--rd)] p-6 text-white md:p-7">
+              <p className="font-estedad text-lg font-bold leading-relaxed md:text-xl [text-wrap:pretty]">{s.callout}</p>
+            </aside>
+          )}
+          </>
         )}
       </div>
     </FaStop>
@@ -187,6 +227,26 @@ export default function FaGuideLayout({
   // Photographs spread evenly between the sections.
   const slotFor = (k: number) => Math.floor(((k + 1) * page.sections.length) / (gallery.length + 1));
   const groups = page.faqGroups ?? [{ heading: '', faqs: page.faqs }];
+  // Visual-first guides (any section with a lead visual) keep the phone page
+  // short: the second FAQ group folds and the hero figures after the fourth
+  // scroll sideways on phones. Every word stays in the HTML.
+  const visual = page.sections.some((s) => s.lead);
+  const faqGroup = (g: (typeof groups)[number], gi: number) => (
+    <div key={gi} id={g.heading ? `faq-${gi + 1}` : undefined} className="scroll-mt-40">
+      {g.heading && <h3 className="mb-2 text-sm font-bold text-[var(--ra-text)]">{g.heading}</h3>}
+      <div className="border-t border-[#1a1a1a]/10">
+        {g.faqs.map((f) => (
+          <details key={f.q} className="group border-b border-[#1a1a1a]/10">
+            <summary className="flex cursor-pointer list-none items-center justify-between gap-6 py-5 transition-colors hover:text-[var(--ra-text)] group-open:text-[var(--ra-text)] [&::-webkit-details-marker]:hidden">
+              <h4 className="font-estedad text-lg font-bold leading-snug">{f.q}</h4>
+              <span aria-hidden="true" className="font-estedad text-2xl transition-transform group-open:rotate-45">+</span>
+            </summary>
+            <p className="max-w-[72ch] pb-6 text-base leading-[1.95] text-[#1a1a1a]/70">{f.a}</p>
+          </details>
+        ))}
+      </div>
+    </div>
+  );
 
   return (
     <article className="w-full overflow-x-clip bg-[#F2F0E9] font-vazir text-[#1a1a1a]">
@@ -250,14 +310,27 @@ export default function FaGuideLayout({
         {page.facts && page.facts.length > 0 && (
           <section aria-label="اعداد کلیدی این مسیر" className="bg-[#F2F0E9] px-4 pt-12 md:px-8">
             <dl className="mx-auto grid max-w-[1200px] grid-cols-2 gap-3 md:grid-cols-4">
-              {page.facts.map((f) => (
-                <div key={f.label} className="flex flex-col rounded-2xl border border-[#1a1a1a]/10 bg-white p-5 transition-transform hover:-translate-y-1">
-                  <dt className="order-2 mt-2 text-sm font-bold">{f.label}</dt>
-                  <dd className="order-1 font-estedad text-xl font-black leading-snug text-[var(--rp)] [text-wrap:balance] md:text-2xl">{f.value}</dd>
-                  {f.note && <dd className="order-3 mt-1 text-xs leading-relaxed text-[#1a1a1a]/55">{f.note}</dd>}
-                </div>
-              ))}
+              {page.facts.slice(0, visual ? 4 : page.facts.length).map((f) => <FactTile key={f.label} f={f} />)}
             </dl>
+            {visual && page.facts.length > 4 && (
+              <>
+                <p className="mx-auto mt-4 max-w-[1200px] text-xs font-bold text-[#1a1a1a]/60 md:hidden" aria-hidden="true">
+                  {fa(page.facts.length - 4)} عدد دیگر؛ برای دیدن، کنار بکشید
+                </p>
+                <div
+                  role="region"
+                  aria-label="بقیه‌ی اعداد کلیدی"
+                  tabIndex={0}
+                  className="-mx-4 mt-2 overflow-x-auto px-4 pb-2 [scrollbar-width:thin] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--rp)] md:mx-auto md:mt-3 md:max-w-[1200px] md:overflow-visible md:px-0 md:pb-0"
+                >
+                  <dl className="flex snap-x snap-mandatory gap-3 md:grid md:grid-cols-4">
+                    {page.facts.slice(4).map((f) => (
+                      <FactTile key={f.label} f={f} className="w-[44%] shrink-0 snap-start md:w-auto" />
+                    ))}
+                  </dl>
+                </div>
+              </>
+            )}
             <p className="mx-auto mt-3 max-w-[1200px] text-xs text-[#1a1a1a]/50">ارقام به تاریخ بازبینی این صفحه است و مرجع رسمی هر برنامه ممکن است آن‌ها را تغییر دهد.</p>
           </section>
         )}
@@ -291,7 +364,7 @@ export default function FaGuideLayout({
         )}
 
         {page.faqs.length > 0 && (
-          <FaStop id="faq" message="خواندید: سؤالات متداول" className="scroll-mt-40 border-b border-[#1a1a1a]/10 bg-white px-4 py-16 md:px-8 md:py-20">
+          <FaStop id="faq" message="خواندید: سؤالات متداول" className="scroll-mt-40 border-b border-[#1a1a1a]/10 bg-white px-4 pb-16 pt-10 md:px-8 md:py-20">
             <div className="mx-auto max-w-[1200px]">
               <div className="mb-6 grid grid-cols-[auto_minmax(0,1fr)] gap-x-5 gap-y-2">
                 <span className="row-span-3 mt-1 h-fit rounded-lg border border-[#1a1a1a]/15 px-2 py-1 font-estedad text-xs font-black text-[#1a1a1a]/50">{fa(String(page.sections.length + 1).padStart(2, '0'))}</span>
@@ -300,22 +373,12 @@ export default function FaGuideLayout({
                 <span className="inline-flex items-center gap-2 text-xs text-[#1a1a1a]/60"><FaTick id="faq" />سؤال‌هایتان را باز کنید</span>
               </div>
               <div className="grid max-w-4xl gap-12">
-                {groups.map((g, gi) => (
-                  <div key={gi} id={g.heading ? `faq-${gi + 1}` : undefined} className="scroll-mt-40">
-                    {g.heading && <h3 className="mb-2 text-sm font-bold text-[var(--ra-text)]">{g.heading}</h3>}
-                    <div className="border-t border-[#1a1a1a]/10">
-                      {g.faqs.map((f) => (
-                        <details key={f.q} className="group border-b border-[#1a1a1a]/10">
-                          <summary className="flex cursor-pointer list-none items-center justify-between gap-6 py-5 transition-colors hover:text-[var(--ra-text)] group-open:text-[var(--ra-text)] [&::-webkit-details-marker]:hidden">
-                            <h4 className="font-estedad text-lg font-bold leading-snug">{f.q}</h4>
-                            <span aria-hidden="true" className="font-estedad text-2xl transition-transform group-open:rotate-45">+</span>
-                          </summary>
-                          <p className="max-w-[72ch] pb-6 text-base leading-[1.95] text-[#1a1a1a]/70">{f.a}</p>
-                        </details>
-                      ))}
-                    </div>
-                  </div>
-                ))}
+                {groups.slice(0, visual ? 1 : groups.length).map(faqGroup)}
+                {visual && groups.length > 1 && (
+                  <Detail lang="fa" label={`پرسش‌های بیشتر (${fa(groups.slice(1).reduce((n, g) => n + g.faqs.length, 0))})`} closeLabel="بستن این پرسش‌ها">
+                    <div className="grid gap-12">{groups.slice(1).map((g, gi) => faqGroup(g, gi + 1))}</div>
+                  </Detail>
+                )}
               </div>
             </div>
           </FaStop>
