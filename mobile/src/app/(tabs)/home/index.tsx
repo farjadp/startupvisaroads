@@ -1,80 +1,139 @@
-// Home (B1 "photo stack", Farjad 28 Oct 2026): where you are on each road you
-// follow, as photo cards; then your last result as a strip (no % here: the
-// figure and its coverage live on the results screen); then news on your
-// countries. Assessed but following nothing: one card to go and follow a road.
-// With nothing yet, the two doors.
+// Home, "Today" (spec 2026-11-09 §6, amendment 6): three blocks and nothing
+// else. The next step on the first road the user can run (or the closest road
+// from the assessment, or the two doors), the Express Entry score beside the
+// last general draw, and the newest news on their countries. No % anywhere on
+// Home: the figure and its coverage live on the results screen.
 import * as WebBrowser from 'expo-web-browser';
-import { router } from 'expo-router';
+import { router, type Href } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Pressable, View } from 'react-native';
 import { toUsdExact } from '@shared/fx';
 import { ROUTES_V2, routeV2 } from '@shared/routes-v2';
+import { extrasOf } from '@shared/routes-v2/extras';
 import { rank } from '@shared/routes-v2/match';
 import { preferredFamily, toProfile } from '@/content/assessment';
-import { cachedFeed, fetchFeed, type Feed } from '@/content/news';
-import type { Country } from '@/content/routes';
+import { cachedFeed, fetchFeed, type NewsItem } from '@/content/news';
+import { COUNTRY_NAMES, type Country } from '@/content/routes';
+import { latestGeneral, scoreOf, type SavedDraws } from '@/engine/crs';
+import { cachedDraws, fetchDraws } from '@/engine/crs-draws';
+import { nextStep, type NextStep } from '@/engine/next-step';
 import { useI18n } from '@/i18n/I18nProvider';
 import { useStore } from '@/state/store';
-import { Doors } from '@/ui/Doors';
 import { useTheme } from '@/theme/ThemeProvider';
 import { space } from '@/theme/tokens';
+import { Doors } from '@/ui/Doors';
 import { Flag } from '@/ui/Flag';
 import { Icon } from '@/ui/Icon';
 import { DisclaimerWithAbout } from '@/ui/InfoSheets';
-import { Button, Heading, Label, LinkRow, Ruled, Screen } from '@/ui/kit';
-import { RoadStack } from '@/ui/RoadStack';
+import { Heading, Label, LinkRow, Ruled, Screen } from '@/ui/kit';
 import { T } from '@/ui/T';
 
-function RoadNews({ countries }: { countries: Country[] }) {
-  const { t, meta } = useI18n();
-  const [feed, setFeed] = useState<Feed | null>(null);
-  const lang = meta.siteLocale;
-  useEffect(() => {
-    let live = true;
-    void cachedFeed(lang).then((f) => live && f && setFeed(f));
-    fetchFeed(lang)
-      .then((f) => live && setFeed(f))
-      .catch(() => {});
-    return () => {
-      live = false;
-    };
-  }, [lang]);
-  const items = (feed?.items ?? []).filter((i) => i.countries.some((k) => countries.includes(k))).slice(0, 2);
-  if (!items.length) return null;
+const routePage = (key: string, tab: 'do' | 'rules') => `/(tabs)/countries/route/${key}?tab=${tab}` as Href;
+
+/** The one action on the acid card, ink on acid in both modes. */
+function AcidAction({ label, onPress }: { label: string; onPress: () => void }) {
   return (
-    <View>
-      <Label>{t('home.news')}</Label>
-      <Ruled>
-        {items.map((i) => (
-          <LinkRow key={i.link} external label={i.title} lang={lang} onPress={() => void WebBrowser.openBrowserAsync(i.link)} />
-        ))}
-      </Ruled>
+    <Pressable onPress={onPress} accessibilityRole="button" hitSlop={4} style={({ pressed }) => ({ minHeight: 48, flexDirection: 'row', alignItems: 'center', gap: space.s2, opacity: pressed ? 0.6 : 1 })}>
+      <T variant="row" weight="bold" tone="onAccent" style={{ flexShrink: 1, textDecorationLine: 'underline' }}>
+        {label}
+      </T>
+      <Icon name="chevron" tone="onAccent" />
+    </Pressable>
+  );
+}
+
+function AcidCard({ eyebrow, country, header, lines, action, onPress }: { eyebrow: string; country?: Country; header: string; lines: string[]; action: string; onPress: () => void }) {
+  const { c } = useTheme();
+  return (
+    <View style={{ backgroundColor: c.accent, paddingHorizontal: space.s4, paddingTop: space.s4, paddingBottom: space.s2, gap: space.s2 }}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.s2 }}>
+        {country ? <Flag country={country} width={20} /> : null}
+        <T variant="caption" weight="bold" tone="onAccent" style={{ flexShrink: 1 }}>
+          {eyebrow}
+        </T>
+      </View>
+      <T variant="headline" tone="onAccent" accessibilityRole="header">
+        {header}
+      </T>
+      {lines.map((l) => (
+        <T key={l} variant="caption" tone="onAccent">
+          {l}
+        </T>
+      ))}
+      <AcidAction label={action} onPress={onPress} />
     </View>
   );
 }
 
-/** The closest road from the last assessment, in one row: no figure, so no readiness sentence is needed here. */
-function ResultStrip({ best }: { best: string | null }) {
-  const { t, pick, date } = useI18n();
+function NextCard({ next }: { next: Exclude<NextStep, { kind: 'fresh' }> }) {
+  const { t, pick, count } = useI18n();
+  if (next.kind === 'all-blocked') {
+    return <T variant="body">{t('today.allBlocked')}</T>;
+  }
+  const route = routeV2(next.routeKey);
+  if (!route) return null;
+  const name = pick(route.name).text;
+  const eyebrow = `${name} · ${pick(COUNTRY_NAMES[route.country as Country]).text}`;
+  if (next.kind === 'all-done') {
+    return <T variant="body">{t('today.allDone', { route: name })}</T>;
+  }
+  if (next.kind === 'best-match') {
+    const close = next.close === 0 ? t('today.closeNone') : next.close === 1 ? t('today.closeOne') : t('today.closeN', { n: count(next.close) });
+    return <AcidCard eyebrow={t('today.closest')} country={route.country as Country} header={name} lines={[close]} action={t('today.seeRules')} onPress={() => router.push(routePage(route.key, 'rules'))} />;
+  }
+  const takes = next.step.takes ? pick(next.step.takes).text : null;
+  return (
+    <AcidCard
+      eyebrow={eyebrow}
+      country={route.country as Country}
+      header={t('today.stepOf', { n: count(next.stepIndex + 1), total: count(next.stepCount), title: pick(next.step.title).text })}
+      lines={takes ? [t('today.takes', { takes })] : []}
+      // "Usually 10 working days" carries its source: the route page's Do segment shows it with the checked date.
+      action={takes ? t('today.takesSource') : t('today.openSteps')}
+      onPress={() => router.push(routePage(route.key, 'do'))}
+    />
+  );
+}
+
+function ExpressCard({ show }: { show: boolean }) {
+  const { t, count, date } = useI18n();
   const { c } = useTheme();
   const { state } = useStore();
-  const route = best ? routeV2(best) : null;
-  const when = state.assessAt ? t('home.lastResultOn', { date: date(state.assessAt) }) : t('home.lastResult');
-  const label = route ? pick(route.name) : null;
+  const [draws, setDraws] = useState<SavedDraws | null>(null);
+  const hasCrs = !!state.crsAt && Object.keys(state.crs).length > 0;
+  useEffect(() => {
+    if (!hasCrs) return;
+    let live = true;
+    void cachedDraws().then((d) => live && d && setDraws((cur) => cur ?? d));
+    fetchDraws()
+      .then((d) => live && setDraws(d))
+      .catch(() => {});
+    return () => {
+      live = false;
+    };
+  }, [hasCrs]);
+  if (!hasCrs && !show) return null;
+  if (!hasCrs) {
+    return <LinkRow icon="calculator" label={t('today.eeStart')} onPress={() => router.push('/(tabs)/assess/express-entry')} />;
+  }
+  const n = count(scoreOf(state.crs));
+  const general = draws ? latestGeneral(draws.rounds) : null;
+  // Like with like only (amendment 4): a category draw is never set against the user's score.
+  const line = !draws ? t('today.eeNoDraws', { n }) : general ? t('today.eeLine', { n, cutoff: count(general.crsCutoff), date: date(general.date) }) : t('today.eeNoGeneral', { n });
   return (
     <Pressable
-      onPress={() => router.push('/(tabs)/assess/results')}
+      onPress={() => router.push('/(tabs)/assess/express-entry')}
       accessibilityRole="button"
-      accessibilityLabel={label ? t('home.resultA11y', { route: label.text }) : `${when}. ${t('home.seeResult')}`}
-      style={({ pressed }) => ({ borderWidth: 1.5, borderColor: c.fg, minHeight: 56, paddingHorizontal: space.s4, paddingVertical: space.s3, flexDirection: 'row', alignItems: 'center', gap: space.s3, opacity: pressed ? 0.85 : 1 })}
+      accessibilityLabel={`${t('today.ee')}. ${line}`}
+      accessibilityHint={t('today.eeOpen')}
+      style={({ pressed }) => ({ borderWidth: 1.5, borderColor: c.fg, minHeight: 56, paddingHorizontal: space.s4, paddingVertical: space.s3, flexDirection: 'row', alignItems: 'center', gap: space.s3, backgroundColor: pressed ? c.rowPressed : 'transparent' })}
     >
-      {route ? <Flag country={route.country as Country} width={20} /> : null}
       <View style={{ flex: 1, gap: 2 }}>
-        <T variant="row" weight="bold" lang={label?.lang}>
-          {label ? label.text : t('home.seeResult')}
+        <T variant="row" weight="bold">
+          {t('today.ee')}
         </T>
         <T variant="caption" tone="fgMuted">
-          {when}
+          {line}
         </T>
       </View>
       <Icon name="chevron" tone="fgMuted" />
@@ -82,14 +141,42 @@ function ResultStrip({ best }: { best: string | null }) {
   );
 }
 
-/** Assessed, following nothing: the one thing to do next. */
-function FollowCard() {
-  const { t } = useI18n();
-  const { c } = useTheme();
+type Item = NewsItem & { slug?: string };
+
+function CountryNews({ countries }: { countries: Country[] }) {
+  const { t, meta } = useI18n();
+  const [items, setItems] = useState<Item[]>([]);
+  const lang = meta.siteLocale;
+  useEffect(() => {
+    let live = true;
+    const take = (list: Item[]) => live && setItems(list);
+    void cachedFeed(lang).then((f) => f && take(f.items));
+    fetchFeed(lang)
+      .then((f) => take(f.items))
+      .catch(() => {});
+    return () => {
+      live = false;
+    };
+  }, [lang]);
+  const newest = items
+    .filter((i) => i.countries.some((k) => countries.includes(k)))
+    .sort((a, b) => b.date.localeCompare(a.date))
+    .slice(0, 2);
+  if (!newest.length) return null;
   return (
-    <View style={{ borderWidth: 1.5, borderColor: c.fg, padding: space.s4, gap: space.s4 }}>
-      <T variant="headline">{t('home.followPrompt')}</T>
-      <Button label={t('home.followCta')} onPress={() => router.push('/(tabs)/assess/results')} />
+    <View>
+      <Label>{t('today.news')}</Label>
+      <Ruled>
+        {newest.map((i) => (
+          <LinkRow
+            key={i.link}
+            external={!i.slug}
+            label={i.title}
+            lang={lang}
+            onPress={() => (i.slug ? router.push(`/(tabs)/news/${i.slug}` as Href) : void WebBrowser.openBrowserAsync(i.link))}
+          />
+        ))}
+      </Ruled>
     </View>
   );
 }
@@ -97,18 +184,18 @@ function FollowCard() {
 export default function Home() {
   const { t } = useI18n();
   const { state } = useStore();
+  const passport = state.assess.citizenship && state.assess.citizenship !== 'skip' ? state.assess.citizenship : null;
+  const ranked = state.assessAt ? rank(ROUTES_V2, toProfile(state.assess), toUsdExact, preferredFamily(state.assess)) : null;
+  const next = nextStep({ following: state.following, journey: state.journey, passport, ranked, routeOf: routeV2, stepsOf: (k) => extrasOf(k)?.steps });
   const followed = state.following.map((k) => routeV2(k)).filter((r) => !!r);
-  const myCountries = [...new Set(followed.map((r) => r.country as Country))];
-  const fresh = !state.assessAt && followed.length === 0;
-  const ranked = state.assessAt ? rank(ROUTES_V2, toProfile(state.assess), toUsdExact, preferredFamily(state.assess)) : [];
-  const best = ranked[0]?.route ?? null;
   // Following nothing yet: news follows the countries of the closest roads instead.
-  const newsCountries = followed.length ? myCountries : [...new Set(ranked.slice(0, 3).map((m) => routeV2(m.route)!.country as Country))];
+  const countries = [...new Set((followed.length ? followed.map((r) => r.country) : (ranked ?? []).slice(0, 3).map((m) => routeV2(m.route)!.country)) as Country[])];
+  const showExpress = followed.some((r) => r.country === 'CA') || state.assess.goal === 'express';
 
   return (
     <Screen>
-      <Heading>{t('home.title')}</Heading>
-      {fresh ? (
+      <Heading>{t('today.title')}</Heading>
+      {next.kind === 'fresh' ? (
         <>
           <T variant="body" tone="fgMuted">
             {t('home.emptyLead')}
@@ -116,12 +203,10 @@ export default function Home() {
           <Doors onRoad={() => router.navigate('/(tabs)/countries')} onAssess={() => router.push('/assessment')} />
         </>
       ) : (
-        <>
-          {followed.length ? <RoadStack /> : <FollowCard />}
-          {state.assessAt ? followed.length ? <ResultStrip best={best} /> : null : <Button label={t('start.assessTitle')} kind="secondary" onPress={() => router.push('/assessment')} />}
-          <RoadNews countries={newsCountries} />
-        </>
+        <NextCard next={next} />
       )}
+      <ExpressCard show={showExpress} />
+      <CountryNews countries={countries} />
       <DisclaimerWithAbout />
     </Screen>
   );
