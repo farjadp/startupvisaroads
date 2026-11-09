@@ -58,6 +58,7 @@ import {
   type RoadmapCopy,
   type RouteStep,
 } from '@/components/route/RouteWidgets';
+import { CheckRows, Detail, MoneyBar, NumberTiles, StepLine, WhyWatch, YearsLine, type CheckRow, type Milestone, type MoneyRow, type Tile } from '@/components/guide/visual';
 
 export async function generateMetadata({
   params,
@@ -279,6 +280,46 @@ const roadmap: RoadmapCopy = {
     citizen: { title: 'Eligible to apply for citizenship', body: 'You also need a clean record, met payment obligations and proof of financial resources. A citizenship test applies from 1 March 2027.' },
   },
 };
+
+// ─── Visuals (9 Nov 2026, the Spain pattern): each restates figures already
+// in the prose below; the prose folds under it in a <Detail>. Each fold's
+// `minutes` is its word count at 200 words a minute. ────────────────────────
+
+const snapshotTiles: Tile[] = [
+  { value: '~2 wk', label: 'Fast Track', sub: 'from a complete application' },
+  { value: '~8%', label: 'Approval rate', sub: 'Business Finland, 2024–2025' },
+  { value: '2+', label: 'Founders required', sub: 'holding at least 60% between them' },
+  { value: '€0', label: 'Minimum investment', sub: 'no statutory capital threshold' },
+];
+
+const stepChips = ['Free today · valid 4 months', '€650 online, per founder', '~2 weeks to a decision', '€95 online · valid 100 days', 'First permit up to 2 yrs'];
+
+// Helsinki-rate households from `funds`; the figures are the page's own
+// two-year totals, the segments size the bars by monthly amount.
+const moneyRows: MoneyRow[] = [
+  { label: 'Single applicant', figure: '€29,040', sub: '€1,210 a month', segments: [{ value: 1210, role: 0 }] },
+  { label: 'Applicant + spouse', figure: '€43,680', sub: '€1,820 a month', segments: [{ value: 1210, role: 0 }, { value: 610, role: 1 }] },
+  { label: 'With one child', figure: '€58,320', sub: '€1,820 + €610 a month for the first child', segments: [{ value: 1210, role: 0 }, { value: 610, role: 1 }, { value: 610, role: 2 }] },
+  { label: 'With two children', figure: '€69,840', sub: '+ €480 a month for the second child', segments: [{ value: 1210, role: 0 }, { value: 610, role: 1 }, { value: 610, role: 2 }, { value: 480, role: 2 }] },
+];
+
+const lifeWhy = ['Open work right for your spouse', 'Fast Track, about two weeks', 'Schengen travel, 90 of 180 days', 'Public healthcare, capped fees', 'Free public education'];
+const lifeWatch = ['Your permit is tied to your startup', 'You must genuinely live in Finland', 'No social benefits straight after arrival', 'Extension approval about 65% in 2025'];
+
+const prRows: CheckRow[] = [
+  { label: 'Finnish degree', note: 'No minimum residence · language at A2' },
+  { label: 'High income', note: '4 years · €40,000 taxable income' },
+  { label: 'Foreign advanced degree', note: '4 years · 2 years of work' },
+  { label: 'Superior language skills', note: '4 years · C1 and 3 years of work' },
+  { label: 'Long residence', note: '6 years · B1 and 2 years of work' },
+];
+
+const years: Milestone[] = [
+  { at: 0, year: 'Y0', label: roadmap.arrive.title, sub: roadmap.arrive.sub },
+  { at: roadmap.extension.year, year: `Y${roadmap.extension.year}`, label: roadmap.extension.title, sub: roadmap.extension.sub },
+  { at: 4, year: 'Y4–6', label: 'Permanent residence', sub: 'Depending on route' },
+  { at: 8, year: 'Y5–8', label: 'Citizenship', sub: '5 years with Finnish or Swedish, otherwise 8' },
+];
 
 // Permanent residence, for applications filed on or after 8 January 2026.
 // Ordered fastest first; `needs` drives the finder.
@@ -574,6 +615,7 @@ export default async function FinlandPage({ params }: { params: Promise<{ locale
           task="Read the four facts"
           completeOn="view"
           message="Snapshot read"
+          lead={<NumberTiles tiles={snapshotTiles} />}
           answer={
             <p>
               The Finland startup visa is the start-up entrepreneur residence permit. Business Finland first judges the business and issues an Eligibility
@@ -582,21 +624,8 @@ export default async function FinlandPage({ params }: { params: Promise<{ locale
             </p>
           }
         >
-          <dl className="grid grid-cols-2 gap-3 md:grid-cols-4">
-            {[
-              { stat: '~2 wk', label: 'Fast Track', sub: 'from a complete application' },
-              { stat: '~8%', label: 'Approval rate', sub: 'Business Finland, 2024–2025' },
-              { stat: '2+', label: 'Founders required', sub: 'holding at least 60% between them' },
-              { stat: '€0', label: 'Minimum investment', sub: 'no statutory capital threshold' },
-            ].map((s) => (
-              <div key={s.label} className="flex flex-col rounded-2xl border border-[#1a1a1a]/10 bg-white p-5 transition-transform hover:-translate-y-1">
-                <dt className="order-2 mt-2 font-sans text-sm font-bold">{s.label}</dt>
-                <dd className="order-1 font-serif text-4xl text-[#002F6C]">{s.stat}</dd>
-                <dd className="order-3 font-sans text-xs text-[#1a1a1a]/55">{s.sub}</dd>
-              </div>
-            ))}
-          </dl>
-          <div className="mt-8 grid max-w-5xl grid-cols-1 gap-6 font-sans text-[15px] leading-relaxed text-[#1a1a1a]/70 md:grid-cols-2">
+          <Detail minutes={1}>
+          <div className="grid max-w-5xl grid-cols-1 gap-6 font-sans text-[15px] leading-relaxed text-[#1a1a1a]/70 md:grid-cols-2">
             <p>
               <strong className="text-[#1a1a1a]">Two bodies, one judgement.</strong> Business Finland evaluates the business and issues the Eligibility
               Statement. Migri does not second-guess your idea; it has delegated that judgement entirely, and checks the general immigration conditions and
@@ -608,6 +637,7 @@ export default async function FinlandPage({ params }: { params: Promise<{ locale
               arrives in weeks.
             </p>
           </div>
+          </Detail>
         </RouteStop>
 
         {/* 02 — Video */}
@@ -634,6 +664,29 @@ export default async function FinlandPage({ params }: { params: Promise<{ locale
           eyebrow="Business Finland's four tests"
           question="Who qualifies for the Finland startup permit?"
           task="Answer all four"
+          lead={
+            <GateQuiz
+              stopId="gate"
+              criteria={criteria}
+              compact
+              strongNote="What decides it now is whether the file is visibly your own work: real traction, named competitors, an itemised first-year budget."
+              gapNote="A refusal stays on record and is visible on your next attempt."
+            >
+              <h3 className="font-serif text-xl">Why are about 92% of applications refused?</h3>
+              <div>
+                <p className="mb-2 font-sans text-sm text-[#1a1a1a]/60"><b className="tabular-nums text-[#1a1a1a]">8 in 100</b> files got a positive statement in 2024–2025</p>
+                <ApprovalDots />
+              </div>
+              <ul className="grid gap-1.5 font-sans text-sm text-[#1a1a1a]/65">
+                <li><b className="tabular-nums text-[#1a1a1a]">107 → 1,068</b> applications a year, 2018 to 2024</li>
+                <li><b className="tabular-nums text-[#1a1a1a]">42%</b> are repeats; one person applied twelve times</li>
+                <li><b className="tabular-nums text-[#1a1a1a]">22% → 71%</b> a cancellation review opens on 22% of permits issued; 71% of the 246 decided reviews ended in cancellation</li>
+              </ul>
+              <Link href="/book-meeting" className="inline-flex w-fit items-center gap-2 rounded-full bg-[#00BFA5] px-5 py-3 font-sans text-sm font-bold text-[#00261F] transition-transform hover:-translate-y-0.5">
+                Get a free read on your file <ArrowRight className="h-4 w-4" />
+              </Link>
+            </GateQuiz>
+          }
           answer={
             <p>
               You need at least two founders holding at least 60% of the company, working on it full-time, with an innovative business that has real
@@ -642,28 +695,16 @@ export default async function FinlandPage({ params }: { params: Promise<{ locale
             </p>
           }
         >
-          <GateQuiz
-            stopId="gate"
-            criteria={criteria}
-            strongNote="What decides it now is whether the file is visibly your own work: real traction, named competitors, an itemised first-year budget."
-            gapNote="A refusal stays on record and is visible on your next attempt."
-          >
-            <h3 className="font-serif text-xl">Why are about 92% of applications refused?</h3>
-            <div>
-              <p className="mb-2 font-sans text-sm text-[#1a1a1a]/60"><b className="tabular-nums text-[#1a1a1a]">8 in 100</b> files got a positive statement in 2024–2025</p>
-              <ApprovalDots />
-            </div>
-            <ul className="grid gap-1.5 font-sans text-sm text-[#1a1a1a]/65">
-              <li><b className="tabular-nums text-[#1a1a1a]">107 → 1,068</b> applications a year, 2018 to 2024</li>
-              <li><b className="tabular-nums text-[#1a1a1a]">42%</b> are repeats; one person applied twelve times</li>
-              <li><b className="tabular-nums text-[#1a1a1a]">22% → 71%</b> a cancellation review opens on 22% of permits issued; 71% of the 246 decided reviews ended in cancellation</li>
-            </ul>
-            <Link href="/book-meeting" className="inline-flex w-fit items-center gap-2 rounded-full bg-[#00BFA5] px-5 py-3 font-sans text-sm font-bold text-[#00261F] transition-transform hover:-translate-y-0.5">
-              Get a free read on your file <ArrowRight className="h-4 w-4" />
-            </Link>
-          </GateQuiz>
-
-          <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
+          <Detail minutes={1}>
+          <dl className="mb-8 grid max-w-5xl grid-cols-1 gap-x-8 gap-y-4 font-sans text-[15px] leading-relaxed md:grid-cols-2">
+            {criteria.map((c) => (
+              <div key={c.title}>
+                <dt className="font-bold text-[#1a1a1a]">{c.title}</dt>
+                <dd className="text-[#1a1a1a]/70">{c.body}</dd>
+              </div>
+            ))}
+          </dl>
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
             <div className="font-sans text-[15px] leading-relaxed text-[#1a1a1a]/70">
               <h3 className="mb-2 font-serif text-xl text-[#1a1a1a]">What has to be in the file</h3>
               <p>
@@ -685,6 +726,7 @@ export default async function FinlandPage({ params }: { params: Promise<{ locale
               </ul>
             </div>
           </div>
+          </Detail>
         </RouteStop>
 
         {/* 04 — How to apply */}
@@ -694,7 +736,10 @@ export default async function FinlandPage({ params }: { params: Promise<{ locale
           tone="white"
           eyebrow="The process"
           question="How do you apply for the Finland startup permit?"
-          task="Walk to step 5"
+          task="See the five steps"
+          completeOn="view"
+          message="Steps seen"
+          lead={<StepLine steps={steps.map((s, i) => ({ label: s.title, who: s.who, chip: stepChips[i] }))} />}
           answer={
             <p>
               Get a positive Eligibility Statement from Business Finland, file your residence permit in Enter Finland from outside Finland, give
@@ -703,11 +748,13 @@ export default async function FinlandPage({ params }: { params: Promise<{ locale
             </p>
           }
         >
+          <Detail minutes={2}>
           <StepWalker stopId="steps" steps={steps} />
           <p className="mt-6 max-w-[68ch] font-sans text-sm text-[#1a1a1a]/65">
             <strong className="text-[#1a1a1a]">Realistic timeline:</strong> preparing a genuinely competitive Business Finland package is the long pole —
             usually months, not weeks. The permit stage that follows is the fast one.
           </p>
+          </Detail>
         </RouteStop>
 
         {/* Photo band */}
@@ -743,7 +790,10 @@ export default async function FinlandPage({ params }: { params: Promise<{ locale
           number={5}
           eyebrow="Means of support · 2026 Migri figures"
           question="How much money do you need for the Finland startup visa in 2026?"
-          task="Set up your family"
+          task="See the household money"
+          completeOn="view"
+          message="Money worked out"
+          lead={<MoneyBar rows={moneyRows} legend={['You, the founder', 'Spouse or partner', 'Each child']} caption="Two-year totals at the Helsinki rate, 2026 (Migri)" note="Monthly net income or savings to show. A two-year permit needs two years of funds; other large cities and elsewhere are lower." />}
           answer={
             <p>
               A single founder must show €1,210 a month net in the Helsinki region, €1,090 in other large cities and €1,030 elsewhere: about €29,040 for a
@@ -752,6 +802,7 @@ export default async function FinlandPage({ params }: { params: Promise<{ locale
             </p>
           }
         >
+          <Detail minutes={1}>
           <FundsCalculator stopId="money" t={funds} />
 
           <div className="mt-8 grid grid-cols-1 gap-8 xl:grid-cols-2">
@@ -815,6 +866,7 @@ export default async function FinlandPage({ params }: { params: Promise<{ locale
               pay the one in force on the day you file.
             </p>
           </div>
+          </Detail>
         </RouteStop>
 
         {/* 06 — Rights */}
@@ -824,7 +876,10 @@ export default async function FinlandPage({ params }: { params: Promise<{ locale
           tone="white"
           eyebrow="Perk or catch?"
           question="What rights does the startup permit give you and your family?"
-          task="Guess all eight"
+          task="Weigh perks and catches"
+          completeOn="view"
+          message="Perks and catches weighed"
+          lead={<WhyWatch why={{ heading: 'Why Finland', items: lifeWhy }} watch={{ heading: 'Watch out', items: lifeWatch }} />}
           answer={
             <p>
               Your spouse gets an open work right, your children get free public schooling and the family can travel across Schengen. In return, the
@@ -833,6 +888,7 @@ export default async function FinlandPage({ params }: { params: Promise<{ locale
             </p>
           }
         >
+          <Detail minutes={2}>
           <PerkOrCatch stopId="life" items={rights} />
 
           <div className="mt-10 grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.3fr)]">
@@ -854,6 +910,7 @@ export default async function FinlandPage({ params }: { params: Promise<{ locale
               ))}
             </ul>
           </div>
+          </Detail>
         </RouteStop>
 
         {/* 07 — Permanent residence */}
@@ -862,7 +919,10 @@ export default async function FinlandPage({ params }: { params: Promise<{ locale
           number={7}
           eyebrow="Permanent residence · applications from 8 Jan 2026"
           question="How do you get permanent residence in Finland after the startup permit?"
-          task="Find your fastest route"
+          task="See the five routes"
+          completeOn="view"
+          message="Routes compared"
+          lead={<CheckRows items={prRows} icon="number" label="Five routes to permanent residence" />}
           answer={
             <p>
               Years on the startup permit count towards permanent residence. Since 8 January 2026 there are five routes: four years with €40,000 taxable
@@ -871,8 +931,10 @@ export default async function FinlandPage({ params }: { params: Promise<{ locale
             </p>
           }
         >
+          <Detail minutes={1}>
           <PrFinder stopId="residence" questions={prQuestions} routes={prRoutes} />
           <p className="mt-4 font-sans text-xs text-[#1a1a1a]/55">Every route requires that you still meet the conditions for a continuous (A) residence permit.</p>
+          </Detail>
         </RouteStop>
 
         {/* 08 — Roadmap */}
@@ -882,7 +944,10 @@ export default async function FinlandPage({ params }: { params: Promise<{ locale
           tone="white"
           eyebrow="Zero to 100"
           question="How long does it take to get Finnish citizenship through the startup permit?"
-          task="Drag yourself through the years"
+          task="See the years to a passport"
+          completeOn="view"
+          message="Road mapped"
+          lead={<YearsLine milestones={years} surface="white" caption="From arrival to a Finnish passport" />}
           answer={
             <p>
               Plan on a first permit of up to two years, an extension of up to four more, permanent residence after four to six years depending on your
@@ -890,6 +955,7 @@ export default async function FinlandPage({ params }: { params: Promise<{ locale
             </p>
           }
         >
+          <Detail minutes={1}>
           <YearsRoadmap stopId="roadmap" routes={prRoutes} defaultRoute={4} copy={roadmap} />
           <ol className="mt-6 grid grid-cols-2 gap-3 font-sans text-sm text-[#1a1a1a]/65 md:grid-cols-5">
             {[
@@ -915,6 +981,7 @@ export default async function FinlandPage({ params }: { params: Promise<{ locale
               money, is the bottleneck on this path.
             </p>
           </div>
+          </Detail>
         </RouteStop>
 
         {/* 09 — FAQ */}
@@ -1039,7 +1106,7 @@ export default async function FinlandPage({ params }: { params: Promise<{ locale
         <div className="container mx-auto max-w-4xl">
           <div className="flex items-start gap-4">
             <ShieldAlert className="mt-0.5 h-4 w-4 shrink-0 text-[#1a1a1a]/30" />
-            <p className="font-sans text-[11px] leading-relaxed text-[#1a1a1a]/45">
+            <p className="font-sans text-[11px] leading-relaxed text-[#1a1a1a]/65">
               <strong>Regulatory Notice:</strong> Figures on this page were verified on 8 September 2026, and the citizenship rules re-checked on 27 October
               2026, against official Business Finland and Migri documentation, the Finnish Government&apos;s announcement on reforming start-up
               entrepreneur permits, and the Ministry of Economic Affairs and Employment working-group report TEM 2025:36. They are provided for
@@ -1065,19 +1132,26 @@ function FaqGroups() {
       items: deepDiveFaqs,
     },
   ];
+  const group = (g: (typeof groups)[number]) => (
+    <div key={g.heading}>
+      <h3 className={`mb-2 text-[#00796B] ${label}`}>{g.heading}</h3>
+      {g.blurb && <p className="mb-4 max-w-2xl font-sans text-sm text-[#1a1a1a]/55">{g.blurb}</p>}
+      <div className="border-t border-[#1a1a1a]/10">
+        {g.items.map((f) => (
+          <FaqItem key={f.q} q={f.q} a={f.a} />
+        ))}
+      </div>
+    </div>
+  );
+  const [first, ...rest] = groups;
+  // The second group sits behind one fold: every answer stays in the HTML
+  // (and in the FAQPage JSON-LD), the phone page gets shorter.
   return (
     <div className="grid max-w-4xl gap-12">
-      {groups.map((g) => (
-        <div key={g.heading}>
-          <h3 className={`mb-2 text-[#00796B] ${label}`}>{g.heading}</h3>
-          {g.blurb && <p className="mb-4 max-w-2xl font-sans text-sm text-[#1a1a1a]/55">{g.blurb}</p>}
-          <div className="border-t border-[#1a1a1a]/10">
-            {g.items.map((f) => (
-              <FaqItem key={f.q} q={f.q} a={f.a} />
-            ))}
-          </div>
-        </div>
-      ))}
+      {group(first)}
+      <Detail label={`More questions (${rest.reduce((n, g) => n + g.items.length, 0)})`} closeLabel="Hide these questions">
+        <div className="grid gap-12">{rest.map(group)}</div>
+      </Detail>
     </div>
   );
 }

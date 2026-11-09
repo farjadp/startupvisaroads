@@ -28,10 +28,11 @@ import { Link } from '@/routing';
 import JsonLd from '@/components/JsonLd';
 import { faqJsonLd } from '@/lib/seo';
 import { MAIN_CONTACT } from '@/content/contact';
-import Flag from '@/components/route/flags';
+import Flag, { type FlagCode } from '@/components/route/flags';
 import { RouteProvider, RouteRail, RouteStop, RouteFinish, type RouteStopDef, type RouteTheme } from '@/components/route/RouteProgress';
 import { CopyButton, GateQuiz, OpenedTracker, ParallaxLayer, PerkOrCatch } from '@/components/route/RouteWidgets';
 import { PointsCounter, StepTrail, type Criterion, type TrailStep } from './BulgariaWidgets';
+import { CheckRows, CompareCards, Detail, NumberTiles, StepLine, WhyWatch, YearsLine, type Milestone, type Tile } from '@/components/guide/visual';
 import { SOURCES, UPDATED } from './meta';
 
 // ─── Data ────────────────────────────────────────────────────────────────────
@@ -229,6 +230,52 @@ const comparison = [
   { country: 'Italy', plus: 'A thirty-day committee.', minus: '€50,000 for the team, and a first residence permit of one year.' },
   { country: 'Estonia', plus: 'Fast and cheap.', minus: 'An MVP is required.' },
   { country: 'Denmark', plus: 'A transparent scoring panel, like Bulgaria’s.', minus: 'An annual quota and much higher proof of funds.' },
+];
+
+// ─── Visuals: drawn in code from the data above ──────────────────────────────
+// Every figure below is already on the page, with its source. Each fold's
+// `minutes` is its word count at 200 words a minute (measured 9 Nov 2026).
+
+const snapshotTiles: Tile[] = snapshot.slice(0, 4).map((s) => ({ value: s.value, label: s.label, sub: s.note }));
+
+const pointsRows = criteria.map((c) => ({
+  label: c.title,
+  note: `Up to ${c.max} ${c.max === 1 ? 'point' : 'points'} · ${c.mandatory ? 'mandatory attachment' : c.max === 1 ? 'optional' : 'assessed on every file'}`,
+}));
+
+const moneyTiles: Tile[] = [
+  { value: '€1,860.60', label: 'Proof of personal funds', sub: '3 × €620.20, held 30 consecutive days' },
+  { value: 'None', label: 'Minimum investment', sub: 'no investment threshold' },
+  { value: '€51,129', label: 'Sales or fund contract', sub: 'optional, one point each' },
+  { value: 'Free', label: 'Certificate fee', sub: 'to issue and to extend (Article 14)' },
+];
+
+const stepChips = steps.map((s) => `${s.figure} · ${s.figureLabel}`);
+
+const afterYears: Milestone[] = [
+  { at: 0, year: 'Y0', label: 'Certificate, one year', sub: 'D visa, arrival, company, a real start' },
+  { at: 1, year: 'Y1', label: 'Extension, two years', sub: 'Progress report, at least 50% of a company' },
+  { at: 5, year: 'Y5', label: 'Permanent residence', sub: 'No more than 30 months outside Bulgaria' },
+];
+
+const taxTiles: Tile[] = [
+  { value: '10%', label: 'Corporate income tax', sub: 'flat; every Bulgarian company' },
+  { value: '10%', label: 'Personal income tax', sub: 'flat rate' },
+  { value: '5%', label: 'Withholding tax on dividends', sub: 'paid to companies outside the EU/EEA' },
+  { value: 'EOOD', label: 'Company, one owner', sub: 'OOD for several partners' },
+];
+
+// One line per perk or catch, restating its row in perksAndCatches.
+const why = ['Free to issue and extend', 'A decision within 30 days', 'Published scoring: 6 criteria, 14 points', 'No minimum investment'];
+const watch = ['A qualified electronic signature', 'Certified Bulgarian translations', 'A one-year first certificate', 'Residence tied to 50% ownership'];
+
+const compareCodes: Record<string, FlagCode> = { Bulgaria: 'bg', Spain: 'es', Italy: 'it', Estonia: 'ee', Denmark: 'dk' };
+
+const workPhases = [
+  { label: 'Business plan and forecast', who: 'Self-assessment against the 14 points', chip: 'First instalment on signing' },
+  { label: 'Filing in NIMS', who: 'Through to the certificate', chip: 'Second instalment with the certificate' },
+  { label: 'D visa documents', who: 'Support preparing them' },
+  { label: 'Residence issued', who: 'You', chip: 'Third instalment' },
 ];
 
 const commonFaqs = [
@@ -430,6 +477,7 @@ export default function BulgariaEn() {
           task="Read the snapshot"
           completeOn="view"
           message="Snapshot read"
+          lead={<NumberTiles tiles={snapshotTiles} />}
           answer={
             <p>
               The Bulgaria startup visa is a certificate, not a visa. The Ministry of Innovation and Growth decides on it, free and within 30 days, for a
@@ -438,6 +486,7 @@ export default function BulgariaEn() {
             </p>
           }
         >
+          <Detail minutes={2}>
           <dl className="grid grid-cols-2 gap-3 md:grid-cols-5">
             {snapshot.map((s) => (
               <div key={s.label} className="flex flex-col rounded-2xl border border-[#1a1a1a]/10 bg-white p-4 transition-transform hover:-translate-y-1">
@@ -467,6 +516,7 @@ export default function BulgariaEn() {
             the euro area since January 2026. The Ordinance was written before the
             euro and states every figure in leva; this page converts them at the fixed rate of 1.95583.
           </p>
+          </Detail>
         </RouteStop>
 
         {/* 02 — The points */}
@@ -476,6 +526,7 @@ export default function BulgariaEn() {
           eyebrow="Article 7 · six criteria"
           question="How is the Bulgaria startup visa scored?"
           task="Score all six criteria"
+          lead={<CheckRows items={pointsRows} icon="number" columns={3} label="The six criteria of Article 7" />}
           answer={
             <p>
               An expert council scores six criteria for 14 points, and you need 8 to pass: personal funds (up to 3), a three-year financial forecast (up
@@ -484,6 +535,7 @@ export default function BulgariaEn() {
             </p>
           }
         >
+          <Detail label="Score your file" minutes={2}>
           <PointsCounter stopId="points" criteria={criteria} pass={8} total={14} />
 
           <div className="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
@@ -526,6 +578,7 @@ export default function BulgariaEn() {
               </p>
             </div>
           </div>
+          </Detail>
         </RouteStop>
 
         {/* 03 — Money */}
@@ -537,6 +590,7 @@ export default function BulgariaEn() {
           task="Read the money table"
           completeOn="view"
           message="Money mapped"
+          lead={<NumberTiles tiles={moneyTiles} />}
           answer={
             <p>
               The only required amount is three times Bulgaria’s monthly minimum wage, held in your personal account for 30 consecutive days before you
@@ -545,6 +599,7 @@ export default function BulgariaEn() {
             </p>
           }
         >
+          <Detail minutes={1}>
           <div className="overflow-x-auto">
             <table className="w-full min-w-[680px] overflow-hidden rounded-2xl bg-white font-sans text-sm">
               <caption className="pb-2 text-left font-bold">What the Bulgarian startup visa certificate requires and costs, 2026</caption>
@@ -581,6 +636,7 @@ export default function BulgariaEn() {
               for proof of means to live in Bulgaria for the D visa.
             </p>
           </div>
+          </Detail>
         </RouteStop>
 
         {/* 04 — Documents */}
@@ -591,6 +647,15 @@ export default function BulgariaEn() {
           eyebrow="Three mandatory, the rest optional"
           question="What documents do you need for the Bulgaria startup visa?"
           task="Check all five"
+          lead={
+            <GateQuiz
+              stopId="documents"
+              criteria={readiness}
+              compact
+              strongNote="Attach every optional document you have as well: the council uses them to judge how realistic the plan is and how strong the team is."
+              gapNote="Sort the electronic signature first; it takes the longest to arrange from outside Europe."
+            />
+          }
           answer={
             <p>
               MIG’s technical guidelines list thirteen attachments, and three are mandatory: a copy of your passport, the business plan and project
@@ -599,14 +664,17 @@ export default function BulgariaEn() {
             </p>
           }
         >
-          <GateQuiz
-            stopId="documents"
-            criteria={readiness}
-            strongNote="Attach every optional document you have as well: the council uses them to judge how realistic the plan is and how strong the team is."
-            gapNote="Sort the electronic signature first; it takes the longest to arrange from outside Europe."
-          >
+          <Detail minutes={1}>
+            <dl className="mb-8 grid max-w-5xl grid-cols-1 gap-x-8 gap-y-4 font-sans text-[15px] leading-relaxed md:grid-cols-2">
+              {readiness.map((r) => (
+                <div key={r.title}>
+                  <dt className="font-bold text-[#1a1a1a]">{r.title}</dt>
+                  <dd className="text-[#1a1a1a]/70">{r.body}</dd>
+                </div>
+              ))}
+            </dl>
             <h3 className="font-serif text-xl">The optional attachments</h3>
-            <ul className="grid gap-1.5 font-sans text-sm text-[#1a1a1a]/65">
+            <ul className="mt-2 grid gap-1.5 font-sans text-sm text-[#1a1a1a]/65">
               {optionalDocs.map((d) => (
                 <li key={d} className="flex gap-2">
                   <span aria-hidden="true" className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[#00966E]" />
@@ -614,12 +682,12 @@ export default function BulgariaEn() {
                 </li>
               ))}
             </ul>
-          </GateQuiz>
           <p className="mt-6 max-w-[68ch] font-sans text-sm text-[#1a1a1a]/65">
             <strong className="text-[#1a1a1a]">Optional is not useless.</strong> The optional documents that earn no direct points (articles, awards,
             a Seal of Excellence, a Bulgarian partner, your degree) are what the expert council uses to judge how realistic the business plan is and how
             capable the team is, and that is the 5-point criterion. Attach whatever you have.
           </p>
+          </Detail>
         </RouteStop>
 
         {/* 05 — Steps */}
@@ -629,6 +697,7 @@ export default function BulgariaEn() {
           eyebrow="The process"
           question="How do you apply for the Bulgaria startup visa?"
           task="Walk to step 7"
+          lead={<StepLine steps={steps.map((s, i) => ({ label: s.title, who: s.who, chip: stepChips[i] }))} />}
           answer={
             <p>
               Prepare the plan, forecast, funds proof, translations and a qualified e-signature. File in NIMS (enims.egov.bg) with a 12-month period and
@@ -637,6 +706,7 @@ export default function BulgariaEn() {
             </p>
           }
         >
+          <Detail label="Walk the seven steps" minutes={1}>
           <StepTrail stopId="steps" steps={steps} />
           <div className="mt-6 max-w-[68ch] rounded-xl border-l-4 border-[#A51E10] bg-white px-4 py-3 font-sans text-sm leading-relaxed text-[#1a1a1a]/75">
             <strong className="text-[#1a1a1a]">Company after the visa, not before.</strong> A widely shared road map puts “register a Bulgarian company”
@@ -644,6 +714,7 @@ export default function BulgariaEn() {
             after the D visa was issued. If you have already registered a company before the visa, check with a Bulgarian lawyer before your next step
             that this order will not cause problems with the migration authority.
           </div>
+          </Detail>
         </RouteStop>
 
         {/* Photo band */}
@@ -684,6 +755,7 @@ export default function BulgariaEn() {
           task="Read the timeline"
           completeOn="view"
           message="Timeline read"
+          lead={<YearsLine milestones={afterYears} surface="white" caption="From the certificate to permanent residence" />}
           answer={
             <p>
               The certificate lasts one year. In its last month you file a progress report with proof you hold at least 50% of a Bulgarian company, and
@@ -692,6 +764,7 @@ export default function BulgariaEn() {
             </p>
           }
         >
+          <Detail minutes={1}>
           <ol className="grid grid-cols-1 gap-3 md:grid-cols-4">
             {[
               { when: 'Year 0', t: 'Certificate, one year', b: 'D visa, arrival, company and a real start, all inside the first year.' },
@@ -716,6 +789,7 @@ export default function BulgariaEn() {
               startup with a heavy funding round ahead.
             </p>
           </div>
+          </Detail>
         </RouteStop>
 
         {/* 07 — Company and tax */}
@@ -727,6 +801,7 @@ export default function BulgariaEn() {
           task="Read the basics"
           completeOn="view"
           message="Company basics read"
+          lead={<NumberTiles tiles={taxTiles} />}
           answer={
             <p>
               The usual vehicle is a limited liability company: an EOOD for a single owner or an OOD for several partners. Corporate and personal income
@@ -734,6 +809,7 @@ export default function BulgariaEn() {
             </p>
           }
         >
+          <Detail minutes={1}>
           <div className="overflow-x-auto">
             <table className="w-full min-w-[480px] max-w-3xl overflow-hidden rounded-2xl bg-white font-sans text-sm">
               <caption className="pb-2 text-left font-bold">Company form and headline tax rates in Bulgaria</caption>
@@ -765,6 +841,7 @@ export default function BulgariaEn() {
             <strong className="text-[#1a1a1a]">Low corporate tax is not the whole bill.</strong> It does not remove personal income tax, social
             security or monthly bookkeeping. Talk to a Bulgarian accountant about the structure and running costs before you register the company.
           </p>
+          </Detail>
         </RouteStop>
 
         {/* Photo band */}
@@ -803,6 +880,7 @@ export default function BulgariaEn() {
           eyebrow="Perk or catch?"
           question="What are the catches of the Bulgaria startup visa?"
           task="Guess all eight"
+          lead={<WhyWatch why={{ heading: 'Why Bulgaria', items: why }} watch={{ heading: 'Watch out', items: watch }} />}
           answer={
             <p>
               The perks are real: a free certificate, a 30-day decision, published scoring and no minimum investment. The catches are practical: a
@@ -811,6 +889,7 @@ export default function BulgariaEn() {
             </p>
           }
         >
+          <Detail label="Guess all eight, then read the detail" minutes={3}>
           <PerkOrCatch stopId="catches" items={perksAndCatches} />
 
           <div className="mt-10 grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
@@ -852,6 +931,7 @@ export default function BulgariaEn() {
               </ul>
             </aside>
           </div>
+          </Detail>
         </RouteStop>
 
         {/* 09 — Compare */}
@@ -863,6 +943,13 @@ export default function BulgariaEn() {
           task="Read the comparison"
           completeOn="view"
           message="Comparison read"
+          lead={
+            <CompareCards
+              rows={comparison.map((c) => ({ flag: <Flag code={compareCodes[c.country]} uid={`cmp-${compareCodes[c.country]}`} width={22} />, country: c.country, plus: c.plus, minus: c.minus, self: c.country === 'Bulgaria' }))}
+              heads={['Country', 'In its favour', 'The trade-off']}
+              caption="Bulgaria against four other European startup routes"
+            />
+          }
           answer={
             <p>
               Bulgaria has the most transparent points scoring, very low proof of funds, a free 30-day certificate and 10% corporate tax, but a one-year
@@ -871,6 +958,7 @@ export default function BulgariaEn() {
             </p>
           }
         >
+          <Detail minutes={1}>
           <div className="overflow-x-auto">
             <table className="w-full min-w-[640px] overflow-hidden rounded-2xl bg-white font-sans text-sm">
               <caption className="pb-2 text-left font-bold">Bulgaria compared with four other European startup routes</caption>
@@ -897,6 +985,7 @@ export default function BulgariaEn() {
             majority of the company yourself, Bulgaria is the cheapest way into the European Union. If a heavy funding round is coming in the next year
             or two, take the 50% rule seriously.
           </p>
+          </Detail>
         </RouteStop>
 
         {/* 10 — Our role */}
@@ -909,6 +998,7 @@ export default function BulgariaEn() {
           task="Read how we work"
           completeOn="view"
           message="Terms read"
+          lead={<StepLine steps={workPhases} caption="Four phases, three instalments, a twelve-month contract" />}
           answer={
             <p>
               We are not Bulgarian immigration lawyers and we do not file the D visa or residence application for you. Our work comes before that:
@@ -917,6 +1007,11 @@ export default function BulgariaEn() {
             </p>
           }
         >
+          <p className="mb-8 max-w-[72ch] rounded-2xl border-l-4 border-[#A51E10] bg-[#F2F0E9] p-5 font-sans text-sm leading-relaxed">
+            <strong>This is not a residence guarantee.</strong> Nobody outside Bulgaria’s ministry, embassy and migration authority can guarantee their
+            decision.
+          </p>
+          <Detail minutes={2}>
           <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
             <div>
               <h3 className="mb-3 font-serif text-2xl">What we do</h3>
@@ -963,6 +1058,7 @@ export default function BulgariaEn() {
               </p>
             </div>
           </div>
+          </Detail>
         </RouteStop>
 
         {/* 11 — FAQ */}
@@ -983,7 +1079,8 @@ export default function BulgariaEn() {
             {[
               { heading: 'The most common questions', items: commonFaqs },
               { heading: 'Points, documents, signature and extension, in detail', items: deepFaqs },
-            ].map((g) => (
+            ].map((g, gi) => {
+              const group = (
               <div key={g.heading}>
                 <h3 className={`mb-2 text-[#00704F] ${label}`}>{g.heading}</h3>
                 <div className="border-t border-[#1a1a1a]/10">
@@ -998,7 +1095,14 @@ export default function BulgariaEn() {
                   ))}
                 </div>
               </div>
-            ))}
+              );
+              // The second group sits behind one fold: every answer stays in the HTML (and in the FAQPage JSON-LD).
+              return gi === 0 ? group : (
+                <Detail key={g.heading} label={`More questions (${deepFaqs.length})`} closeLabel="Hide these questions">
+                  {group}
+                </Detail>
+              );
+            })}
           </div>
           <OpenedTracker stopId="faq" need={3} message="Questions answered" />
         </RouteStop>
@@ -1105,7 +1209,7 @@ export default function BulgariaEn() {
         <div className="container mx-auto max-w-4xl">
           <div className="flex items-start gap-4">
             <ShieldAlert className="mt-0.5 h-4 w-4 shrink-0 text-[#1a1a1a]/30" />
-            <p className="font-sans text-[11px] leading-relaxed text-[#1a1a1a]/55">
+            <p className="font-sans text-[11px] leading-relaxed text-[#1a1a1a]/65">
               <strong>Regulatory Notice:</strong> Figures on this page were checked on 29 October 2026 against the Ordinance on the Startup Visa
               certificate, the Foreigners in the Republic of Bulgaria Act, the Ministry of Innovation and Growth’s published guidance and the 2026
               minimum wage. They are provided for informational purposes only. VisaRoads Inc., an Ashavid company, is a strategic business advisory firm;

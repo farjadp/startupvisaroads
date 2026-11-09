@@ -72,6 +72,7 @@ import Flag, { type FlagCode } from '@/components/route/flags';
 import { RouteProvider, RouteRail, RouteStop, RouteFinish, type RouteStopDef, type RouteTheme } from '@/components/route/RouteProgress';
 import { CopyButton, GateQuiz, OpenedTracker, ParallaxLayer, PerkOrCatch, StepWalker, type RouteStep } from '@/components/route/RouteWidgets';
 import { ConversionClock, PassportCheck, TnufaCheck, type ClockCopy, type PassportOption, type TnufaItem } from './IsraelWidgets';
+import { Detail, NumberTiles, StepLine, WhyWatch, YearsLine, type Milestone, type Tile } from '@/components/guide/visual';
 
 export async function generateMetadata({
   params,
@@ -199,6 +200,19 @@ const steps: RouteStep[] = [
   },
 ];
 
+const snapshotTiles: Tile[] = [
+  { value: 'B/2', label: 'Visa type', sub: 'residence, not work' },
+  { value: '2 yrs', label: 'Maximum stay', sub: 'then convert or leave' },
+  { value: '2 yrs', label: 'Experience required', sub: 'in the field of the idea' },
+  { value: '100%', label: 'Of R&D in Israel', sub: 'a condition, not a preference' },
+];
+
+// One chip per stage, from the stage's own figure and label.
+const stepChips = ['Letter of acceptance, in writing', '2 yrs experience in the field', 'Recommends; PIBA decides', '30 days to apply in Israel, if visa-exempt', 'File for B/1 3 months before expiry'];
+
+const padGives = ['Workspace', 'Technological infrastructure', 'Administrative, business and logistical support', 'Mentorship', 'Access to the local ecosystem and investors'];
+const padDoesNot = ['Money to live on', 'A current roster: the list is from 2017'];
+
 const howToJsonLd = {
   '@context': 'https://schema.org',
   '@type': 'HowTo',
@@ -230,6 +244,14 @@ const money = [
   },
 ];
 
+// The money table's four figures, short enough for a phone tile.
+const moneyTiles: Tile[] = [
+  { value: 'None', label: 'Your own living costs', sub: 'no published figure; a declaration' },
+  { value: 'NIS 200,000', label: 'Ideation (Tnufa) grant', sub: 'up to; 80% of an approved budget' },
+  { value: 'NIS 3.5m', label: 'Technological incubator', sub: 'up to; 85% of an approved budget' },
+  { value: 'Royalties', label: 'Repayment', sub: 'only, on commercial sales' },
+];
+
 // What Tnufa covers and excludes, as the money section lists it.
 const tnufaItems: TnufaItem[] = [
   { label: 'Building the prototype', covered: true },
@@ -240,6 +262,12 @@ const tnufaItems: TnufaItem[] = [
   { label: 'Your rent and living costs', covered: false },
   { label: 'Subcontractors and consultants', covered: true },
   { label: 'Exhibitions', covered: true },
+];
+
+const afterYears: Milestone[] = [
+  { at: 0, year: 'Start', label: 'B/2 issued', sub: 'for up to two years' },
+  { at: 21, year: '3 months before expiry', label: 'File for the B/1', sub: 'a product or a stable company' },
+  { at: 24, year: 'Up to 2 years', label: 'The B/2 ends', sub: 'B/1 carries the work permit' },
 ];
 
 const rights = [
@@ -372,6 +400,12 @@ const related: { href: string; flag: FlagCode; stage: string; title: string; exc
 
 const label = 'font-sans text-xs font-bold uppercase tracking-[0.18em]';
 
+// Each fold's reading time: its word count at 200 words a minute (measured
+// 9 Nov 2026); update it when a fold's text grows or shrinks a lot.
+const MIN = { snapshot: 1, gate: 1, pads: 1, steps: 2, money: 2, life: 1, after: 1 };
+// FAQ answers shown before the "More questions" fold.
+const FAQ_OPEN = 5;
+
 // setRequestLocale before the first <Link>: without it next-intl reads
 // headers(), Next renders the route dynamically and streams <title> and
 // the meta tags into <body> instead of <head>.
@@ -464,6 +498,7 @@ export default async function IsraelPage({ params }: { params: Promise<{ locale:
           task="Read the four facts"
           completeOn="view"
           message="Snapshot read"
+          lead={<NumberTiles tiles={snapshotTiles} />}
           answer={
             <p>
               The Israel Innovation Visa is a B/2 residence permit of up to two years for foreign technology founders. An approved landing pad must accept
@@ -472,36 +507,24 @@ export default async function IsraelPage({ params }: { params: Promise<{ locale:
             </p>
           }
         >
-          <dl className="grid grid-cols-2 gap-3 md:grid-cols-4">
-            {[
-              { stat: 'B/2', label: 'Visa type', sub: 'residence, not work' },
-              { stat: '2 yrs', label: 'Maximum stay', sub: 'then convert or leave' },
-              { stat: '2 yrs', label: 'Experience required', sub: 'in the field of the idea' },
-              { stat: '100%', label: 'Of R&D in Israel', sub: 'a condition, not a preference' },
-            ].map((s) => (
-              <div key={s.label} className="flex flex-col rounded-2xl border border-[#1a1a1a]/10 bg-white p-5 transition-transform hover:-translate-y-1">
-                <dt className="order-2 mt-2 font-sans text-sm font-bold">{s.label}</dt>
-                <dd className="order-1 font-serif text-4xl text-[#0038B8]">{s.stat}</dd>
-                <dd className="order-3 font-sans text-xs text-[#1a1a1a]/55">{s.sub}</dd>
-              </div>
-            ))}
-          </dl>
-          <div className="mt-8 grid max-w-5xl grid-cols-1 gap-6 font-sans text-[15px] leading-relaxed text-[#1a1a1a]/70 md:grid-cols-3">
-            <p>
-              <strong className="text-[#1a1a1a]">A recommendation, not a visa.</strong> Israel&rsquo;s technology sector is roughly a fifth of its GDP,
-              and the Innovation Visa exists to pull founders into it. Announced as a pilot in 2017, the current procedure was approved in{' '}
-              <strong className="text-[#1a1a1a]">2024</strong> together with the Population and Immigration Authority.
-            </p>
-            <p>
-              Understand the decision chain before anything else, because almost every misdescription of this route starts here. The{' '}
-              <strong className="text-[#1a1a1a]">Israel Innovation Authority does not issue visas</strong>. It evaluates your project and, if it approves,
-              writes a recommendation. PIBA issues the visa. And before either of them will act, a landing pad has to have accepted you.
-            </p>
-            <p>
-              The Authority also runs the funding programmes a founder here would use — Ideation (Tnufa) at idea stage, the technological incubators
-              above it — and, with the Ministry of Defense, a set of dual-use programmes that are outside the scope of this page.
-            </p>
-          </div>
+          <Detail minutes={MIN.snapshot}>
+            <div className="grid max-w-5xl grid-cols-1 gap-6 font-sans text-[15px] leading-relaxed text-[#1a1a1a]/70 md:grid-cols-3">
+              <p>
+                <strong className="text-[#1a1a1a]">A recommendation, not a visa.</strong> Israel&rsquo;s technology sector is roughly a fifth of its GDP,
+                and the Innovation Visa exists to pull founders into it. Announced as a pilot in 2017, the current procedure was approved in{' '}
+                <strong className="text-[#1a1a1a]">2024</strong> together with the Population and Immigration Authority.
+              </p>
+              <p>
+                Understand the decision chain before anything else, because almost every misdescription of this route starts here. The{' '}
+                <strong className="text-[#1a1a1a]">Israel Innovation Authority does not issue visas</strong>. It evaluates your project and, if it approves,
+                writes a recommendation. PIBA issues the visa. And before either of them will act, a landing pad has to have accepted you.
+              </p>
+              <p>
+                The Authority also runs the funding programmes a founder here would use — Ideation (Tnufa) at idea stage, the technological incubators
+                above it — and, with the Ministry of Defense, a set of dual-use programmes that are outside the scope of this page.
+              </p>
+            </div>
+          </Detail>
         </RouteStop>
 
         {/* 02 — Who cannot use this route */}
@@ -562,6 +585,25 @@ export default async function IsraelPage({ params }: { params: Promise<{ locale:
           eyebrow="What they are actually asking for"
           question="Who is eligible for the Israel Innovation Visa?"
           task="Answer all four"
+          lead={
+              <GateQuiz
+                stopId="gate"
+                criteria={criteria}
+                compact
+                strongNote="The next gate is not the Authority: it is a landing pad's written acceptance."
+                gapNote="A professional evaluator assesses the project and a committee decides."
+              >
+                <h3 className="font-serif text-xl">Two conditions outside the grid</h3>
+                <p className="font-sans text-sm leading-relaxed text-[#1a1a1a]/65">
+                  Two conditions sit outside that grid and are missed more often than any of them. All research and development must be carried out{' '}
+                  <strong className="text-[#1a1a1a]">inside Israel</strong>. And you must file a declaration of the financial means to support yourself for
+                  the whole stay — the landing pad contributes nothing towards your living costs.
+                </p>
+                <Link href="/book-meeting" className="inline-flex w-fit items-center gap-2 rounded-full bg-[#0038B8] px-5 py-3 font-sans text-sm font-bold text-white transition-transform hover:-translate-y-0.5">
+                  Get a free read on your route <ArrowRight className="h-4 w-4" />
+                </Link>
+              </GateQuiz>
+          }
           answer={
             <p>
               You must be neither an Israeli citizen nor a resident, have at least two years of experience in the field of your idea, and bring real
@@ -570,22 +612,16 @@ export default async function IsraelPage({ params }: { params: Promise<{ locale:
             </p>
           }
         >
-          <GateQuiz
-            stopId="gate"
-            criteria={criteria}
-            strongNote="The next gate is not the Authority: it is a landing pad's written acceptance."
-            gapNote="A professional evaluator assesses the project and a committee decides."
-          >
-            <h3 className="font-serif text-xl">Two conditions outside the grid</h3>
-            <p className="font-sans text-sm leading-relaxed text-[#1a1a1a]/65">
-              Two conditions sit outside that grid and are missed more often than any of them. All research and development must be carried out{' '}
-              <strong className="text-[#1a1a1a]">inside Israel</strong>. And you must file a declaration of the financial means to support yourself for
-              the whole stay — the landing pad contributes nothing towards your living costs.
-            </p>
-            <Link href="/book-meeting" className="inline-flex w-fit items-center gap-2 rounded-full bg-[#0038B8] px-5 py-3 font-sans text-sm font-bold text-white transition-transform hover:-translate-y-0.5">
-              Get a free read on your route <ArrowRight className="h-4 w-4" />
-            </Link>
-          </GateQuiz>
+          <Detail minutes={MIN.gate}>
+            <dl className="grid max-w-5xl grid-cols-1 gap-x-8 gap-y-4 font-sans text-[15px] leading-relaxed md:grid-cols-2">
+              {criteria.map((c) => (
+                <div key={c.title}>
+                  <dt className="font-bold text-[#1a1a1a]">{c.title}</dt>
+                  <dd className="text-[#1a1a1a]/70">{c.body}</dd>
+                </div>
+              ))}
+            </dl>
+          </Detail>
         </RouteStop>
 
         {/* 04 — Landing pads */}
@@ -598,6 +634,7 @@ export default async function IsraelPage({ params }: { params: Promise<{ locale:
           task="Read the dated list"
           completeOn="view"
           message="Landing pads read"
+          lead={<WhyWatch why={{ heading: 'What a landing pad gives', items: padGives }} watch={{ heading: 'What it does not give', items: padDoesNot }} />}
           answer={
             <p>
               A landing pad is an approved incubator or accelerator that agrees, in a formal letter, to host and support you for your whole stay in
@@ -606,36 +643,38 @@ export default async function IsraelPage({ params }: { params: Promise<{ locale:
             </p>
           }
         >
-          <div className="mb-6 max-w-3xl rounded-r-xl border-l-4 border-[#B4531A] bg-[#fff7ed] p-5">
-            <p className="font-sans text-sm leading-relaxed text-[#1a1a1a]/80">
-              <strong>This list is from 2017.</strong> It was published when the programme was announced as a pilot, and no newer official source we
-              could find restates it. It is printed here with its date because that is the honest way to print it — take it as a starting point for your
-              own enquiry with the Innovation Authority, never as today&rsquo;s roster.
-            </p>
-          </div>
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-[520px] overflow-hidden rounded-2xl bg-[#F2F0E9] font-sans text-sm">
-              <caption className="pb-2 text-left font-bold">The twelve landing pads named in the 2017 pilot announcement</caption>
-              <thead>
-                <tr className="border-b border-[#1a1a1a]/10 text-left text-[11px] uppercase tracking-[0.1em] text-[#1a1a1a]/55">
-                  <th scope="col" className="px-4 py-3">Landing pad</th>
-                  <th scope="col" className="px-4 py-3">Focus, as stated in 2017</th>
-                </tr>
-              </thead>
-              <tbody>
-                {landingPads.map((p) => (
-                  <tr key={p.name} className="border-b border-[#1a1a1a]/10 last:border-0">
-                    <th scope="row" className="px-4 py-3 text-left font-bold">{p.name}</th>
-                    <td className="px-4 py-3 text-[#1a1a1a]/65">{p.note}</td>
+          <Detail minutes={MIN.pads}>
+            <div className="mb-6 max-w-3xl rounded-r-xl border-l-4 border-[#B4531A] bg-[#fff7ed] p-5">
+              <p className="font-sans text-sm leading-relaxed text-[#1a1a1a]/80">
+                <strong>This list is from 2017.</strong> It was published when the programme was announced as a pilot, and no newer official source we
+                could find restates it. It is printed here with its date because that is the honest way to print it — take it as a starting point for your
+                own enquiry with the Innovation Authority, never as today&rsquo;s roster.
+              </p>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[520px] overflow-hidden rounded-2xl bg-[#F2F0E9] font-sans text-sm">
+                <caption className="pb-2 text-left font-bold">The twelve landing pads named in the 2017 pilot announcement</caption>
+                <thead>
+                  <tr className="border-b border-[#1a1a1a]/10 text-left text-[11px] uppercase tracking-[0.1em] text-[#1a1a1a]/55">
+                    <th scope="col" className="px-4 py-3">Landing pad</th>
+                    <th scope="col" className="px-4 py-3">Focus, as stated in 2017</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <p className="mt-6 max-w-3xl font-sans text-sm leading-relaxed text-[#1a1a1a]/65">
-            What a landing pad gives: workspace, technological infrastructure, administrative, business and logistical support, mentorship, and a route
-            into the local ecosystem and its investors. What it does not give: money to live on.
-          </p>
+                </thead>
+                <tbody>
+                  {landingPads.map((p) => (
+                    <tr key={p.name} className="border-b border-[#1a1a1a]/10 last:border-0">
+                      <th scope="row" className="px-4 py-3 text-left font-bold">{p.name}</th>
+                      <td className="px-4 py-3 text-[#1a1a1a]/65">{p.note}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <p className="mt-6 max-w-3xl font-sans text-sm leading-relaxed text-[#1a1a1a]/65">
+              What a landing pad gives: workspace, technological infrastructure, administrative, business and logistical support, mentorship, and a route
+              into the local ecosystem and its investors. What it does not give: money to live on.
+            </p>
+          </Detail>
         </RouteStop>
 
         {/* 05 — How to apply */}
@@ -644,7 +683,10 @@ export default async function IsraelPage({ params }: { params: Promise<{ locale:
           number={5}
           eyebrow="Five stages, in this order"
           question="How do you apply for the Israel Innovation Visa?"
-          task="Walk to stage 5"
+          task="See the five stages"
+          completeOn="view"
+          message="Stages seen"
+          lead={<StepLine steps={steps.map((st, i) => ({ label: st.title, who: st.who, chip: stepChips[i] }))} />}
           answer={
             <p>
               Get a landing pad&apos;s letter, then apply to the Israel Innovation Authority with your business plan, CV, that letter and a declaration of
@@ -653,11 +695,13 @@ export default async function IsraelPage({ params }: { params: Promise<{ locale:
             </p>
           }
         >
-          <StepWalker stopId="steps" steps={steps} />
-          <p className="mt-6 max-w-[68ch] font-sans text-sm text-[#1a1a1a]/65">
-            <strong className="text-[#1a1a1a]">Each stage produces the input for the next one.</strong> Skipping to the immigration question is the most
-            expensive mistake available on this route: without a landing pad&rsquo;s letter there is no file to submit.
-          </p>
+          <Detail minutes={MIN.steps}>
+            <StepWalker stopId="steps" steps={steps} />
+            <p className="mt-6 max-w-[68ch] font-sans text-sm text-[#1a1a1a]/65">
+              <strong className="text-[#1a1a1a]">Each stage produces the input for the next one.</strong> Skipping to the immigration question is the most
+              expensive mistake available on this route: without a landing pad&rsquo;s letter there is no file to submit.
+            </p>
+          </Detail>
         </RouteStop>
 
         {/* Photo band */}
@@ -690,7 +734,10 @@ export default async function IsraelPage({ params }: { params: Promise<{ locale:
           number={6}
           eyebrow="Four different things people keep confusing"
           question="How much money do you need for the Israel Innovation Visa?"
-          task="Sort all eight costs"
+          task="See the four answers"
+          completeOn="view"
+          message="Money sorted"
+          lead={<NumberTiles tiles={moneyTiles} label="Four separate money questions" />}
           answer={
             <p>
               Israel publishes no minimum: you file a declaration that you can cover your living costs for the whole stay, and the landing pad contributes
@@ -699,36 +746,38 @@ export default async function IsraelPage({ params }: { params: Promise<{ locale:
             </p>
           }
         >
-          <TnufaCheck stopId="money" items={tnufaItems} rate={0.8} cap={250000} />
+          <Detail minutes={MIN.money}>
+            <TnufaCheck stopId="money" items={tnufaItems} rate={0.8} cap={250000} />
 
-          <div className="mt-8 overflow-x-auto">
-            <table className="w-full min-w-[640px] overflow-hidden rounded-2xl bg-white font-sans text-sm">
-              <caption className="pb-2 text-left font-bold">
-                Your own means, the idea-stage grant, the incubator programme, and what you owe back: four separate questions with four different answers
-              </caption>
-              <thead>
-                <tr className="border-b border-[#1a1a1a]/10 text-left text-[11px] uppercase tracking-[0.1em] text-[#1a1a1a]/55">
-                  <th scope="col" className="px-4 py-3">Question</th>
-                  <th scope="col" className="px-4 py-3">Figure</th>
-                  <th scope="col" className="px-4 py-3">What it means</th>
-                </tr>
-              </thead>
-              <tbody>
-                {money.map((m) => (
-                  <tr key={m.label} className="border-b border-[#1a1a1a]/10 align-top last:border-0">
-                    <th scope="row" className="px-4 py-3 text-left font-bold">{m.label}</th>
-                    <td className="whitespace-nowrap px-4 py-3 font-serif text-lg text-[#0038B8]">{m.figure}</td>
-                    <td className="px-4 py-3 leading-relaxed text-[#1a1a1a]/65">{m.body}</td>
+            <div className="mt-8 overflow-x-auto">
+              <table className="w-full min-w-[640px] overflow-hidden rounded-2xl bg-white font-sans text-sm">
+                <caption className="pb-2 text-left font-bold">
+                  Your own means, the idea-stage grant, the incubator programme, and what you owe back: four separate questions with four different answers
+                </caption>
+                <thead>
+                  <tr className="border-b border-[#1a1a1a]/10 text-left text-[11px] uppercase tracking-[0.1em] text-[#1a1a1a]/55">
+                    <th scope="col" className="px-4 py-3">Question</th>
+                    <th scope="col" className="px-4 py-3">Figure</th>
+                    <th scope="col" className="px-4 py-3">What it means</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody>
+                  {money.map((m) => (
+                    <tr key={m.label} className="border-b border-[#1a1a1a]/10 align-top last:border-0">
+                      <th scope="row" className="px-4 py-3 text-left font-bold">{m.label}</th>
+                      <td className="whitespace-nowrap px-4 py-3 font-serif text-lg text-[#0038B8]">{m.figure}</td>
+                      <td className="px-4 py-3 leading-relaxed text-[#1a1a1a]/65">{m.body}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
 
-          <p className="mt-6 max-w-3xl border-l-2 border-[#0038B8] pl-4 font-sans text-sm leading-relaxed text-[#1a1a1a]/70">
-            Tnufa is money to build the product, not money to live on — salaries and overheads are explicitly excluded. Budget for both separately, or
-            the gap turns up in month three.
-          </p>
+            <p className="mt-6 max-w-3xl border-l-2 border-[#0038B8] pl-4 font-sans text-sm leading-relaxed text-[#1a1a1a]/70">
+              Tnufa is money to build the product, not money to live on — salaries and overheads are explicitly excluded. Budget for both separately, or
+              the gap turns up in month three.
+            </p>
+          </Detail>
         </RouteStop>
 
         {/* 07 — Life on the B/2 */}
@@ -738,7 +787,10 @@ export default async function IsraelPage({ params }: { params: Promise<{ locale:
           tone="white"
           eyebrow="Perk or catch?"
           question="What can you do on the Israel Innovation Visa, and what can't you?"
-          task="Guess all eight"
+          task="See the perks and the catches"
+          completeOn="view"
+          message="Perks and catches seen"
+          lead={<WhyWatch why={{ heading: 'Perks', items: rights.filter((r) => r.positive).map((r) => r.title) }} watch={{ heading: 'Catches', items: rights.filter((r) => !r.positive).map((r) => r.title) }} />}
           answer={
             <p>
               The B/2 gives you up to two years in Israel to build an approved project, with a landing pad&apos;s workspace, mentorship and investor
@@ -747,17 +799,19 @@ export default async function IsraelPage({ params }: { params: Promise<{ locale:
             </p>
           }
         >
-          <PerkOrCatch stopId="life" items={rights} />
-          <div className="mt-8 grid max-w-5xl grid-cols-1 gap-4 font-sans text-sm leading-relaxed text-[#1a1a1a]/70 md:grid-cols-2">
-            <p>
-              <strong className="text-[#1a1a1a]">Your family comes on a different visa.</strong> Spouse and children under 18 do not get innovation visas:
-              they apply separately, through the ordinary route, for B/2 tourist visas, extendable to match your stay.
-            </p>
-            <p>
-              <strong className="text-[#1a1a1a]">Your own work is fenced.</strong> The holder may not enter an employer–employee relationship with an
-              Israeli company or draw a salary from one, and must work on the approved project only.
-            </p>
-          </div>
+          <Detail minutes={MIN.life}>
+            <PerkOrCatch stopId="life" items={rights} />
+            <div className="mt-8 grid max-w-5xl grid-cols-1 gap-4 font-sans text-sm leading-relaxed text-[#1a1a1a]/70 md:grid-cols-2">
+              <p>
+                <strong className="text-[#1a1a1a]">Your family comes on a different visa.</strong> Spouse and children under 18 do not get innovation visas:
+                they apply separately, through the ordinary route, for B/2 tourist visas, extendable to match your stay.
+              </p>
+              <p>
+                <strong className="text-[#1a1a1a]">Your own work is fenced.</strong> The holder may not enter an employer–employee relationship with an
+                Israeli company or draw a salary from one, and must work on the approved project only.
+              </p>
+            </div>
+          </Detail>
         </RouteStop>
 
         {/* 08 — After two years */}
@@ -766,7 +820,10 @@ export default async function IsraelPage({ params }: { params: Promise<{ locale:
           number={8}
           eyebrow="Build, then convert"
           question="What happens after two years on the Israel Innovation Visa?"
-          task="Find your B/1 deadline"
+          task="See the B/1 deadline"
+          completeOn="view"
+          message="Deadline seen"
+          lead={<YearsLine milestones={afterYears} caption="Two years on the B/2, then the B/1" />}
           answer={
             <p>
               If the project has become a product or a stable company, you can apply for the B/1 expert work visa, recognised as an Expert by that company
@@ -775,10 +832,12 @@ export default async function IsraelPage({ params }: { params: Promise<{ locale:
             </p>
           }
         >
-          <ConversionClock stopId="after" copy={clock} />
-          <p className="mt-4 max-w-[68ch] font-sans text-xs text-[#1a1a1a]/55">
-            The clock assumes a B/2 issued for the full two years; PIBA issues it for up to two. Count back three months from your own expiry date.
-          </p>
+          <Detail minutes={MIN.after}>
+            <ConversionClock stopId="after" copy={clock} />
+            <p className="mt-4 max-w-[68ch] font-sans text-xs text-[#1a1a1a]/55">
+              The clock assumes a B/2 issued for the full two years; PIBA issues it for up to two. Count back three months from your own expiry date.
+            </p>
+          </Detail>
         </RouteStop>
 
         {/* 09 — FAQ */}
@@ -791,16 +850,21 @@ export default async function IsraelPage({ params }: { params: Promise<{ locale:
           task="Open three answers"
           answer={<p>Ten answers, from whether the B/2 is a work permit and what Tnufa will not pay for, to whether the 2017 landing-pad list is current and which nationals Israeli law bars from the route.</p>}
         >
-          <div className="max-w-4xl border-t border-[#1a1a1a]/10">
-            {faqs.map((f) => (
-              <details key={f.q} className="group border-b border-[#1a1a1a]/10" data-faq>
-                <summary className="flex cursor-pointer list-none items-center justify-between gap-6 py-5 transition-colors hover:text-[#0038B8] group-open:text-[#0038B8] [&::-webkit-details-marker]:hidden">
-                  <h3 className="font-serif text-xl leading-snug">{f.q}</h3>
-                  <span aria-hidden="true" className="font-serif text-2xl transition-transform group-open:rotate-45">+</span>
-                </summary>
-                <p className="max-w-[72ch] pb-6 font-sans text-[15px] leading-relaxed text-[#1a1a1a]/65">{f.a}</p>
-              </details>
-            ))}
+          {/* The second half sits behind one fold: every answer stays in the HTML
+              (and in the FAQPage JSON-LD), the phone page gets shorter. */}
+          <div className="grid max-w-4xl gap-8">
+            <div className="border-t border-[#1a1a1a]/10">
+              {faqs.slice(0, FAQ_OPEN).map((f) => (
+                <FaqItem key={f.q} q={f.q} a={f.a} />
+              ))}
+            </div>
+            <Detail label={`More questions (${faqs.length - FAQ_OPEN})`} closeLabel="Hide these questions">
+              <div className="border-t border-[#1a1a1a]/10">
+                {faqs.slice(FAQ_OPEN).map((f) => (
+                  <FaqItem key={f.q} q={f.q} a={f.a} />
+                ))}
+              </div>
+            </Detail>
           </div>
           <OpenedTracker stopId="faq" need={3} message="Questions answered" />
         </RouteStop>
@@ -933,5 +997,17 @@ export default async function IsraelPage({ params }: { params: Promise<{ locale:
         </div>
       </section>
     </div>
+  );
+}
+
+function FaqItem({ q, a }: { q: string; a: string }) {
+  return (
+    <details className="group border-b border-[#1a1a1a]/10" data-faq>
+      <summary className="flex cursor-pointer list-none items-center justify-between gap-6 py-5 transition-colors hover:text-[#0038B8] group-open:text-[#0038B8] [&::-webkit-details-marker]:hidden">
+        <h3 className="font-serif text-xl leading-snug">{q}</h3>
+        <span aria-hidden="true" className="font-serif text-2xl transition-transform group-open:rotate-45">+</span>
+      </summary>
+      <p className="max-w-[72ch] pb-6 font-sans text-[15px] leading-relaxed text-[#1a1a1a]/65">{a}</p>
+    </details>
   );
 }

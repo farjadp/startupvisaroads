@@ -81,6 +81,13 @@ import {
   type RouteStep,
 } from '@/components/route/RouteWidgets';
 import { LaneGuess, type Lane, type LaneRound } from './AustraliaWidgets';
+import { CheckRows, Detail, NumberTiles, StepLine, WhyWatch, type Tile } from '@/components/guide/visual';
+
+// Visual first (9 Nov 2026, the Spain pattern): each stop opens with a
+// code-drawn visual that restates figures already on the page, then the
+// answer, then the rest folded in <Detail> (still in the server HTML). Each
+// fold's `minutes` is its word count at 200 words a minute, measured on
+// 9 Nov 2026; update it when a fold's text grows or shrinks a lot.
 
 export async function generateMetadata({
   params,
@@ -240,6 +247,42 @@ const steps: RouteStep[] = [
   },
 ];
 
+// The chip under each stage on the line: the figure and what it measures.
+const stepChips = steps.map((s) => `${s.figure} · ${s.figureLabel}`);
+
+const snapshotTiles: Tile[] = [
+  { value: 'Day 1', label: 'Permanent residence', sub: 'no provisional stage' },
+  { value: '1 in 9', label: 'EOIs invited', sub: 'April–June 2026 round' },
+  { value: '60', label: 'Days to lodge', sub: 'after an invitation' },
+  { value: 'U-23', label: 'Children included', sub: 'PR at the same time' },
+];
+
+const notStartup = [
+  { label: 'The Distinguished Talent visa renamed', note: 'It replaced the Global Talent programme' },
+  { label: 'Assessed on you, not on a company', note: 'No business plan or pitch deck is judged' },
+  { label: 'No team applications', note: 'Each co-founder applies on their own record' },
+  { label: 'Subclass 188 closed in 2024', note: 'No startup route underneath it' },
+];
+
+const oddsTiles: Tile[] = [
+  { value: '2,166', label: 'EOIs', sub: 'April–June 2026' },
+  { value: '248', label: 'Invitations', sub: 'April–June 2026' },
+  { value: '1 in 9', label: 'Roughly invited', sub: 'one invitation per nine EOIs' },
+  { value: '4,300', label: 'Places allocated', sub: 'around, 2025-26: not the constraint' },
+];
+
+const laneTiles: Tile[] = [
+  { value: '192', label: 'Priority 3 invitations', sub: 'Tier 1 sector, the direct route · Apr–Jun 2026' },
+  { value: '<20', label: 'Priority 2 invitations', sub: 'state nomination on Form 1000 · Apr–Jun 2026' },
+  { value: '113 / 15', label: 'The quarter before', sub: 'Priority 3 against Priority 2, Jan–Mar 2026' },
+];
+
+const chargeTiles: Tile[] = [
+  { value: 'AUD 6,235', label: 'Main applicant', sub: 'about; secondary sources disagree' },
+  { value: 'AUD 3,120', label: 'Each additional 18+', sub: 'about; not confirmed with Home Affairs' },
+  { value: 'AUD 1,560', label: 'Each additional under 18', sub: 'about; indexed every 1 July' },
+];
+
 const howToJsonLd = {
   '@context': 'https://schema.org',
   '@type': 'HowTo',
@@ -363,6 +406,12 @@ const reads = [
   },
 ];
 
+// The questions people ask first; the rest fold.
+const FAQ_SPLIT = 6;
+
+// Reading time of each fold, in minutes (words / 200, measured 9 Nov 2026).
+const MIN = { snapshot: 1, startup: 1, gate: 2, odds: 1, lanes: 2, steps: 2, money: 1, life: 1, promise: 1 };
+
 // ─── Page ────────────────────────────────────────────────────────────────────
 
 const label = 'font-sans text-xs font-bold uppercase tracking-[0.18em]';
@@ -456,6 +505,7 @@ export default async function AustraliaPage({ params }: { params: Promise<{ loca
           task="Read the four facts"
           completeOn="view"
           message="Snapshot read"
+          lead={<NumberTiles tiles={snapshotTiles} />}
           answer={
             <p>
               The National Innovation Visa, subclass 858, is invitation-only permanent residence that replaced the Global Talent programme. There is no
@@ -464,21 +514,8 @@ export default async function AustraliaPage({ params }: { params: Promise<{ loca
             </p>
           }
         >
-          <dl className="grid grid-cols-2 gap-3 md:grid-cols-4">
-            {[
-              { stat: 'Day 1', label: 'Permanent residence', sub: 'no provisional stage' },
-              { stat: '1 in 9', label: 'EOIs invited', sub: 'April–June 2026 round' },
-              { stat: '60', label: 'Days to lodge', sub: 'after an invitation' },
-              { stat: 'U-23', label: 'Children included', sub: 'PR at the same time' },
-            ].map((s) => (
-              <div key={s.label} className="flex flex-col rounded-2xl border border-[#1a1a1a]/10 bg-white p-5 transition-transform hover:-translate-y-1">
-                <dt className="order-2 mt-2 font-sans text-sm font-bold">{s.label}</dt>
-                <dd className="order-1 font-serif text-4xl text-[#006B31]">{s.stat}</dd>
-                <dd className="order-3 font-sans text-xs text-[#1a1a1a]/55">{s.sub}</dd>
-              </div>
-            ))}
-          </dl>
-          <div className="mt-8 grid max-w-5xl grid-cols-1 gap-6 font-sans text-[15px] leading-relaxed text-[#1a1a1a]/70 md:grid-cols-2">
+          <Detail minutes={MIN.snapshot}>
+          <div className="grid max-w-5xl grid-cols-1 gap-6 font-sans text-[15px] leading-relaxed text-[#1a1a1a]/70 md:grid-cols-2">
             <p>
               <strong className="text-[#1a1a1a]">Permanent residence on day one. 248 invitations last quarter.</strong> No points test, no sponsor, no
               investment threshold — and no way in unless the Australian government invites you.
@@ -488,6 +525,7 @@ export default async function AustraliaPage({ params }: { params: Promise<{ loca
               at a very high rate. Everything else on this page is downstream of clearing it.
             </p>
           </div>
+          </Detail>
         </RouteStop>
 
         {/* 02 — The misnomer */}
@@ -500,6 +538,7 @@ export default async function AustraliaPage({ params }: { params: Promise<{ loca
           task="Read why not"
           completeOn="view"
           message="Misnomer cleared"
+          lead={<CheckRows items={notStartup} icon="alert" surface="white" label="Why it is not a startup visa" />}
           answer={
             <p>
               No. Subclass 858 is Australia&rsquo;s Distinguished Talent visa renamed, assessed on the individual against a standard of exceptional and
@@ -508,6 +547,7 @@ export default async function AustraliaPage({ params }: { params: Promise<{ loca
             </p>
           }
         >
+          <Detail minutes={MIN.startup}>
           <div className="grid grid-cols-1 items-stretch gap-8 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)]">
             <div className="grid content-start gap-5 font-sans text-[15px] leading-relaxed text-[#1a1a1a]/70">
               <p>
@@ -547,6 +587,7 @@ export default async function AustraliaPage({ params }: { params: Promise<{ loca
               />
             </figure>
           </div>
+          </Detail>
         </RouteStop>
 
         {/* 03 — Who qualifies */}
@@ -556,6 +597,19 @@ export default async function AustraliaPage({ params }: { params: Promise<{ loca
           eyebrow="The standard · exceptional and outstanding"
           question="Who qualifies for the National Innovation Visa?"
           task="Answer all four"
+          lead={
+            <GateQuiz
+              stopId="gate"
+              criteria={criteria}
+              compact
+              strongNote="Then the wall is the invitation: in April–June 2026, 248 of 2,166 EOIs drew one."
+              gapNote="There is no startup route underneath: subclass 188 closed to new applications in 2024."
+            >
+              <Link href="/book-meeting" className="inline-flex w-fit items-center gap-2 rounded-full bg-[#00843D] px-5 py-3 font-sans text-sm font-bold text-white transition-transform hover:-translate-y-0.5">
+                Get a free read on your record <ArrowRight className="h-4 w-4" />
+              </Link>
+            </GateQuiz>
+          }
           answer={
             <p>
               Someone whose record is exceptional and outstanding at an international level, and still current: international patents, highly cited
@@ -564,12 +618,16 @@ export default async function AustraliaPage({ params }: { params: Promise<{ loca
             </p>
           }
         >
-          <GateQuiz
-            stopId="gate"
-            criteria={criteria}
-            strongNote="Then the wall is the invitation: in April–June 2026, 248 of 2,166 EOIs drew one."
-            gapNote="There is no startup route underneath: subclass 188 closed to new applications in 2024."
-          >
+          <Detail minutes={MIN.gate}>
+            <dl className="mb-8 grid max-w-5xl grid-cols-1 gap-x-8 gap-y-4 font-sans text-[15px] leading-relaxed md:grid-cols-2">
+              {criteria.map((c) => (
+                <div key={c.title}>
+                  <dt className="font-bold text-[#1a1a1a]">{c.title}</dt>
+                  <dd className="text-[#1a1a1a]/70">{c.body}</dd>
+                </div>
+              ))}
+            </dl>
+            <div className="grid max-w-2xl gap-4">
             <h3 className="font-serif text-xl">How many EOIs get an invitation?</h3>
             <div>
               <p className="mb-2 font-sans text-sm text-[#1a1a1a]/60">
@@ -581,10 +639,7 @@ export default async function AustraliaPage({ params }: { params: Promise<{ loca
               <li><b className="tabular-nums text-[#1a1a1a]">146 of 1,815</b> the quarter before, January–March 2026</li>
               <li><b className="tabular-nums text-[#1a1a1a]">55+</b> or under 18: exceptional benefit to the Australian community, shown separately</li>
             </ul>
-            <Link href="/book-meeting" className="inline-flex w-fit items-center gap-2 rounded-full bg-[#00843D] px-5 py-3 font-sans text-sm font-bold text-white transition-transform hover:-translate-y-0.5">
-              Get a free read on your record <ArrowRight className="h-4 w-4" />
-            </Link>
-          </GateQuiz>
+            </div>
 
           <div className="mt-10">
             <h3 className="mb-2 font-serif text-2xl">What carries weight in the file</h3>
@@ -613,6 +668,7 @@ export default async function AustraliaPage({ params }: { params: Promise<{ loca
               </p>
             </div>
           </div>
+          </Detail>
         </RouteStop>
 
         {/* 04 — The odds */}
@@ -625,6 +681,8 @@ export default async function AustraliaPage({ params }: { params: Promise<{ loca
           task="Read both rounds"
           completeOn="view"
           message="Rounds read"
+          // The tiles are white on the night band, so their labels take dark ink.
+          lead={<div className="text-[#1a1a1a]"><NumberTiles tiles={oddsTiles} label="The invitation odds" /></div>}
           answer={
             <p>
               The invitation is the wall. The Department received 2,166 expressions of interest and issued 248 invitations in April–June 2026, and 1,815
@@ -633,6 +691,7 @@ export default async function AustraliaPage({ params }: { params: Promise<{ loca
             </p>
           }
         >
+          <Detail minutes={MIN.odds}>
           <div className="overflow-x-auto">
             <table className="w-full min-w-[640px] border-collapse font-sans text-sm">
               <caption className="pb-3 text-left font-bold text-white">
@@ -685,6 +744,7 @@ export default async function AustraliaPage({ params }: { params: Promise<{ loca
               </p>
             </div>
           </div>
+          </Detail>
         </RouteStop>
 
         {/* 05 — Priority lanes */}
@@ -693,7 +753,10 @@ export default async function AustraliaPage({ params }: { params: Promise<{ loca
           number={5}
           eyebrow="Priority groups · Ministerial Direction 120"
           question="Does a state nomination help you get a National Innovation Visa invitation?"
-          task="Guess the lane"
+          task="See where the invitations go"
+          completeOn="view"
+          message="Lanes seen"
+          lead={<NumberTiles tiles={laneTiles} label="Invitations by priority lane" />}
           answer={
             <p>
               Less than the standard advice says. A government nomination on Form 1000 places you in Priority 2, but in April–June 2026 Priority 2 drew
@@ -702,6 +765,7 @@ export default async function AustraliaPage({ params }: { params: Promise<{ loca
             </p>
           }
         >
+          <Detail minutes={MIN.lanes}>
           <LaneGuess
             stopId="lanes"
             prompt="The standard advice: get a state nomination, it puts you in Priority 2. Which lane drew more invitations in April–June 2026?"
@@ -781,6 +845,7 @@ export default async function AustraliaPage({ params }: { params: Promise<{ loca
               ))}
             </div>
           </div>
+          </Detail>
         </RouteStop>
 
         {/* 06 — How to apply */}
@@ -790,7 +855,10 @@ export default async function AustraliaPage({ params }: { params: Promise<{ loca
           tone="white"
           eyebrow="Step by step · five stages, one that decides it"
           question="How do you apply for the National Innovation Visa?"
-          task="Walk to stage 5"
+          task="See the five stages"
+          completeOn="view"
+          message="Stages seen"
+          lead={<StepLine steps={steps.map((s, i) => ({ label: s.title, who: s.who, chip: stepChips[i] }))} />}
           answer={
             <p>
               In five stages. Submit an Expression of Interest with evidence of your achievements; wait for an invitation, which is the stage that
@@ -799,11 +867,13 @@ export default async function AustraliaPage({ params }: { params: Promise<{ loca
             </p>
           }
         >
+          <Detail minutes={MIN.steps}>
           <StepWalker stopId="steps" steps={steps} />
           <p className="mt-6 max-w-[68ch] font-sans text-sm text-[#1a1a1a]/65">
             <strong className="text-[#1a1a1a]">Have the nominator lined up before the invitation arrives.</strong> The 60-day clock to lodge starts the
             day you are invited; miss it and you are back at the start.
           </p>
+          </Detail>
         </RouteStop>
 
         {/* 07 — Cost */}
@@ -815,6 +885,7 @@ export default async function AustraliaPage({ params }: { params: Promise<{ loca
           task="Read the charges"
           completeOn="view"
           message="Charges read"
+          lead={<NumberTiles tiles={chargeTiles} label="Visa application charge from 1 July 2026, as secondary sources report it" />}
           answer={
             <p>
               The visa application charge rose on 1 July 2026. Secondary sources put the main applicant near AUD 6,235, with roughly AUD 3,120 per
@@ -823,6 +894,7 @@ export default async function AustraliaPage({ params }: { params: Promise<{ loca
             </p>
           }
         >
+          <Detail minutes={MIN.money}>
           <div className="grid grid-cols-1 gap-8 xl:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
             <div className="overflow-x-auto">
               <table className="w-full min-w-[520px] overflow-hidden rounded-2xl bg-white font-sans text-sm">
@@ -860,6 +932,7 @@ export default async function AustraliaPage({ params }: { params: Promise<{ loca
               </p>
             </div>
           </div>
+          </Detail>
         </RouteStop>
 
         {/* 08 — Rights */}
@@ -869,7 +942,10 @@ export default async function AustraliaPage({ params }: { params: Promise<{ loca
           tone="white"
           eyebrow="Perk or catch?"
           question="What does the National Innovation Visa give you and your family?"
-          task="Guess all eight"
+          task="Weigh perks and catches"
+          completeOn="view"
+          message="Perks and catches weighed"
+          lead={<WhyWatch why={{ heading: 'Why 858', items: rights.filter((r) => r.positive).map((r) => r.title) }} watch={{ heading: 'Watch out', items: rights.filter((r) => !r.positive).map((r) => r.title) }} />}
           answer={
             <p>
               Permanent residence from the day it is granted, with no provisional stage and no condition tying you to a particular state. Your partner and
@@ -878,7 +954,9 @@ export default async function AustraliaPage({ params }: { params: Promise<{ loca
             </p>
           }
         >
-          <PerkOrCatch stopId="life" items={rights} />
+          <Detail minutes={MIN.life}>
+            <PerkOrCatch stopId="life" items={rights} />
+          </Detail>
         </RouteStop>
 
         {/* Photo band */}
@@ -914,6 +992,12 @@ export default async function AustraliaPage({ params }: { params: Promise<{ loca
           task="Read what we will not promise"
           completeOn="view"
           message="Promise read"
+          lead={
+            <WhyWatch
+              why={{ heading: 'What we work on', items: ['Auditing and documenting your record', 'Your sector and priority', 'Direct route or nomination, decided honestly', 'Nominators of national standing', 'The EOI narrative'] }}
+              watch={{ heading: 'What we will not promise', items: ['A guaranteed invitation', 'A refund undertaking on this route', 'Lodging in ImmiAccount'] }}
+            />
+          }
           answer={
             <p>
               No. The gate is a government invitation that nobody outside the Department of Home Affairs controls, issued at a published rate near one in
@@ -922,6 +1006,7 @@ export default async function AustraliaPage({ params }: { params: Promise<{ loca
             </p>
           }
         >
+          <Detail minutes={MIN.promise}>
           <div className="grid max-w-5xl grid-cols-1 gap-6 lg:grid-cols-2">
             <p className="font-sans text-[15px] leading-relaxed text-[#1a1a1a]/70">
               We are not registered migration agents and we do not lodge in ImmiAccount. What we work on is the part that is actually movable: the
@@ -940,6 +1025,7 @@ export default async function AustraliaPage({ params }: { params: Promise<{ loca
               </p>
             </div>
           </div>
+          </Detail>
         </RouteStop>
 
         {/* 10 — FAQ */}
@@ -958,10 +1044,21 @@ export default async function AustraliaPage({ params }: { params: Promise<{ loca
             </p>
           }
         >
-          <div className="max-w-4xl border-t border-[#1a1a1a]/10">
-            {faqs.map((f) => (
-              <FaqItem key={f.q} q={f.q} a={f.a} />
-            ))}
+          {/* The second half sits behind one fold: every answer stays in the
+              HTML (and in the FAQPage JSON-LD), the phone page gets shorter. */}
+          <div className="grid max-w-4xl gap-8">
+            <div className="border-t border-[#1a1a1a]/10">
+              {faqs.slice(0, FAQ_SPLIT).map((f) => (
+                <FaqItem key={f.q} q={f.q} a={f.a} />
+              ))}
+            </div>
+            <Detail label={`More questions (${faqs.length - FAQ_SPLIT})`} closeLabel="Hide these questions">
+              <div className="border-t border-[#1a1a1a]/10">
+                {faqs.slice(FAQ_SPLIT).map((f) => (
+                  <FaqItem key={f.q} q={f.q} a={f.a} />
+                ))}
+              </div>
+            </Detail>
           </div>
           <OpenedTracker stopId="faq" need={3} message="Questions answered" />
         </RouteStop>

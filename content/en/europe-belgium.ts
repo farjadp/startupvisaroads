@@ -172,6 +172,15 @@ export const page: FaPage = {
   sections: [
     {
       heading: 'What the Belgian startup visa is, and what it is not',
+      lead: {
+        type: 'steps',
+        caption: 'Three decisions, three authorities',
+        steps: [
+          { label: 'Professional card', who: 'The regional government', chip: '30 days with an Access Point letter' },
+          { label: 'D visa', who: 'The federal Immigration Office', chip: 'Each post publishes its own timing' },
+          { label: 'Residence card', who: 'The municipality and the business counter', chip: '€90 per year of card validity' },
+        ],
+      },
       keyFacts: [
         {
           value: '3 decisions',
@@ -223,6 +232,16 @@ export const page: FaPage = {
     },
     {
       heading: 'The four general conditions of the Flemish professional card',
+      lead: {
+        type: 'checks',
+        label: 'The four general conditions',
+        items: [
+          { label: 'Nationality', note: 'Outside the European Economic Area and Switzerland' },
+          { label: 'Education', note: 'At least level 4, a secondary-school diploma' },
+          { label: 'Means', note: '€2,408.79 net a month, 110% of the minimum wage' },
+          { label: 'Public order and the law', note: 'Registered in the Crossroads Bank for Enterprises' },
+        ],
+      },
       body: ['These are the same for all four added-value categories (economic, innovative, sporting, cultural):'],
       terms: [
         {
@@ -246,6 +265,15 @@ export const page: FaPage = {
     },
     {
       heading: 'Innovative added value: three criteria, one is enough',
+      lead: {
+        type: 'tiles',
+        tiles: [
+          { value: '3', label: 'Criteria', sub: 'New product, new technology, or cooperation with an incubator' },
+          { value: '1', label: 'Is enough', sub: 'They are alternatives, not conditions at once' },
+          { value: '€0', label: 'Fixed company capital', sub: 'in the innovative category' },
+          { value: '€22,838', label: 'Starting capital', sub: 'only in the economic added-value category' },
+        ],
+      },
       keyFacts: [
         {
           value: '3 criteria',
@@ -295,6 +323,15 @@ export const page: FaPage = {
     },
     {
       heading: 'Access Point: the letter that triggers the fast track',
+      lead: {
+        type: 'tiles',
+        tiles: [
+          { value: '59', label: 'Access Points', sub: 'on the official August 2026 list' },
+          { value: '30 days', label: 'Decision with the letter' },
+          { value: '120 days', label: 'Decision without it', sub: 'then tacit approval' },
+          { value: 'Dutch', label: 'Official letter template', sub: 'Word or PDF, from the government' },
+        ],
+      },
       keyFacts: [
         {
           value: '59',
@@ -352,6 +389,19 @@ export const page: FaPage = {
     },
     {
       heading: 'The business plan and first-application documents',
+      lead: {
+        type: 'checks',
+        label: 'What the business plan must contain',
+        icon: 'number',
+        items: [
+          { label: 'Market and target group' },
+          { label: 'Market size' },
+          { label: 'Competitor analysis' },
+          { label: 'SWOT analysis' },
+          { label: 'Marketing plan' },
+          { label: 'Financial plan', note: 'in the official Excel template' },
+        ],
+      },
       checklist: {
         title: 'Documents for a first Flemish professional card application',
         intro: 'The official list from the "first application" page. Every document not in English/Dutch/French/German needs a sworn translation and legalisation.',
@@ -376,6 +426,17 @@ export const page: FaPage = {
     },
     {
       heading: 'The route, step by step',
+      lead: {
+        type: 'steps',
+        steps: [
+          { label: 'Profile', who: 'You', chip: '€2,408.79 a month' },
+          { label: 'Business plan', who: 'You', chip: 'Official financial template' },
+          { label: 'Access Point', who: 'One of 59 organisations', chip: 'Letter on the Dutch template' },
+          { label: 'Submit', who: 'Embassy or WSE portal', chip: '€140 · forwarded within 5 days' },
+          { label: 'Decision and D visa', who: 'Flanders, then the embassy', chip: '30 days with the letter, 120 without' },
+          { label: 'Arrival and start', who: 'Business counter and municipality', chip: '€90 per year of validity' },
+        ],
+      },
       table: {
         caption: 'Timelines and fees at each step',
         head: ['Step', 'Who decides', 'Official timeline', 'Fee'],
@@ -418,6 +479,15 @@ export const page: FaPage = {
     },
     {
       heading: 'Government fees',
+      lead: {
+        type: 'tiles',
+        tiles: [
+          { value: '€140', label: 'Card application', sub: 'on submission' },
+          { value: '€90', label: 'Per year of validity', sub: 'when the card is issued' },
+          { value: '€320', label: 'Two-year card, total' },
+          { value: 'Separate', label: 'D visa fees', sub: 'administrative contribution and consular fee' },
+        ],
+      },
       keyFacts: [
         {
           value: '€140',
@@ -465,6 +535,15 @@ export const page: FaPage = {
     },
     {
       heading: 'Applying from outside Belgium: each embassy has its own rules',
+      lead: {
+        type: 'tiles',
+        tiles: [
+          { value: '5 days', label: 'Embassy forwards the file', sub: 'after the €140 fee' },
+          { value: '6 months', label: 'Maximum document age', sub: 'police certificate and legalised documents' },
+          { value: 'VisaOnWeb', label: 'Federal D visa form', sub: 'for every post' },
+          { value: 'Each post', label: 'Sets its own rules', sub: 'submission method, fees and templates' },
+        ],
+      },
       keyFacts: [
         {
           value: '5 days',
@@ -506,6 +585,18 @@ export const page: FaPage = {
     },
     {
       heading: 'After the card: D visa, arrival, company registration',
+      lead: {
+        type: 'steps',
+        caption: 'From a positive decision to your first day of work',
+        steps: [
+          { label: 'Positive decision', who: 'You and the embassy are informed' },
+          { label: 'D visa application', who: 'The same embassy', chip: 'Police certificate under six months old' },
+          { label: 'Visa copy to the office', who: 'Card sent by registered post' },
+          { label: 'Arrival in Belgium', who: 'Business counter', chip: '€90 per year of validity' },
+          { label: 'Municipality', who: 'Registration, residence card' },
+          { label: 'Company', who: 'KBO, VAT, social insurance fund' },
+        ],
+      },
       timeline: {
         caption: 'From a positive decision to your first day of work',
         items: [
@@ -542,6 +633,15 @@ export const page: FaPage = {
     },
     {
       heading: 'Validity, renewal, and the real test in year two',
+      lead: {
+        type: 'tiles',
+        tiles: [
+          { value: '1–3 yrs', label: 'Flemish card validity', sub: 'depending on the merits of the file' },
+          { value: '2 yrs', label: 'Usual first card in Brussels', sub: 'a probation period' },
+          { value: '5 yrs', label: 'Maximum validity in Brussels' },
+          { value: '2 months', label: 'Before expiry', sub: 'deadline for the renewal application' },
+        ],
+      },
       keyFacts: [
         {
           value: '1 to 3 years',
@@ -581,6 +681,17 @@ export const page: FaPage = {
     },
     {
       heading: 'Refusal, appeal, and a one-year bar',
+      lead: {
+        type: 'checks',
+        label: 'The clock after a refusal in Flanders',
+        icon: 'alert',
+        items: [
+          { label: '30 days to complete an incomplete file' },
+          { label: '30 days to appeal, with no suspensive effect' },
+          { label: 'One year before re-applying for the same activity', note: 'Brussels: two years' },
+          { label: 'A different activity: any time' },
+        ],
+      },
       timeline: {
         caption: 'The clock after a refusal in Flanders',
         items: [
@@ -630,6 +741,17 @@ export const page: FaPage = {
     },
     {
       heading: 'Brussels and Wallonia: the same card, no fast track',
+      lead: {
+        type: 'checks',
+        label: 'Three regions, one card',
+        icon: 'number',
+        columns: 3,
+        items: [
+          { label: 'Flanders', note: '30 days with an Access Point letter; 59 Access Points' },
+          { label: 'Brussels', note: 'No fast track; about 3 months; a 20-page plan' },
+          { label: 'Wallonia', note: 'Its own card, no fast track; figures not verified' },
+        ],
+      },
       choice: {
         question: 'Which region?',
         options: [
@@ -674,12 +796,29 @@ export const page: FaPage = {
     },
     {
       heading: 'Family',
+      lead: {
+        type: 'checks',
+        label: 'Who can come with you',
+        items: [
+          { label: 'Spouse or registered partner' },
+          { label: 'Minor children' },
+        ],
+      },
       body: [
         'The federal Immigration Office says a third-country national who has authorisation to work and stay more than 90 days can bring their spouse or registered partner and minor children with them or have them join later, "under certain conditions". Those conditions are defined in the section on family reunification with non-EU nationals holding limited residence and normally include adequate housing, income and health insurance. Reunification is not automatic, and there is no guarantee your family arrives at the same time as you. Each family member needs a separate D visa with evidence of the family relationship, and the card\'s 110% means figure is defined for "you or your family".',
       ],
     },
     {
       heading: 'Long-term residence: five years, with an open legal question',
+      lead: {
+        type: 'tiles',
+        tiles: [
+          { value: '5 yrs', label: 'Legal and continuous residence', sub: 'before applying for the L card' },
+          { value: '6 / 10 mo', label: 'Absences allowed', sub: 'any single one / in total over five years' },
+          { value: '5 months', label: 'Decision deadline', sub: 'silence means approval' },
+          { value: '12 months', label: 'Outside the EU', sub: 'and the status is lost' },
+        ],
+      },
       keyFacts: [
         {
           value: '5 years',
@@ -722,6 +861,17 @@ export const page: FaPage = {
     },
     {
       heading: 'Applicants from sanctioned countries (e.g. Iran)',
+      lead: {
+        type: 'checks',
+        label: 'Four issues for applicants from sanctioned countries',
+        icon: 'alert',
+        items: [
+          { label: 'Legalising documents', note: 'Iran is not a party to the Apostille Convention' },
+          { label: 'Means and banking' },
+          { label: 'Police certificate', note: 'from your country of legal residence' },
+          { label: 'An Access Point letter from a distance' },
+        ],
+      },
       checklist: {
         title: 'The legalisation chain for documents from a non-Apostille country such as Iran',
         intro: 'Iran is not a party to the Apostille Convention; this route replaces the apostille and must be followed for every official document.',
@@ -760,6 +910,17 @@ export const page: FaPage = {
     },
     {
       heading: 'Belgium compared with Finland, Bulgaria and the Netherlands',
+      lead: {
+        type: 'compare',
+        caption: 'Four European routes',
+        heads: ['Country', 'In its favour', 'Against it'],
+        rows: [
+          { code: 'be', country: 'Belgium', plus: '30 days with the letter; no fixed capital', minus: '€2,408.79 a month; a one-year bar after a refusal', self: true },
+          { code: 'fi', country: 'Finland', plus: 'Business Finland assesses; means about half of Belgium\'s', minus: 'A high refusal rate and a months-long assessment' },
+          { code: 'bg', country: 'Bulgaria', plus: '€1,860 for thirty days; a free certificate within 30 days', minus: 'Starts with a one-year certificate' },
+          { code: 'nl', country: 'Netherlands', plus: 'Free to re-apply after a refusal', minus: 'A one-year residence permit' },
+        ],
+      },
       choice: {
         question: 'Which route fits your situation?',
         options: [
@@ -829,6 +990,17 @@ export const page: FaPage = {
     },
     {
       heading: 'Our role',
+      lead: {
+        type: 'checks',
+        label: 'What we do',
+        items: [
+          { label: 'Identifying the category' },
+          { label: 'A business plan in the Flemish format' },
+          { label: 'Choosing and approaching an Access Point' },
+          { label: 'A documents and legalisation plan' },
+          { label: 'Year-two readiness' },
+        ],
+      },
       body: [
         'We are not immigration lawyers or licensed consultants, and we do not file Belgian applications. Our work is the part the Access Point and the economic migration office judge:',
       ],

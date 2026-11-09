@@ -61,6 +61,7 @@ import Flag from '@/components/route/flags';
 import { RouteProvider, RouteRail, RouteStop, RouteFinish, type RouteStopDef, type RouteTheme } from '@/components/route/RouteProgress';
 import { CopyButton, GateQuiz, ParallaxLayer, PerkOrCatch, StepWalker, type RouteStep } from '@/components/route/RouteWidgets';
 import { DoorFinder, HqPicker, type Door, type HqCity } from './CanadaWidgets';
+import { CheckRows, Detail, NumberTiles, StepLine, WhyWatch, type Tile } from '@/components/guide/visual';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
@@ -79,6 +80,19 @@ const longDate = (iso: string) => {
   return `${d} ${MONTHS[m - 1]} ${y}`;
 };
 const PAUSED_ON = longDate(SUV_STATE.pausedOn);
+
+// ─── Visuals: drawn in code from facts already on the page ──────────────────
+// Each fold's `minutes` is its word count at 200 words a minute (measured
+// 9 Nov 2026); update it when a fold's text grows or shrinks a lot.
+// The status tiles say only what the answer says: closed to new files, files
+// in process still processed, no published replacement. Nothing here reads
+// as "you can apply".
+const statusTiles: Tile[] = [
+  { value: 'Closed', label: 'New applications', sub: `IRCC stopped accepting them on ${PAUSED_ON}` },
+  { value: 'None', label: 'Published replacement', sub: 'plan around the routes open now' },
+  // Third, so it takes the full row on a phone: the word is too wide for a half tile.
+  { value: 'Processed', label: 'Files filed before the pause', sub: 'still being processed' },
+];
 
 // The page's own palette: Canadian red on ink and paper. #D80027 reads at
 // 4.66:1 on the paper (#F2F0E9) and 5.32:1 on white, and white on it at
@@ -169,6 +183,9 @@ const steps: RouteStep[] = [
     figureLabel: 'C11 maximum at a time',
   },
 ];
+
+// What each step produces or the figure the step text gives; all in the step text.
+const stepChips = ['Toronto, Waterloo or Calgary', 'At least 51% under C11', 'No LMIA: C10, C11, C60', 'Point of entry', 'Express Entry or a province'];
 
 const howToJsonLd = {
   '@context': 'https://schema.org',
@@ -370,6 +387,7 @@ export default async function CanadaPage({ params }: { params: Promise<{ locale:
           task="Read the status"
           completeOn="view"
           message="Status read"
+          lead={<NumberTiles tiles={statusTiles} label="Start-up Visa status" />}
           answer={
             <p>
               No. The Canada Start-up Visa is paused: IRCC stopped accepting new applications on {PAUSED_ON}. Files submitted before the pause are still
@@ -379,27 +397,31 @@ export default async function CanadaPage({ params }: { params: Promise<{ locale:
           }
         >
           <SuvStatusNotice variant="inline" showRoutesLink={false} className="max-w-4xl" />
-          <div className="mt-8 grid max-w-5xl grid-cols-1 gap-6 md:grid-cols-2">
-            {routeCards.map((c) => (
-              <div key={c.title} className="rounded-2xl border border-[#1a1a1a]/10 bg-white p-6">
-                <p className={`text-[#1a1a1a]/55 ${label}`}>{c.eyebrow}</p>
-                <h3 className="mt-2 font-serif text-3xl">{c.title}</h3>
-                <span className="mt-2 inline-block rounded bg-[#D80027]/10 px-2 py-1 font-sans text-xs font-bold uppercase tracking-[0.14em] text-[#D80027]">{c.badge}</span>
-                <p className="mt-4 font-sans text-sm leading-relaxed text-[#1a1a1a]/70">{c.body}</p>
-                <p className="mt-4 flex items-center gap-2 font-sans text-xs font-bold uppercase tracking-[0.14em] text-[#1a1a1a]/55">
-                  <span className="h-2 w-2 rounded-full bg-[#1a1a1a]" /> {c.foot}
-                </p>
+          <div className="mt-8">
+            <Detail minutes={1}>
+              <div className="grid max-w-5xl grid-cols-1 gap-6 md:grid-cols-2">
+                {routeCards.map((c) => (
+                  <div key={c.title} className="rounded-2xl border border-[#1a1a1a]/10 bg-white p-6">
+                    <p className={`text-[#1a1a1a]/55 ${label}`}>{c.eyebrow}</p>
+                    <h3 className="mt-2 font-serif text-3xl">{c.title}</h3>
+                    <span className="mt-2 inline-block rounded bg-[#D80027]/10 px-2 py-1 font-sans text-xs font-bold uppercase tracking-[0.14em] text-[#D80027]">{c.badge}</span>
+                    <p className="mt-4 font-sans text-sm leading-relaxed text-[#1a1a1a]/70">{c.body}</p>
+                    <p className="mt-4 flex items-center gap-2 font-sans text-xs font-bold uppercase tracking-[0.14em] text-[#1a1a1a]/55">
+                      <span className="h-2 w-2 rounded-full bg-[#1a1a1a]" /> {c.foot}
+                    </p>
+                  </div>
+                ))}
+                <div className="flex flex-col justify-between gap-4 rounded-2xl bg-[#1a1a1a] p-6 text-white">
+                  <p className="font-sans text-sm leading-relaxed text-white/75">
+                    The full programme, as it stood and as it stands, is on our Start-up Visa guide: eligibility, designated organisations, settlement funds
+                    and what the pause means for a file already in process. This page covers what a founder can do instead.
+                  </p>
+                  <Link href="/startup-visa-canada" className="inline-flex w-fit items-center gap-2 rounded-full bg-[#D80027] px-5 py-3 font-sans text-sm font-bold text-white transition-transform hover:-translate-y-0.5">
+                    View Start-up Visa details <ArrowRight className="h-4 w-4" />
+                  </Link>
+                </div>
               </div>
-            ))}
-            <div className="flex flex-col justify-between gap-4 rounded-2xl bg-[#1a1a1a] p-6 text-white">
-              <p className="font-sans text-sm leading-relaxed text-white/75">
-                The full programme, as it stood and as it stands, is on our Start-up Visa guide: eligibility, designated organisations, settlement funds
-                and what the pause means for a file already in process. This page covers what a founder can do instead.
-              </p>
-              <Link href="/startup-visa-canada" className="inline-flex w-fit items-center gap-2 rounded-full bg-[#D80027] px-5 py-3 font-sans text-sm font-bold text-white transition-transform hover:-translate-y-0.5">
-                View Start-up Visa details <ArrowRight className="h-4 w-4" />
-              </Link>
-            </div>
+            </Detail>
           </div>
         </RouteStop>
 
@@ -410,7 +432,15 @@ export default async function CanadaPage({ params }: { params: Promise<{ locale:
           tone="white"
           eyebrow="The pivot · operational work permits"
           question="What can founders use instead of the Canada Start-up Visa?"
-          task="Guess all eight"
+          task="Weigh perks and catches"
+          completeOn="view"
+          message="Perks and catches weighed"
+          lead={
+            <WhyWatch
+              why={{ heading: 'Perks', items: rights.filter((r) => r.positive).map((r) => r.title) }}
+              watch={{ heading: 'Catches', items: rights.filter((r) => !r.positive).map((r) => r.title) }}
+            />
+          }
           answer={
             <p>
               Founders who still want to build in Canada are turning to operational work permits. An executive transfer (ICT) lets your company open a
@@ -419,41 +449,43 @@ export default async function CanadaPage({ params }: { params: Promise<{ locale:
             </p>
           }
         >
-          <div className="mb-10 grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)]">
-            <div className="relative overflow-hidden rounded-2xl bg-[#1a1a1a] p-8 text-[#F2F0E9]">
-              <div aria-hidden="true" className="absolute right-0 top-0 h-40 w-40 rounded-bl-full bg-[#D80027] opacity-20" />
-              <p className={`relative text-[#FF6B7F] ${label}`}>High velocity</p>
-              <h3 className="relative mt-2 font-serif text-4xl">ICT &amp; C11</h3>
-              <p className="relative mt-1 font-sans text-xs font-bold uppercase tracking-[0.14em] text-white/60">Operational work permits</p>
-              <p className="relative mt-5 font-sans text-sm leading-relaxed text-white/80">
-                The strategic alternative. Launch your Canadian branch and transfer yourself as an Executive (ICT), or run your own business under C11, which
-                IRCC limits to owners of at least 51% seeking only temporary residence, for up to 18 months at a time.{' '}
-                <strong className="text-white">Routes that are open to new applications today.</strong> Convert to PR later via Express Entry or a provincial
-                entrepreneur stream; Express Entry job-offer CRS points were removed on 25 March 2025.
-              </p>
-              <ul className="relative mt-5 grid gap-2 font-sans text-sm">
-                {ictBullets.map((b) => (
-                  <li key={b} className="flex gap-3">
-                    <ArrowRight className="mt-0.5 h-4 w-4 shrink-0 text-[#FF6B7F]" />
-                    {b}
-                  </li>
-                ))}
-              </ul>
+          <Detail minutes={2}>
+            <div className="mb-10 grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)]">
+              <div className="relative overflow-hidden rounded-2xl bg-[#1a1a1a] p-8 text-[#F2F0E9]">
+                <div aria-hidden="true" className="absolute right-0 top-0 h-40 w-40 rounded-bl-full bg-[#D80027] opacity-20" />
+                <p className={`relative text-[#FF6B7F] ${label}`}>High velocity</p>
+                <h3 className="relative mt-2 font-serif text-4xl">ICT &amp; C11</h3>
+                <p className="relative mt-1 font-sans text-xs font-bold uppercase tracking-[0.14em] text-white/60">Operational work permits</p>
+                <p className="relative mt-5 font-sans text-sm leading-relaxed text-white/80">
+                  The strategic alternative. Launch your Canadian branch and transfer yourself as an Executive (ICT), or run your own business under C11, which
+                  IRCC limits to owners of at least 51% seeking only temporary residence, for up to 18 months at a time.{' '}
+                  <strong className="text-white">Routes that are open to new applications today.</strong> Convert to PR later via Express Entry or a provincial
+                  entrepreneur stream; Express Entry job-offer CRS points were removed on 25 March 2025.
+                </p>
+                <ul className="relative mt-5 grid gap-2 font-sans text-sm">
+                  {ictBullets.map((b) => (
+                    <li key={b} className="flex gap-3">
+                      <ArrowRight className="mt-0.5 h-4 w-4 shrink-0 text-[#FF6B7F]" />
+                      {b}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="font-sans text-[15px] leading-relaxed text-[#1a1a1a]/70">
+                <h3 className="mb-2 font-serif text-xl text-[#1a1a1a]">C11 is not a road to permanent residence</h3>
+                <p>
+                  IRCC&apos;s own instructions describe C11 as the code for someone who wants to run, including establish, their own business in Canada and
+                  then leave. If your goal is permanent residence through a business, IRCC directs you to the provincial business streams, which issue C60
+                  work permits. Stop 6 sorts out which door is yours.
+                </p>
+                <Link href="/c10-work-permit" className="mt-4 inline-flex items-center gap-1.5 font-bold text-[#D80027] hover:underline">
+                  C10, C11 and C60 work permits compared <ArrowRight className="h-4 w-4" />
+                </Link>
+              </div>
             </div>
-            <div className="font-sans text-[15px] leading-relaxed text-[#1a1a1a]/70">
-              <h3 className="mb-2 font-serif text-xl text-[#1a1a1a]">C11 is not a road to permanent residence</h3>
-              <p>
-                IRCC&apos;s own instructions describe C11 as the code for someone who wants to run, including establish, their own business in Canada and
-                then leave. If your goal is permanent residence through a business, IRCC directs you to the provincial business streams, which issue C60
-                work permits. Stop 6 sorts out which door is yours.
-              </p>
-              <Link href="/c10-work-permit" className="mt-4 inline-flex items-center gap-1.5 font-bold text-[#D80027] hover:underline">
-                C10, C11 and C60 work permits compared <ArrowRight className="h-4 w-4" />
-              </Link>
-            </div>
-          </div>
-          <h3 className="mb-3 font-serif text-2xl">Perk or catch? Eight things to know about the open routes</h3>
-          <PerkOrCatch stopId="routes" items={rights} />
+            <h3 className="mb-3 font-serif text-2xl">Perk or catch? Eight things to know about the open routes</h3>
+            <PerkOrCatch stopId="routes" items={rights} />
+          </Detail>
         </RouteStop>
 
         {/* 03 — Reality check */}
@@ -463,6 +495,19 @@ export default async function CanadaPage({ params }: { params: Promise<{ locale:
           eyebrow="Reality check · no more passive income"
           question="Will a virtual office or a passive holding company work for a Canadian work permit?"
           task="Answer all four"
+          lead={
+            <GateQuiz
+              stopId="test"
+              criteria={criteria}
+              compact
+              strongNote="Now the business plan has to show it: knowledge transfer, job creation and a significant benefit to Canada."
+              gapNote="Each one is something an officer can ask you to evidence."
+            >
+              <Link href="/book-meeting" className="inline-flex w-fit items-center gap-2 rounded-full bg-[#D80027] px-5 py-3 font-sans text-sm font-bold text-white transition-transform hover:-translate-y-0.5">
+                Get a free read on your business <ArrowRight className="h-4 w-4" />
+              </Link>
+            </GateQuiz>
+          }
           answer={
             <p>
               In our view, no. A business that exists only on paper does not survive scrutiny, whichever route you take. We will not put forward a file
@@ -471,24 +516,26 @@ export default async function CanadaPage({ params }: { params: Promise<{ locale:
             </p>
           }
         >
-          <GateQuiz
-            stopId="test"
-            criteria={criteria}
-            strongNote="Now the business plan has to show it: knowledge transfer, job creation and a significant benefit to Canada."
-            gapNote="Each one is something an officer can ask you to evidence."
-          >
-            <h3 className="font-serif text-xl">&ldquo;No more passive income.&rdquo;</h3>
-            <p className="font-sans text-sm leading-relaxed text-[#1a1a1a]/65">
-              In our experience, a business that exists only on paper does not survive scrutiny. Whichever route you take, we will not put forward a file
-              without a real operating business behind it.
-            </p>
-            <p className="font-sans text-xs font-bold uppercase tracking-[0.14em] text-[#1a1a1a]">
-              Our service includes: Commercial Lease Negotiation &amp; Canadian Hiring Strategy.
-            </p>
-            <Link href="/book-meeting" className="inline-flex w-fit items-center gap-2 rounded-full bg-[#D80027] px-5 py-3 font-sans text-sm font-bold text-white transition-transform hover:-translate-y-0.5">
-              Get a free read on your business <ArrowRight className="h-4 w-4" />
-            </Link>
-          </GateQuiz>
+          <Detail minutes={1}>
+            <ul className="grid max-w-5xl grid-cols-1 gap-x-8 gap-y-4 font-sans text-[15px] leading-relaxed text-[#1a1a1a]/70 md:grid-cols-2">
+              {criteria.map((c) => (
+                <li key={c.title}>
+                  <strong className="block text-[#1a1a1a]">{c.title}</strong>
+                  {c.body}
+                </li>
+              ))}
+            </ul>
+            <div className="mt-8 grid max-w-[68ch] gap-3">
+              <h3 className="font-serif text-xl">&ldquo;No more passive income.&rdquo;</h3>
+              <p className="font-sans text-sm leading-relaxed text-[#1a1a1a]/65">
+                In our experience, a business that exists only on paper does not survive scrutiny. Whichever route you take, we will not put forward a file
+                without a real operating business behind it.
+              </p>
+              <p className="font-sans text-xs font-bold uppercase tracking-[0.14em] text-[#1a1a1a]">
+                Our service includes: Commercial Lease Negotiation &amp; Canadian Hiring Strategy.
+              </p>
+            </div>
+          </Detail>
         </RouteStop>
 
         {/* 04 — The process */}
@@ -498,7 +545,10 @@ export default async function CanadaPage({ params }: { params: Promise<{ locale:
           tone="white"
           eyebrow="The architect's approach"
           question="How do you set up a Canadian business for a founder work permit?"
-          task="Walk to step 5"
+          task="See the five steps"
+          completeOn="view"
+          message="Steps seen"
+          lead={<StepLine steps={steps.map((s, i) => ({ label: s.title, who: s.who, chip: stepChips[i] }))} />}
           answer={
             <p>
               Choose a headquarters city, incorporate and structure the shareholder agreement (Canadian or foreign entity), write a business plan built on
@@ -507,12 +557,14 @@ export default async function CanadaPage({ params }: { params: Promise<{ locale:
             </p>
           }
         >
-          <StepWalker stopId="steps" steps={steps} />
-          <p className="mt-6 max-w-[68ch] font-sans text-sm text-[#1a1a1a]/65">
-            <strong className="text-[#1a1a1a]">We don&apos;t just file forms. We build the Canadian narrative.</strong> We structure your company as a
-            &ldquo;significant benefit&rdquo; to Canada&apos;s economy and prepare your work permit application on that basis. The decision is the
-            officer&apos;s, not ours.
-          </p>
+          <Detail minutes={2}>
+            <StepWalker stopId="steps" steps={steps} />
+            <p className="mt-6 max-w-[68ch] font-sans text-sm text-[#1a1a1a]/65">
+              <strong className="text-[#1a1a1a]">We don&apos;t just file forms. We build the Canadian narrative.</strong> We structure your company as a
+              &ldquo;significant benefit&rdquo; to Canada&apos;s economy and prepare your work permit application on that basis. The decision is the
+              officer&apos;s, not ours.
+            </p>
+          </Detail>
         </RouteStop>
 
         {/* Photo band */}
@@ -545,7 +597,10 @@ export default async function CanadaPage({ params }: { params: Promise<{ locale:
           number={5}
           eyebrow="Select HQ · ecosystem data"
           question="Where should a founder base a startup in Canada: Toronto, Waterloo or Calgary?"
-          task="Pick your sector"
+          task="Compare the three cities"
+          completeOn="view"
+          message="HQ cities compared"
+          lead={<CheckRows items={cities.map((c) => ({ label: c.city, note: c.sector }))} icon="number" columns={3} label="Three HQ cities" />}
           answer={
             <p>
               Most founders default to Toronto: highest cost, highest density, and essential for fintech and enterprise SaaS. Cost-efficiency lies
@@ -554,20 +609,22 @@ export default async function CanadaPage({ params }: { params: Promise<{ locale:
             </p>
           }
         >
-          <HqPicker stopId="hq" cities={cities} />
+          <Detail minutes={1}>
+            <HqPicker stopId="hq" cities={cities} />
 
-          <div className="mt-12">
-            <h3 className="font-serif text-2xl">Why Canada? It&apos;s not just about the passport. It&apos;s about the talent density.</h3>
-            <dl className="mt-5 grid grid-cols-1 gap-3 md:grid-cols-3">
-              {ecosystem.map((s) => (
-                <div key={s.label} className="flex flex-col rounded-2xl border border-[#1a1a1a]/10 bg-white p-6 transition-transform hover:-translate-y-1">
-                  <dt className={`order-1 text-[#1a1a1a]/55 ${label}`}>{s.label}</dt>
-                  <dd className="order-2 mt-3 font-serif text-4xl text-[#D80027]">{s.stat}</dd>
-                  <dd className="order-3 mt-2 font-sans text-sm text-[#1a1a1a]/65">{s.body}</dd>
-                </div>
-              ))}
-            </dl>
-          </div>
+            <div className="mt-12">
+              <h3 className="font-serif text-2xl">Why Canada? It&apos;s not just about the passport. It&apos;s about the talent density.</h3>
+              <dl className="mt-5 grid grid-cols-1 gap-3 md:grid-cols-3">
+                {ecosystem.map((s) => (
+                  <div key={s.label} className="flex flex-col rounded-2xl border border-[#1a1a1a]/10 bg-white p-6 transition-transform hover:-translate-y-1">
+                    <dt className={`order-1 text-[#1a1a1a]/55 ${label}`}>{s.label}</dt>
+                    <dd className="order-2 mt-3 font-serif text-4xl text-[#D80027]">{s.stat}</dd>
+                    <dd className="order-3 mt-2 font-sans text-sm text-[#1a1a1a]/65">{s.body}</dd>
+                  </div>
+                ))}
+              </dl>
+            </div>
+          </Detail>
         </RouteStop>
 
         {/* 06 — Road to permanent residence */}
@@ -577,7 +634,26 @@ export default async function CanadaPage({ params }: { params: Promise<{ locale:
           tone="white"
           eyebrow="Your road to permanent residence"
           question="How do founders get permanent residence in Canada now the Start-up Visa is paused?"
-          task="Find your door"
+          task="See the four routes"
+          completeOn="view"
+          message="Routes seen"
+          lead={
+            <div className="grid gap-3">
+              <CheckRows
+                items={routeTable.filter((r) => r.status === 'Open' || r.status.startsWith('Open in')).map((r) => ({ label: r.route, note: `Toward PR: ${r.pr}` }))}
+                columns={3}
+                surface="white"
+                label="Open to new applications"
+              />
+              <CheckRows
+                items={routeTable.filter((r) => r.status.startsWith('Paused')).map((r) => ({ label: r.route, note: r.status }))}
+                icon="alert"
+                columns={1}
+                surface="white"
+                label="Closed to new applications"
+              />
+            </div>
+          }
           answer={
             <p>
               Through a provincial entrepreneur stream or Express Entry. Alberta, Manitoba, Nova Scotia, New Brunswick, British Columbia and Newfoundland and Labrador each approve a founder, sign a
@@ -586,47 +662,49 @@ export default async function CanadaPage({ params }: { params: Promise<{ locale:
             </p>
           }
         >
-          <DoorFinder stopId="door" doors={doors} />
+          <Detail minutes={1}>
+            <DoorFinder stopId="door" doors={doors} />
 
-          <div className="mt-10 overflow-x-auto">
-            <table className="w-full min-w-[760px] overflow-hidden rounded-2xl bg-[#F2F0E9] font-sans text-sm">
-              <caption className="pb-2 text-left font-bold">Canadian routes for founders, as of {UPDATED.label}</caption>
-              <thead>
-                <tr className="border-b border-[#1a1a1a]/10 text-left text-[11px] uppercase tracking-[0.1em] text-[#1a1a1a]/55">
-                  <th scope="col" className="px-4 py-3">Route</th>
-                  <th scope="col" className="px-4 py-3">New applications</th>
-                  <th scope="col" className="px-4 py-3">Who it suits</th>
-                  <th scope="col" className="px-4 py-3">Ownership</th>
-                  <th scope="col" className="px-4 py-3">Length</th>
-                  <th scope="col" className="px-4 py-3">Toward PR</th>
-                </tr>
-              </thead>
-              <tbody>
-                {routeTable.map((r) => (
-                  <tr key={r.route} className="border-b border-[#1a1a1a]/10 align-top last:border-0">
-                    <th scope="row" className="px-4 py-3 text-left font-bold">{r.route}</th>
-                    <td className="px-4 py-3">{r.status}</td>
-                    <td className="px-4 py-3">{r.who}</td>
-                    <td className="px-4 py-3">{r.own}</td>
-                    <td className="px-4 py-3">{r.length}</td>
-                    <td className="px-4 py-3">{r.pr}</td>
+            <div className="mt-10 overflow-x-auto">
+              <table className="w-full min-w-[760px] overflow-hidden rounded-2xl bg-[#F2F0E9] font-sans text-sm">
+                <caption className="pb-2 text-left font-bold">Canadian routes for founders, as of {UPDATED.label}</caption>
+                <thead>
+                  <tr className="border-b border-[#1a1a1a]/10 text-left text-[11px] uppercase tracking-[0.1em] text-[#1a1a1a]/55">
+                    <th scope="col" className="px-4 py-3">Route</th>
+                    <th scope="col" className="px-4 py-3">New applications</th>
+                    <th scope="col" className="px-4 py-3">Who it suits</th>
+                    <th scope="col" className="px-4 py-3">Ownership</th>
+                    <th scope="col" className="px-4 py-3">Length</th>
+                    <th scope="col" className="px-4 py-3">Toward PR</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody>
+                  {routeTable.map((r) => (
+                    <tr key={r.route} className="border-b border-[#1a1a1a]/10 align-top last:border-0">
+                      <th scope="row" className="px-4 py-3 text-left font-bold">{r.route}</th>
+                      <td className="px-4 py-3">{r.status}</td>
+                      <td className="px-4 py-3">{r.who}</td>
+                      <td className="px-4 py-3">{r.own}</td>
+                      <td className="px-4 py-3">{r.length}</td>
+                      <td className="px-4 py-3">{r.pr}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
 
-          <nav aria-label="Open Canadian routes for founders" className="mt-8 grid max-w-4xl gap-3 font-sans text-sm">
-            <p className={`text-[#D80027] ${label}`}>The open routes, one guide each</p>
-            <ul className="flex flex-wrap gap-x-6 gap-y-3">
-              <li><Link href="/pnp" className={linkCls}>Entrepreneur PNP: the five provinces compared</Link></li>
-              <li><Link href="/pnp/alberta" className={linkCls}>Alberta</Link></li>
-              <li><Link href="/pnp/manitoba" className={linkCls}>Manitoba</Link></li>
-              <li><Link href="/pnp/nova-scotia" className={linkCls}>Nova Scotia</Link></li>
-              <li><Link href="/pnp/new-brunswick" className={linkCls}>New Brunswick</Link></li>
-              <li><Link href="/c10-work-permit" className={linkCls}>C10, C11 and C60 work permits</Link></li>
-            </ul>
-          </nav>
+            <nav aria-label="Open Canadian routes for founders" className="mt-8 grid max-w-4xl gap-3 font-sans text-sm">
+              <p className={`text-[#D80027] ${label}`}>The open routes, one guide each</p>
+              <ul className="flex flex-wrap gap-x-6 gap-y-3">
+                <li><Link href="/pnp" className={linkCls}>Entrepreneur PNP: the five provinces compared</Link></li>
+                <li><Link href="/pnp/alberta" className={linkCls}>Alberta</Link></li>
+                <li><Link href="/pnp/manitoba" className={linkCls}>Manitoba</Link></li>
+                <li><Link href="/pnp/nova-scotia" className={linkCls}>Nova Scotia</Link></li>
+                <li><Link href="/pnp/new-brunswick" className={linkCls}>New Brunswick</Link></li>
+                <li><Link href="/c10-work-permit" className={linkCls}>C10, C11 and C60 work permits</Link></li>
+              </ul>
+            </nav>
+          </Detail>
         </RouteStop>
 
         {/* Sources */}
@@ -741,7 +819,7 @@ export default async function CanadaPage({ params }: { params: Promise<{ locale:
         <div className="container mx-auto max-w-4xl">
           <div className="flex items-start gap-4">
             <ShieldAlert className="mt-0.5 h-4 w-4 shrink-0 text-[#1a1a1a]/30" />
-            <p className="font-sans text-[11px] leading-relaxed text-[#1a1a1a]/55">
+            <p className="font-sans text-[11px] leading-relaxed text-[#1a1a1a]/65">
               <strong>Regulatory Notice:</strong> The Start-up Visa status and the Express Entry rule on this page were checked against canada.ca on 15
               October 2026, the C10, C11 and C60 instructions on 13 October 2026, and the provincial entrepreneur streams on 12 October 2026. They are
               provided for informational purposes only. VisaRoads Inc., an Ashavid company, is not an immigration law firm and does not file work permit

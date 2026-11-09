@@ -28,7 +28,18 @@ function Toggle({ pressed, onClick, children }: { pressed: boolean; onClick: () 
 
 /* ── The jury's four tests ──────────────────────────────────────────────── */
 
-export function JuryQuiz({ stopId, criteria, children }: { stopId: string; criteria: { title: string; body: string }[]; children?: React.ReactNode }) {
+export function JuryQuiz({
+  stopId,
+  criteria,
+  compact = false,
+  children,
+}: {
+  stopId: string;
+  criteria: { title: string; body: string }[];
+  /** Titles and answers only; the page carries each test's wording in its fold. */
+  compact?: boolean;
+  children?: React.ReactNode;
+}) {
   const { complete } = useRoute();
   const [answers, setAnswers] = useState<Record<number, boolean>>({});
   const answered = Object.keys(answers).length;
@@ -58,10 +69,15 @@ export function JuryQuiz({ stopId, criteria, children }: { stopId: string; crite
     <div className="grid grid-cols-1 gap-5 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)]">
       <ol className="rounded-2xl border border-[#1a1a1a]/10 bg-white p-6">
         {criteria.map((c, i) => (
-          <li key={c.title} className="grid gap-1.5 border-b border-dashed border-[#1a1a1a]/10 py-4 first:pt-0 last:border-0 last:pb-0">
-            <h3 className="font-serif text-xl">{c.title}</h3>
-            <p className="font-sans text-sm leading-relaxed text-[#1a1a1a]/65">{c.body}</p>
-            <div className="mt-1 flex gap-1.5">
+          <li
+            key={c.title}
+            className={`grid border-b border-dashed border-[#1a1a1a]/10 first:pt-0 last:border-0 last:pb-0 ${
+              compact ? 'gap-2 py-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center' : 'gap-1.5 py-4'
+            }`}
+          >
+            <h3 className={`font-serif ${compact ? 'text-lg leading-snug' : 'text-xl'}`}>{c.title}</h3>
+            {!compact && <p className="font-sans text-sm leading-relaxed text-[#1a1a1a]/65">{c.body}</p>}
+            <div className={`flex gap-1.5 ${compact ? '' : 'mt-1'}`}>
               <Toggle pressed={answers[i] === true} onClick={() => setAnswers((p) => ({ ...p, [i]: true }))}>We have this</Toggle>
               <Toggle pressed={answers[i] === false} onClick={() => setAnswers((p) => ({ ...p, [i]: false }))}>Not yet</Toggle>
             </div>

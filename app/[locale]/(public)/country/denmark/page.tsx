@@ -27,6 +27,11 @@
 // The old page's "Danish offshore wind turbines — Ørsted" was onshore turbines
 // in a wheat field with nothing to place them in Denmark, and its "family"
 // image was a green sofa against a white wall; both are gone.
+//
+// Visual first (9 Nov 2026, the Spain pattern): every stop opens with a
+// code-drawn visual that restates facts already on the page, then the
+// answer, then the rest inside a <Detail> fold. Each fold's `minutes` is its
+// word count at 200 words a minute; update it when a fold changes a lot.
 // ============================================================================
 
 import React from 'react';
@@ -54,6 +59,7 @@ import {
   type RouteStep,
 } from '@/components/route/RouteWidgets';
 import { CitizenshipRoadmap, SelfSupportCalculator, type DenmarkRoadmapCopy, type SelfSupportRow } from './DenmarkWidgets';
+import { Detail, MoneyBar, NumberTiles, StepLine, WhyWatch, YearsLine, type Milestone, type MoneyRow, type Tile } from '@/components/guide/visual';
 
 export async function generateMetadata({
   params,
@@ -218,6 +224,8 @@ const financials: [SelfSupportRow, SelfSupportRow, SelfSupportRow, SelfSupportRo
   { label: 'With child(ren), no spouse', dkk: 203664, eur: '~€27,300' },
 ];
 
+const dkk = (n: number) => `DKK ${n.toLocaleString('en')}`;
+
 const fees = [
   { label: 'Start-up Denmark residence permit — you', dkk: 'DKK 3,060', eur: '~€410', note: '2026 level, raised on 1 January' },
   { label: 'Each accompanying family member', dkk: 'DKK 3,080', eur: '~€413', note: '2026 level, raised on 1 January' },
@@ -307,6 +315,48 @@ const timeline = [
   { phase: 'Year 10+', title: 'Danish Passport', desc: 'Nine years of continuous residence, but you must also have held PR for 2 years, passed Prøve i Dansk 3 and the citizenship test. Dual citizenship is allowed.' },
 ];
 
+// ─── Visuals: each restates figures already in the prose below ──────────────
+
+const snapshotTiles: Tile[] = [
+  { value: '75', label: 'Visas per year', sub: 'per person, not per team' },
+  { value: '2 yrs', label: 'Initial permit', sub: 'extendable up to 3 yrs' },
+  { value: '3.5/5', label: 'Panel pass mark', sub: 'average across 4 criteria' },
+  { value: '8 yrs', label: 'To permanent residence', sub: '4 only with all four extras' },
+];
+
+const stepChips = ['1–3 founders per team', '15-page deck · 5-minute video', 'Up to 6 weeks · 3.5/5 to pass', 'DKK 3,060 · 2 months', 'Initial permit up to 2 yrs'];
+
+const quotaTiles: Tile[] = [
+  { value: '75', label: 'Permits a year', sub: 'counted per person, not per team' },
+  { value: '3 of 75', label: 'A three-founder team', sub: 'takes three slots' },
+  { value: '1 Jan', label: 'The count resets', sub: 'apply in Q1 if your material is ready' },
+];
+
+// One bar per household row of `financials`, one segment per person: the
+// child(ren) segment is SIRI's single "one or more children" amount.
+const moneyRows: MoneyRow[] = [
+  { label: financials[0].label, figure: dkk(financials[0].dkk), sub: financials[0].eur, segments: [{ value: 153240, role: 0 }] },
+  { label: financials[1].label, figure: dkk(financials[1].dkk), sub: financials[1].eur, segments: [{ value: 153240, role: 0 }, { value: 153240, role: 1 }] },
+  { label: financials[2].label, figure: dkk(financials[2].dkk), sub: financials[2].eur, segments: [{ value: 153240, role: 0 }, { value: 153240, role: 1 }, { value: 50424, role: 2 }] },
+  { label: financials[3].label, figure: dkk(financials[3].dkk), sub: financials[3].eur, segments: [{ value: 153240, role: 0 }, { value: 50424, role: 2 }] },
+];
+
+const lifeWhy = ['Open work permit for your spouse', 'Side work, 8–15 hrs/week', 'Schengen travel, 90 of 180 days', 'Free Danish classes', 'Voluntary work allowed'];
+const lifeWatch = ['Closed permit: the approved startup only', 'No public welfare', 'Renewal: the panel assesses you again', 'Over 6 months abroad ends the permit'];
+
+const prTiles: Tile[] = [
+  { value: '8 yrs', label: 'General route', sub: 'at least 2 of the 4 supplementary conditions' },
+  { value: '4 yrs', label: 'Fast route', sub: 'all 4 supplementary conditions' },
+  { value: '3½ yrs', label: 'Full-time work or self-employment', sub: 'in the last 4 years' },
+];
+
+const years: Milestone[] = [
+  { at: 0, year: 'Y0', label: roadmap.arrive.title, sub: roadmap.arrive.sub },
+  { at: roadmap.extension.year, year: `Y${roadmap.extension.year}`, label: roadmap.extension.title, sub: roadmap.extension.sub },
+  { at: 8, year: 'Y8', label: 'Permanent residence', sub: 'General route; 4 years only with all four extras' },
+  { at: 10, year: 'Y10+', label: 'Danish passport', sub: '9 years’ residence, PR held 2 years' },
+];
+
 const faqs = [
   {
     q: 'Is a language certificate (IELTS/TOEFL) required?',
@@ -394,7 +444,6 @@ const reads = [
 
 // ─── Page ────────────────────────────────────────────────────────────────────
 
-const dkk = (n: number) => `DKK ${n.toLocaleString('en')}`;
 const label = 'font-sans text-xs font-bold uppercase tracking-[0.18em]';
 
 // setRequestLocale before the first <Link>: without it next-intl reads
@@ -493,6 +542,7 @@ export default async function DenmarkPage({ params }: { params: Promise<{ locale
           task="Read the four facts"
           completeOn="view"
           message="Snapshot read"
+          lead={<NumberTiles tiles={snapshotTiles} surface="paper" />}
           answer={
             <p>
               The Denmark startup visa is Start-up Denmark, a government-run route for non-EU founders. An independent expert panel appointed by the
@@ -501,21 +551,8 @@ export default async function DenmarkPage({ params }: { params: Promise<{ locale
             </p>
           }
         >
-          <dl className="grid grid-cols-2 gap-3 md:grid-cols-4">
-            {[
-              { stat: '75', label: 'Visas per year', sub: 'per person, not per team' },
-              { stat: '2 yrs', label: 'Initial permit', sub: 'extendable up to 3 yrs' },
-              { stat: '3.5/5', label: 'Panel pass mark', sub: 'average across 4 criteria' },
-              { stat: '8 yrs', label: 'To permanent residence', sub: '4 only with all four extras' },
-            ].map((s) => (
-              <div key={s.label} className="flex flex-col rounded-2xl border border-[#1a1a1a]/10 bg-white p-5 transition-transform hover:-translate-y-1">
-                <dt className="order-2 mt-2 font-sans text-sm font-bold">{s.label}</dt>
-                <dd className="order-1 font-serif text-4xl text-[#C8102E]">{s.stat}</dd>
-                <dd className="order-3 font-sans text-xs text-[#1a1a1a]/55">{s.sub}</dd>
-              </div>
-            ))}
-          </dl>
-          <div className="mt-8 grid max-w-5xl grid-cols-1 gap-6 font-sans text-[15px] leading-relaxed text-[#1a1a1a]/70 md:grid-cols-2">
+          <Detail minutes={1}>
+          <div className="grid max-w-5xl grid-cols-1 gap-6 font-sans text-[15px] leading-relaxed text-[#1a1a1a]/70 md:grid-cols-2">
             <div>
               <h3 className="mb-2 font-serif text-xl text-[#1a1a1a]">The world&apos;s most digital nation</h3>
               <p>
@@ -533,6 +570,7 @@ export default async function DenmarkPage({ params }: { params: Promise<{ locale
               </p>
             </div>
           </div>
+          </Detail>
         </RouteStop>
 
         {/* 02 — Video */}
@@ -559,6 +597,34 @@ export default async function DenmarkPage({ params }: { params: Promise<{ locale
           eyebrow="How you are judged"
           question="Who qualifies for the Start-up Denmark visa?"
           task="Answer all four"
+          lead={
+            <GateQuiz
+              stopId="gate"
+              criteria={criteria}
+              compact
+              gapNote="If you are rejected you get the panel's scores per criterion, and may appeal once or reapply with a substantially improved plan."
+            >
+              <h3 className="font-serif text-xl">How the panel scores you</h3>
+              <dl className="grid grid-cols-3 gap-2 text-center font-sans">
+                {[
+                  ['3', 'panel members'],
+                  ['4', 'criteria, each 1–5'],
+                  ['3.5', 'average to pass'],
+                ].map(([n, t]) => (
+                  <div key={t} className="flex flex-col rounded-xl bg-[#F2F0E9] px-2 py-3">
+                    <dt className="order-2 text-[11px] text-[#1a1a1a]/60">{t}</dt>
+                    <dd className="font-serif text-3xl tabular-nums text-[#C8102E]">{n}</dd>
+                  </div>
+                ))}
+              </dl>
+              <p className="font-sans text-sm text-[#1a1a1a]/65">
+                There is no interview. The panel works exclusively from your pitch deck and video.
+              </p>
+              <Link href="/book-meeting" className="inline-flex w-fit items-center gap-2 rounded-full bg-[#C8102E] px-5 py-3 font-sans text-sm font-bold text-white transition-transform hover:-translate-y-0.5">
+                Get a free read on your file <ArrowRight className="h-4 w-4" />
+              </Link>
+            </GateQuiz>
+          }
           answer={
             <p>
               Non-EU/EEA/Swiss founders, solo or in a team of up to three, with an innovative, scalable business. Three panel members each score
@@ -567,33 +633,16 @@ export default async function DenmarkPage({ params }: { params: Promise<{ locale
             </p>
           }
         >
-          <GateQuiz
-            stopId="gate"
-            criteria={criteria}
-            gapNote="If you are rejected you get the panel's scores per criterion, and may appeal once or reapply with a substantially improved plan."
-          >
-            <h3 className="font-serif text-xl">How the panel scores you</h3>
-            <dl className="grid grid-cols-3 gap-2 text-center font-sans">
-              {[
-                ['3', 'panel members'],
-                ['4', 'criteria, each 1–5'],
-                ['3.5', 'average to pass'],
-              ].map(([n, t]) => (
-                <div key={t} className="flex flex-col rounded-xl bg-[#F2F0E9] px-2 py-3">
-                  <dt className="order-2 text-[11px] text-[#1a1a1a]/60">{t}</dt>
-                  <dd className="font-serif text-3xl tabular-nums text-[#C8102E]">{n}</dd>
-                </div>
-              ))}
-            </dl>
-            <p className="font-sans text-sm text-[#1a1a1a]/65">
-              There is no interview. The panel works exclusively from your pitch deck and video.
-            </p>
-            <Link href="/book-meeting" className="inline-flex w-fit items-center gap-2 rounded-full bg-[#C8102E] px-5 py-3 font-sans text-sm font-bold text-white transition-transform hover:-translate-y-0.5">
-              Get a free read on your file <ArrowRight className="h-4 w-4" />
-            </Link>
-          </GateQuiz>
-
-          <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
+          <Detail minutes={1}>
+          <dl className="mb-8 grid max-w-5xl grid-cols-1 gap-x-8 gap-y-4 font-sans text-[15px] leading-relaxed md:grid-cols-2">
+            {criteria.map((c) => (
+              <div key={c.title}>
+                <dt className="font-bold text-[#1a1a1a]">{c.title}</dt>
+                <dd className="text-[#1a1a1a]/70">{c.body}</dd>
+              </div>
+            ))}
+          </dl>
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
             <div className="grid content-start gap-6 font-sans text-[15px] leading-relaxed text-[#1a1a1a]/70">
               <div>
                 <h3 className="mb-2 font-serif text-xl text-[#1a1a1a]">Who can apply</h3>
@@ -629,6 +678,7 @@ export default async function DenmarkPage({ params }: { params: Promise<{ locale
               <p className="mt-3 font-sans text-xs text-[#1a1a1a]/55">Priority sector: home to Vestas &amp; Ørsted. The world&apos;s green energy capital.</p>
             </div>
           </div>
+          </Detail>
         </RouteStop>
 
         {/* 04 — How to apply */}
@@ -638,7 +688,10 @@ export default async function DenmarkPage({ params }: { params: Promise<{ locale
           tone="white"
           eyebrow="The process"
           question="How do you apply for the Start-up Denmark visa?"
-          task="Walk to step 5"
+          task="See the five steps"
+          completeOn="view"
+          message="Steps seen"
+          lead={<StepLine steps={steps.map((s, i) => ({ label: s.title, who: s.who, chip: stepChips[i] }))} />}
           answer={
             <p>
               Check you are eligible, then submit a pitch deck of up to 15 pages and a video pitch of up to five minutes on Virk.dk. The panel usually
@@ -647,11 +700,13 @@ export default async function DenmarkPage({ params }: { params: Promise<{ locale
             </p>
           }
         >
+          <Detail minutes={2}>
           <StepWalker stopId="steps" steps={steps} />
           <p className="mt-6 max-w-[68ch] font-sans text-sm text-[#1a1a1a]/65">
             From eligibility check to registering your company in Copenhagen. Based on official Startup Denmark, SIRI, and Danish Business Authority
             guidelines.
           </p>
+          </Detail>
         </RouteStop>
 
         {/* 05 — The quota */}
@@ -663,6 +718,7 @@ export default async function DenmarkPage({ params }: { params: Promise<{ locale
           task="Read the four timing rules"
           completeOn="view"
           message="Quota understood"
+          lead={<NumberTiles tiles={quotaTiles} />}
           answer={
             <p>
               Denmark grants 75 Start-up Denmark permits a year, and the cap is counted per person, not per team: a three-founder team uses three of
@@ -671,6 +727,7 @@ export default async function DenmarkPage({ params }: { params: Promise<{ locale
             </p>
           }
         >
+          <Detail minutes={1}>
           <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)]">
             <div>
               <p className="mb-6 max-w-[60ch] font-sans text-[15px] leading-relaxed text-[#1a1a1a]/70">
@@ -701,6 +758,7 @@ export default async function DenmarkPage({ params }: { params: Promise<{ locale
               </figcaption>
             </figure>
           </div>
+          </Detail>
         </RouteStop>
 
         {/* 06 — Money */}
@@ -710,7 +768,10 @@ export default async function DenmarkPage({ params }: { params: Promise<{ locale
           tone="white"
           eyebrow="Self-support · SIRI figures"
           question="How much money do you need for the Start-up Denmark visa?"
-          task="Set up your family"
+          task="See the household money"
+          completeOn="view"
+          message="Money worked out"
+          lead={<MoneyBar rows={moneyRows} legend={['You, the founder', 'Spouse or partner', 'One or more children']} surface="white" caption="Self-support to document, 2025 level (SIRI)" note="There is no minimum investment. nyidanmark.dk still publishes these at the 2025 level and revises them each January." />}
           answer={
             <p>
               There is no minimum investment. Instead you document self-support: DKK 153,240 (about €20,500) as a single applicant, DKK 306,480 with a
@@ -719,6 +780,7 @@ export default async function DenmarkPage({ params }: { params: Promise<{ locale
             </p>
           }
         >
+          <Detail minutes={1}>
           <SelfSupportCalculator stopId="money" rows={financials} fees={{ founder: 3060, family: 3080 }} />
 
           <div className="mt-8 grid grid-cols-1 gap-8 xl:grid-cols-2">
@@ -783,6 +845,7 @@ export default async function DenmarkPage({ params }: { params: Promise<{ locale
               classes: free after CPR registration.
             </p>
           </div>
+          </Detail>
         </RouteStop>
 
         {/* 07 — Rights */}
@@ -791,7 +854,10 @@ export default async function DenmarkPage({ params }: { params: Promise<{ locale
           number={7}
           eyebrow="Perk or catch?"
           question="What rights does the Start-up Denmark permit give you and your family?"
-          task="Guess all eight"
+          task="Weigh perks and catches"
+          completeOn="view"
+          message="Perks and catches weighed"
+          lead={<WhyWatch why={{ heading: 'Why Denmark', items: lifeWhy }} watch={{ heading: 'Watch out', items: lifeWatch }} />}
           answer={
             <p>
               Your own permit is closed: you may work only in the approved startup, plus 8–15 hours a week of related side work with separate
@@ -800,6 +866,7 @@ export default async function DenmarkPage({ params }: { params: Promise<{ locale
             </p>
           }
         >
+          <Detail minutes={1}>
           <PerkOrCatch stopId="life" items={rights} />
 
           <div className="mt-10 grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.3fr)]">
@@ -821,6 +888,7 @@ export default async function DenmarkPage({ params }: { params: Promise<{ locale
               ))}
             </ul>
           </div>
+          </Detail>
         </RouteStop>
 
         {/* 08 — Permanent residence */}
@@ -830,7 +898,10 @@ export default async function DenmarkPage({ params }: { params: Promise<{ locale
           tone="white"
           eyebrow="Permanent residence"
           question="How do you get permanent residence in Denmark after Start-up Denmark?"
-          task="Find your fastest route"
+          task="See the two routes"
+          completeOn="view"
+          message="Routes compared"
+          lead={<NumberTiles tiles={prTiles} surface="white" />}
           answer={
             <p>
               Plan on eight years of lawful residence, not five. You also need Prøve i Dansk 2, three and a half years of full-time work or
@@ -839,12 +910,14 @@ export default async function DenmarkPage({ params }: { params: Promise<{ locale
             </p>
           }
         >
+          <Detail minutes={2}>
           <PrFinder stopId="residence" questions={prQuestions} routes={prRoutes} />
           <p className="mt-4 max-w-[72ch] font-sans text-xs text-[#1a1a1a]/55">
             The four supplementary conditions: Prøve i Dansk 3; 4 years of employment within the last 4.5; active citizenship (the exam, or a year of
             documented civic participation); and taxable income of at least DKK 346,155.57 (2026 level) in each of the last two years. Self-employment
             counts as employment if it is your main occupation and supports you.
           </p>
+          </Detail>
         </RouteStop>
 
         {/* 09 — Roadmap */}
@@ -853,7 +926,10 @@ export default async function DenmarkPage({ params }: { params: Promise<{ locale
           number={9}
           eyebrow="Long-term vision"
           question="How long does it take to get Danish citizenship through Start-up Denmark?"
-          task="Drag yourself through the years"
+          task="See the years to a passport"
+          completeOn="view"
+          message="Road mapped"
+          lead={<YearsLine milestones={years} caption="From arrival to a Danish passport" />}
           answer={
             <p>
               On the general route, ten years or more. Citizenship needs nine years of continuous residence, permanent residence held for at least
@@ -862,6 +938,7 @@ export default async function DenmarkPage({ params }: { params: Promise<{ locale
             </p>
           }
         >
+          <Detail minutes={1}>
           <CitizenshipRoadmap stopId="roadmap" routes={prRoutes} defaultRoute={1} copy={roadmap} />
           <ol className="mt-6 grid grid-cols-1 gap-4 font-sans text-sm text-[#1a1a1a]/65 sm:grid-cols-2 lg:grid-cols-4">
             {timeline.map((p) => (
@@ -881,6 +958,7 @@ export default async function DenmarkPage({ params }: { params: Promise<{ locale
               declaration of loyalty. Denmark has allowed dual citizenship since 2015. PR, not the calendar, is the bottleneck on this path.
             </p>
           </div>
+          </Detail>
         </RouteStop>
 
         {/* 10 — FAQ */}
@@ -1043,18 +1121,25 @@ function FaqGroups() {
       items: pick('What is the real path to Permanent Residence?', 'Can a founder realistically reach the 4-year fast route?', 'And Danish citizenship?'),
     },
   ];
+  const group = (g: (typeof groups)[number]) => (
+    <div key={g.heading}>
+      <h3 className={`mb-2 text-[#C8102E] ${label}`}>{g.heading}</h3>
+      <div className="border-t border-[#1a1a1a]/10">
+        {g.items.map((f) => (
+          <FaqItem key={f.q} q={f.q} a={f.a} />
+        ))}
+      </div>
+    </div>
+  );
+  const [first, ...rest] = groups;
+  // The later groups sit behind one fold: every answer stays in the HTML
+  // (and in the FAQPage JSON-LD), the phone page gets shorter.
   return (
     <div className="grid max-w-4xl gap-12">
-      {groups.map((g) => (
-        <div key={g.heading}>
-          <h3 className={`mb-2 text-[#C8102E] ${label}`}>{g.heading}</h3>
-          <div className="border-t border-[#1a1a1a]/10">
-            {g.items.map((f) => (
-              <FaqItem key={f.q} q={f.q} a={f.a} />
-            ))}
-          </div>
-        </div>
-      ))}
+      {group(first)}
+      <Detail label={`More questions (${rest.reduce((n, g) => n + g.items.length, 0)})`} closeLabel="Hide these questions">
+        <div className="grid gap-12">{rest.map(group)}</div>
+      </Detail>
     </div>
   );
 }

@@ -55,6 +55,7 @@ import Flag from '@/components/route/flags';
 import { RouteProvider, RouteRail, RouteStop, RouteFinish, type RouteStopDef, type RouteTheme } from '@/components/route/RouteProgress';
 import { CopyButton, PerkOrCatch, StepWalker, type RouteStep } from '@/components/route/RouteWidgets';
 import { ArenaPicker, TierFinder, type Arena, type TierDoor } from './UaeWidgets';
+import { Detail, NumberTiles, StepLine, WhyWatch, YearsLine, type Milestone, type Tile } from '@/components/guide/visual';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
@@ -283,6 +284,39 @@ const reads = [
   },
 ];
 
+// ─── Visuals: drawn in code from facts already on the page ──────────────────
+// Each fold's `minutes` is its word count at 200 words a minute (measured
+// 9 Nov 2026); update it when a fold's text grows or shrinks a lot.
+
+const snapshotTiles: Tile[] = [
+  { value: '10 yr', label: 'Golden Visa', sub: 'renewable, no sponsor' },
+  { value: '5 yr', label: 'Green Visa', sub: 'freelancers, skilled, investors' },
+  { value: 'AED 2M', label: 'Golden threshold', sub: 'property or bank deposit' },
+  { value: '0%', label: 'Personal tax', sub: 'with 100% foreign ownership' },
+];
+
+const tierTiles: Tile[] = tiers.map((t) => ({ value: t.term.split(' ')[0].replace('-year', ' yr'), label: t.name, sub: t.items.join(' · ') }));
+
+const arenaTiles: Tile[] = arenas.map((a) => ({ value: a.city, label: a.role, sub: `${a.sectors.join(', ')} · ${a.zones.join(', ')}` }));
+
+const stepChips = steps.map((s) => s.figureLabel ?? '');
+
+// One tile per checked Golden figure plus the Green investor line, which the
+// thresholds table marks as not yet checked.
+const moneyTiles: Tile[] = [
+  { value: 'AED 2M', label: 'Property or bank deposit', sub: 'Golden Visa, either one on its own' },
+  { value: 'AED 1M', label: 'SME annual revenue', sub: 'Golden Visa, entrepreneur' },
+  { value: 'AED 7M', label: 'Businesses founded and sold', sub: 'Golden Visa, entrepreneur, in total' },
+  { value: 'AED 1M', label: 'Green Visa investor', sub: 'not yet checked against an official source' },
+];
+
+// Renewals on a true scale; no milestone leads to a passport.
+const years: Milestone[] = [
+  { at: 0, year: 'Y0', label: 'Residence issued', sub: 'ICP or GDRFA Dubai' },
+  { at: 5, year: 'Y5', label: 'Green Visa renewal', sub: '5 years, renewable' },
+  { at: 10, year: 'Y10', label: 'Golden Visa renewal', sub: 'renewable while the conditions are met' },
+];
+
 // ─── Page ────────────────────────────────────────────────────────────────────
 
 const label = 'font-sans text-xs font-bold uppercase tracking-[0.18em]';
@@ -378,6 +412,7 @@ export default async function UAEPage({ params }: { params: Promise<{ locale: st
           task="Read the four facts"
           completeOn="view"
           message="Snapshot read"
+          lead={<NumberTiles tiles={snapshotTiles} />}
           answer={
             <p>
               Not in the classic sense. There is no stand-alone startup visa: founders and investors use the UAE&apos;s long-term residencies. The 10-year
@@ -386,32 +421,20 @@ export default async function UAEPage({ params }: { params: Promise<{ locale: st
             </p>
           }
         >
-          <dl className="grid grid-cols-2 gap-3 md:grid-cols-4">
-            {[
-              { stat: '10 yr', label: 'Golden Visa', sub: 'renewable, no sponsor' },
-              { stat: '5 yr', label: 'Green Visa', sub: 'freelancers, skilled, investors' },
-              { stat: 'AED 2M', label: 'Golden threshold', sub: 'property or bank deposit' },
-              { stat: '0%', label: 'Personal tax', sub: 'with 100% foreign ownership' },
-            ].map((s) => (
-              <div key={s.label} className="flex flex-col rounded-2xl border border-[#1a1a1a]/10 bg-white p-5 transition-transform hover:-translate-y-1">
-                <dt className="order-2 mt-2 font-sans text-sm font-bold">{s.label}</dt>
-                <dd className="order-1 font-serif text-4xl text-[#1a1a1a]">{s.stat}</dd>
-                <dd className="order-3 font-sans text-xs text-[#1a1a1a]/55">{s.sub}</dd>
-              </div>
-            ))}
-          </dl>
-          <div className="mt-8 grid max-w-5xl grid-cols-1 gap-6 font-sans text-[15px] leading-relaxed text-[#1a1a1a]/70 md:grid-cols-2">
-            <p>
-              <strong className="text-[#1a1a1a]">Beyond oil.</strong> The UAE has evolved beyond oil and now positions itself as a global HQ for Web3, AI
-              and family offices. With the introduction of the Blue Visa (2025) alongside the Golden and Green tiers, it offers one of the most
-              diversified residency portfolios in the world.
-            </p>
-            <p>
-              <strong className="text-[#1a1a1a]">Who decides.</strong> Residence visas are issued by the Federal Authority for Identity, Citizenship,
-              Customs &amp; Port Security (ICP), and in Dubai by GDRFA Dubai. For the Golden Visa&apos;s entrepreneur route in Dubai, Dubai Future
-              Foundation nominates first and GDRFA Dubai reviews last.
-            </p>
-          </div>
+          <Detail minutes={1}>
+            <div className="grid max-w-5xl grid-cols-1 gap-6 font-sans text-[15px] leading-relaxed text-[#1a1a1a]/70 md:grid-cols-2">
+              <p>
+                <strong className="text-[#1a1a1a]">Beyond oil.</strong> The UAE has evolved beyond oil and now positions itself as a global HQ for Web3, AI
+                and family offices. With the introduction of the Blue Visa (2025) alongside the Golden and Green tiers, it offers one of the most
+                diversified residency portfolios in the world.
+              </p>
+              <p>
+                <strong className="text-[#1a1a1a]">Who decides.</strong> Residence visas are issued by the Federal Authority for Identity, Citizenship,
+                Customs &amp; Port Security (ICP), and in Dubai by GDRFA Dubai. For the Golden Visa&apos;s entrepreneur route in Dubai, Dubai Future
+                Foundation nominates first and GDRFA Dubai reviews last.
+              </p>
+            </div>
+          </Detail>
         </RouteStop>
 
         {/* 02 — Which tier */}
@@ -421,7 +444,10 @@ export default async function UAEPage({ params }: { params: Promise<{ locale: st
           tone="white"
           eyebrow="The visa portfolio"
           question="Which UAE visa fits you: Golden, Green or Blue?"
-          task="Answer all seven"
+          task="See the three tiers"
+          completeOn="view"
+          message="Tiers seen"
+          lead={<NumberTiles tiles={tierTiles} surface="white" label="Golden, Green and Blue" />}
           answer={
             <p>
               Match the tier to what you bring. Property or a bank deposit of AED 2 million, or a qualifying business, points to the 10-year Golden Visa.
@@ -430,38 +456,40 @@ export default async function UAEPage({ params }: { params: Promise<{ locale: st
             </p>
           }
         >
-          <TierFinder
-            stopId="tiers"
-            doors={doors}
-            noneNote="None of the doors is open to you today. Bring your situation to a free session and we will tell you honestly whether the UAE is the right route."
-          />
+          <Detail minutes={2}>
+            <TierFinder
+              stopId="tiers"
+              doors={doors}
+              noneNote="None of the doors is open to you today. Bring your situation to a free session and we will tell you honestly whether the UAE is the right route."
+            />
 
-          <ul className="mt-10 grid grid-cols-1 gap-4 md:grid-cols-3">
-            {tiers.map((t) => (
-              <li key={t.name} className={`rounded-2xl p-6 md:p-8 ${t.dark ? 'bg-[#1a1a1a] text-[#F2F0E9]' : 'border border-[#1a1a1a]/10 bg-[#F2F0E9]'}`}>
-                <h3 className={`font-serif text-3xl ${t.dark ? 'text-[#D4AF37]' : ''}`}>{t.name}</h3>
-                <p className={`mb-5 mt-1 ${label} ${t.dark ? 'text-white/60' : 'text-[#1a1a1a]/55'}`}>{t.term}</p>
-                <ul className={`grid gap-3 font-sans text-sm ${t.dark ? 'text-white/80' : 'text-[#1a1a1a]/70'}`}>
-                  {t.items.map((it) => (
-                    <li key={it} className="flex gap-3">
-                      <span aria-hidden="true" className={`mt-1.5 h-2 w-2 shrink-0 rounded-full ${t.dark ? 'bg-[#D4AF37]' : 'bg-[#7D6310]'}`} />
-                      {it}
-                    </li>
-                  ))}
-                </ul>
-              </li>
-            ))}
-          </ul>
-          <div className="mt-6 grid max-w-5xl grid-cols-1 gap-4 font-sans text-sm leading-relaxed text-[#1a1a1a]/65 md:grid-cols-2">
-            <p>
-              <strong className="text-[#1a1a1a]">The entrepreneur route has changed.</strong> Older guides quote an AED 500,000 project. That figure comes
-              from a 2018 decree and is on no current official page. Today the Golden Visa&apos;s entrepreneur doors are the three above.
-            </p>
-            <p>
-              <strong className="text-[#1a1a1a]">Not yet checked.</strong> The Blue Visa, and the Green Visa&apos;s skilled-employee and AED 1M investor
-              categories, are kept here as the page has long stated them but have not yet been checked against an official source.
-            </p>
-          </div>
+            <ul className="mt-10 grid grid-cols-1 gap-4 md:grid-cols-3">
+              {tiers.map((t) => (
+                <li key={t.name} className={`rounded-2xl p-6 md:p-8 ${t.dark ? 'bg-[#1a1a1a] text-[#F2F0E9]' : 'border border-[#1a1a1a]/10 bg-[#F2F0E9]'}`}>
+                  <h3 className={`font-serif text-3xl ${t.dark ? 'text-[#D4AF37]' : ''}`}>{t.name}</h3>
+                  <p className={`mb-5 mt-1 ${label} ${t.dark ? 'text-white/60' : 'text-[#1a1a1a]/55'}`}>{t.term}</p>
+                  <ul className={`grid gap-3 font-sans text-sm ${t.dark ? 'text-white/80' : 'text-[#1a1a1a]/70'}`}>
+                    {t.items.map((it) => (
+                      <li key={it} className="flex gap-3">
+                        <span aria-hidden="true" className={`mt-1.5 h-2 w-2 shrink-0 rounded-full ${t.dark ? 'bg-[#D4AF37]' : 'bg-[#7D6310]'}`} />
+                        {it}
+                      </li>
+                    ))}
+                  </ul>
+                </li>
+              ))}
+            </ul>
+            <div className="mt-6 grid max-w-5xl grid-cols-1 gap-4 font-sans text-sm leading-relaxed text-[#1a1a1a]/65 md:grid-cols-2">
+              <p>
+                <strong className="text-[#1a1a1a]">The entrepreneur route has changed.</strong> Older guides quote an AED 500,000 project. That figure comes
+                from a 2018 decree and is on no current official page. Today the Golden Visa&apos;s entrepreneur doors are the three above.
+              </p>
+              <p>
+                <strong className="text-[#1a1a1a]">Not yet checked.</strong> The Blue Visa, and the Green Visa&apos;s skilled-employee and AED 1M investor
+                categories, are kept here as the page has long stated them but have not yet been checked against an official source.
+              </p>
+            </div>
+          </Detail>
         </RouteStop>
 
         {/* 03 — Dubai or Abu Dhabi */}
@@ -470,7 +498,10 @@ export default async function UAEPage({ params }: { params: Promise<{ locale: st
           number={3}
           eyebrow="Choose your arena"
           question="Dubai or Abu Dhabi: where should a founder set up?"
-          task="Pick your sector"
+          task="Compare the two cities"
+          completeOn="view"
+          message="Cities compared"
+          lead={<NumberTiles tiles={arenaTiles} label="Dubai and Abu Dhabi" />}
           answer={
             <p>
               Two cities, two distinct strategies. Dubai suits speed: fintech, crypto and e-commerce, with fast setup, high visibility and zones such as
@@ -479,34 +510,36 @@ export default async function UAEPage({ params }: { params: Promise<{ locale: st
             </p>
           }
         >
-          <ArenaPicker stopId="arena" arenas={arenas} />
-          <div className="mt-8 overflow-x-auto">
-            <table className="w-full min-w-[520px] overflow-hidden rounded-2xl bg-white font-sans text-sm">
-              <caption className="pb-2 text-left font-bold">Dubai and Abu Dhabi side by side</caption>
-              <thead>
-                <tr className="border-b border-[#1a1a1a]/10 text-left text-[11px] uppercase tracking-[0.1em] text-[#1a1a1a]/55">
-                  <th scope="col" className="px-4 py-3"><span className="sr-only">Factor</span></th>
-                  <th scope="col" className="px-4 py-3">Dubai</th>
-                  <th scope="col" className="px-4 py-3">Abu Dhabi</th>
-                </tr>
-              </thead>
-              <tbody>
-                {[
-                  ['Role', 'The commercial hub', 'The capital'],
-                  ['Optimised for', 'Speed, fintech, crypto, e-commerce', 'Deep tech, AI, healthcare, clean energy'],
-                  ['Zones and programmes', 'DIFC, DMCC, DWTC', 'ADGM, Hub71, Masdar'],
-                  ['Pace', 'Fast setup, high visibility', 'Slower pace, higher capital support'],
-                  ['Character', 'Cosmopolitan lifestyle', 'Backed by massive sovereign wealth funds'],
-                ].map(([k, d, a]) => (
-                  <tr key={k} className="border-b border-[#1a1a1a]/10 last:border-0">
-                    <th scope="row" className="px-4 py-3 text-left font-bold">{k}</th>
-                    <td className="px-4 py-3">{d}</td>
-                    <td className="px-4 py-3">{a}</td>
+          <Detail minutes={1}>
+            <ArenaPicker stopId="arena" arenas={arenas} />
+            <div className="mt-8 overflow-x-auto">
+              <table className="w-full min-w-[520px] overflow-hidden rounded-2xl bg-white font-sans text-sm">
+                <caption className="pb-2 text-left font-bold">Dubai and Abu Dhabi side by side</caption>
+                <thead>
+                  <tr className="border-b border-[#1a1a1a]/10 text-left text-[11px] uppercase tracking-[0.1em] text-[#1a1a1a]/55">
+                    <th scope="col" className="px-4 py-3"><span className="sr-only">Factor</span></th>
+                    <th scope="col" className="px-4 py-3">Dubai</th>
+                    <th scope="col" className="px-4 py-3">Abu Dhabi</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody>
+                  {[
+                    ['Role', 'The commercial hub', 'The capital'],
+                    ['Optimised for', 'Speed, fintech, crypto, e-commerce', 'Deep tech, AI, healthcare, clean energy'],
+                    ['Zones and programmes', 'DIFC, DMCC, DWTC', 'ADGM, Hub71, Masdar'],
+                    ['Pace', 'Fast setup, high visibility', 'Slower pace, higher capital support'],
+                    ['Character', 'Cosmopolitan lifestyle', 'Backed by massive sovereign wealth funds'],
+                  ].map(([k, d, a]) => (
+                    <tr key={k} className="border-b border-[#1a1a1a]/10 last:border-0">
+                      <th scope="row" className="px-4 py-3 text-left font-bold">{k}</th>
+                      <td className="px-4 py-3">{d}</td>
+                      <td className="px-4 py-3">{a}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </Detail>
         </RouteStop>
 
         {/* 04 — How to apply */}
@@ -516,7 +549,10 @@ export default async function UAEPage({ params }: { params: Promise<{ locale: st
           tone="white"
           eyebrow="The process"
           question="How do you get UAE residency as a founder or investor?"
-          task="Walk to step 5"
+          task="See the five steps"
+          completeOn="view"
+          message="Steps seen"
+          lead={<StepLine steps={steps.map((s, i) => ({ label: s.title, who: s.who, chip: stepChips[i] }))} />}
           answer={
             <p>
               Pick your city, pick the visa tier that matches your assets, and structure the company as a mainland LLC or a free zone entity that meets
@@ -525,11 +561,13 @@ export default async function UAEPage({ params }: { params: Promise<{ locale: st
             </p>
           }
         >
-          <StepWalker stopId="steps" steps={steps} />
-          <p className="mt-6 max-w-[68ch] font-sans text-sm text-[#1a1a1a]/65">
-            <strong className="text-[#1a1a1a]">Where it goes wrong:</strong> getting the residency is the easy part. A company structured for the wrong
-            market, or not bankable, is what turns a few weeks into months.
-          </p>
+          <Detail minutes={2}>
+            <StepWalker stopId="steps" steps={steps} />
+            <p className="mt-6 max-w-[68ch] font-sans text-sm text-[#1a1a1a]/65">
+              <strong className="text-[#1a1a1a]">Where it goes wrong:</strong> getting the residency is the easy part. A company structured for the wrong
+              market, or not bankable, is what turns a few weeks into months.
+            </p>
+          </Detail>
         </RouteStop>
 
         {/* 05 — Money */}
@@ -541,6 +579,7 @@ export default async function UAEPage({ params }: { params: Promise<{ locale: st
           task="Read the thresholds"
           completeOn="view"
           message="Thresholds read"
+          lead={<NumberTiles tiles={moneyTiles} label="Residency thresholds" />}
           answer={
             <p>
               AED 2 million in UAE property or in a bank deposit qualifies for the 10-year Golden Visa on its own. Entrepreneurs qualify through an SME
@@ -549,57 +588,59 @@ export default async function UAEPage({ params }: { params: Promise<{ locale: st
             </p>
           }
         >
-          <div className="grid grid-cols-1 gap-8 xl:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)]">
-            <div className="overflow-x-auto">
-              <table className="w-full min-w-[560px] overflow-hidden rounded-2xl bg-white font-sans text-sm">
-                <caption className="pb-2 text-left font-bold">Residency thresholds, in UAE dirhams (AED)</caption>
-                <thead>
-                  <tr className="border-b border-[#1a1a1a]/10 text-left text-[11px] uppercase tracking-[0.1em] text-[#1a1a1a]/55">
-                    <th scope="col" className="px-4 py-3">Tier</th>
-                    <th scope="col" className="px-4 py-3">Route</th>
-                    <th scope="col" className="px-4 py-3">Amount</th>
-                    <th scope="col" className="px-4 py-3">Source</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {thresholds.map((r) => (
-                    <tr key={r.route} className="border-b border-[#1a1a1a]/10 last:border-0">
-                      <td className="px-4 py-3">{r.tier}</td>
-                      <th scope="row" className="px-4 py-3 text-left font-normal">{r.route}</th>
-                      <td className="px-4 py-3 tabular-nums">{r.amount}</td>
-                      <td className={`px-4 py-3 text-xs ${r.checked ? 'text-[#1a1a1a]/60' : 'font-bold text-[#B4531A]'}`}>{r.source}</td>
+          <Detail minutes={1}>
+            <div className="grid grid-cols-1 gap-8 xl:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)]">
+              <div className="overflow-x-auto">
+                <table className="w-full min-w-[560px] overflow-hidden rounded-2xl bg-white font-sans text-sm">
+                  <caption className="pb-2 text-left font-bold">Residency thresholds, in UAE dirhams (AED)</caption>
+                  <thead>
+                    <tr className="border-b border-[#1a1a1a]/10 text-left text-[11px] uppercase tracking-[0.1em] text-[#1a1a1a]/55">
+                      <th scope="col" className="px-4 py-3">Tier</th>
+                      <th scope="col" className="px-4 py-3">Route</th>
+                      <th scope="col" className="px-4 py-3">Amount</th>
+                      <th scope="col" className="px-4 py-3">Source</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-              <p className="mt-2 font-sans text-xs text-[#1a1a1a]/55">
-                Any one Golden route is enough. On the incubator route ICP sets no income figure; GDRFA Dubai asks for AED 2,000,000 of income.
-              </p>
-            </div>
-            <div className="overflow-x-auto">
-              <table className="w-full min-w-[320px] overflow-hidden rounded-2xl bg-white font-sans text-sm">
-                <caption className="pb-2 text-left font-bold">Tax at a glance</caption>
-                <thead>
-                  <tr className="border-b border-[#1a1a1a]/10 text-left text-[11px] uppercase tracking-[0.1em] text-[#1a1a1a]/55">
-                    <th scope="col" className="px-4 py-3">Tax</th>
-                    <th scope="col" className="px-4 py-3">Rate</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {taxes.map((t) => (
-                    <tr key={t.label} className="border-b border-[#1a1a1a]/10 last:border-0">
-                      <th scope="row" className="px-4 py-3 text-left font-normal">
-                        {t.label}
-                        <span className="block text-xs text-[#1a1a1a]/55">{t.note}</span>
-                      </th>
-                      <td className="px-4 py-3 font-serif text-2xl tabular-nums">{t.rate}</td>
+                  </thead>
+                  <tbody>
+                    {thresholds.map((r) => (
+                      <tr key={r.route} className="border-b border-[#1a1a1a]/10 last:border-0">
+                        <td className="px-4 py-3">{r.tier}</td>
+                        <th scope="row" className="px-4 py-3 text-left font-normal">{r.route}</th>
+                        <td className="px-4 py-3 tabular-nums">{r.amount}</td>
+                        <td className={`px-4 py-3 text-xs ${r.checked ? 'text-[#1a1a1a]/60' : 'font-bold text-[#B4531A]'}`}>{r.source}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+                <p className="mt-2 font-sans text-xs text-[#1a1a1a]/55">
+                  Any one Golden route is enough. On the incubator route ICP sets no income figure; GDRFA Dubai asks for AED 2,000,000 of income.
+                </p>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full min-w-[320px] overflow-hidden rounded-2xl bg-white font-sans text-sm">
+                  <caption className="pb-2 text-left font-bold">Tax at a glance</caption>
+                  <thead>
+                    <tr className="border-b border-[#1a1a1a]/10 text-left text-[11px] uppercase tracking-[0.1em] text-[#1a1a1a]/55">
+                      <th scope="col" className="px-4 py-3">Tax</th>
+                      <th scope="col" className="px-4 py-3">Rate</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-              <p className="mt-2 font-sans text-xs text-[#1a1a1a]/55">Tax rates not yet checked against an official source.</p>
+                  </thead>
+                  <tbody>
+                    {taxes.map((t) => (
+                      <tr key={t.label} className="border-b border-[#1a1a1a]/10 last:border-0">
+                        <th scope="row" className="px-4 py-3 text-left font-normal">
+                          {t.label}
+                          <span className="block text-xs text-[#1a1a1a]/55">{t.note}</span>
+                        </th>
+                        <td className="px-4 py-3 font-serif text-2xl tabular-nums">{t.rate}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+                <p className="mt-2 font-sans text-xs text-[#1a1a1a]/55">Tax rates not yet checked against an official source.</p>
+              </div>
             </div>
-          </div>
+          </Detail>
         </RouteStop>
 
         {/* 06 — Perks and catches */}
@@ -609,7 +650,15 @@ export default async function UAEPage({ params }: { params: Promise<{ locale: st
           tone="white"
           eyebrow="Perk or catch?"
           question="What does UAE residency give you, and what are the catches?"
-          task="Guess all eight"
+          task="Weigh perks and catches"
+          completeOn="view"
+          message="Perks and catches weighed"
+          lead={
+            <WhyWatch
+              why={{ heading: 'Perks', items: rights.filter((r) => r.positive).map((r) => r.title) }}
+              watch={{ heading: 'Catches', items: rights.filter((r) => !r.positive).map((r) => r.title) }}
+            />
+          }
           answer={
             <p>
               You get zero personal income tax, 100% foreign ownership and, on the Golden Visa, a 10-year residence with no sponsor. The catches sit
@@ -618,32 +667,34 @@ export default async function UAEPage({ params }: { params: Promise<{ locale: st
             </p>
           }
         >
-          <PerkOrCatch stopId="life" items={rights} />
+          <Detail minutes={1}>
+            <PerkOrCatch stopId="life" items={rights} />
 
-          <div className="mt-10 grid grid-cols-1 items-start gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.3fr)]">
-            <div className="font-sans text-[15px] leading-relaxed text-[#1a1a1a]/70">
-              <h3 className="mb-2 font-serif text-2xl text-[#1a1a1a]">Beyond the visa</h3>
-              <p className="mb-4">
-                Getting the residency is the easy part. The challenge is the infrastructure. Setting up a corporate bank account in the UAE can take 3–6
-                months if structured incorrectly.
-              </p>
-              <p>
-                We handle the &quot;mainland vs free zone&quot; selection to ensure your business entity is compliant with the Economic Substance
-                Regulations (ESR) and bankable from day one.
-              </p>
+            <div className="mt-10 grid grid-cols-1 items-start gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.3fr)]">
+              <div className="font-sans text-[15px] leading-relaxed text-[#1a1a1a]/70">
+                <h3 className="mb-2 font-serif text-2xl text-[#1a1a1a]">Beyond the visa</h3>
+                <p className="mb-4">
+                  Getting the residency is the easy part. The challenge is the infrastructure. Setting up a corporate bank account in the UAE can take 3–6
+                  months if structured incorrectly.
+                </p>
+                <p>
+                  We handle the &quot;mainland vs free zone&quot; selection to ensure your business entity is compliant with the Economic Substance
+                  Regulations (ESR) and bankable from day one.
+                </p>
+              </div>
+              <div className="rounded-2xl bg-[#1a1a1a] p-6 text-[#F2F0E9] md:p-8">
+                <h3 className="mb-6 font-serif text-2xl">VisaRoads corporate services</h3>
+                <ul className="grid grid-cols-1 gap-6 font-sans text-sm sm:grid-cols-2">
+                  {services.map((s) => (
+                    <li key={s.title} className="border-l border-[#D4AF37] pl-4">
+                      <b className="mb-1 block text-[#D4AF37]">{s.title}</b>
+                      <span className="text-white/70">{s.body}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
-            <div className="rounded-2xl bg-[#1a1a1a] p-6 text-[#F2F0E9] md:p-8">
-              <h3 className="mb-6 font-serif text-2xl">VisaRoads corporate services</h3>
-              <ul className="grid grid-cols-1 gap-6 font-sans text-sm sm:grid-cols-2">
-                {services.map((s) => (
-                  <li key={s.title} className="border-l border-[#D4AF37] pl-4">
-                    <b className="mb-1 block text-[#D4AF37]">{s.title}</b>
-                    <span className="text-white/70">{s.body}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
+          </Detail>
         </RouteStop>
 
         {/* 07 — Long term */}
@@ -655,6 +706,7 @@ export default async function UAEPage({ params }: { params: Promise<{ locale: st
           task="Read the answer"
           completeOn="view"
           message="Long term read"
+          lead={<YearsLine milestones={years} caption="Renewals, not a road to a passport" />}
           answer={
             <p>
               No permanent residence exists. The Golden Visa is a 10-year residence, renewable for as long as you keep meeting its conditions, with no
@@ -663,22 +715,24 @@ export default async function UAEPage({ params }: { params: Promise<{ locale: st
             </p>
           }
         >
-          <ol className="grid grid-cols-1 gap-3 font-sans text-sm text-[#1a1a1a]/65 md:grid-cols-3">
-            {[
-              ['Golden Visa', '10 years, renewable while the conditions are met. No sponsor.'],
-              ['Green Visa', '5 years, renewable, and it allows family sponsorship.'],
-              ['Citizenship', 'By nomination only. No residence clock leads to it.'],
-            ].map(([t, s]) => (
-              <li key={t} className="rounded-2xl border border-[#1a1a1a]/10 bg-white p-5">
-                <b className="mb-1 block font-serif text-xl text-[#1a1a1a]">{t}</b>
-                {s}
-              </li>
-            ))}
-          </ol>
-          <p className="mt-6 max-w-[68ch] font-sans text-sm text-[#1a1a1a]/65">
-            <strong className="text-[#1a1a1a]">Check the term on your own approval.</strong> ICP and GDRFA Dubai give the Golden Visa 10 years; the u.ae
-            government portal lists 5 years for some categories, including real-estate investors and entrepreneurs.
-          </p>
+          <Detail minutes={1}>
+            <ol className="grid grid-cols-1 gap-3 font-sans text-sm text-[#1a1a1a]/65 md:grid-cols-3">
+              {[
+                ['Golden Visa', '10 years, renewable while the conditions are met. No sponsor.'],
+                ['Green Visa', '5 years, renewable, and it allows family sponsorship.'],
+                ['Citizenship', 'By nomination only. No residence clock leads to it.'],
+              ].map(([t, s]) => (
+                <li key={t} className="rounded-2xl border border-[#1a1a1a]/10 bg-white p-5">
+                  <b className="mb-1 block font-serif text-xl text-[#1a1a1a]">{t}</b>
+                  {s}
+                </li>
+              ))}
+            </ol>
+            <p className="mt-6 max-w-[68ch] font-sans text-sm text-[#1a1a1a]/65">
+              <strong className="text-[#1a1a1a]">Check the term on your own approval.</strong> ICP and GDRFA Dubai give the Golden Visa 10 years; the u.ae
+              government portal lists 5 years for some categories, including real-estate investors and entrepreneurs.
+            </p>
+          </Detail>
         </RouteStop>
 
         {/* Sources */}

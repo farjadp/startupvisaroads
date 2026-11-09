@@ -376,7 +376,7 @@ export function PerkOrCatch({ stopId, items }: { stopId: string; items: { title:
                     it.positive ? 'border-[color-mix(in_srgb,var(--ra)_30%,transparent)] bg-[var(--rs)]' : 'border-[#B4531A]/25 bg-[#FBEBDD]'
                   }`}
                 >
-                  <span className={`font-sans text-[11px] font-bold uppercase tracking-[0.16em] ${it.positive ? 'text-[var(--ra-text)]' : 'text-[#B4531A]'}`}>
+                  <span className={`font-sans text-[11px] font-bold uppercase tracking-[0.16em] ${it.positive ? 'text-[var(--ra-text)]' : 'text-[#8F3A0E]'}`}>
                     {it.positive ? 'Perk' : 'Catch'} · {it.title}
                   </span>
                   <p>{it.content}</p>
