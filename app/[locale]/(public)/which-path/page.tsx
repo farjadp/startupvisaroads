@@ -16,6 +16,8 @@ import { SITE_URL } from '@/lib/seo';
 import PathQuiz from '@/components/fa/PathQuiz';
 import RouteCompare from '@/components/fa/RouteCompare';
 import Eligibility from '@/components/fa/Eligibility';
+import RouteAtlas from '@/components/fa/RouteAtlas';
+import { ATLAS } from '@/lib/fa/route-atlas';
 import { meta } from '@/content/fa/which-path';
 import WhichPathEn from './WhichPathEn';
 import { EN_META, EN_PATH } from './en-copy';
@@ -55,15 +57,28 @@ export default async function WhichPathFa({ params }: Props) {
             offers: { '@type': 'Offer', price: '0', priceCurrency: 'CAD' },
             provider: { '@type': 'ProfessionalService', '@id': `${SITE_URL}/fa#service` },
           },
+          {
+            '@context': 'https://schema.org',
+            '@type': 'ItemList',
+            name: 'اطلس مسیرهای مهاجرت کارآفرینی',
+            inLanguage: 'fa-IR',
+            itemListElement: ATLAS.map((r, i) => ({
+              '@type': 'ListItem',
+              position: i + 1,
+              name: `${r.name}: ${r.programme}`,
+              description: r.line,
+              url: `${SITE_URL}/fa${r.href}`,
+            })),
+          },
         ]}
       />
-      <div className="min-h-[70vh] py-16 md:py-24">
+      <div className="pt-12 pb-4 md:pt-20">
         <PathQuiz />
       </div>
-      {/* The quiz answers "which route"; these two answer "and can I clear
-          it". Kept below the quiz so the lead magnet stays the first thing
-          on the page. */}
-      <div className="pb-20 md:pb-28">
+      <RouteAtlas />
+      {/* The quiz answers "which route" and the atlas "what exists"; these
+          two answer "and can I clear it", for the reader who wants numbers. */}
+      <div className="border-t border-[#1a1a1a]/15 pb-20 md:pb-28">
         <RouteCompare />
         <Eligibility />
       </div>
