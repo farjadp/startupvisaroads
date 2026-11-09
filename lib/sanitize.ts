@@ -13,6 +13,7 @@
 // ============================================================================
 
 import * as cheerio from 'cheerio';
+import type { Element } from 'domhandler';
 
 // Tags that are unconditionally removed (SVG itself is intentionally NOT here).
 const DISALLOWED_TAGS = ['script', 'style', 'iframe', 'object', 'embed', 'form', 'input', 'button', 'link', 'meta', 'base', 'math'];
@@ -70,6 +71,82 @@ export function sanitizeHtml(html: string): string {
       }
     }
   });
+
+  return $.html();
+}
+
+// ----------------------------------------------------------------------------
+// Stricter sanitiser for the mobile app (GET /api/app/news). The app renders
+// HTML natively with a small renderer, so only the tags it understands are
+// kept; everything else is unwrapped to its text (div, span, figure, …) or
+// removed with its content (script, style, iframe, svg, …). Attributes are
+// dropped except a[href] (http/https only) and img[src, alt] (http/https only).
+// ----------------------------------------------------------------------------
+
+const APP_ALLOWED_TAGS = new Set([
+  'p', 'h2', 'h3', 'h4', 'ul', 'ol', 'li', 'strong', 'b', 'em', 'i', 'a', 'blockquote', 'img',
+  'table', 'thead', 'tbody', 'tr', 'td', 'th', 'br', 'hr',
+]);
+
+// Removed together with their content: the text inside is not article prose.
+const APP_REMOVED_TAGS = [
+  'script', 'style', 'iframe', 'object', 'embed', 'form', 'input', 'button', 'select', 'textarea',
+  'link', 'meta', 'base', 'math', 'svg', 'noscript', 'template', 'head', 'title', 'video', 'audio',
+  'canvas', 'source', 'track', 'map', 'area',
+];
+
+// Headings the renderer does not have are folded into the nearest it has.
+const APP_HEADING_MAP: Record<string, string> = { h1: 'h2', h5: 'h4', h6: 'h4' };
+
+function isHttpUrl(value: string | undefined): value is string {
+  return typeof value === 'string' && /^https?:\/\//i.test(value.trim());
+}
+
+export function sanitizeForApp(html: string): string {
+  if (!html) return '';
+  const $ = cheerio.load(html, null, false);
+
+  $(APP_REMOVED_TAGS.join(',')).remove();
+
+  // Comments anywhere in the fragment.
+  $.root()
+    .find('*')
+    .addBack()
+    .contents()
+    .each((_, node) => {
+      if (node.type === 'comment') $(node).remove();
+    });
+
+  // Snapshot first: unwrapping moves children, and the loop must still visit them.
+  const elements = $('*')
+    .toArray()
+    .filter((n): n is Element => n.type === 'tag');
+  for (const el of elements) {
+    const tag = el.tagName.toLowerCase();
+    const mapped = APP_HEADING_MAP[tag];
+    if (mapped) {
+      el.tagName = mapped;
+    } else if (!APP_ALLOWED_TAGS.has(tag)) {
+      $(el).replaceWith($(el).contents());
+      continue;
+    }
+
+    const name = el.tagName.toLowerCase();
+    const attribs: Record<string, string> = { ...el.attribs };
+    for (const attr of Object.keys(attribs)) $(el).removeAttr(attr);
+
+    if (name === 'a') {
+      if (isHttpUrl(attribs.href)) $(el).attr('href', attribs.href.trim());
+      else $(el).replaceWith($(el).contents());
+    } else if (name === 'img') {
+      if (!isHttpUrl(attribs.src)) {
+        $(el).remove();
+        continue;
+      }
+      $(el).attr('src', attribs.src.trim());
+      if (attribs.alt) $(el).attr('alt', attribs.alt);
+    }
+  }
 
   return $.html();
 }
