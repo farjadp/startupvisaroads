@@ -16,6 +16,7 @@ export default function Detail({
   lang = 'en',
   label,
   minutes,
+  closeLabel,
   children,
 }: {
   lang?: Lang;
@@ -23,6 +24,8 @@ export default function Detail({
   label?: string;
   /** Reading time of the folded text, shown next to the label. */
   minutes?: number;
+  /** Replaces the default "Close the detail" line. */
+  closeLabel?: string;
   children: React.ReactNode;
 }) {
   const c = COPY[lang];
@@ -39,7 +42,7 @@ export default function Detail({
           +
         </span>
         <span className="group-open:hidden">{(label ?? c.open) + meta}</span>
-        <span className="hidden group-open:inline">{c.close}</span>
+        <span className="hidden group-open:inline">{closeLabel ?? c.close}</span>
       </summary>
       <div className="pt-8">{children}</div>
     </details>

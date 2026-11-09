@@ -293,7 +293,7 @@ export function RouteStop({
       id={id}
       aria-labelledby={`${id}-q`}
       onClickCapture={completeOn === 'click' ? () => complete(id, message ?? 'Checkpoint reached') : undefined}
-      className={`scroll-mt-32 border-b border-[#1a1a1a]/10 px-6 py-16 md:py-20 ${t.section}`}
+      className={`scroll-mt-32 border-b border-[#1a1a1a]/10 px-6 pb-16 pt-10 md:py-20 ${t.section}`}
     >
       <div className="container mx-auto">
         <div className="mb-6 grid grid-cols-[auto_minmax(0,1fr)] gap-x-5 gap-y-2">

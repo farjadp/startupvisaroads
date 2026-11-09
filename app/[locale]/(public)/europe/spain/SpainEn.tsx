@@ -26,6 +26,8 @@
 // and Valencia (City of Arts and Sciences).
 // ============================================================================
 
+// Each fold's `minutes` is its word count at 200 words a minute (measured
+// 9 Nov 2026); update it when a fold's text grows or shrinks a lot.
 import React from 'react';
 import Image from 'next/image';
 import { ArrowRight, ShieldAlert } from 'lucide-react';
@@ -570,7 +572,7 @@ export default function SpainEn() {
             </p>
           }
         >
-          <Detail>
+          <Detail minutes={2}>
             <div className={`grid max-w-5xl grid-cols-1 gap-6 md:grid-cols-3 ${body}`}>
               <p>
                 <strong className="text-[#1a1a1a]">A law for people Spain wants.</strong> In 2013 Spain passed the Law on support for entrepreneurs and
@@ -651,7 +653,7 @@ export default function SpainEn() {
             </p>
           }
         >
-          <Detail>
+          <Detail minutes={2}>
             <MeansCalculator stopId="money" rule={meansRule} />
 
             <div className="mt-8 overflow-x-auto">
@@ -722,7 +724,19 @@ export default function SpainEn() {
           task="See the six requirements"
           completeOn="view"
           message="Requirements seen"
-          lead={<CheckRows items={requirements.map((r) => ({ label: r.title }))} label="The six requirements" />}
+          lead={
+            <GateQuiz
+              stopId="requirements"
+              criteria={requirements}
+              compact
+              strongNote="What decides it now is the ENISA report: a plan built for Spain, a profile that fits it and a credible funding plan."
+              gapNote="Certificates, apostilles and sworn translations take months; start the slow ones first."
+            >
+              <Link href="/book-meeting" className="inline-flex w-fit items-center gap-2 rounded-full bg-[#FFC400] px-5 py-3 font-sans text-sm font-bold text-[#1a1a1a] transition-transform hover:-translate-y-0.5">
+                Get a free read on your plan <ArrowRight className="h-4 w-4" />
+              </Link>
+            </GateQuiz>
+          }
           answer={
             <p>
               You need a favourable ENISA report that your activity is innovative and/or of special economic interest for Spain. You must be 18 or over
@@ -731,22 +745,20 @@ export default function SpainEn() {
             </p>
           }
         >
-          <Detail>
-            <GateQuiz
-              stopId="requirements"
-              criteria={requirements}
-              strongNote="What decides it now is the ENISA report: a plan built for Spain, a profile that fits it and a credible funding plan."
-              gapNote="Certificates, apostilles and sworn translations take months; start the slow ones first."
-            >
-              <h3 className="font-serif text-xl">The fees, by form</h3>
-              <p className="font-sans text-sm text-[#1a1a1a]/65">
-                Tasa 790 code 038 for the residence application to the UGE, and later tasa 790 code 012 for the residence card. See the amount on the
-                form on the day you generate it; the figures change yearly.
-              </p>
-              <Link href="/book-meeting" className="inline-flex w-fit items-center gap-2 rounded-full bg-[#FFC400] px-5 py-3 font-sans text-sm font-bold text-[#1a1a1a] transition-transform hover:-translate-y-0.5">
-                Get a free read on your plan <ArrowRight className="h-4 w-4" />
-              </Link>
-            </GateQuiz>
+          <Detail minutes={2}>
+            <dl className="mb-8 grid max-w-5xl grid-cols-1 gap-x-8 gap-y-4 font-sans text-[15px] leading-relaxed md:grid-cols-2">
+              {requirements.map((r) => (
+                <div key={r.title}>
+                  <dt className="font-bold text-[#1a1a1a]">{r.title}</dt>
+                  <dd className="text-[#1a1a1a]/70">{r.body}</dd>
+                </div>
+              ))}
+            </dl>
+            <h3 className="font-serif text-xl">The fees, by form</h3>
+            <p className="mt-2 max-w-[68ch] font-sans text-sm text-[#1a1a1a]/65">
+              Tasa 790 code 038 for the residence application to the UGE, and later tasa 790 code 012 for the residence card. See the amount on the
+              form on the day you generate it; the figures change yearly.
+            </p>
 
             <div className="mt-8 overflow-x-auto">
               <table className="w-full min-w-[560px] overflow-hidden rounded-2xl bg-white font-sans text-sm">
@@ -807,7 +819,7 @@ export default function SpainEn() {
             </p>
           }
         >
-          <Detail>
+          <Detail minutes={1}>
             <ol className="grid grid-cols-1 gap-3 md:grid-cols-3">
               {enisaCriteria.map((x, i) => (
                 <li key={x.t} className="rounded-2xl border border-[#1a1a1a]/10 bg-[#F2F0E9] p-5">
@@ -863,7 +875,7 @@ export default function SpainEn() {
             </p>
           }
         >
-          <Detail>
+          <Detail minutes={4}>
             <SpainSteps stopId="steps" steps={steps} />
 
             <p className="mt-6 max-w-[72ch] rounded-2xl border-l-4 border-[#FFC400] bg-[#FFF4CC] p-5 font-sans text-sm leading-relaxed">
@@ -960,7 +972,7 @@ export default function SpainEn() {
             </p>
           }
         >
-          <Detail>
+          <Detail minutes={1}>
             <p className={`max-w-[72ch] ${body}`}>
               Every family member meets the same general conditions: a passport, health insurance, means (already counted in the household criterion) and
               proof of the relationship. Every foreign document needs an apostille or legalisation and an official Spanish translation.
@@ -986,7 +998,7 @@ export default function SpainEn() {
             </p>
           }
         >
-          <Detail>
+          <Detail minutes={2}>
             <PerkOrCatch stopId="catches" items={rights} />
             <div className="mt-10 max-w-4xl">
               <h3 className="mb-3 font-serif text-2xl">What the sales pitch leaves out</h3>
@@ -1016,7 +1028,7 @@ export default function SpainEn() {
             </p>
           }
         >
-          <Detail>
+          <Detail minutes={1}>
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <div className="rounded-2xl border border-[#1a1a1a]/10 bg-[#F2F0E9] p-6">
                 <p className={`text-[#A30F1F] ${label}`}>You, personally</p>
@@ -1090,7 +1102,7 @@ export default function SpainEn() {
             </p>
           }
         >
-          <Detail>
+          <Detail minutes={1}>
             <YearsRoadmap stopId="roadmap" routes={prRoutes} defaultRoute={0} copy={roadmap} />
             <ul className="mt-6 grid max-w-5xl grid-cols-1 gap-3 font-sans text-sm leading-relaxed text-[#1a1a1a]/70 md:grid-cols-2">
               <li>
@@ -1136,7 +1148,7 @@ export default function SpainEn() {
             </p>
           }
         >
-          <Detail>
+          <Detail minutes={1}>
             <p className="max-w-[72ch] rounded-2xl border-l-4 border-[#FFC400] bg-[#FFF4CC] p-5 font-sans text-sm leading-relaxed">
               <strong>A simple rule.</strong> If you have a genuinely innovative plan, not much capital, and want your family with you from day one: Spain.
               If your end goal is a passport, weigh Spain&apos;s ten years against the other routes.
@@ -1162,7 +1174,7 @@ export default function SpainEn() {
             </p>
           }
         >
-          <Detail>
+          <Detail minutes={1}>
             <p className="mb-4 max-w-[72ch] font-sans text-sm text-[#1a1a1a]/60">
               These notes are written for Iranian passport holders. If you hold another passport, check how each one applies to your nationality.
             </p>
@@ -1204,7 +1216,7 @@ export default function SpainEn() {
               <strong>This is not a residence guarantee.</strong> No one outside ENISA and the UGE can guarantee their decision. If anyone sells you a
               guaranteed residence permit, walk away there and then.
             </p>
-            <Detail>
+            <Detail minutes={2}>
               <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
                 <div className={body}>
                   <h3 className="mb-2 font-serif text-2xl text-[#1a1a1a]">Our role</h3>
@@ -1372,22 +1384,24 @@ export default function SpainEn() {
 }
 
 function FaqGroups() {
-  const groups = [
-    { heading: 'The essentials', items: faqs },
-    { heading: 'ENISA, deadlines, family and renewal, in detail', items: deepDiveFaqs },
-  ];
+  const group = (heading: string, items: { q: string; a: string }[]) => (
+    <div>
+      <h3 className={`mb-2 text-[#A30F1F] ${label}`}>{heading}</h3>
+      <div className="border-t border-[#1a1a1a]/10">
+        {items.map((f) => (
+          <FaqItem key={f.q} q={f.q} a={f.a} />
+        ))}
+      </div>
+    </div>
+  );
+  // The second group sits behind one fold: every answer stays in the HTML
+  // (and in the FAQPage JSON-LD), the phone page gets shorter.
   return (
     <div className="grid max-w-4xl gap-12">
-      {groups.map((g) => (
-        <div key={g.heading}>
-          <h3 className={`mb-2 text-[#A30F1F] ${label}`}>{g.heading}</h3>
-          <div className="border-t border-[#1a1a1a]/10">
-            {g.items.map((f) => (
-              <FaqItem key={f.q} q={f.q} a={f.a} />
-            ))}
-          </div>
-        </div>
-      ))}
+      {group('The essentials', faqs)}
+      <Detail label={`More questions (${deepDiveFaqs.length})`} closeLabel="Hide these questions">
+        {group('ENISA, deadlines, family and renewal, in detail', deepDiveFaqs)}
+      </Detail>
     </div>
   );
 }
