@@ -8,6 +8,8 @@ function UnsubscribeContent() {
   const searchParams = useSearchParams();
 
   const [email, setEmail] = useState('');
+  // Signed token from the email link; the API refuses a request without it.
+  const [token, setToken] = useState('');
   const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
   const [message, setMessage] = useState('');
 
@@ -16,6 +18,10 @@ function UnsubscribeContent() {
     const emailParam = searchParams?.get('email');
     if (emailParam) {
       setEmail(emailParam);
+    }
+    const tokenParam = searchParams?.get('token');
+    if (tokenParam) {
+      setToken(tokenParam);
     }
   }, [searchParams]);
 
@@ -30,7 +36,7 @@ function UnsubscribeContent() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ email, token }),
       });
 
       const data = await res.json();
@@ -101,6 +107,7 @@ function UnsubscribeContent() {
             type="email"
             required
             value={email}
+            readOnly={!!token}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="نشانی ایمیل شما / Your email address"
             className="w-full border border-[#1a1a1a]/10 rounded-xl pl-12 pr-4 py-3.5 font-sans text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#1a1a1a]/20 transition-all text-left"

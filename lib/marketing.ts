@@ -89,3 +89,91 @@ export async function getTodaySentCount(channel: 'EMAIL' | 'SMS') {
     },
   });
 }
+
+// ─── Unsubscribe tag ─────────────────────────────────────────────────────────
+// A reversible "do not send" marker, used by the CASL grace path in
+// /api/unsubscribe (tokenless links from emails sent before signed tokens).
+// The schema has no unsubscribed column, and `tags` differs by database:
+// a JSON string ("[]") in the SQLite dev schema, a native String[] in the
+// Postgres production schema. These helpers accept either and write back in
+// the same shape they read. Malformed JSON reads as no tags.
+
+export const UNSUBSCRIBED_TAG = 'unsubscribed';
+
+// CASL grace path — TEMPORARY, remove after the cutoff.
+// Emails sent before signed tokens shipped (~9 Nov 2026) carry unsubscribe
+// links with no token, and CASL requires an unsubscribe mechanism to keep
+// working for 60 days after a message is sent. Until this fixed date,
+// a request with NO token is accepted, but only tags the contact
+// "unsubscribed" (reversible; the campaign sender skips tagged contacts) and
+// never deletes. A token that is present but invalid is always refused.
+// 9 Nov 2026 + 60 days = 8 Jan 2027; set to the end of that day to absorb
+// merge/deploy delay. After it, tokenless requests get the normal 403.
+// Delete this constant and the grace branch after 2027-01-08.
+export const UNSUBSCRIBE_GRACE_UNTIL = Date.parse('2027-01-08T23:59:59Z');
+
+export function parseTags(tags: unknown): string[] {
+  let raw: unknown = tags;
+  if (typeof tags === 'string') {
+    try {
+      raw = JSON.parse(tags);
+    } catch {
+      return [];
+    }
+  }
+  return Array.isArray(raw) ? raw.filter((t): t is string => typeof t === 'string') : [];
+}
+
+export const isUnsubscribed = (tags: unknown): boolean => parseTags(tags).includes(UNSUBSCRIBED_TAG);
+
+/** The tags with UNSUBSCRIBED_TAG added, in the same representation as the input. */
+export function withUnsubscribedTag(tags: unknown): string[] | string {
+  const next = parseTags(tags);
+  if (!next.includes(UNSUBSCRIBED_TAG)) next.push(UNSUBSCRIBED_TAG);
+  return Array.isArray(tags) ? next : JSON.stringify(next);
+}
+
+/** For logs: first character, ***, and the domain. Never the full address. */
+export function maskEmail(email: string): string {
+  const at = email.lastIndexOf('@');
+  if (at < 1) return '***';
+  return `${email[0]}***${email.slice(at)}`;
+}
+
+/** Tags every contact with this exact (already normalised) email. Deletes nothing. */
+export async function markUnsubscribed(email: string): Promise<number> {
+  const contacts = await prisma.marketingContact.findMany({
+    where: { email },
+    select: { id: true, tags: true },
+  });
+  let tagged = 0;
+  for (const c of contacts) {
+    if (isUnsubscribed(c.tags)) continue;
+    await prisma.marketingContact.update({
+      where: { id: c.id },
+      // The generated type is string (dev) or string[] (prod); the helper
+      // returns whichever shape it was given.
+      data: { tags: withUnsubscribedTag(c.tags) as never },
+    });
+    tagged++;
+  }
+  return tagged;
+}
+
+/**
+ * Unique contacts across the campaign's groups, minus anyone tagged
+ * unsubscribed (the CASL grace path in /api/unsubscribe). Skipped for every
+ * channel: an unsubscribe covers email and SMS alike.
+ */
+export function selectRecipients(
+  groups: { group: { contacts: { id: string; email: string | null; phone: string | null; tags?: unknown }[] } }[],
+): { id: string; email: string | null; phone: string | null }[] {
+  const contactMap = new Map<string, { id: string; email: string | null; phone: string | null }>();
+  for (const cg of groups) {
+    for (const contact of cg.group.contacts) {
+      if (isUnsubscribed(contact.tags)) continue;
+      contactMap.set(contact.id, contact);
+    }
+  }
+  return Array.from(contactMap.values());
+}

@@ -6,10 +6,12 @@ import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { sanitizeHtml } from '@/lib/sanitize';
 import { shareToSocials } from '@/lib/socials';
+import { requireAdmin } from '@/lib/admin-guard';
 
 const normalizeLocale = (v: FormDataEntryValue | null): string => (v === 'fa' ? 'fa' : 'en');
 
 export async function createArticle(formData: FormData) {
+  await requireAdmin();
   const title = formData.get('title') as string;
   const content = sanitizeHtml(formData.get('content') as string);
   const excerpt = formData.get('excerpt') as string;
@@ -65,6 +67,7 @@ export async function createArticle(formData: FormData) {
 }
 
 export async function updateArticle(id: string, formData: FormData) {
+  await requireAdmin();
   const title = formData.get('title') as string;
   const content = sanitizeHtml(formData.get('content') as string);
   const excerpt = formData.get('excerpt') as string;
@@ -117,6 +120,7 @@ export async function updateArticle(id: string, formData: FormData) {
 }
 
 export async function deleteArticle(id: string) {
+  await requireAdmin();
   await prisma.article.delete({ where: { id } });
   revalidatePath('/en/admin/articles');
   revalidatePath('/fa/admin/articles');
