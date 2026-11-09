@@ -109,8 +109,46 @@ export type FaChoice = {
 /** Dated or numbered milestones, drawn as a vertical timeline. */
 export type FaTimeline = { caption?: string; items: { when: string; what: string }[] };
 
+/**
+ * A code-drawn visual that opens a section ("visual first"), rendered by the
+ * guide visual kit (components/guide/visual). Short labels only: every fact a
+ * label carries must already be in the section's prose, which folds under it.
+ * Persian digits in every string; `value`/`at` numbers only size the drawing.
+ */
+export type FaLead =
+  /** Two to four large figures. */
+  | { type: 'tiles'; label?: string; tiles: { value: string; label: string; sub?: string }[] }
+  /** An ordered process: a vertical rail on phones, one row on wider screens. */
+  | { type: 'steps'; caption?: string; steps: { label: string; who?: string; chip?: string }[] }
+  /** Household means as stacked bars; `role` 0 applicant, 1 partner, 2 each further member. */
+  | {
+      type: 'money';
+      caption?: string;
+      note?: string;
+      legend: [string, string, string];
+      rows: { label: string; figure: string; sub?: string; segments: { value: number; role: 0 | 1 | 2 }[] }[];
+    }
+  /** One icon and one line per item: conditions (check), cautions (alert) or criteria (number). */
+  | { type: 'checks'; label?: string; icon?: 'check' | 'alert' | 'number'; columns?: 1 | 2 | 3; items: { label: string; note?: string }[] }
+  /** The case for and against, side by side. */
+  | { type: 'whyWatch'; why: { heading: string; items: string[] }; watch: { heading: string; items: string[] } }
+  /** Milestones on a true year scale; `at` is the year, `year` the badge text. */
+  | { type: 'years'; caption?: string; milestones: { at: number; year: string; label: string; sub?: string }[] }
+  /** Countries side by side; `code` is a flag code from components/route/flags. */
+  | {
+      type: 'compare';
+      caption?: string;
+      heads: [string, string, string];
+      rows: { code: string; country: string; plus: string; minus: string; self?: boolean }[];
+    };
+
 export type FaSection = {
   heading: string;
+  /**
+   * A visual that opens the section, before the lead paragraph. When set,
+   * everything after the lead paragraph folds under it (still in the HTML).
+   */
+  lead?: FaLead;
   /** Figures the section is about, above the prose. */
   keyFacts?: FaKeyFact[];
   /** Paragraphs, in order. Plain text — no HTML. */

@@ -48,6 +48,7 @@ import {
   type RouteStep,
 } from '@/components/route/RouteWidgets';
 import { MeansCalculator, SpainSteps, type MeansRule } from './SpainWidgets';
+import { CheckRows, CompareCards, Detail, MoneyBar, NumberTiles, StepLine, WhyWatch, YearsLine, type Milestone, type MoneyRow, type Tile } from '@/components/guide/visual';
 import { SPAIN_EN } from './meta';
 
 // ─── Data ────────────────────────────────────────────────────────────────────
@@ -273,6 +274,79 @@ const comparison = [
   { code: 'nl' as FlagCode, country: 'Netherlands', plus: 'A recognised facilitator guides you.', minus: 'The facilitator is mandatory, and the one-year permit is not extended.' },
 ];
 
+// ENISA's three criteria under article 70. `short` is the one-line gloss the
+// visual shows; `b` is the full text in the fold.
+const enisaCriteria = [
+  { t: 'Your profile and role', short: "Each partner's contribution is assessed separately", b: 'The applicant\'s professional profile and involvement in the project. With several partners, ENISA assesses each one\'s contribution, those who need a visa and those who do not. A CV with nothing in the plan\'s field has already lost this criterion.' },
+  { t: 'The plan and its funding', short: "No minimum, but show where the money comes from", b: 'A description of the project, the product or service, and its financing, including the investment required and possible sources. The law sets no minimum, but the plan must show where the money to execute it comes from.' },
+  { t: 'Value for Spain', short: "Built for the Spanish or European market", b: 'What generates added value for the Spanish economy, innovation or investment opportunities. The plan must be built for the Spanish or European market; a generic model with no local market analysis is exactly what gets refused.' },
+];
+
+// Article 62: who can come with you, and what each must prove.
+const familyMembers = [
+  { t: 'Spouse or partner', b: 'Marriage certificate or proof of the partnership.' },
+  { t: 'Children under 18', b: 'Birth certificates.' },
+  { t: 'Adult children', b: 'Proof that they are financially dependent and have not formed a family of their own.' },
+  { t: 'Dependent parents', b: 'Proof that they are in your care.' },
+];
+
+// For applicants from sanctioned countries, written for Iranian passports.
+const sanctionNotes = [
+  { t: 'The ten consular days are not guaranteed', b: 'Article 75 excludes applicants subject to prior consultation under article 22 of the Schengen Visa Code from the ten-day deadline. Some nationalities need that consultation with other Schengen states, which can add time; the list is not published, so ask the consulate whether it applies to you.' },
+  { t: 'Filing from inside Spain skips the consulate', b: 'If you are lawfully in Spain on a Schengen visa, you can apply directly from there. The application extends your current short-stay status until the decision (article 76). A big advantage, but only with a valid visa and not one day of irregular stay.' },
+  { t: 'Funds must be readable', b: 'Proof of means must sit in an account the Spanish administration can read and whose movements it can see. A balance in an Iranian bank is effectively not accepted; plan on that from the start.' },
+  { t: 'Banking takes longer', b: 'Opening a Spanish bank account with an Iranian passport takes more time and paperwork because of anti-money-laundering rules. Budget the first months on that assumption.' },
+  { t: 'Legalisation, not an apostille', b: 'Iran is not a party to the Apostille Convention, so an Iranian criminal record certificate needs authentication by Iran\'s foreign ministry and the Spanish embassy, plus an official Spanish translation. Start early: a certificate counts as stale after six months.' },
+  { t: 'Define the market as Spain', b: 'Do not define your plan\'s market as Iran or the Iranian diaspora. ENISA\'s third criterion is added value for the Spanish economy.' },
+];
+
+// ─── Visuals: drawn in code from the data above ──────────────────────────────
+
+const snapshotTiles: Tile[] = [
+  { value: '€0', label: 'Minimum investment', sub: 'and no minimum job creation (UGE)' },
+  { value: '€600', label: 'Means a month', sub: 'one person, 100% of IPREM 2026' },
+  { value: '20 days', label: 'UGE decision', sub: 'no answer means granted' },
+  { value: '3 yrs', label: 'First permit', sub: 'then 2-year renewals' },
+];
+
+// One bar per household row of meansRows, one segment per person.
+const moneySegments: MoneyRow['segments'][] = [
+  [{ value: 600, role: 0 }],
+  [{ value: 600, role: 0 }, { value: 300, role: 1 }],
+  [{ value: 600, role: 0 }, { value: 300, role: 1 }, { value: 300, role: 2 }],
+  [{ value: 300, role: 2 }],
+];
+const moneyRows: MoneyRow[] = meansRows.map((r, i) => ({
+  label: r.label,
+  figure: `${r.monthly} a month`,
+  sub: `${r.share} · ${r.total} over 36 months`,
+  segments: moneySegments[i],
+}));
+
+// What each step produces or how long the law gives it; every figure is in the step text.
+const stepChips = ['Online questionnaire', 'Form MIT · tasa 790-038', 'Up to 24 MB', 'ENISA 10 working days · UGE 20 days', '10 working days, with exceptions', 'Town hall · TIE card'];
+
+// Our four phases; each instalment is tied to an event in the file (no prices on the site).
+const workPhases = [
+  { label: 'Business plan', who: 'Idea review, Spanish market research', chip: 'First instalment on signing' },
+  { label: 'ENISA and residence filing', who: 'Up to the favourable report', chip: 'Second instalment with the report' },
+  { label: 'Consular documents or residence card', who: 'Support preparing them' },
+  { label: 'Residence issued', who: 'You and your family', chip: 'Third instalment' },
+];
+
+const taxTiles: Tile[] = [
+  { value: '24%', label: 'Flat income tax (Beckham Law)', sub: 'Spanish income up to €600,000, year of arrival and five more' },
+  { value: '15%', label: 'Corporate tax, certified startup', sub: 'first profitable year and the three after it' },
+  { value: '+2 yrs', label: 'Extra years at 15%', sub: 'beyond what every new company already gets' },
+];
+
+const years: Milestone[] = [
+  { at: 0, year: 'Y0', label: roadmap.arrive.title, sub: roadmap.arrive.sub },
+  { at: roadmap.extension.year, year: `Y${roadmap.extension.year}`, label: roadmap.extension.title, sub: roadmap.extension.sub },
+  { at: prRoutes[0].years, year: `Y${prRoutes[0].years}`, label: prRoutes[0].title, sub: 'Legal, continuous residence' },
+  { at: roadmap.citizenship.years, year: `Y${roadmap.citizenship.years}`, label: 'Citizenship', sub: 'DELE A2, CCSE, renunciation unless an exception applies' },
+];
+
 const faqs = [
   {
     q: 'What exactly is the Spain startup visa?',
@@ -487,6 +561,7 @@ export default function SpainEn() {
           task="Read the snapshot"
           completeOn="view"
           message="Snapshot read"
+          lead={<NumberTiles tiles={snapshotTiles} />}
           answer={
             <p>
               It is the entrepreneur residence permit under Spain&apos;s Law 14/2013, rewritten by the 2022 Startups Law. ENISA reports on your plan,
@@ -495,79 +570,66 @@ export default function SpainEn() {
             </p>
           }
         >
-          <dl className="grid grid-cols-2 gap-3 md:grid-cols-4">
-            {[
-              { stat: '€0', label: 'Minimum investment', sub: 'and no minimum job creation (UGE)' },
-              { stat: '€600', label: 'Means a month', sub: 'one person, 100% of IPREM 2026' },
-              { stat: '20 days', label: 'UGE decision', sub: 'no answer means granted' },
-              { stat: '3 yrs', label: 'First permit', sub: 'then 2-year renewals' },
-            ].map((s) => (
-              <div key={s.label} className="flex flex-col rounded-2xl border border-[#1a1a1a]/10 bg-white p-5 transition-transform hover:-translate-y-1">
-                <dt className="order-2 mt-2 font-sans text-sm font-bold">{s.label}</dt>
-                <dd className="order-1 font-serif text-4xl text-[#A30F1F]">{s.stat}</dd>
-                <dd className="order-3 font-sans text-xs text-[#1a1a1a]/55">{s.sub}</dd>
-              </div>
-            ))}
-          </dl>
+          <Detail>
+            <div className={`grid max-w-5xl grid-cols-1 gap-6 md:grid-cols-3 ${body}`}>
+              <p>
+                <strong className="text-[#1a1a1a]">A law for people Spain wants.</strong> In 2013 Spain passed the Law on support for entrepreneurs and
+                their internationalisation (Ley 14/2013). It built faster residence routes, separate from the general immigration regulation, for
+                foreigners of economic benefit to Spain: entrepreneurs, professionals, researchers and later remote workers. The 2022 Startups Law
+                (Ley 28/2022) rewrote the entrepreneur part: the first permit became three years, and the plan&apos;s assessment went to ENISA.
+              </p>
+              <p>
+                <strong className="text-[#1a1a1a]">Two bodies.</strong> ENISA, the state innovation company, assesses your plan and your profile and
+                reports. The UGE, a unit of the migration ministry in Madrid, takes the residence file, asks ENISA for its report and decides. If you
+                are outside Spain, the consulate only comes in after the UGE&apos;s approval, to issue the entry visa.
+              </p>
+              <p>
+                <strong className="text-[#1a1a1a]">A deliberately open test.</strong> An entrepreneurial activity is one that is innovative and/or of
+                special economic interest for Spain. You do not need a registered company, a finished product or an investor. You need a plan ENISA
+                believes.
+              </p>
+            </div>
 
-          <div className={`mt-8 grid max-w-5xl grid-cols-1 gap-6 md:grid-cols-3 ${body}`}>
-            <p>
-              <strong className="text-[#1a1a1a]">A law for people Spain wants.</strong> In 2013 Spain passed the Law on support for entrepreneurs and
-              their internationalisation (Ley 14/2013). It built faster residence routes, separate from the general immigration regulation, for
-              foreigners of economic benefit to Spain: entrepreneurs, professionals, researchers and later remote workers. The 2022 Startups Law
-              (Ley 28/2022) rewrote the entrepreneur part: the first permit became three years, and the plan&apos;s assessment went to ENISA.
+            <p className="mt-6 max-w-[72ch] rounded-2xl border-l-4 border-[#FFC400] bg-[#FFF4CC] p-5 font-sans text-sm leading-relaxed">
+              <strong>The sentence that matters more than any infographic.</strong> The UGE&apos;s official page says: &ldquo;There is no minimum
+              investment and no minimum job creation.&rdquo; No figure for the business itself is in the law. Anyone who tells you to put a set sum into
+              a company to get residence is talking about a different route.
             </p>
-            <p>
-              <strong className="text-[#1a1a1a]">Two bodies.</strong> ENISA, the state innovation company, assesses your plan and your profile and
-              reports. The UGE, a unit of the migration ministry in Madrid, takes the residence file, asks ENISA for its report and decides. If you
-              are outside Spain, the consulate only comes in after the UGE&apos;s approval, to issue the entry visa.
-            </p>
-            <p>
-              <strong className="text-[#1a1a1a]">A deliberately open test.</strong> An entrepreneurial activity is one that is innovative and/or of
-              special economic interest for Spain. You do not need a registered company, a finished product or an investor. You need a plan ENISA
-              believes.
-            </p>
-          </div>
 
-          <p className="mt-6 max-w-[72ch] rounded-2xl border-l-4 border-[#FFC400] bg-[#FFF4CC] p-5 font-sans text-sm leading-relaxed">
-            <strong>The sentence that matters more than any infographic.</strong> The UGE&apos;s official page says: &ldquo;There is no minimum
-            investment and no minimum job creation.&rdquo; No figure for the business itself is in the law. Anyone who tells you to put a set sum into
-            a company to get residence is talking about a different route.
-          </p>
-
-          <div className="mt-8 overflow-x-auto">
-            <table className="w-full min-w-[560px] overflow-hidden rounded-2xl bg-white font-sans text-sm">
-              <caption className="pb-2 text-left font-bold">Spain&apos;s entrepreneur residence permit at a glance, 2026</caption>
-              <thead>
-                <tr className="border-b border-[#1a1a1a]/10 text-left text-[11px] uppercase tracking-[0.1em] text-[#1a1a1a]/55">
-                  <th scope="col" className="px-4 py-3">Item</th>
-                  <th scope="col" className="px-4 py-3">Figure</th>
-                  <th scope="col" className="px-4 py-3">Note</th>
-                </tr>
-              </thead>
-              <tbody>
-                {[
-                  ['Minimum investment', 'None', 'No minimum job creation either (UGE)'],
-                  ['Means, applicant', '€600 a month', '100% of IPREM 2026; not €34,188'],
-                  ['Means, family', '€900 a month for two', '150% of IPREM, plus 50% for each further person'],
-                  ['Assessing body', 'ENISA', 'Mandatory report, within 10 working days'],
-                  ['UGE decision', '20 days', 'No answer means granted (positive silence)'],
-                  ['Consular deadline', '10 working days', 'Not for applicants subject to Visa Code art. 22 consultation (list not published; ask the consulate)'],
-                  ['First permit', '3 years', 'The entry visa is one year; the residence permit three'],
-                  ['Renewal', '2 years at a time', 'The business must be active'],
-                  ['Permanent residence', 'After 5 years', ''],
-                  ['Citizenship', 'After 10 years', 'Renouncing your previous nationality unless an exception applies (Iran: no exception)'],
-                  ['Family', 'At the same time as you', 'Spouse, children, dependent parents'],
-                ].map(([k, v, n]) => (
-                  <tr key={k} className="border-b border-[#1a1a1a]/10 last:border-0">
-                    <th scope="row" className="px-4 py-3 text-left font-normal">{k}</th>
-                    <td className="whitespace-nowrap px-4 py-3 font-bold tabular-nums text-[#A30F1F]">{v}</td>
-                    <td className="px-4 py-3 text-xs text-[#1a1a1a]/60">{n}</td>
+            <div className="mt-8 overflow-x-auto">
+              <table className="w-full min-w-[560px] overflow-hidden rounded-2xl bg-white font-sans text-sm">
+                <caption className="pb-2 text-left font-bold">Spain&apos;s entrepreneur residence permit at a glance, 2026</caption>
+                <thead>
+                  <tr className="border-b border-[#1a1a1a]/10 text-left text-[11px] uppercase tracking-[0.1em] text-[#1a1a1a]/55">
+                    <th scope="col" className="px-4 py-3">Item</th>
+                    <th scope="col" className="px-4 py-3">Figure</th>
+                    <th scope="col" className="px-4 py-3">Note</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody>
+                  {[
+                    ['Minimum investment', 'None', 'No minimum job creation either (UGE)'],
+                    ['Means, applicant', '€600 a month', '100% of IPREM 2026; not €34,188'],
+                    ['Means, family', '€900 a month for two', '150% of IPREM, plus 50% for each further person'],
+                    ['Assessing body', 'ENISA', 'Mandatory report, within 10 working days'],
+                    ['UGE decision', '20 days', 'No answer means granted (positive silence)'],
+                    ['Consular deadline', '10 working days', 'Not for applicants subject to Visa Code art. 22 consultation (list not published; ask the consulate)'],
+                    ['First permit', '3 years', 'The entry visa is one year; the residence permit three'],
+                    ['Renewal', '2 years at a time', 'The business must be active'],
+                    ['Permanent residence', 'After 5 years', ''],
+                    ['Citizenship', 'After 10 years', 'Renouncing your previous nationality unless an exception applies (Iran: no exception)'],
+                    ['Family', 'At the same time as you', 'Spouse, children, dependent parents'],
+                  ].map(([k, v, n]) => (
+                    <tr key={k} className="border-b border-[#1a1a1a]/10 last:border-0">
+                      <th scope="row" className="px-4 py-3 text-left font-normal">{k}</th>
+                      <td className="whitespace-nowrap px-4 py-3 font-bold tabular-nums text-[#A30F1F]">{v}</td>
+                      <td className="px-4 py-3 text-xs text-[#1a1a1a]/60">{n}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </Detail>
         </RouteStop>
 
         {/* 02 — Money */}
@@ -577,7 +639,10 @@ export default function SpainEn() {
           tone="white"
           eyebrow="Means of support · IPREM 2026"
           question="How much money do you need for the Spain startup visa?"
-          task="Set up your household"
+          task="See the household money"
+          completeOn="view"
+          message="Money worked out"
+          lead={<MoneyBar rows={moneyRows} legend={['You, the entrepreneur', 'Spouse or partner', 'Each further member']} surface="white" caption="Means of support a month, IPREM 2026 (€600)" note="The published criterion is monthly. The 36-month totals are our multiplication, not an official figure." />}
           answer={
             <p>
               The business needs no minimum investment. For your living costs, the criterion the Oficina Nacional de Emprendimiento and consulates
@@ -586,64 +651,66 @@ export default function SpainEn() {
             </p>
           }
         >
-          <MeansCalculator stopId="money" rule={meansRule} />
+          <Detail>
+            <MeansCalculator stopId="money" rule={meansRule} />
 
-          <div className="mt-8 overflow-x-auto">
-            <table className="w-full min-w-[560px] overflow-hidden rounded-2xl bg-[#F2F0E9] font-sans text-sm">
-              <caption className="pb-2 text-left font-bold">Means of support for entrepreneurs, 2026 (IPREM €600 a month)</caption>
-              <thead>
-                <tr className="border-b border-[#1a1a1a]/10 text-left text-[11px] uppercase tracking-[0.1em] text-[#1a1a1a]/55">
-                  <th scope="col" className="px-4 py-3">Household</th>
-                  <th scope="col" className="px-4 py-3">Share of IPREM</th>
-                  <th scope="col" className="px-4 py-3">A month (published criterion)</th>
-                  <th scope="col" className="px-4 py-3">36 months (our multiplication)</th>
-                </tr>
-              </thead>
-              <tbody>
-                {meansRows.map((r) => (
-                  <tr key={r.label} className="border-b border-[#1a1a1a]/10 last:border-0">
-                    <th scope="row" className="px-4 py-3 text-left font-normal">{r.label}</th>
-                    <td className="px-4 py-3">{r.share}</td>
-                    <td className="px-4 py-3 font-bold tabular-nums text-[#A30F1F]">{r.monthly}</td>
-                    <td className="px-4 py-3 tabular-nums">{r.total}</td>
+            <div className="mt-8 overflow-x-auto">
+              <table className="w-full min-w-[560px] overflow-hidden rounded-2xl bg-[#F2F0E9] font-sans text-sm">
+                <caption className="pb-2 text-left font-bold">Means of support for entrepreneurs, 2026 (IPREM €600 a month)</caption>
+                <thead>
+                  <tr className="border-b border-[#1a1a1a]/10 text-left text-[11px] uppercase tracking-[0.1em] text-[#1a1a1a]/55">
+                    <th scope="col" className="px-4 py-3">Household</th>
+                    <th scope="col" className="px-4 py-3">Share of IPREM</th>
+                    <th scope="col" className="px-4 py-3">A month (published criterion)</th>
+                    <th scope="col" className="px-4 py-3">36 months (our multiplication)</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-            <p className="mt-2 font-sans text-xs text-[#1a1a1a]/55">
-              The published criterion is monthly. Covering the whole three-year permit is the safest way to show it; the 36-month totals are our
-              arithmetic, not an official figure.
+                </thead>
+                <tbody>
+                  {meansRows.map((r) => (
+                    <tr key={r.label} className="border-b border-[#1a1a1a]/10 last:border-0">
+                      <th scope="row" className="px-4 py-3 text-left font-normal">{r.label}</th>
+                      <td className="px-4 py-3">{r.share}</td>
+                      <td className="px-4 py-3 font-bold tabular-nums text-[#A30F1F]">{r.monthly}</td>
+                      <td className="px-4 py-3 tabular-nums">{r.total}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              <p className="mt-2 font-sans text-xs text-[#1a1a1a]/55">
+                The published criterion is monthly. Covering the whole three-year permit is the safest way to show it; the 36-month totals are our
+                arithmetic, not an official figure.
+              </p>
+            </div>
+
+            <div className={`mt-8 grid max-w-5xl grid-cols-1 gap-6 md:grid-cols-2 ${body}`}>
+              <div>
+                <h3 className="mb-2 font-serif text-2xl text-[#1a1a1a]">Where €34,188 really comes from</h3>
+                <p>
+                  Almost every guide we have seen puts the means at €34,188 a year for the main applicant, 75% of the minimum wage for a spouse and 25%
+                  for each child. That formula exists, but it belongs to the permit for international remote workers (article 74 bis of the same law,
+                  known as the digital nomad visa): 200% of Spain&apos;s minimum wage (SMI), which in 2026 is €1,221 a month in fourteen payments.
+                </p>
+              </div>
+              <div>
+                <h3 className="mb-2 font-serif text-2xl text-[#1a1a1a]">What the law actually asks</h3>
+                <p>
+                  For entrepreneurs, the law itself (article 62) sets no number. It asks for &ldquo;sufficient financial resources for yourself and your
+                  family for the period of residence&rdquo;. The criterion the Oficina Nacional de Emprendimiento and Spanish consulates publish uses another
+                  index, the IPREM: 100% a month for the entrepreneur, at least 150% for a two-person household, and 50% more for each further person.
+                  The IPREM was set at €600 a month for 2023 by Law 31/2022 and has not changed since, because the budget has been extended rather than
+                  replaced. One caveat: Law 14/2013 (additional provision 20.3) says means thresholds are to be referenced to the minimum wage (SMI), so a
+                  consulate may apply a higher figure. Check with your consulate.
+                </p>
+              </div>
+            </div>
+
+            <p className="mt-6 max-w-[72ch] rounded-2xl border-l-4 border-[#A30F1F] bg-[#FBEBDD] p-5 font-sans text-sm leading-relaxed">
+              <strong>Why the mistake matters, both ways.</strong> A family with €40,000 reads &ldquo;€51,282 for a family of three&rdquo; and decides
+              Spain is out of reach, when it is not. And someone who borrows to reach that figure forgets that the money must be their own: the
+              administration says plainly that the resources must be personal, not a third party&apos;s guarantee or undertaking, and it can ask for a
+              year of bank statements.
             </p>
-          </div>
-
-          <div className={`mt-8 grid max-w-5xl grid-cols-1 gap-6 md:grid-cols-2 ${body}`}>
-            <div>
-              <h3 className="mb-2 font-serif text-2xl text-[#1a1a1a]">Where €34,188 really comes from</h3>
-              <p>
-                Almost every guide we have seen puts the means at €34,188 a year for the main applicant, 75% of the minimum wage for a spouse and 25%
-                for each child. That formula exists, but it belongs to the permit for international remote workers (article 74 bis of the same law,
-                known as the digital nomad visa): 200% of Spain&apos;s minimum wage (SMI), which in 2026 is €1,221 a month in fourteen payments.
-              </p>
-            </div>
-            <div>
-              <h3 className="mb-2 font-serif text-2xl text-[#1a1a1a]">What the law actually asks</h3>
-              <p>
-                For entrepreneurs, the law itself (article 62) sets no number. It asks for &ldquo;sufficient financial resources for yourself and your
-                family for the period of residence&rdquo;. The criterion the Oficina Nacional de Emprendimiento and Spanish consulates publish uses another
-                index, the IPREM: 100% a month for the entrepreneur, at least 150% for a two-person household, and 50% more for each further person.
-                The IPREM was set at €600 a month for 2023 by Law 31/2022 and has not changed since, because the budget has been extended rather than
-                replaced. One caveat: Law 14/2013 (additional provision 20.3) says means thresholds are to be referenced to the minimum wage (SMI), so a
-                consulate may apply a higher figure. Check with your consulate.
-              </p>
-            </div>
-          </div>
-
-          <p className="mt-6 max-w-[72ch] rounded-2xl border-l-4 border-[#A30F1F] bg-[#FBEBDD] p-5 font-sans text-sm leading-relaxed">
-            <strong>Why the mistake matters, both ways.</strong> A family with €40,000 reads &ldquo;€51,282 for a family of three&rdquo; and decides
-            Spain is out of reach, when it is not. And someone who borrows to reach that figure forgets that the money must be their own: the
-            administration says plainly that the resources must be personal, not a third party&apos;s guarantee or undertaking, and it can ask for a
-            year of bank statements.
-          </p>
+          </Detail>
         </RouteStop>
 
         {/* 03 — Requirements */}
@@ -652,7 +719,10 @@ export default function SpainEn() {
           number={3}
           eyebrow="Article 62, plus article 70"
           question="What are the requirements for Spain's entrepreneur residence permit?"
-          task="Answer all six"
+          task="See the six requirements"
+          completeOn="view"
+          message="Requirements seen"
+          lead={<CheckRows items={requirements.map((r) => ({ label: r.title }))} label="The six requirements" />}
           answer={
             <p>
               You need a favourable ENISA report that your activity is innovative and/or of special economic interest for Spain. You must be 18 or over
@@ -661,59 +731,61 @@ export default function SpainEn() {
             </p>
           }
         >
-          <GateQuiz
-            stopId="requirements"
-            criteria={requirements}
-            strongNote="What decides it now is the ENISA report: a plan built for Spain, a profile that fits it and a credible funding plan."
-            gapNote="Certificates, apostilles and sworn translations take months; start the slow ones first."
-          >
-            <h3 className="font-serif text-xl">The fees, by form</h3>
-            <p className="font-sans text-sm text-[#1a1a1a]/65">
-              Tasa 790 code 038 for the residence application to the UGE, and later tasa 790 code 012 for the residence card. See the amount on the
-              form on the day you generate it; the figures change yearly.
-            </p>
-            <Link href="/book-meeting" className="inline-flex w-fit items-center gap-2 rounded-full bg-[#FFC400] px-5 py-3 font-sans text-sm font-bold text-[#1a1a1a] transition-transform hover:-translate-y-0.5">
-              Get a free read on your plan <ArrowRight className="h-4 w-4" />
-            </Link>
-          </GateQuiz>
+          <Detail>
+            <GateQuiz
+              stopId="requirements"
+              criteria={requirements}
+              strongNote="What decides it now is the ENISA report: a plan built for Spain, a profile that fits it and a credible funding plan."
+              gapNote="Certificates, apostilles and sworn translations take months; start the slow ones first."
+            >
+              <h3 className="font-serif text-xl">The fees, by form</h3>
+              <p className="font-sans text-sm text-[#1a1a1a]/65">
+                Tasa 790 code 038 for the residence application to the UGE, and later tasa 790 code 012 for the residence card. See the amount on the
+                form on the day you generate it; the figures change yearly.
+              </p>
+              <Link href="/book-meeting" className="inline-flex w-fit items-center gap-2 rounded-full bg-[#FFC400] px-5 py-3 font-sans text-sm font-bold text-[#1a1a1a] transition-transform hover:-translate-y-0.5">
+                Get a free read on your plan <ArrowRight className="h-4 w-4" />
+              </Link>
+            </GateQuiz>
 
-          <div className="mt-8 overflow-x-auto">
-            <table className="w-full min-w-[560px] overflow-hidden rounded-2xl bg-white font-sans text-sm">
-              <caption className="pb-2 text-left font-bold">Government fees and forms (amounts shown on each form when generated)</caption>
-              <thead>
-                <tr className="border-b border-[#1a1a1a]/10 text-left text-[11px] uppercase tracking-[0.1em] text-[#1a1a1a]/55">
-                  <th scope="col" className="px-4 py-3">Form</th>
-                  <th scope="col" className="px-4 py-3">Pays for</th>
-                  <th scope="col" className="px-4 py-3">When</th>
-                </tr>
-              </thead>
-              <tbody>
-                {fees.map((f) => (
-                  <tr key={f.form} className="border-b border-[#1a1a1a]/10 last:border-0">
-                    <th scope="row" className="px-4 py-3 text-left font-bold">{f.form}</th>
-                    <td className="px-4 py-3">{f.for}</td>
-                    <td className="px-4 py-3 text-xs text-[#1a1a1a]/60">{f.when}</td>
+            <div className="mt-8 overflow-x-auto">
+              <table className="w-full min-w-[560px] overflow-hidden rounded-2xl bg-white font-sans text-sm">
+                <caption className="pb-2 text-left font-bold">Government fees and forms (amounts shown on each form when generated)</caption>
+                <thead>
+                  <tr className="border-b border-[#1a1a1a]/10 text-left text-[11px] uppercase tracking-[0.1em] text-[#1a1a1a]/55">
+                    <th scope="col" className="px-4 py-3">Form</th>
+                    <th scope="col" className="px-4 py-3">Pays for</th>
+                    <th scope="col" className="px-4 py-3">When</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-            <p className="mt-2 font-sans text-xs text-[#1a1a1a]/55">
-              We do not quote these amounts: none could be read off an official page, and the figures in circulation disagree.
-            </p>
-          </div>
+                </thead>
+                <tbody>
+                  {fees.map((f) => (
+                    <tr key={f.form} className="border-b border-[#1a1a1a]/10 last:border-0">
+                      <th scope="row" className="px-4 py-3 text-left font-bold">{f.form}</th>
+                      <td className="px-4 py-3">{f.for}</td>
+                      <td className="px-4 py-3 text-xs text-[#1a1a1a]/60">{f.when}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              <p className="mt-2 font-sans text-xs text-[#1a1a1a]/55">
+                We do not quote these amounts: none could be read off an official page, and the figures in circulation disagree.
+              </p>
+            </div>
 
-          <div className={`mt-8 grid max-w-5xl grid-cols-1 gap-6 md:grid-cols-2 ${body}`}>
-            <p>
-              <strong className="text-[#1a1a1a]">Criminal record.</strong> The law asks for certificates from the countries you lived in over the past
-              two years, plus a written declaration for the past five. The Spanish Consulate in London asks for five years of certificates, no older than
-              six months. Go by your consulate&apos;s list. Each certificate needs an apostille or legalisation and an official Spanish translation.
-            </p>
-            <p>
-              <strong className="text-[#1a1a1a]">Health insurance.</strong> The law only requires public or private insurance from an insurer authorised
-              in Spain; &ldquo;sin copago&rdquo; (no co-payment) is not in Law 14/2013. Caseworkers know that condition from Spain&apos;s other visas, so a
-              comprehensive policy with no co-payments and no waiting period is the safer choice.
-            </p>
-          </div>
+            <div className={`mt-8 grid max-w-5xl grid-cols-1 gap-6 md:grid-cols-2 ${body}`}>
+              <p>
+                <strong className="text-[#1a1a1a]">Criminal record.</strong> The law asks for certificates from the countries you lived in over the past
+                two years, plus a written declaration for the past five. The Spanish Consulate in London asks for five years of certificates, no older than
+                six months. Go by your consulate&apos;s list. Each certificate needs an apostille or legalisation and an official Spanish translation.
+              </p>
+              <p>
+                <strong className="text-[#1a1a1a]">Health insurance.</strong> The law only requires public or private insurance from an insurer authorised
+                in Spain; &ldquo;sin copago&rdquo; (no co-payment) is not in Law 14/2013. Caseworkers know that condition from Spain&apos;s other visas, so a
+                comprehensive policy with no co-payments and no waiting period is the safer choice.
+              </p>
+            </div>
+          </Detail>
         </RouteStop>
 
         {/* 04 — ENISA */}
@@ -726,6 +798,7 @@ export default function SpainEn() {
           task="Read the three criteria"
           completeOn="view"
           message="ENISA's criteria read"
+          lead={<CheckRows items={enisaCriteria.map((c) => ({ label: c.t, note: c.short }))} icon="number" columns={3} surface="white" label="ENISA's three criteria" />}
           answer={
             <p>
               ENISA weighs three things under article 70: your professional profile and role (and each partner&apos;s contribution), the business plan and
@@ -734,44 +807,42 @@ export default function SpainEn() {
             </p>
           }
         >
-          <ol className="grid grid-cols-1 gap-3 md:grid-cols-3">
-            {[
-              { t: 'Your profile and role', b: 'The applicant\'s professional profile and involvement in the project. With several partners, ENISA assesses each one\'s contribution, those who need a visa and those who do not. A CV with nothing in the plan\'s field has already lost this criterion.' },
-              { t: 'The plan and its funding', b: 'A description of the project, the product or service, and its financing, including the investment required and possible sources. The law sets no minimum, but the plan must show where the money to execute it comes from.' },
-              { t: 'Value for Spain', b: 'What generates added value for the Spanish economy, innovation or investment opportunities. The plan must be built for the Spanish or European market; a generic model with no local market analysis is exactly what gets refused.' },
-            ].map((x, i) => (
-              <li key={x.t} className="rounded-2xl border border-[#1a1a1a]/10 bg-[#F2F0E9] p-5">
-                <span className="font-sans text-xs tabular-nums text-[#A30F1F]">{String(i + 1).padStart(2, '0')}</span>
-                <h3 className="mt-1 font-serif text-xl">{x.t}</h3>
-                <p className="mt-1.5 font-sans text-sm leading-relaxed text-[#1a1a1a]/65">{x.b}</p>
-              </li>
-            ))}
-          </ol>
+          <Detail>
+            <ol className="grid grid-cols-1 gap-3 md:grid-cols-3">
+              {enisaCriteria.map((x, i) => (
+                <li key={x.t} className="rounded-2xl border border-[#1a1a1a]/10 bg-[#F2F0E9] p-5">
+                  <span className="font-sans text-xs tabular-nums text-[#A30F1F]">{String(i + 1).padStart(2, '0')}</span>
+                  <h3 className="mt-1 font-serif text-xl">{x.t}</h3>
+                  <p className="mt-1.5 font-sans text-sm leading-relaxed text-[#1a1a1a]/65">{x.b}</p>
+                </li>
+              ))}
+            </ol>
 
-          <div className="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)]">
-            <div className={body}>
-              <h3 className="mb-2 font-serif text-2xl text-[#1a1a1a]">What goes into the business plan</h3>
-              <p className="mb-3">
-                ENISA is a state company that finances innovation, and for years its job has been lending to Spanish startups. Your plan is read by people
-                whose work is judging businesses, not by immigration officers. The immigration administration&apos;s own guidance lists:
-              </p>
-              <ul className="grid list-disc gap-1 pl-5">
-                <li>The project: activity, start date, location, the company&apos;s legal form, economic impact, the number and type of jobs you expect, and the sales and marketing plan.</li>
-                <li>The product or service in detail, with its innovative aspects.</li>
-                <li>Market, competitors and potential customers.</li>
-                <li>Financing and the financial plan.</li>
-                <li>The added value for the Spanish economy.</li>
-                <li>The applicant&apos;s role in the company&apos;s organisation.</li>
-              </ul>
+            <div className="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)]">
+              <div className={body}>
+                <h3 className="mb-2 font-serif text-2xl text-[#1a1a1a]">What goes into the business plan</h3>
+                <p className="mb-3">
+                  ENISA is a state company that finances innovation, and for years its job has been lending to Spanish startups. Your plan is read by people
+                  whose work is judging businesses, not by immigration officers. The immigration administration&apos;s own guidance lists:
+                </p>
+                <ul className="grid list-disc gap-1 pl-5">
+                  <li>The project: activity, start date, location, the company&apos;s legal form, economic impact, the number and type of jobs you expect, and the sales and marketing plan.</li>
+                  <li>The product or service in detail, with its innovative aspects.</li>
+                  <li>Market, competitors and potential customers.</li>
+                  <li>Financing and the financial plan.</li>
+                  <li>The added value for the Spanish economy.</li>
+                  <li>The applicant&apos;s role in the company&apos;s organisation.</li>
+                </ul>
+              </div>
+              <div className="self-start rounded-2xl border-l-4 border-[#A30F1F] bg-[#FBEBDD] p-6">
+                <h3 className="mb-2 font-serif text-2xl text-[#A30F1F]">Not every business belongs here</h3>
+                <p className="font-sans text-sm leading-relaxed text-[#1a1a1a]/80">
+                  A traditional business (a restaurant, a shop, a service agency with nothing innovative or scalable) does not fit this route. ENISA will not
+                  see it as of special economic interest. There is an ordinary self-employed permit for it: slower and narrower, but built for exactly that.
+                </p>
+              </div>
             </div>
-            <div className="self-start rounded-2xl border-l-4 border-[#A30F1F] bg-[#FBEBDD] p-6">
-              <h3 className="mb-2 font-serif text-2xl text-[#A30F1F]">Not every business belongs here</h3>
-              <p className="font-sans text-sm leading-relaxed text-[#1a1a1a]/80">
-                A traditional business (a restaurant, a shop, a service agency with nothing innovative or scalable) does not fit this route. ENISA will not
-                see it as of special economic interest. There is an ordinary self-employed permit for it: slower and narrower, but built for exactly that.
-              </p>
-            </div>
-          </div>
+          </Detail>
         </RouteStop>
 
         {/* 05 — Steps */}
@@ -780,7 +851,10 @@ export default function SpainEn() {
           number={5}
           eyebrow="The official order"
           question="How do you apply for the Spain startup visa?"
-          task="Walk to step 6"
+          task="See the six steps"
+          completeOn="view"
+          message="Steps seen"
+          lead={<StepLine steps={steps.map((s, i) => ({ label: s.title, who: s.who, chip: stepChips[i] }))} />}
           answer={
             <p>
               Complete ENISA&apos;s online questionnaire, prepare form MIT and pay tasa 790-038, then file electronically with the UGE using a digital
@@ -789,53 +863,55 @@ export default function SpainEn() {
             </p>
           }
         >
-          <SpainSteps stopId="steps" steps={steps} />
+          <Detail>
+            <SpainSteps stopId="steps" steps={steps} />
 
-          <p className="mt-6 max-w-[72ch] rounded-2xl border-l-4 border-[#FFC400] bg-[#FFF4CC] p-5 font-sans text-sm leading-relaxed">
-            <strong>When the twenty days start.</strong> The UGE&apos;s twenty days run from the electronic filing, and silence after that means yes. That
-            only works if the file was complete. A file sent with missing documents gets a request to complete it, which stops the clock, and most of the
-            delays you hear about come from there, not from a slow administration.
-          </p>
+            <p className="mt-6 max-w-[72ch] rounded-2xl border-l-4 border-[#FFC400] bg-[#FFF4CC] p-5 font-sans text-sm leading-relaxed">
+              <strong>When the twenty days start.</strong> The UGE&apos;s twenty days run from the electronic filing, and silence after that means yes. That
+              only works if the file was complete. A file sent with missing documents gets a request to complete it, which stops the clock, and most of the
+              delays you hear about come from there, not from a slow administration.
+            </p>
 
-          <div className="mt-8 overflow-x-auto">
-            <table className="w-full min-w-[640px] overflow-hidden rounded-2xl bg-white font-sans text-sm">
-              <caption className="pb-2 text-left font-bold">Legal deadlines under Law 14/2013</caption>
-              <thead>
-                <tr className="border-b border-[#1a1a1a]/10 text-left text-[11px] uppercase tracking-[0.1em] text-[#1a1a1a]/55">
-                  <th scope="col" className="px-4 py-3">Stage</th>
-                  <th scope="col" className="px-4 py-3">Who</th>
-                  <th scope="col" className="px-4 py-3">Deadline</th>
-                  <th scope="col" className="px-4 py-3">Article</th>
-                  <th scope="col" className="px-4 py-3">Note</th>
-                </tr>
-              </thead>
-              <tbody>
-                {deadlines.map((d) => (
-                  <tr key={d.stage} className="border-b border-[#1a1a1a]/10 last:border-0">
-                    <th scope="row" className="px-4 py-3 text-left font-normal">{d.stage}</th>
-                    <td className="px-4 py-3">{d.who}</td>
-                    <td className="whitespace-nowrap px-4 py-3 font-bold tabular-nums text-[#A30F1F]">{d.limit}</td>
-                    <td className="px-4 py-3">{d.law}</td>
-                    <td className="px-4 py-3 text-xs text-[#1a1a1a]/60">{d.note}</td>
+            <div className="mt-8 overflow-x-auto">
+              <table className="w-full min-w-[640px] overflow-hidden rounded-2xl bg-white font-sans text-sm">
+                <caption className="pb-2 text-left font-bold">Legal deadlines under Law 14/2013</caption>
+                <thead>
+                  <tr className="border-b border-[#1a1a1a]/10 text-left text-[11px] uppercase tracking-[0.1em] text-[#1a1a1a]/55">
+                    <th scope="col" className="px-4 py-3">Stage</th>
+                    <th scope="col" className="px-4 py-3">Who</th>
+                    <th scope="col" className="px-4 py-3">Deadline</th>
+                    <th scope="col" className="px-4 py-3">Article</th>
+                    <th scope="col" className="px-4 py-3">Note</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody>
+                  {deadlines.map((d) => (
+                    <tr key={d.stage} className="border-b border-[#1a1a1a]/10 last:border-0">
+                      <th scope="row" className="px-4 py-3 text-left font-normal">{d.stage}</th>
+                      <td className="px-4 py-3">{d.who}</td>
+                      <td className="whitespace-nowrap px-4 py-3 font-bold tabular-nums text-[#A30F1F]">{d.limit}</td>
+                      <td className="px-4 py-3">{d.law}</td>
+                      <td className="px-4 py-3 text-xs text-[#1a1a1a]/60">{d.note}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
 
-          <div className={`mt-8 grid max-w-5xl grid-cols-1 gap-6 md:grid-cols-2 ${body}`}>
-            <p>
-              <strong className="text-[#1a1a1a]">From inside Spain.</strong> If you are lawfully in Spain, for example on a Schengen visa, you or your
-              representative file with the UGE and, once approved, apply directly for the residence card. Filing extends your current short-stay status
-              until the decision (article 76), but only with a valid visa and not a single day of irregular stay. Your criminal record certificate goes to
-              the UGE.
-            </p>
-            <p>
-              <strong className="text-[#1a1a1a]">From abroad.</strong> Article 69 provides for a single application: the residence permit moves through
-              the UGE first, then the visa through the consulate in the country where you legally live. Your criminal record certificate goes to the
-              consulate. If you entered Schengen elsewhere and have no Spanish entry stamp, also file a declaration of entry (declaración de entrada).
-            </p>
-          </div>
+            <div className={`mt-8 grid max-w-5xl grid-cols-1 gap-6 md:grid-cols-2 ${body}`}>
+              <p>
+                <strong className="text-[#1a1a1a]">From inside Spain.</strong> If you are lawfully in Spain, for example on a Schengen visa, you or your
+                representative file with the UGE and, once approved, apply directly for the residence card. Filing extends your current short-stay status
+                until the decision (article 76), but only with a valid visa and not a single day of irregular stay. Your criminal record certificate goes to
+                the UGE.
+              </p>
+              <p>
+                <strong className="text-[#1a1a1a]">From abroad.</strong> Article 69 provides for a single application: the residence permit moves through
+                the UGE first, then the visa through the consulate in the country where you legally live. Your criminal record certificate goes to the
+                consulate. If you entered Schengen elsewhere and have no Spanish entry stamp, also file a declaration of entry (declaración de entrada).
+              </p>
+            </div>
+          </Detail>
         </RouteStop>
 
         {/* Photo band: Barcelona */}
@@ -875,6 +951,7 @@ export default function SpainEn() {
           task="Read who qualifies"
           completeOn="view"
           message="Family covered"
+          lead={<CheckRows items={familyMembers.map((f) => ({ label: f.t, note: f.b }))} surface="white" label="Who can come with you" />}
           answer={
             <p>
               Yes. Your spouse or partner, children under 18, older children who are financially dependent and have not formed their own family, and
@@ -883,23 +960,12 @@ export default function SpainEn() {
             </p>
           }
         >
-          <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            {[
-              { t: 'Spouse or partner', b: 'Marriage certificate or proof of the partnership.' },
-              { t: 'Children under 18', b: 'Birth certificates.' },
-              { t: 'Adult children', b: 'Proof that they are financially dependent and have not formed a family of their own.' },
-              { t: 'Dependent parents', b: 'Proof that they are in your care.' },
-            ].map((f) => (
-              <li key={f.t} className="rounded-xl border border-[#1a1a1a]/10 bg-[#F2F0E9] p-4">
-                <h3 className="font-sans text-sm font-bold">{f.t}</h3>
-                <p className="mt-1 font-sans text-sm text-[#1a1a1a]/65">{f.b}</p>
-              </li>
-            ))}
-          </ul>
-          <p className={`mt-6 max-w-[72ch] ${body}`}>
-            Every family member meets the same general conditions: a passport, health insurance, means (already counted in the household criterion) and
-            proof of the relationship. Every foreign document needs an apostille or legalisation and an official Spanish translation.
-          </p>
+          <Detail>
+            <p className={`max-w-[72ch] ${body}`}>
+              Every family member meets the same general conditions: a passport, health insurance, means (already counted in the household criterion) and
+              proof of the relationship. Every foreign document needs an apostille or legalisation and an official Spanish translation.
+            </p>
+          </Detail>
         </RouteStop>
 
         {/* 07 — Perks and catches */}
@@ -908,7 +974,10 @@ export default function SpainEn() {
           number={7}
           eyebrow="Perk or catch?"
           question="What are the advantages and drawbacks of the Spain startup visa?"
-          task="Guess all eight"
+          task="Weigh perks and catches"
+          completeOn="view"
+          message="Perks and catches weighed"
+          lead={<WhyWatch why={{ heading: 'Why Spain', items: rights.filter((r) => r.positive).map((r) => r.title) }} watch={{ heading: 'Watch out', items: rights.filter((r) => !r.positive).map((r) => r.title) }} />}
           answer={
             <p>
               The advantages are real: a legal decision in twenty days with positive silence, no minimum investment, a three-year first permit and family
@@ -917,13 +986,15 @@ export default function SpainEn() {
             </p>
           }
         >
-          <PerkOrCatch stopId="catches" items={rights} />
-          <div className="mt-10 max-w-4xl">
-            <h3 className="mb-3 font-serif text-2xl">What the sales pitch leaves out</h3>
-            <ul className="grid list-disc gap-2 pl-5 font-sans text-sm leading-relaxed text-[#1a1a1a]/70">
-              {bottlenecks.map((b) => <li key={b}>{b}</li>)}
-            </ul>
-          </div>
+          <Detail>
+            <PerkOrCatch stopId="catches" items={rights} />
+            <div className="mt-10 max-w-4xl">
+              <h3 className="mb-3 font-serif text-2xl">What the sales pitch leaves out</h3>
+              <ul className="grid list-disc gap-2 pl-5 font-sans text-sm leading-relaxed text-[#1a1a1a]/70">
+                {bottlenecks.map((b) => <li key={b}>{b}</li>)}
+              </ul>
+            </div>
+          </Detail>
         </RouteStop>
 
         {/* 08 — Tax */}
@@ -936,6 +1007,7 @@ export default function SpainEn() {
           task="Read both regimes"
           completeOn="view"
           message="Tax regimes read"
+          lead={<NumberTiles tiles={taxTiles} surface="white" />}
           answer={
             <p>
               Two, and they are often confused. The newcomers&apos; regime (the Beckham Law) taxes Spanish income up to €600,000 at a flat 24% for the year
@@ -944,31 +1016,33 @@ export default function SpainEn() {
             </p>
           }
         >
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-            <div className="rounded-2xl border border-[#1a1a1a]/10 bg-[#F2F0E9] p-6">
-              <p className={`text-[#A30F1F] ${label}`}>You, personally</p>
-              <h3 className="mt-1 font-serif text-2xl">The newcomers&apos; regime (Beckham Law)</h3>
-              <p className="mt-2 font-sans text-sm leading-relaxed text-[#1a1a1a]/70">
-                Since the 2022 Startups Law it also covers people who come for an article 70 entrepreneurial activity. Spanish income up to €600,000 is
-                taxed at a flat 24% instead of progressive rates, for the year of arrival and the five years after, provided you were not tax-resident in
-                Spain in the five years before.
-              </p>
+          <Detail>
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              <div className="rounded-2xl border border-[#1a1a1a]/10 bg-[#F2F0E9] p-6">
+                <p className={`text-[#A30F1F] ${label}`}>You, personally</p>
+                <h3 className="mt-1 font-serif text-2xl">The newcomers&apos; regime (Beckham Law)</h3>
+                <p className="mt-2 font-sans text-sm leading-relaxed text-[#1a1a1a]/70">
+                  Since the 2022 Startups Law it also covers people who come for an article 70 entrepreneurial activity. Spanish income up to €600,000 is
+                  taxed at a flat 24% instead of progressive rates, for the year of arrival and the five years after, provided you were not tax-resident in
+                  Spain in the five years before.
+                </p>
+              </div>
+              <div className="rounded-2xl border border-[#1a1a1a]/10 bg-[#F2F0E9] p-6">
+                <p className={`text-[#A30F1F] ${label}`}>Your company</p>
+                <h3 className="mt-1 font-serif text-2xl">15% corporate tax for two extra years</h3>
+                <p className="mt-2 font-sans text-sm leading-relaxed text-[#1a1a1a]/70">
+                  A certified &ldquo;emerging company&rdquo; (empresa emergente) pays 15% in its first profitable year and the three after it (Law 28/2022,
+                  art. 7). Every new company already pays 15% in its first profitable year and the next (Corporate Tax Law, art. 29.1), and since 2025
+                  companies with turnover under €1m pay 17% or 20%. So the startup advantage is two extra years at 15%. It needs a separate certificate
+                  from ENISA; a favourable ENISA report for residence is not that certificate.
+                </p>
+              </div>
             </div>
-            <div className="rounded-2xl border border-[#1a1a1a]/10 bg-[#F2F0E9] p-6">
-              <p className={`text-[#A30F1F] ${label}`}>Your company</p>
-              <h3 className="mt-1 font-serif text-2xl">15% corporate tax for two extra years</h3>
-              <p className="mt-2 font-sans text-sm leading-relaxed text-[#1a1a1a]/70">
-                A certified &ldquo;emerging company&rdquo; (empresa emergente) pays 15% in its first profitable year and the three after it (Law 28/2022,
-                art. 7). Every new company already pays 15% in its first profitable year and the next (Corporate Tax Law, art. 29.1), and since 2025
-                companies with turnover under €1m pay 17% or 20%. So the startup advantage is two extra years at 15%. It needs a separate certificate
-                from ENISA; a favourable ENISA report for residence is not that certificate.
-              </p>
-            </div>
-          </div>
-          <p className="mt-6 max-w-[72ch] font-sans text-sm text-[#1a1a1a]/65">
-            <strong className="text-[#1a1a1a]">Do not build your financial model on either</strong> until a Spanish tax adviser has looked at your case.
-            Both have conditions we summarise here, not in full.
-          </p>
+            <p className="mt-6 max-w-[72ch] font-sans text-sm text-[#1a1a1a]/65">
+              <strong className="text-[#1a1a1a]">Do not build your financial model on either</strong> until a Spanish tax adviser has looked at your case.
+              Both have conditions we summarise here, not in full.
+            </p>
+          </Detail>
         </RouteStop>
 
         {/* Photo band: Valencia */}
@@ -1004,7 +1078,10 @@ export default function SpainEn() {
           number={9}
           eyebrow="Renewal, residence, passport"
           question="How long does it take to get Spanish permanent residence and citizenship?"
-          task="Drag yourself through the years"
+          task="See the years to a passport"
+          completeOn="view"
+          message="Road mapped"
+          lead={<YearsLine milestones={years} caption="From arrival to a Spanish passport" />}
           answer={
             <p>
               The first permit lasts three years, then renews two years at a time while the business stays active. Permanent residence comes after five
@@ -1013,29 +1090,31 @@ export default function SpainEn() {
             </p>
           }
         >
-          <YearsRoadmap stopId="roadmap" routes={prRoutes} defaultRoute={0} copy={roadmap} />
-          <ul className="mt-6 grid max-w-5xl grid-cols-1 gap-3 font-sans text-sm leading-relaxed text-[#1a1a1a]/70 md:grid-cols-2">
-            <li>
-              <strong className="text-[#1a1a1a]">Renewal, two years at a time,</strong> as long as the conditions that created the permit still hold. The
-              business must be active: a registered company or self-employed registration (RETA), with tax and social security payments, is the evidence.
-            </li>
-            <li>
-              <strong className="text-[#1a1a1a]">File on time, or within 90 days.</strong> A renewal application keeps your permit valid until the
-              decision. One filed up to 90 days after expiry also keeps it valid, but may bring an administrative fine.
-            </li>
-            <li>
-              <strong className="text-[#1a1a1a]">Permanent residence</strong> after five years of legal, continuous residence.
-            </li>
-            <li>
-              <strong className="text-[#1a1a1a]">Citizenship</strong> after ten years of legal, continuous residence under the Civil Code. The two-year
-              reduction is only for nationals of Latin American countries, Andorra, the Philippines, Equatorial Guinea and Portugal, and for Sephardic
-              Jews.
-            </li>
-          </ul>
-          <p className="mt-6 max-w-3xl rounded-2xl bg-[#2B0A0F] p-6 font-sans text-sm leading-relaxed text-white/75">
-            <strong className="text-white">Fast in, slow to a passport.</strong> If your end goal is an EU passport, Spain gives the fastest entry but the
-            longest road to citizenship. Compare it with Denmark and the Netherlands, not just with the twenty-day decision.
-          </p>
+          <Detail>
+            <YearsRoadmap stopId="roadmap" routes={prRoutes} defaultRoute={0} copy={roadmap} />
+            <ul className="mt-6 grid max-w-5xl grid-cols-1 gap-3 font-sans text-sm leading-relaxed text-[#1a1a1a]/70 md:grid-cols-2">
+              <li>
+                <strong className="text-[#1a1a1a]">Renewal, two years at a time,</strong> as long as the conditions that created the permit still hold. The
+                business must be active: a registered company or self-employed registration (RETA), with tax and social security payments, is the evidence.
+              </li>
+              <li>
+                <strong className="text-[#1a1a1a]">File on time, or within 90 days.</strong> A renewal application keeps your permit valid until the
+                decision. One filed up to 90 days after expiry also keeps it valid, but may bring an administrative fine.
+              </li>
+              <li>
+                <strong className="text-[#1a1a1a]">Permanent residence</strong> after five years of legal, continuous residence.
+              </li>
+              <li>
+                <strong className="text-[#1a1a1a]">Citizenship</strong> after ten years of legal, continuous residence under the Civil Code. The two-year
+                reduction is only for nationals of Latin American countries, Andorra, the Philippines, Equatorial Guinea and Portugal, and for Sephardic
+                Jews.
+              </li>
+            </ul>
+            <p className="mt-6 max-w-3xl rounded-2xl bg-[#2B0A0F] p-6 font-sans text-sm leading-relaxed text-white/75">
+              <strong className="text-white">Fast in, slow to a passport.</strong> If your end goal is an EU passport, Spain gives the fastest entry but the
+              longest road to citizenship. Compare it with Denmark and the Netherlands, not just with the twenty-day decision.
+            </p>
+          </Detail>
         </RouteStop>
 
         {/* 10 — Compare */}
@@ -1048,6 +1127,7 @@ export default function SpainEn() {
           task="Read the comparison"
           completeOn="view"
           message="Routes compared"
+          lead={<CompareCards rows={comparison.map((c) => ({ flag: <Flag code={c.code} uid={`cmp-${c.code}`} width={22} />, country: c.country, plus: c.plus, minus: c.minus, self: c.code === 'es' }))} heads={['Country', 'In its favour', 'Against it']} surface="white" caption="Spain's entrepreneur permit against four European startup routes" />}
           answer={
             <p>
               Spain has the fastest legal decision, with positive silence, no minimum investment, low means, a three-year first permit and family at the
@@ -1056,36 +1136,12 @@ export default function SpainEn() {
             </p>
           }
         >
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-[640px] overflow-hidden rounded-2xl bg-[#F2F0E9] font-sans text-sm">
-              <caption className="pb-2 text-left font-bold">Spain&apos;s entrepreneur permit against four European startup routes</caption>
-              <thead>
-                <tr className="border-b border-[#1a1a1a]/10 text-left text-[11px] uppercase tracking-[0.1em] text-[#1a1a1a]/55">
-                  <th scope="col" className="px-4 py-3">Country</th>
-                  <th scope="col" className="px-4 py-3">In its favour</th>
-                  <th scope="col" className="px-4 py-3">Against it</th>
-                </tr>
-              </thead>
-              <tbody>
-                {comparison.map((c) => (
-                  <tr key={c.country} className="border-b border-[#1a1a1a]/10 last:border-0">
-                    <th scope="row" className="px-4 py-3 text-left">
-                      <span className="flex items-center gap-2 font-bold">
-                        <Flag code={c.code} uid={`cmp-${c.code}`} width={22} />
-                        {c.country}
-                      </span>
-                    </th>
-                    <td className="px-4 py-3">{c.plus}</td>
-                    <td className="px-4 py-3 text-[#1a1a1a]/70">{c.minus}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <p className="mt-6 max-w-[72ch] rounded-2xl border-l-4 border-[#FFC400] bg-[#FFF4CC] p-5 font-sans text-sm leading-relaxed">
-            <strong>A simple rule.</strong> If you have a genuinely innovative plan, not much capital, and want your family with you from day one: Spain.
-            If your end goal is a passport, weigh Spain&apos;s ten years against the other routes.
-          </p>
+          <Detail>
+            <p className="max-w-[72ch] rounded-2xl border-l-4 border-[#FFC400] bg-[#FFF4CC] p-5 font-sans text-sm leading-relaxed">
+              <strong>A simple rule.</strong> If you have a genuinely innovative plan, not much capital, and want your family with you from day one: Spain.
+              If your end goal is a passport, weigh Spain&apos;s ten years against the other routes.
+            </p>
+          </Detail>
         </RouteStop>
 
         {/* 11 — Sanctioned countries */}
@@ -1097,6 +1153,7 @@ export default function SpainEn() {
           task="Read the six points"
           completeOn="view"
           message="Sanctions notes read"
+          lead={<CheckRows items={sanctionNotes.map((x) => ({ label: x.t }))} icon="alert" label="Six points for applicants from sanctioned countries" />}
           answer={
             <p>
               For Iranian passport holders the ten-day consular deadline is not guaranteed, Iranian bank balances are effectively not accepted as proof of
@@ -1105,25 +1162,20 @@ export default function SpainEn() {
             </p>
           }
         >
-          <p className="mb-4 max-w-[72ch] font-sans text-sm text-[#1a1a1a]/60">
-            These notes are written for Iranian passport holders. If you hold another passport, check how each one applies to your nationality.
-          </p>
-          <ol className="grid grid-cols-1 gap-3 md:grid-cols-2">
-            {[
-              { t: 'The ten consular days are not guaranteed', b: 'Article 75 excludes applicants subject to prior consultation under article 22 of the Schengen Visa Code from the ten-day deadline. Some nationalities need that consultation with other Schengen states, which can add time; the list is not published, so ask the consulate whether it applies to you.' },
-              { t: 'Filing from inside Spain skips the consulate', b: 'If you are lawfully in Spain on a Schengen visa, you can apply directly from there. The application extends your current short-stay status until the decision (article 76). A big advantage, but only with a valid visa and not one day of irregular stay.' },
-              { t: 'Funds must be readable', b: 'Proof of means must sit in an account the Spanish administration can read and whose movements it can see. A balance in an Iranian bank is effectively not accepted; plan on that from the start.' },
-              { t: 'Banking takes longer', b: 'Opening a Spanish bank account with an Iranian passport takes more time and paperwork because of anti-money-laundering rules. Budget the first months on that assumption.' },
-              { t: 'Legalisation, not an apostille', b: 'Iran is not a party to the Apostille Convention, so an Iranian criminal record certificate needs authentication by Iran\'s foreign ministry and the Spanish embassy, plus an official Spanish translation. Start early: a certificate counts as stale after six months.' },
-              { t: 'Define the market as Spain', b: 'Do not define your plan\'s market as Iran or the Iranian diaspora. ENISA\'s third criterion is added value for the Spanish economy.' },
-            ].map((x, i) => (
-              <li key={x.t} className="rounded-2xl border border-[#1a1a1a]/10 bg-white p-5">
-                <span className="font-sans text-xs tabular-nums text-[#A30F1F]">{String(i + 1).padStart(2, '0')}</span>
-                <h3 className="mt-1 font-serif text-xl">{x.t}</h3>
-                <p className="mt-1.5 font-sans text-sm leading-relaxed text-[#1a1a1a]/65">{x.b}</p>
-              </li>
-            ))}
-          </ol>
+          <Detail>
+            <p className="mb-4 max-w-[72ch] font-sans text-sm text-[#1a1a1a]/60">
+              These notes are written for Iranian passport holders. If you hold another passport, check how each one applies to your nationality.
+            </p>
+            <ol className="grid grid-cols-1 gap-3 md:grid-cols-2">
+              {sanctionNotes.map((x, i) => (
+                <li key={x.t} className="rounded-2xl border border-[#1a1a1a]/10 bg-white p-5">
+                  <span className="font-sans text-xs tabular-nums text-[#A30F1F]">{String(i + 1).padStart(2, '0')}</span>
+                  <h3 className="mt-1 font-serif text-xl">{x.t}</h3>
+                  <p className="mt-1.5 font-sans text-sm leading-relaxed text-[#1a1a1a]/65">{x.b}</p>
+                </li>
+              ))}
+            </ol>
+          </Detail>
         </RouteStop>
 
         {/* 12 — FAQ */}
@@ -1145,51 +1197,56 @@ export default function SpainEn() {
           <div className="container mx-auto">
             <p className={`text-[#A30F1F] ${label}`}>Where we fit</p>
             <h2 id="work-h" className="mt-2 max-w-4xl font-serif text-3xl leading-tight md:text-4xl">What VisaRoads does, and does not do, on a Spain file</h2>
-            <div className="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-3">
-              <div className={body}>
-                <h3 className="mb-2 font-serif text-2xl text-[#1a1a1a]">Our role</h3>
-                <p className="mb-3">
-                  We are not Spanish immigration lawyers, and we do not file the UGE or consular application on your behalf. Our work comes before the
-                  file: taking your plan to a favourable ENISA report.
-                </p>
-                <ul className="grid list-disc gap-1 pl-5 text-sm">
-                  <li>An honest check of whether your plan is &ldquo;innovative and/or of special economic interest for Spain&rdquo;, before you spend money.</li>
-                  <li>The business plan, Spanish market analysis and financial model, in the structure the immigration administration lists and ENISA assesses.</li>
-                  <li>Aligning each founder&apos;s CV and role with the plan, since ENISA assesses each partner separately.</li>
-                  <li>Preparing the ENISA portal questionnaire and documents.</li>
-                  <li>Support in the next stage (family documents, proof of means, the first weeks in Spain) alongside the lawyer or representative who files the residence application.</li>
-                </ul>
-              </div>
-              <div className={body}>
-                <h3 className="mb-2 font-serif text-2xl text-[#1a1a1a]">Four phases, three instalments</h3>
-                <p className="mb-3">Each instalment is tied to a real event in the file, not to the passing of time.</p>
-                <ol className="grid list-decimal gap-1 pl-5 text-sm">
-                  <li>Contract, idea review, fit with article 70, Spanish market research and the business plan. First instalment on signing.</li>
-                  <li>Filing the plan on the ENISA portal and the residence application, up to the favourable ENISA report. Second instalment with the favourable report.</li>
-                  <li>Support preparing consular documents or the residence card.</li>
-                  <li>Your and your family&apos;s residence is issued. Third instalment when residence is issued.</li>
-                </ol>
-                <p className="mt-3 text-sm">The contract runs twelve months from signing and payment of the first instalment.</p>
-              </div>
-              <div className={body}>
-                <h3 className="mb-2 font-serif text-2xl text-[#1a1a1a]">The refund undertaking, exactly</h3>
-                <p className="mb-3 text-sm">
-                  What we undertake is a favourable ENISA report for your plan, and only that. If we do not obtain it within twelve months of the first
-                  instalment, 100% of what you paid is refunded at the day&apos;s euro rate. That includes a negative ENISA report caused by structural or
-                  content weaknesses in the business plan: that is our work and our responsibility.
-                </p>
-                <ul className="grid list-disc gap-1 pl-5 text-sm">
-                  <li>No refund if the UGE, a consulate or the police refuse residence or a visa for any reason other than the ENISA report. That decision belongs to another body.</li>
-                  <li>No refund if a refusal is due to your own personal or identity issues: problems with civil documents and translations or your passport, forged documents, a criminal record, or being unable to provide proof of means.</li>
-                  <li>No refund if you do not pay government and consular fees on time or provide the personal documents Spain requires and the delay passes two months; the contract is then terminated in VisaRoads&apos; favour.</li>
-                  <li>If you withdraw at any stage, the remaining instalments are due within seven working days.</li>
-                </ul>
-              </div>
+            <div className="mt-8">
+              <StepLine steps={workPhases} caption="Four phases, three instalments, a twelve-month contract" />
             </div>
-            <p className="mt-8 max-w-[72ch] rounded-2xl border-l-4 border-[#A30F1F] bg-white p-5 font-sans text-sm leading-relaxed">
+            <p className="mb-8 mt-6 max-w-[72ch] rounded-2xl border-l-4 border-[#A30F1F] bg-white p-5 font-sans text-sm leading-relaxed">
               <strong>This is not a residence guarantee.</strong> No one outside ENISA and the UGE can guarantee their decision. If anyone sells you a
               guaranteed residence permit, walk away there and then.
             </p>
+            <Detail>
+              <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
+                <div className={body}>
+                  <h3 className="mb-2 font-serif text-2xl text-[#1a1a1a]">Our role</h3>
+                  <p className="mb-3">
+                    We are not Spanish immigration lawyers, and we do not file the UGE or consular application on your behalf. Our work comes before the
+                    file: taking your plan to a favourable ENISA report.
+                  </p>
+                  <ul className="grid list-disc gap-1 pl-5 text-sm">
+                    <li>An honest check of whether your plan is &ldquo;innovative and/or of special economic interest for Spain&rdquo;, before you spend money.</li>
+                    <li>The business plan, Spanish market analysis and financial model, in the structure the immigration administration lists and ENISA assesses.</li>
+                    <li>Aligning each founder&apos;s CV and role with the plan, since ENISA assesses each partner separately.</li>
+                    <li>Preparing the ENISA portal questionnaire and documents.</li>
+                    <li>Support in the next stage (family documents, proof of means, the first weeks in Spain) alongside the lawyer or representative who files the residence application.</li>
+                  </ul>
+                </div>
+                <div className={body}>
+                  <h3 className="mb-2 font-serif text-2xl text-[#1a1a1a]">Four phases, three instalments</h3>
+                  <p className="mb-3">Each instalment is tied to a real event in the file, not to the passing of time.</p>
+                  <ol className="grid list-decimal gap-1 pl-5 text-sm">
+                    <li>Contract, idea review, fit with article 70, Spanish market research and the business plan. First instalment on signing.</li>
+                    <li>Filing the plan on the ENISA portal and the residence application, up to the favourable ENISA report. Second instalment with the favourable report.</li>
+                    <li>Support preparing consular documents or the residence card.</li>
+                    <li>Your and your family&apos;s residence is issued. Third instalment when residence is issued.</li>
+                  </ol>
+                  <p className="mt-3 text-sm">The contract runs twelve months from signing and payment of the first instalment.</p>
+                </div>
+                <div className={body}>
+                  <h3 className="mb-2 font-serif text-2xl text-[#1a1a1a]">The refund undertaking, exactly</h3>
+                  <p className="mb-3 text-sm">
+                    What we undertake is a favourable ENISA report for your plan, and only that. If we do not obtain it within twelve months of the first
+                    instalment, 100% of what you paid is refunded at the day&apos;s euro rate. That includes a negative ENISA report caused by structural or
+                    content weaknesses in the business plan: that is our work and our responsibility.
+                  </p>
+                  <ul className="grid list-disc gap-1 pl-5 text-sm">
+                    <li>No refund if the UGE, a consulate or the police refuse residence or a visa for any reason other than the ENISA report. That decision belongs to another body.</li>
+                    <li>No refund if a refusal is due to your own personal or identity issues: problems with civil documents and translations or your passport, forged documents, a criminal record, or being unable to provide proof of means.</li>
+                    <li>No refund if you do not pay government and consular fees on time or provide the personal documents Spain requires and the delay passes two months; the contract is then terminated in VisaRoads&apos; favour.</li>
+                    <li>If you withdraw at any stage, the remaining instalments are due within seven working days.</li>
+                  </ul>
+                </div>
+              </div>
+            </Detail>
           </div>
         </section>
 

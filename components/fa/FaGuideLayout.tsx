@@ -28,7 +28,8 @@ import Eligibility from './Eligibility';
 import QuizEcho from './QuizEcho';
 import Downloads from './motion/Downloads';
 import DataTable from './DataTable';
-import { KeyFacts, FigureBlock, Terms, Choice, Timeline } from './Blocks';
+import { KeyFacts, FigureBlock, Terms, Choice, Timeline, Lead } from './Blocks';
+import { Detail } from '@/components/guide/visual';
 import Visual from './Visual';
 import Checklist from './motion/Checklist';
 import { FaStop, FaTick, FaCheck, FaSteps, FaCopy, type FaStep } from './FaRoute';
@@ -97,7 +98,7 @@ function Stop({ s, i, total, selfCheck, pagePath }: { s: FaSection; i: number; t
   const bullets = !steps && !check && s.bullets ? s.bullets : [];
   const restWords = words(rest.join(' ')) + words(bullets.join(' '));
   const fold = restWords > 60;
-  const task = check ? 'شرایط را با خودتان بسنجید' : steps ? 'مراحل را تا آخر مرور کنید' : 'این بخش را بخوانید';
+  const task = s.lead ? 'این بخش را ببینید' : check ? 'شرایط را با خودتان بسنجید' : steps ? 'مراحل را تا آخر مرور کنید' : 'این بخش را بخوانید';
   const detail = (
     <div className="max-w-[68ch] space-y-4 text-base leading-[1.95] text-[#1a1a1a]/75">
       {rest.map((p, j) => <p key={j}>{p}</p>)}
@@ -126,35 +127,64 @@ function Stop({ s, i, total, selfCheck, pagePath }: { s: FaSection; i: number; t
             {task}
           </span>
         </div>
-        {s.keyFacts && <div className="max-w-[68ch]"><KeyFacts facts={s.keyFacts} /></div>}
-        {lead && <p className="mb-8 max-w-[68ch] border-s-[3px] border-[var(--ra)] ps-4 text-[1.1rem] leading-[1.95] text-[#1a1a1a]/90">{lead}</p>}
-        {s.figure && <FigureBlock figure={s.figure} />}
-        {s.visual && <Visual visual={s.visual} />}
-        {s.table && <div className="mb-8 max-w-[68ch]"><DataTable table={s.table} /></div>}
-        {s.terms && <div className="mb-8"><Terms terms={s.terms} /></div>}
-        {rest.length > 0 || bullets.length > 0 ? (
-          fold ? (
-            <details className="group mb-6 max-w-[68ch]">
-              <summary className="flex cursor-pointer list-none items-center gap-3 font-bold text-[#1a1a1a] [&::-webkit-details-marker]:hidden">
-                <span className="grid h-7 w-7 place-items-center rounded-full bg-[var(--rs)] text-base text-[var(--ra-text)] transition-transform group-open:rotate-45" aria-hidden>+</span>
-                <span className="group-open:hidden">ادامه‌ی این بخش · حدود {fa(Math.max(1, Math.round(restWords / 200)))} دقیقه</span>
-                <span className="hidden group-open:inline">بستن</span>
-              </summary>
-              <div className="pt-5">{detail}</div>
-            </details>
-          ) : (
-            <div className="mb-6">{detail}</div>
-          )
-        ) : null}
-        {steps && <FaSteps stopId={id} steps={steps} />}
-        {check && s.bullets && <FaCheck stopId={id} items={s.bullets} />}
-        {s.timeline && <div className="mt-6"><Timeline timeline={s.timeline} /></div>}
-        {s.choice && <div className="mt-6"><Choice choice={s.choice} /></div>}
-        {s.checklist && <div className="mt-6 max-w-[68ch]"><Checklist list={s.checklist} storageKey={`fa-checklist:${pagePath}:${s.checklist.title}`} /></div>}
-        {s.callout && (
-          <aside className="mt-6 max-w-[68ch] rounded-2xl bg-[var(--rd)] p-6 text-white md:p-7">
-            <p className="font-estedad text-lg font-bold leading-relaxed md:text-xl [text-wrap:pretty]">{s.callout}</p>
-          </aside>
+        {s.lead ? (
+          <>
+            <div className="mb-8"><Lead lead={s.lead} surface={white ? 'white' : 'paper'} /></div>
+            {lead && <p className="mb-8 max-w-[68ch] border-s-[3px] border-[var(--ra)] ps-4 text-[1.1rem] leading-[1.95] text-[#1a1a1a]/90">{lead}</p>}
+            {(rest.length > 0 || bullets.length > 0 || steps || check || s.keyFacts || s.figure || s.visual || s.table || s.terms || s.timeline || s.choice || s.checklist || s.callout) && (
+              <Detail lang="fa" minutes={(restWords + words(s.callout ?? '')) / 200}>
+                {s.keyFacts && <div className="max-w-[68ch]"><KeyFacts facts={s.keyFacts} /></div>}
+                {s.figure && <FigureBlock figure={s.figure} />}
+                {s.visual && <Visual visual={s.visual} />}
+                {s.table && <div className="mb-8 max-w-[68ch]"><DataTable table={s.table} /></div>}
+                {s.terms && <div className="mb-8"><Terms terms={s.terms} /></div>}
+                {(rest.length > 0 || bullets.length > 0) && <div className="mb-6">{detail}</div>}
+                {steps && <FaSteps stopId={id} steps={steps} />}
+                {check && s.bullets && <FaCheck stopId={id} items={s.bullets} />}
+                {s.timeline && <div className="mt-6"><Timeline timeline={s.timeline} /></div>}
+                {s.choice && <div className="mt-6"><Choice choice={s.choice} /></div>}
+                {s.checklist && <div className="mt-6 max-w-[68ch]"><Checklist list={s.checklist} storageKey={`fa-checklist:${pagePath}:${s.checklist.title}`} /></div>}
+                {s.callout && (
+                  <aside className="mt-6 max-w-[68ch] rounded-2xl bg-[var(--rd)] p-6 text-white md:p-7">
+                    <p className="font-estedad text-lg font-bold leading-relaxed md:text-xl [text-wrap:pretty]">{s.callout}</p>
+                  </aside>
+                )}
+              </Detail>
+            )}
+          </>
+        ) : (
+          <>
+          {s.keyFacts && <div className="max-w-[68ch]"><KeyFacts facts={s.keyFacts} /></div>}
+          {lead && <p className="mb-8 max-w-[68ch] border-s-[3px] border-[var(--ra)] ps-4 text-[1.1rem] leading-[1.95] text-[#1a1a1a]/90">{lead}</p>}
+          {s.figure && <FigureBlock figure={s.figure} />}
+          {s.visual && <Visual visual={s.visual} />}
+          {s.table && <div className="mb-8 max-w-[68ch]"><DataTable table={s.table} /></div>}
+          {s.terms && <div className="mb-8"><Terms terms={s.terms} /></div>}
+          {rest.length > 0 || bullets.length > 0 ? (
+            fold ? (
+              <details className="group mb-6 max-w-[68ch]">
+                <summary className="flex cursor-pointer list-none items-center gap-3 font-bold text-[#1a1a1a] [&::-webkit-details-marker]:hidden">
+                  <span className="grid h-7 w-7 place-items-center rounded-full bg-[var(--rs)] text-base text-[var(--ra-text)] transition-transform group-open:rotate-45" aria-hidden>+</span>
+                  <span className="group-open:hidden">ادامه‌ی این بخش · حدود {fa(Math.max(1, Math.round(restWords / 200)))} دقیقه</span>
+                  <span className="hidden group-open:inline">بستن</span>
+                </summary>
+                <div className="pt-5">{detail}</div>
+              </details>
+            ) : (
+              <div className="mb-6">{detail}</div>
+            )
+          ) : null}
+          {steps && <FaSteps stopId={id} steps={steps} />}
+          {check && s.bullets && <FaCheck stopId={id} items={s.bullets} />}
+          {s.timeline && <div className="mt-6"><Timeline timeline={s.timeline} /></div>}
+          {s.choice && <div className="mt-6"><Choice choice={s.choice} /></div>}
+          {s.checklist && <div className="mt-6 max-w-[68ch]"><Checklist list={s.checklist} storageKey={`fa-checklist:${pagePath}:${s.checklist.title}`} /></div>}
+          {s.callout && (
+            <aside className="mt-6 max-w-[68ch] rounded-2xl bg-[var(--rd)] p-6 text-white md:p-7">
+              <p className="font-estedad text-lg font-bold leading-relaxed md:text-xl [text-wrap:pretty]">{s.callout}</p>
+            </aside>
+          )}
+          </>
         )}
       </div>
     </FaStop>

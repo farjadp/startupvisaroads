@@ -244,6 +244,7 @@ export function RouteStop({
   tone = 'paper',
   completeOn,
   message,
+  lead,
   children,
 }: {
   id: string;
@@ -255,6 +256,8 @@ export function RouteStop({
   tone?: Tone;
   completeOn?: 'view' | 'click';
   message?: string;
+  /** A visual shown between the question and the answer ("visual first"). */
+  lead?: React.ReactNode;
   children: React.ReactNode;
 }) {
   const { done, complete } = useRoute();
@@ -312,6 +315,7 @@ export function RouteStop({
             {task}
           </span>
         </div>
+        {lead && <div className="mb-8">{lead}</div>}
         <div className={`mb-8 max-w-[68ch] border-l-[3px] border-[var(--ra)] pl-4 font-sans text-[1.05rem] leading-relaxed ${t.answer}`}>{answer}</div>
         {children}
       </div>
