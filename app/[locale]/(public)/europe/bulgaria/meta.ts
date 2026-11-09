@@ -17,13 +17,14 @@ export const EN_META = {
   image: '/fa/img/bulgaria.webp',
 };
 
-export const UPDATED = { iso: '2026-10-29', label: '29 Oct 2026' };
+export const UPDATED = { iso: '2026-11-09', label: '9 Nov 2026' };
 
 /**
  * The official pages the figures were checked against: the ones named in the
  * header of content/fa/europe-bulgaria.ts (the Ordinance, the Foreigners Act,
  * MIG's NIMS guidelines, the 2026 minimum wage), with the URLs MIG itself links
- * to. Each URL returned 200 on 29 Oct 2026.
+ * to. Each URL returned 200 on 29 Oct 2026; the strategy.bg and InvestBulgaria
+ * entries were added on 9 Nov 2026.
  */
 export const SOURCES = [
   {
@@ -44,7 +45,7 @@ export const SOURCES = [
   {
     name: 'Foreigners in the Republic of Bulgaria Act, English text published by MIG',
     href: 'https://www.mig.government.bg/wp-content/uploads/2022/11/foreigners_in_the_republic_of_bulgaria_act.pdf',
-    what: 'Article 24p (D visa, certificate, then at least 50% of a Bulgarian company) and Article 25 (permanent residence after five years).',
+    what: 'Article 24p (D visa, certificate, then at least 50% of a Bulgarian company), Article 24(1)(2) (the ordinary business route and its 10 jobs), the investor routes in Articles 24 and 25, and Article 25 (permanent residence after five years).',
   },
   {
     name: 'MIG — Guidelines on how to complete the online application form',
@@ -57,9 +58,19 @@ export const SOURCES = [
     what: 'Where the application is filed.',
   },
   {
+    name: 'Council of Ministers — draft decree on the 2026 minimum monthly wage (public consultation, strategy.bg)',
+    href: 'https://www.strategy.bg/bg/public-consultations/11485/export',
+    what: 'The 2026 monthly minimum wage, BGN 1,213 (€620.20), behind the €1,860.60 proof of funds.',
+  },
+  {
     name: 'BTA — Cabinet raises minimum wage by 12.6% to EUR 620.20 from January 1, 2026',
     href: 'https://www.bta.bg/en/news/bulgaria/1007805',
-    what: 'The 2026 monthly minimum wage behind the €1,860.60 proof of funds.',
+    what: 'Secondary: reports that the Council of Ministers adopted the €620.20 figure.',
+  },
+  {
+    name: 'InvestBulgaria Agency',
+    href: 'https://investbg.government.bg/',
+    what: 'The flat 10% corporate and personal income tax, and the 5% withholding tax on dividends paid to companies outside the EU/EEA.',
   },
 ];
 

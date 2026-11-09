@@ -4,7 +4,7 @@
 // Title is brandless (buildMetadata appends the brand only when it fits).
 export const SPAIN_EN = {
   path: '/europe/spain',
-  title: 'Spain Startup Visa 2026: ENISA, UGE and Real Funds',
+  title: 'Spain Startup Visa 2026: ENISA, UGE and Funds to Show',
   description:
     "Spain's 3-year entrepreneur permit under Law 14/2013: an ENISA report, a UGE decision in 20 days or approval by silence, no minimum investment, family included.",
   image: '/fa/img/spain.webp',

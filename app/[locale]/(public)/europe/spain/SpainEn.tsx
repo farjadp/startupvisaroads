@@ -90,7 +90,25 @@ const sources = [
   {
     name: 'BOE — Ley 14/2013 (Law on support for entrepreneurs), consolidated text',
     href: 'https://www.boe.es/buscar/act.php?id=BOE-A-2013-10074',
-    what: 'Art. 62 (general requirements), 69 (3-year permit, 2-year renewals), 70 (ENISA report in 10 working days), 75.5 (consular deadline and its Visa Code art. 22 exception), 76 (UGE: 20 days, silence means granted; residence card).',
+    what: 'Art. 62 (general requirements), 69 (3-year permit, 2-year renewals), 70 (ENISA report in 10 working days), 75.4 (the one-year visa authorises residence without a TIE), 75.5 (consular deadline and its Visa Code art. 22 exception), 76 (UGE: 20 days, silence means granted; residence card for permits granted in Spain), additional provision 20.3 (means thresholds to be referenced to the minimum wage).',
+  },
+  {
+    name: 'Oficina Nacional de Emprendimiento (ONE) — Application for the entrepreneur visa',
+    href: 'https://one.gob.es/en/procedures/application-entrepreneur-visa',
+    what: 'The means criterion for entrepreneurs: 100% of the IPREM for the holder, 150% for two, 50% more per further person. Consulates publish the same criterion.',
+    checked: '9 Nov 2026',
+  },
+  {
+    name: 'BOE — Ley 28/2022 (Startups Law), consolidated text',
+    href: 'https://www.boe.es/buscar/act.php?id=BOE-A-2022-21739',
+    what: 'Art. 7: 15% corporate tax for certified emerging companies in their first positive year and the next three.',
+    checked: '9 Nov 2026',
+  },
+  {
+    name: 'BOE — Ley 27/2014 (Corporate Tax Law), consolidated text',
+    href: 'https://www.boe.es/buscar/act.php?id=BOE-A-2014-12328',
+    what: 'Art. 29.1: 15% for every new company in its first positive year and the next; 17%/20% for companies under €1m turnover since 2025.',
+    checked: '9 Nov 2026',
   },
   {
     name: 'UGE, Ministry of Inclusion, Social Security and Migration — Emprendedores',
@@ -121,7 +139,7 @@ const requirements = [
   { title: 'Lawful status', body: 'You are not in Spain irregularly, and you are not on the Schengen list of people refused entry.' },
   { title: 'A clean criminal record', body: 'No record in Spain or in the countries you lived in over the last two years, plus a written declaration covering the last five years. Consulates may ask for five years of certificates.' },
   { title: 'Health insurance', body: 'Public or private health insurance with an insurer authorised to operate in Spain.' },
-  { title: 'Sufficient means', body: 'Enough money for you and your family for the stay, against the IPREM criterion: €600 a month for one person in 2026.' },
+  { title: 'Sufficient means', body: 'Enough money for you and your family for the stay. The criterion the Oficina Nacional de Emprendimiento and consulates publish is 100% of the IPREM: €600 a month for one person in 2026.' },
 ];
 
 const meansRule: MeansRule = { iprem: 600, holder: 1, twoPerson: 1.5, eachFurther: 0.5 };
@@ -145,7 +163,7 @@ const steps: RouteStep[] = [
   {
     title: 'Immigration file',
     who: 'You',
-    body: 'Prepare the immigration file: form MIT signed by you (a handwritten signature, scanned, is accepted); pay tasa 790 code 038 and note the 22-digit NRC code, which goes into the application; a full scan of every passport page; proof of means; insurance; and, if you are in Spain, your criminal record certificate.',
+    body: 'Prepare the immigration file: form MIT signed by you (a handwritten signature, scanned, is accepted); pay tasa 790 code 038 and note the NRC, a 22-character alphanumeric code, which goes into the application; a full scan of every passport page; proof of means; insurance; and, if you are in Spain, your criminal record certificate.',
     note: 'The fee amount is printed on the form when you generate it. It changes yearly, so we do not quote it.',
     figure: '22',
     figureLabel: 'digits in the NRC payment code',
@@ -175,9 +193,9 @@ const steps: RouteStep[] = [
     figureLabel: 'working days, with exceptions',
   },
   {
-    title: 'Arrive and get your TIE',
+    title: 'Arrive and settle in',
     who: 'Town hall and police',
-    body: 'Enter Spain, register your address with the town hall (empadronamiento), book a fingerprint appointment with the police, complete form EX-17, pay tasa 790 code 012 and collect your TIE residence card a few weeks later.',
+    body: 'Enter Spain and register your address with the town hall (empadronamiento). The one-year residence visa authorises residence without a TIE residence card (article 75.4), though you may apply for one. If your permit was granted in Spain, the card is required (article 76.2). To get it, book a fingerprint appointment with the police, complete form EX-17, pay tasa 790 code 012 and collect the card a few weeks later.',
     note: 'For the first six months your passport is enough to register with Social Security, so you can start working before the card arrives.',
     figure: 'TIE',
     figureLabel: 'residence card',
@@ -199,8 +217,8 @@ const deadlines = [
 ];
 
 const fees = [
-  { form: 'Tasa 790, code 038', for: 'The residence permit application to the UGE', when: 'Before filing; gives the 22-digit NRC' },
-  { form: 'Tasa 790, code 012', for: 'The TIE residence card', when: 'After arrival, with form EX-17' },
+  { form: 'Tasa 790, code 038', for: 'The residence permit application to the UGE', when: 'Before filing; gives the 22-character NRC code' },
+  { form: 'Tasa 790, code 012', for: 'The TIE residence card', when: 'When you apply for the card, with form EX-17' },
   { form: 'Consular visa fee', for: 'The residence visa, if you apply from abroad', when: 'When you submit at the consulate' },
 ];
 
@@ -262,15 +280,15 @@ const faqs = [
   },
   {
     q: 'How much money do I need to show?',
-    a: 'For the business itself, nothing: the UGE states plainly that there is no minimum investment and no minimum job creation. For your own living costs, the law only asks for "sufficient financial resources", and the criterion the immigration administration published for entrepreneurs is 100% of the IPREM index a month: €600 a month for one person in 2026. The €34,188 figure repeated everywhere belongs to the remote-work (digital nomad) permit, not to this route.',
+    a: 'For the business itself, nothing: the UGE states plainly that there is no minimum investment and no minimum job creation. For your own living costs, the law only asks for "sufficient financial resources". The criterion the Oficina Nacional de Emprendimiento and Spanish consulates publish for entrepreneurs is 100% of the IPREM index a month: €600 a month for one person in 2026. A consulate may apply a higher figure, so check with yours. The €34,188 figure repeated everywhere belongs to the remote-work (digital nomad) permit, not to this route.',
   },
   {
     q: 'How long does it take?',
-    a: 'On paper it is the shortest route in Europe: ENISA must report within ten working days, the UGE decides within twenty days, and if it does not, the application counts as granted (positive silence). The consulate also has ten working days. But for nationalities subject to Schengen prior consultation, Iran among them, the ten consular days are not guaranteed; see the question on that below.',
+    a: 'On paper it is the shortest route in Europe: ENISA must report within ten working days, the UGE decides within twenty days, and if it does not, the application counts as granted (positive silence). The consulate also has ten working days. But some nationalities need prior consultation with other Schengen states, and for them the ten consular days do not apply; see the question on that below.',
   },
   {
     q: 'How long is the first residence permit?',
-    a: 'Three years, whether you apply from inside Spain or from abroad. Article 69 sets the entrepreneur permit at three years. "The consulate only gives one year" is a misreading: the visa the consulate puts in your passport is valid for one year because it is an entry document, but the residence permit the UGE granted runs for three years and continues, after you arrive, with the TIE residence card.',
+    a: 'Three years, whether you apply from inside Spain or from abroad. Article 69 sets the entrepreneur permit at three years. "The consulate only gives one year" is a misreading: the visa the consulate puts in your passport is valid for one year because it is an entry document, but the residence permit the UGE granted runs for three years. During the visa\'s year you can live in Spain without a residence card (article 75.4), though you may apply for the TIE card.',
   },
   {
     q: 'Do I need to register a company first?',
@@ -305,7 +323,7 @@ const deepDiveFaqs = [
   },
   {
     q: 'Why is the ten-day consular deadline not guaranteed for every nationality?',
-    a: 'Article 75.5 of Law 14/2013 expressly excludes from the consulate\'s ten-working-day deadline "applicants subject to the consultation in article 22 of the Visa Code" and returns them to the Visa Code\'s general deadlines. Iran is on the list of countries whose nationals at least one Schengen state requires prior consultation for. So if you are from such a country and apply through a consulate, do not build your plan around ten days.',
+    a: 'Article 75.5 of Law 14/2013 expressly excludes from the consulate\'s ten-working-day deadline "applicants subject to the consultation in article 22 of the Visa Code" and returns them to the Visa Code\'s general deadlines. Some nationalities need that prior consultation with other Schengen states, which can add time. The list is not published officially, so ask the consulate whether it applies to you. If it does, do not build your plan around ten days.',
   },
   {
     q: 'Should I apply from inside Spain or from my own country?',
@@ -321,11 +339,11 @@ const deepDiveFaqs = [
   },
   {
     q: 'For how long do I have to show the funds?',
-    a: 'The law says "for the period of residence in Spain". The administration\'s criterion is monthly, so the question is how many months to multiply by. When the permit was two years, the common practice was 24 months. Now that the first permit is three years, covering the whole period means about €21,600 for one person, €32,400 for a couple and €43,200 for a family of three. That multiplication is ours, not a published UGE figure, but a file that covers the whole period leaves nothing to argue about. The money must be your own, and you may be asked for a year of bank statements.',
+    a: 'The law says "for the period of residence in Spain". The published criterion is monthly, so the question is how many months to multiply by. When the permit was two years, the common practice was 24 months. Now that the first permit is three years, covering the whole period means about €21,600 for one person, €32,400 for a couple and €43,200 for a family of three. That multiplication is ours, not a published figure, but a file that covers the whole period leaves nothing to argue about. The money must be your own, and you may be asked for a year of bank statements.',
   },
   {
     q: 'What do I do after arriving in Spain?',
-    a: 'A permit for more than six months needs a residence card (article 76). In practice: register your address with the town hall (empadronamiento), book a fingerprinting appointment with the police, complete form EX-17 and pay the fee with form 790 code 012, then collect your TIE card a few weeks later. If you entered the Schengen area through another country and have no Spanish entry stamp, you must also file a declaration of entry (declaración de entrada). A practical point: under the same article, for the first six months your passport is enough to register with Social Security, so do not wait for the card to start working.',
+    a: 'Register your address with the town hall (empadronamiento). If you came on the one-year residence visa, the visa itself authorises residence for that year without a residence card (article 75.4), though you may apply for one. If your permit was granted in Spain, a permit for more than six months needs a residence card (article 76.2). To get the card, book a fingerprinting appointment with the police, complete form EX-17 and pay the fee with form 790 code 012, then collect your TIE card a few weeks later. If you entered the Schengen area through another country and have no Spanish entry stamp, you must also file a declaration of entry (declaración de entrada). A practical point: under article 76, for the first six months your passport is enough to register with Social Security, so do not wait for the card to start working.',
   },
   {
     q: 'How does renewal work, and when do I get permanent residence and a passport?',
@@ -337,11 +355,11 @@ const deepDiveFaqs = [
   },
   {
     q: 'Do the Beckham Law and the 15% corporate tax rate apply to me?',
-    a: 'They are two separate things and often confused. The special tax regime for newcomers (known as the Beckham Law) has, since the 2022 Startups Law, also covered people who come to Spain for an article 70 entrepreneurial activity: Spanish income up to €600,000 taxed at a flat 24%, provided you were not tax-resident in Spain in the five years before you came. The 15% corporate tax rate, however, belongs to the "emerging company" (empresa emergente), which needs a separate certificate from ENISA; a favourable ENISA report for residence is not automatically that certificate.',
+    a: 'They are two separate things and often confused. The special tax regime for newcomers (known as the Beckham Law) has, since the 2022 Startups Law, also covered people who come to Spain for an article 70 entrepreneurial activity: Spanish income up to €600,000 taxed at a flat 24%, provided you were not tax-resident in Spain in the five years before you came. The longer 15% corporate tax rate, however, belongs to the "emerging company" (empresa emergente), which needs a separate certificate from ENISA: 15% in its first profitable year and the next three (Law 28/2022, art. 7). Every new company already pays 15% in its first profitable year and the next, so the startup advantage is two extra years at 15%. A favourable ENISA report for residence is not automatically that certificate.',
   },
   {
     q: 'How is this route different from the ordinary self-employed (cuenta propia) permit?',
-    a: 'The ordinary self-employed permit falls under the general immigration regulation, not Law 14/2013: it goes through a consulate, is assessed by the provincial labour office, has no twenty-day deadline or positive silence, and does not let your family come at the same time. For a traditional business (a café, a shop, local services) that is the route, because ENISA will not approve a plan that is neither innovative nor of special economic interest. If your plan is genuinely scalable, the Law 14/2013 route is better in every respect.',
+    a: 'The ordinary self-employed permit falls under the general immigration regulation, not Law 14/2013: it goes through a consulate, is decided by the competent authority (often the regional government), has no twenty-day deadline or positive silence, and does not let your family come at the same time. For a traditional business (a café, a shop, local services) that is the route, because ENISA will not approve a plan that is neither innovative nor of special economic interest. If your plan is genuinely scalable, the Law 14/2013 route is better in every respect.',
   },
   {
     q: 'How many co-founders can apply together?',
@@ -438,7 +456,7 @@ export default function SpainEn() {
               </p>
               <p className="mt-5 max-w-[60ch] border-l-2 border-[#FFC400] pl-3 font-sans text-sm text-white/70">
                 <strong className="text-white">The number everyone gets wrong.</strong> The €34,188 in most guides and infographics is the remote-work
-                permit&apos;s threshold. For entrepreneurs the criterion is €600 a month for one person.
+                permit&apos;s threshold. For entrepreneurs, the criterion the Oficina Nacional de Emprendimiento publishes is €600 a month for one person.
               </p>
             </div>
 
@@ -534,7 +552,7 @@ export default function SpainEn() {
                   ['Means, family', '€900 a month for two', '150% of IPREM, plus 50% for each further person'],
                   ['Assessing body', 'ENISA', 'Mandatory report, within 10 working days'],
                   ['UGE decision', '20 days', 'No answer means granted (positive silence)'],
-                  ['Consular deadline', '10 working days', 'Not for applicants subject to Visa Code art. 22 consultation, Iran included'],
+                  ['Consular deadline', '10 working days', 'Not for applicants subject to Visa Code art. 22 consultation (list not published; ask the consulate)'],
                   ['First permit', '3 years', 'The entry visa is one year; the residence permit three'],
                   ['Renewal', '2 years at a time', 'The business must be active'],
                   ['Permanent residence', 'After 5 years', ''],
@@ -562,8 +580,8 @@ export default function SpainEn() {
           task="Set up your household"
           answer={
             <p>
-              The business needs no minimum investment. For your living costs, the administration&apos;s criterion for entrepreneurs is 100% of the IPREM
-              a month: €600 for one person in 2026, €900 for a couple and €300 more for each further family member. The €34,188 quoted everywhere is the
+              The business needs no minimum investment. For your living costs, the criterion the Oficina Nacional de Emprendimiento and consulates
+              publish for entrepreneurs is 100% of the IPREM a month: €600 for one person in 2026, €900 for a couple and €300 more for each further family member. The €34,188 quoted everywhere is the
               remote-work permit&apos;s threshold, not this route&apos;s.
             </p>
           }
@@ -577,7 +595,7 @@ export default function SpainEn() {
                 <tr className="border-b border-[#1a1a1a]/10 text-left text-[11px] uppercase tracking-[0.1em] text-[#1a1a1a]/55">
                   <th scope="col" className="px-4 py-3">Household</th>
                   <th scope="col" className="px-4 py-3">Share of IPREM</th>
-                  <th scope="col" className="px-4 py-3">A month (official criterion)</th>
+                  <th scope="col" className="px-4 py-3">A month (published criterion)</th>
                   <th scope="col" className="px-4 py-3">36 months (our multiplication)</th>
                 </tr>
               </thead>
@@ -594,7 +612,7 @@ export default function SpainEn() {
             </table>
             <p className="mt-2 font-sans text-xs text-[#1a1a1a]/55">
               The published criterion is monthly. Covering the whole three-year permit is the safest way to show it; the 36-month totals are our
-              arithmetic, not a UGE figure.
+              arithmetic, not an official figure.
             </p>
           </div>
 
@@ -611,9 +629,11 @@ export default function SpainEn() {
               <h3 className="mb-2 font-serif text-2xl text-[#1a1a1a]">What the law actually asks</h3>
               <p>
                 For entrepreneurs, the law itself (article 62) sets no number. It asks for &ldquo;sufficient financial resources for yourself and your
-                family for the period of residence&rdquo;. The criterion the Secretary of State for Migration published to apply it uses another index,
-                the IPREM: 100% a month for the entrepreneur, at least 150% for a two-person household, and 50% more for each further person. The IPREM
-                has been frozen since 2023 and is €600 a month in 2026. It is the administration&apos;s reading of the law, not a figure in the law.
+                family for the period of residence&rdquo;. The criterion the Oficina Nacional de Emprendimiento and Spanish consulates publish uses another
+                index, the IPREM: 100% a month for the entrepreneur, at least 150% for a two-person household, and 50% more for each further person.
+                The IPREM was set at €600 a month for 2023 by Law 31/2022 and has not changed since, because the budget has been extended rather than
+                replaced. One caveat: Law 14/2013 (additional provision 20.3) says means thresholds are to be referenced to the minimum wage (SMI), so a
+                consulate may apply a higher figure. Check with your consulate.
               </p>
             </div>
           </div>
@@ -919,8 +939,8 @@ export default function SpainEn() {
           answer={
             <p>
               Two, and they are often confused. The newcomers&apos; regime (the Beckham Law) taxes Spanish income up to €600,000 at a flat 24% for the year
-              you arrive and five more, if you were not tax-resident in Spain for the previous five years. The 15% corporate rate needs a separate ENISA
-              &ldquo;emerging company&rdquo; certificate.
+              you arrive and five more, if you were not tax-resident in Spain for the previous five years. Two extra years at the 15% corporate rate need a separate
+              ENISA &ldquo;emerging company&rdquo; certificate.
             </p>
           }
         >
@@ -936,10 +956,12 @@ export default function SpainEn() {
             </div>
             <div className="rounded-2xl border border-[#1a1a1a]/10 bg-[#F2F0E9] p-6">
               <p className={`text-[#A30F1F] ${label}`}>Your company</p>
-              <h3 className="mt-1 font-serif text-2xl">15% corporate tax instead of 25%</h3>
+              <h3 className="mt-1 font-serif text-2xl">15% corporate tax for two extra years</h3>
               <p className="mt-2 font-sans text-sm leading-relaxed text-[#1a1a1a]/70">
-                For the first profitable period and the three after it. It belongs to the &ldquo;emerging company&rdquo; (empresa emergente) under Law
-                28/2022 and needs a separate certificate from ENISA. A favourable ENISA report for residence is not that certificate.
+                A certified &ldquo;emerging company&rdquo; (empresa emergente) pays 15% in its first profitable year and the three after it (Law 28/2022,
+                art. 7). Every new company already pays 15% in its first profitable year and the next (Corporate Tax Law, art. 29.1), and since 2025
+                companies with turnover under €1m pay 17% or 20%. So the startup advantage is two extra years at 15%. It needs a separate certificate
+                from ENISA; a favourable ENISA report for residence is not that certificate.
               </p>
             </div>
           </div>
@@ -1088,7 +1110,7 @@ export default function SpainEn() {
           </p>
           <ol className="grid grid-cols-1 gap-3 md:grid-cols-2">
             {[
-              { t: 'The ten consular days are not guaranteed', b: 'Article 75 excludes applicants subject to prior consultation under article 22 of the Schengen Visa Code from the ten-day deadline, and Iran is on that list.' },
+              { t: 'The ten consular days are not guaranteed', b: 'Article 75 excludes applicants subject to prior consultation under article 22 of the Schengen Visa Code from the ten-day deadline. Some nationalities need that consultation with other Schengen states, which can add time; the list is not published, so ask the consulate whether it applies to you.' },
               { t: 'Filing from inside Spain skips the consulate', b: 'If you are lawfully in Spain on a Schengen visa, you can apply directly from there. The application extends your current short-stay status until the decision (article 76). A big advantage, but only with a valid visa and not one day of irregular stay.' },
               { t: 'Funds must be readable', b: 'Proof of means must sit in an account the Spanish administration can read and whose movements it can see. A balance in an Iranian bank is effectively not accepted; plan on that from the start.' },
               { t: 'Banking takes longer', b: 'Opening a Spanish bank account with an Iranian passport takes more time and paperwork because of anti-money-laundering rules. Budget the first months on that assumption.' },
@@ -1182,7 +1204,7 @@ export default function SpainEn() {
                   <a href={s.href} target="_blank" rel="noopener noreferrer" className="break-words font-bold underline decoration-[#FFC400] decoration-2 underline-offset-2 hover:text-[#A30F1F]">
                     {s.name}
                   </a>{' '}
-                  <span className="text-[#1a1a1a]/60">{s.what} Checked 29 Oct 2026.</span>
+                  <span className="text-[#1a1a1a]/60">{s.what} Checked {s.checked ?? '29 Oct 2026'}.</span>
                 </li>
               ))}
             </ol>
