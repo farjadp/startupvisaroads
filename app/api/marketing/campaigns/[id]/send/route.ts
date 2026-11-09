@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { getSessionFromRequest } from '@/lib/auth';
-import { getMarketingSettings, sendEmail, sendSms, getTodaySentCount } from '@/lib/marketing';
+import { getMarketingSettings, sendEmail, sendSms, getTodaySentCount, selectRecipients } from '@/lib/marketing';
 import * as cheerio from 'cheerio';
 import { assertLinkSigningConfigured, buildUnsubscribeUrl, clickSignature } from '@/lib/signed-links';
 
@@ -134,13 +134,7 @@ export async function POST(
   }
 
   // ── Full send (Background execution) ──────────────────────────────────────────
-  const contactMap = new Map<string, { id: string; email: string | null; phone: string | null }>();
-  for (const cg of campaign.groups) {
-    for (const contact of cg.group.contacts) {
-      contactMap.set(contact.id, contact);
-    }
-  }
-  const contacts = Array.from(contactMap.values());
+  const contacts = selectRecipients(campaign.groups);
 
   if (campaign.type === 'EMAIL' || campaign.type === 'BOTH') {
     const todayEmails = await getTodaySentCount('EMAIL');
