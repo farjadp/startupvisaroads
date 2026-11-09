@@ -62,12 +62,13 @@ export function MatchCard({ picture = true }: { picture?: boolean }) {
             {pick(route.name).text}
           </T>
         </View>
-        <T variant={best.thin ? 'headline' : 'figure'}>{figure}</T>
-        <T variant="caption" tone="fgMuted">
-          {best.thin ? t('assess2.notChance') : t('assess2.matchLine')}
+        {/* The % and its coverage share one type size (auditor P1 #5): a % never outweighs what it rests on. */}
+        <T variant="headline">{figure}</T>
+        <T variant="headline" tone="fgMuted">
+          {coverage}
         </T>
         <T variant="caption" tone="fgMuted">
-          {[best.thin ? `${coverage} · ${t('assess2.thin')}` : coverage, uncheckedLine].filter(Boolean).join(' · ')}
+          {[best.thin ? `${t('assess2.notChance')} · ${t('assess2.thin')}` : t('assess2.matchLine'), uncheckedLine].filter(Boolean).join(' · ')}
         </T>
         {gapLabel ? <T variant="body">{t('home.closeFirst', { item: gapLabel })}</T> : null}
         <T variant="row" weight="bold" style={{ textDecorationLine: 'underline' }}>

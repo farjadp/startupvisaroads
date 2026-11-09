@@ -12,7 +12,8 @@ import { useI18n } from '@/i18n/I18nProvider';
 import { useStore } from '@/state/store';
 import { space } from '@/theme/tokens';
 import { Icon } from '@/ui/Icon';
-import { Button, Disclaimer, Heading, Progress, RadioRow, Screen } from '@/ui/kit';
+import { DisclaimerWithAbout } from '@/ui/InfoSheets';
+import { Button, Heading, Progress, RadioRow, Screen } from '@/ui/kit';
 import { T } from '@/ui/T';
 
 function shuffled(n: number): number[] {
@@ -120,13 +121,8 @@ export default function Quiz() {
         </T>
         <Button kind="secondary" label={t('quiz.again')} onPress={again} />
         <Button kind="link" label={t('quiz.back')} onPress={() => router.back()} />
-        {/* The iOS sheet covers the tabs: close it first, or the About page opens unseen underneath. */}
-        <Disclaimer
-          onAbout={() => {
-            router.back();
-            router.navigate('/(tabs)/me/about');
-          }}
-        />
+        {/* About opens as a sheet over the quiz, so the reader stays in it (spec 2026-11-09 §3). */}
+        <DisclaimerWithAbout />
       </Screen>
     );
   }

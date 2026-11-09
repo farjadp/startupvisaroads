@@ -65,6 +65,11 @@ export function T({ variant: role = 'body', tone = 'fg', weight, italic, lang, s
           // Natural alignment follows the text's language, not only the native layer
           // (which on iOS can lag one launch behind a language switch).
           writingDirection: textMeta.rtl ? 'rtl' : 'ltr',
+          // Workaround (9 Nov 2026, RN 0.86 / iOS 26): some multi-line texts were measured for
+          // N lines but drawn as N-1 wider lines, clipping the end at the right edge (seen on
+          // the Express Entry NOC caption and a news paragraph). A hairline top padding makes
+          // iOS lay the text out again with the measured width; remove when RN fixes it.
+          paddingTop: 0.5,
         },
         // The text node's own direction, so RN does not swap 'left' to right inside an RTL layout.
         foreignLtr ? { direction: 'ltr', writingDirection: 'ltr', textAlign: 'left' } : null,

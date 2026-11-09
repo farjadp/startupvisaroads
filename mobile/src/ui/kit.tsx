@@ -91,6 +91,23 @@ export function useReduceMotion(): boolean | null {
   return reduce;
 }
 
+/** Whether VoiceOver / TalkBack is on, kept current; null until read. */
+export function useScreenReader(): boolean | null {
+  const [on, setOn] = useState<boolean | null>(null);
+  useEffect(() => {
+    let live = true;
+    AccessibilityInfo.isScreenReaderEnabled()
+      .then((v) => live && setOn(v))
+      .catch(() => live && setOn(false));
+    const sub = AccessibilityInfo.addEventListener('screenReaderChanged', setOn);
+    return () => {
+      live = false;
+      sub.remove();
+    };
+  }, []);
+  return on;
+}
+
 export function AcidRule() {
   const { c } = useTheme();
   return <View accessible={false} style={{ width: 48, height: size.ruleAccent, backgroundColor: c.accent }} />;
@@ -341,13 +358,13 @@ export function CheckRow({ label, checked, onToggle, trailing }: { label: string
   );
 }
 
-/** Radio option (spec 6). */
-export function RadioRow({ label, selected, onPress, muted }: { label: string; selected: boolean; onPress: () => void; muted?: boolean }) {
+/** Radio option (spec 6); `check` makes it a checkbox row with a square mark (multi-choice sheets). */
+export function RadioRow({ label, selected, onPress, muted, lang, check }: { label: string; selected: boolean; onPress: () => void; muted?: boolean; lang?: Locale; check?: boolean }) {
   const { c } = useTheme();
   return (
     <Pressable
       onPress={onPress}
-      accessibilityRole="radio"
+      accessibilityRole={check ? 'checkbox' : 'radio'}
       accessibilityState={{ checked: selected }}
       style={({ pressed }) => ({
         flexDirection: 'row',
@@ -362,10 +379,12 @@ export function RadioRow({ label, selected, onPress, muted }: { label: string; s
         backgroundColor: selected ? c.fg : pressed ? c.rowPressed : 'transparent',
       })}
     >
-      <T variant="body" weight={selected ? 'bold' : 'medium'} tone={selected ? 'buttonFg' : muted ? 'fgMuted' : 'fg'} style={{ flex: 1 }}>
+      <T variant="body" weight={selected ? 'bold' : 'medium'} tone={selected ? 'buttonFg' : muted ? 'fgMuted' : 'fg'} lang={lang} style={{ flex: 1 }}>
         {label}
       </T>
-      <View style={{ width: 20, height: 20, borderRadius: 999, borderWidth: 1.5, borderColor: selected ? c.bg : c.fg, backgroundColor: selected ? c.accent : 'transparent' }} />
+      <View style={{ width: 20, height: 20, borderRadius: check ? 0 : 999, borderWidth: 1.5, borderColor: selected ? c.bg : c.fg, backgroundColor: selected ? c.accent : 'transparent', alignItems: 'center', justifyContent: 'center' }}>
+        {check && selected ? <Icon name="check" size={14} tone="onAccent" /> : null}
+      </View>
     </Pressable>
   );
 }

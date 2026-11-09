@@ -13,7 +13,8 @@ import { useStore } from '@/state/store';
 import { space } from '@/theme/tokens';
 import { CountryPicture } from '@/ui/CountryPicture';
 import { CountryProfileView } from '@/ui/road';
-import { Disclaimer, Heading, Label, LinkRow, Ruled, Screen } from '@/ui/kit';
+import { DisclaimerWithAbout } from '@/ui/InfoSheets';
+import { Heading, Label, LinkRow, Ruled, Screen } from '@/ui/kit';
 import { T } from '@/ui/T';
 
 export default function CountryPage() {
@@ -68,7 +69,7 @@ export default function CountryPage() {
           <LinkRow icon="wallet" label={t('countries.funds')} onPress={() => router.push({ pathname: '/(tabs)/assess/funds', params: { country } })} />
         </Ruled>
       ) : null}
-      <Disclaimer onAbout={() => router.navigate('/(tabs)/me/about')} />
+      <DisclaimerWithAbout />
     </Screen>
   );
 }

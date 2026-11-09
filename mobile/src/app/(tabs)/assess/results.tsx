@@ -18,8 +18,9 @@ import { useTheme } from '@/theme/ThemeProvider';
 import { space } from '@/theme/tokens';
 import { CountryPicture } from '@/ui/CountryPicture';
 import { Flag } from '@/ui/Flag';
-import { Button, Disclaimer, Heading, Label, LinkRow, Ruled, Screen } from '@/ui/kit';
+import { Button, Heading, Label, LinkRow, Ruled, Screen } from '@/ui/kit';
 import { T } from '@/ui/T';
+import { DisclaimerWithAbout, MentorSheet } from '@/ui/InfoSheets';
 
 function ResultCard({ m, lead }: { m: MatchResult; lead?: boolean }) {
   const { t, pick, count } = useI18n();
@@ -32,6 +33,8 @@ function ResultCard({ m, lead }: { m: MatchResult; lead?: boolean }) {
     .map((cr) => pick(cr!.label).text);
   const pct = `${count(m.pct ?? 0)}${t('assess2.pctSign')}`;
   const coverage = t('assess2.coverage', { n: count(m.coverage.scored), total: count(m.coverage.of) });
+  // The conditions the answers could not score, by name (trust rule: unscored conditions are always listed).
+  const unscored = m.results.filter((r) => r.state === 'unscored').map((r) => route.criteria.find((cr) => cr.key === r.key)).filter(Boolean).map((cr) => pick(cr!.label).text);
   // Thin coverage: what is met, never a % (a "100%" on one checkable condition reads as "you qualify").
   const figure = m.thin ? t('assess2.thinMet', { met: count(metCount(m)), n: count(m.coverage.scored) }) : pct;
   const figureA11y = m.thin ? `${figure}, ${t('assess2.notChance')}` : t('assess2.matchA11y', { pct });
@@ -39,7 +42,7 @@ function ResultCard({ m, lead }: { m: MatchResult; lead?: boolean }) {
     <Pressable
       onPress={() => router.push(`/(tabs)/countries/route/${route.key}`)}
       accessibilityRole="button"
-      accessibilityLabel={[name.text, figureA11y, coverage, gaps.length ? `${t('assess2.gaps')}: ${gaps.join('; ')}` : ''].filter(Boolean).join('. ')}
+      accessibilityLabel={[name.text, figureA11y, coverage, unscored.length ? `${t('assess2.notChecked')}: ${unscored.join('; ')}` : '', gaps.length ? `${t('assess2.gaps')}: ${gaps.join('; ')}` : ''].filter(Boolean).join('. ')}
       style={({ pressed }) => ({ borderWidth: lead ? 1.5 : 1, borderColor: lead ? c.fg : c.rule, opacity: pressed ? 0.85 : 1 })}
     >
       {lead ? <CountryPicture country={route.country as Country} height={110} /> : null}
@@ -50,13 +53,26 @@ function ResultCard({ m, lead }: { m: MatchResult; lead?: boolean }) {
             {name.text}
           </T>
         </View>
-        <T variant={lead && !m.thin ? 'figure' : 'headline'}>{figure}</T>
-        <T variant="caption" tone="fgMuted">
-          {m.thin ? t('assess2.notChance') : t('assess2.matchLine')}
+        {/* The % and what it rests on share one type size (auditor P1 #5, 27 Oct 2026): neither outweighs the other. */}
+        <T variant="headline">{figure}</T>
+        <T variant="headline" tone="fgMuted">
+          {coverage}
         </T>
         <T variant="caption" tone="fgMuted">
-          {m.thin ? `${coverage} · ${t('assess2.thin')}` : coverage}
+          {m.thin ? `${t('assess2.notChance')} · ${t('assess2.thin')}` : t('assess2.matchLine')}
         </T>
+        {unscored.length ? (
+          <View style={{ gap: 2 }}>
+            <T variant="label" tone="fgMuted">
+              {t('assess2.notChecked')}
+            </T>
+            {unscored.map((u) => (
+              <T key={u} variant="caption" tone="fgMuted">
+                {`– ${u}`}
+              </T>
+            ))}
+          </View>
+        ) : null}
         {gaps.length ? (
           <View style={{ gap: 2, marginTop: space.s1 }}>
             <T variant="label" tone="fgMuted">
@@ -78,6 +94,7 @@ export default function Results() {
   const { t, pick, count } = useI18n();
   const { state } = useStore();
   const [all, setAll] = useState(false);
+  const [mentor, setMentor] = useState(false);
 
   if (!state.assessAt) {
     return (
@@ -132,7 +149,8 @@ export default function Results() {
       ) : null}
 
       {top[0] ? <Button label={t('assess2.closeFirst')} onPress={() => router.push(`/(tabs)/countries/route/${top[0].route}`)} /> : null}
-      <Button kind="secondary" label={t('assess2.mentor')} onPress={() => router.navigate('/(tabs)/me/mentor')} />
+      <Button kind="secondary" label={t('assess2.mentor')} onPress={() => setMentor(true)} />
+      <MentorSheet open={mentor} onClose={() => setMentor(false)} />
 
       {rest.length ? (
         <View>
@@ -177,7 +195,7 @@ export default function Results() {
       ) : null}
 
       <Button kind="link" icon={null} label={t('assess2.retake')} onPress={() => router.push('/assessment')} />
-      <Disclaimer onAbout={() => router.navigate('/(tabs)/me/about')} />
+      <DisclaimerWithAbout />
     </Screen>
   );
 }

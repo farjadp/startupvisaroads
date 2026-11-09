@@ -1,16 +1,19 @@
-// The v2 assessment (spec 2026-10-15 §4, auditor review of 15 Oct): an intro
-// that names the sensitive questions, then ten screens, one question each
-// (some with two short groups). Every group has "Prefer not to say", which
-// counts as unscored; "none" is an answer. Answers are saved as you go and
-// the flow resumes; Close keeps them. Nothing leaves the phone.
+// The v2 assessment (spec 2026-10-15 §4; v4 journey 2026-11-09 §2): an intro
+// that names the sensitive questions, then two screens of picker rows ("You",
+// "Money and plan") instead of ten screens of radios. Every sheet has "Prefer
+// not to say", which counts as unscored; "none" is an answer. After a choice
+// the sheet closes and, with no screen reader and no Reduce Motion, the next
+// empty row's sheet opens once the first has fully gone (never on a timer,
+// never past the last row). Answers are saved as you go and the flow resumes;
+// Close keeps them. Nothing leaves the phone.
 import { router } from 'expo-router';
-import { useEffect, useRef } from 'react';
-import { AccessibilityInfo, BackHandler, Pressable, View, findNodeHandle, type Text as RNText } from 'react-native';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { AccessibilityInfo, BackHandler, View, findNodeHandle, type ScrollView, type Text as RNText } from 'react-native';
 import { fromUsd, type FxCurrency } from '@shared/fx';
 import { ROUTES_V2 } from '@shared/routes-v2';
 import {
   AGE_BANDS,
-  ASSESS_ORDER,
+  ASSESS_SCREENS,
   DEGREES,
   GOALS,
   HOME_CURRENCY,
@@ -20,19 +23,24 @@ import {
   STAGES,
   TALENT_SIGNALS,
   WORK_BANDS,
+  answeredCount,
+  fieldsOf,
+  missingFields,
+  nextEmptyField,
   type AssessAnswers,
+  type AssessField,
   type MoneyKey,
 } from '@/content/assessment';
 import { useI18n } from '@/i18n/I18nProvider';
+import { normaliseAssessStep } from '@/state/migrate';
 import { useStore } from '@/state/store';
 import { useTheme } from '@/theme/ThemeProvider';
 import { space } from '@/theme/tokens';
-import { Icon } from '@/ui/Icon';
-import { Button, Label, RadioRow, Ruled, Screen } from '@/ui/kit';
+import { Button, Ruled, Screen, useReduceMotion, useScreenReader } from '@/ui/kit';
+import { PickerRow, type PickerOption } from '@/ui/PickerRow';
 import { T } from '@/ui/T';
 
 const SKIP = 'skip';
-type Field = keyof AssessAnswers;
 
 /** Rounds a converted band edge to two significant figures, so bands read as bands. */
 const nice = (n: number) => {
@@ -41,175 +49,69 @@ const nice = (n: number) => {
   return Math.round(n / p) * p;
 };
 
-function Group({ title, field, options }: { title?: string; field: Field; options: { id: string; label: string }[] }) {
-  const { state, set } = useStore();
-  const { t } = useI18n();
-  const value = state.assess[field] as string | undefined;
-  const choose = (id: string) => set({ assess: { ...state.assess, [field]: id } });
-  return (
-    <View accessibilityRole="radiogroup">
-      {title ? <Label>{title}</Label> : null}
-      <Ruled>
-        {options.map((o) => (
-          <RadioRow key={o.id} label={o.label} selected={value === o.id} onPress={() => choose(o.id)} />
-        ))}
-        <RadioRow label={t('assess2.skip')} muted selected={value === SKIP} onPress={() => choose(SKIP)} />
-      </Ruled>
-    </View>
-  );
-}
+type RowSpec = { field: AssessField; label: string; sheetTitle?: string; sub?: string; options: PickerOption[] };
 
-function MoneyGroup({ title, field, kind, currency }: { title: string; field: Field; kind: MoneyKey; currency: FxCurrency }) {
+/** The row for each field: label, sheet title (the full question where it reads better) and options, "Prefer not to say" last. */
+function useRows(a: AssessAnswers) {
   const { t, money } = useI18n();
-  const edges = MONEY_EDGES[kind];
-  const show = (usd: number) => money(nice(fromUsd(usd, currency)), currency);
-  // Each range is isolated (FSI … PDI) so "10,000 – 50,000" never flips in right-to-left text.
-  const options = edges.map((lo, i) => {
-    const label =
-      i === 0 ? t('assess2.under', { amount: `⁨${show(edges[1])}⁩` }) : i === edges.length - 1 ? t('assess2.over', { amount: `⁨${show(lo)}⁩` }) : `⁨${show(lo)} – ${show(edges[i + 1])}⁩`;
-    return { id: String(i), label };
-  });
-  return <Group title={title} field={field} options={options} />;
-}
-
-function YesNo({ field, label }: { field: 'admission' | 'jobOffer' | 'endorsement'; label: string }) {
-  const { t } = useI18n();
-  return <Group title={label} field={field} options={[{ id: 'yes', label: t('assess2.yes') }, { id: 'no', label: t('assess2.no') }]} />;
-}
-
-function Question({ index }: { index: number }) {
-  const { t } = useI18n();
-  const { state, set } = useStore();
-  const a = state.assess;
   const currency: FxCurrency = a.residence && a.residence !== SKIP ? HOME_CURRENCY[a.residence] : 'USD';
-  const key = ASSESS_ORDER[index];
-  switch (key) {
-    case 'goal':
-      return <Group field="goal" options={GOALS.map((g) => ({ id: g, label: t(`assess2.goals.${g}`) }))} />;
-    case 'where':
-      return (
-        <>
-          <Group title={t('assess2.residence')} field="residence" options={RESIDENCES.map((r) => ({ id: r, label: t(`assess2.places.${r}`) }))} />
-          <Group title={t('assess2.citizenship')} field="citizenship" options={RESIDENCES.map((r) => ({ id: r, label: t(`assess2.places.${r}`) }))} />
-        </>
-      );
-    case 'age':
-      return <Group field="age" options={AGE_BANDS.map((b) => ({ id: b.id, label: t(`assess2.ages.${b.id}`) }))} />;
-    case 'degree':
-      return <Group field="degree" options={DEGREES.map((d) => ({ id: d, label: t(`assess2.degrees.${d}`) }))} />;
-    case 'work':
-      return <Group field="work" options={WORK_BANDS.map((b) => ({ id: b.id, label: t(`assess2.works.${b.id}`) }))} />;
-    case 'language':
-      return (
-        <>
-          <Group title={t('assess2.english')} field="english" options={LANGUAGE_BANDS.map((b) => ({ id: b.id, label: t(`assess2.levels.${b.id}`) }))} />
-          <Group title={t('assess2.french')} field="french" options={LANGUAGE_BANDS.map((b) => ({ id: b.id, label: t(`assess2.levels.${b.id}`) }))} />
-        </>
-      );
-    case 'money':
-      return (
-        <>
-          {currency === 'USD' && a.residence === 'IR' ? (
-            <T variant="caption" tone="fgMuted">
-              {t('assess2.usdNote')}
-            </T>
-          ) : null}
-          <MoneyGroup title={t('assess2.liquid')} field="liquid" kind="liquid" currency={currency} />
-          <MoneyGroup title={t('assess2.netWorth')} field="netWorth" kind="netWorth" currency={currency} />
-        </>
-      );
-    case 'earning':
-      return (
-        <>
-          <MoneyGroup title={t('assess2.income')} field="income" kind="income" currency={currency} />
-          <MoneyGroup title={t('assess2.investment')} field="investment" kind="investment" currency={currency} />
-        </>
-      );
-    case 'business':
-      return (
-        <>
-          <Group field="businessStage" options={STAGES.map((s) => ({ id: s, label: t(`assess2.stages.${s}`) }))} />
-          {a.businessStage === 'revenue' || a.businessStage === 'established' ? <MoneyGroup title={t('assess2.revenue')} field="revenue" kind="revenue" currency={currency} /> : null}
-        </>
-      );
-    case 'extras': {
-      const talent = a.goal === 'talent' || a.goal === 'unsure' || a.goal === SKIP || !a.goal;
-      const picked = a.talent ?? [];
-      const toggle = (s: string) => set({ assess: { ...a, talent: picked.includes(s) ? picked.filter((x) => x !== s) : [...picked, s] } });
-      return (
-        <>
-          <YesNo field="admission" label={t('assess2.admission')} />
-          <YesNo field="jobOffer" label={t('assess2.jobOffer')} />
-          <YesNo field="endorsement" label={t('assess2.endorsement')} />
-          {talent ? (
-            <View>
-              <Label>{t('assess2.talent')}</Label>
-              <Ruled>
-                {TALENT_SIGNALS.map((s) => (
-                  <TalentRow key={s} label={t(`assess2.signals.${s}`)} checked={picked.includes(s)} onToggle={() => toggle(s)} />
-                ))}
-              </Ruled>
-            </View>
-          ) : null}
-        </>
-      );
-    }
-  }
-}
-
-function TalentRow({ label, checked, onToggle }: { label: string; checked: boolean; onToggle: () => void }) {
-  const { c } = useTheme();
-  return (
-    <Pressable
-      onPress={onToggle}
-      accessibilityRole="checkbox"
-      accessibilityState={{ checked }}
-      style={({ pressed }) => ({ flexDirection: 'row', alignItems: 'center', gap: space.s3, minHeight: 56, paddingVertical: space.s2, borderBottomWidth: 1, borderBottomColor: c.rule, backgroundColor: pressed ? c.rowPressed : 'transparent' })}
-    >
-      <View style={{ width: 22, height: 22, borderWidth: 1.5, borderColor: c.fg, backgroundColor: checked ? c.fg : 'transparent', alignItems: 'center', justifyContent: 'center' }}>
-        {checked ? <Icon name="check" size={16} tone="buttonFg" /> : null}
-      </View>
-      <T variant="row" style={{ flex: 1 }}>
-        {label}
-      </T>
-    </Pressable>
-  );
-}
-
-/** Every group on the screen has an answer (or "prefer not to say"). Talent signals are optional. */
-function answered(index: number, a: AssessAnswers): boolean {
-  const has = (f: Field) => a[f] !== undefined;
-  switch (ASSESS_ORDER[index]) {
-    case 'goal':
-      return has('goal');
-    case 'where':
-      return has('residence') && has('citizenship');
-    case 'age':
-      return has('age');
-    case 'degree':
-      return has('degree');
-    case 'work':
-      return has('work');
-    case 'language':
-      return has('english') && has('french');
-    case 'money':
-      return has('liquid') && has('netWorth');
-    case 'earning':
-      return has('income') && has('investment');
-    case 'business':
-      return has('businessStage') && (!(a.businessStage === 'revenue' || a.businessStage === 'established') || has('revenue'));
-    case 'extras':
-      return has('admission') && has('jobOffer') && has('endorsement');
-  }
+  const skip: PickerOption = { id: SKIP, label: t('assess2.skip'), muted: true };
+  const list = (ids: readonly string[], path: string): PickerOption[] => [...ids.map((id) => ({ id, label: t(`${path}.${id}`) })), skip];
+  const moneyOptions = (kind: MoneyKey): PickerOption[] => {
+    const edges = MONEY_EDGES[kind];
+    const show = (usd: number) => money(nice(fromUsd(usd, currency)), currency);
+    // Each range is isolated (FSI … PDI) so "10,000 – 50,000" never flips in right-to-left text.
+    return [
+      ...edges.map((lo, i) => ({
+        id: String(i),
+        label: i === 0 ? t('assess2.under', { amount: `⁨${show(edges[1])}⁩` }) : i === edges.length - 1 ? t('assess2.over', { amount: `⁨${show(lo)}⁩` }) : `⁨${show(lo)} – ${show(edges[i + 1])}⁩`,
+      })),
+      skip,
+    ];
+  };
+  const usdNote = currency === 'USD' && a.residence === 'IR' ? t('assess2.usdNote') : undefined;
+  const yesNo: PickerOption[] = [{ id: 'yes', label: t('assess2.yes') }, { id: 'no', label: t('assess2.no') }, skip];
+  const places = RESIDENCES.map((r) => ({ id: r, label: t(`assess2.places.${r}`) }));
+  const rows: Record<Exclude<AssessField, 'talent'>, RowSpec> = {
+    goal: { field: 'goal', label: t('assess2.rows.goal'), sheetTitle: t('assess2.q.goal'), options: list(GOALS, 'assess2.goals') },
+    residence: { field: 'residence', label: t('assess2.residence'), options: [...places, skip] },
+    citizenship: { field: 'citizenship', label: t('assess2.citizenship'), options: [...places, skip] },
+    age: { field: 'age', label: t('assess2.rows.age'), sheetTitle: t('assess2.q.age'), options: list(AGE_BANDS.map((b) => b.id), 'assess2.ages') },
+    degree: { field: 'degree', label: t('assess2.rows.degree'), sheetTitle: t('assess2.q.degree'), options: list(DEGREES, 'assess2.degrees') },
+    work: { field: 'work', label: t('assess2.rows.work'), sheetTitle: t('assess2.q.work'), options: list(WORK_BANDS.map((b) => b.id), 'assess2.works') },
+    english: { field: 'english', label: t('assess2.english'), options: list(LANGUAGE_BANDS.map((b) => b.id), 'assess2.levels') },
+    french: { field: 'french', label: t('assess2.french'), options: list(LANGUAGE_BANDS.map((b) => b.id), 'assess2.levels') },
+    liquid: { field: 'liquid', label: t('assess2.liquid'), sub: usdNote, options: moneyOptions('liquid') },
+    netWorth: { field: 'netWorth', label: t('assess2.netWorth'), sub: usdNote, options: moneyOptions('netWorth') },
+    income: { field: 'income', label: t('assess2.income'), sub: usdNote, options: moneyOptions('income') },
+    investment: { field: 'investment', label: t('assess2.investment'), sub: usdNote, options: moneyOptions('investment') },
+    businessStage: { field: 'businessStage', label: t('assess2.rows.businessStage'), sheetTitle: t('assess2.q.business'), options: list(STAGES, 'assess2.stages') },
+    revenue: { field: 'revenue', label: t('assess2.revenue'), sub: usdNote, options: moneyOptions('revenue') },
+    admission: { field: 'admission', label: t('assess2.admission'), options: yesNo },
+    jobOffer: { field: 'jobOffer', label: t('assess2.jobOffer'), options: yesNo },
+    endorsement: { field: 'endorsement', label: t('assess2.endorsement'), options: yesNo },
+  };
+  return rows;
 }
 
 export default function Assessment() {
   const { state, set } = useStore();
   const { t, count } = useI18n();
   const { c } = useTheme();
-  const step = Math.max(-1, Math.min(state.assessStep, ASSESS_ORDER.length - 1));
+  const reduce = useReduceMotion();
+  const reader = useScreenReader();
+  // Stored steps from the ten-screen flow fold onto the two screens (migrate.ts).
+  const step = normaliseAssessStep(state.assessStep);
+  const a = state.assess;
+  const rows = useRows(a);
   const headingRef = useRef<RNText>(null);
-  const total = ASSESS_ORDER.length;
+  const scrollRef = useRef<ScrollView>(null);
+  const rowRefs = useRef<Partial<Record<AssessField, View | null>>>({});
+  const listRef = useRef<View>(null);
+  const listY = useRef(0);
+  const [openField, setOpenField] = useState<AssessField | null>(null);
+  // The row to open once the current sheet has fully gone (Modal onDismiss), or null.
+  const pending = useRef<AssessField | null>(null);
 
   useEffect(() => {
     const node = headingRef.current ? findNodeHandle(headingRef.current) : null;
@@ -227,26 +129,77 @@ export default function Assessment() {
     return () => sub.remove();
   });
 
+  const intro = step === -1;
+  const missing = intro ? [] : missingFields(step, a);
+  const ok = missing.length === 0;
+  const progress = answeredCount(a);
+
   const next = () => {
-    if (step < total - 1) return set({ assessStep: step + 1 });
+    if (step < 1) return set({ assessStep: step + 1 });
     set({ assessAt: new Date().toISOString(), assessStep: -1 });
     router.replace('/(tabs)/assess/results');
   };
 
-  const intro = step === -1;
-  const ok = intro || answered(step, state.assess);
+  const bringIntoView = (field: AssessField) => {
+    const row = rowRefs.current[field];
+    const scroll = scrollRef.current;
+    if (!row || !scroll) return;
+    const list = listRef.current;
+    if (!list) return;
+    try {
+      // The row's offset inside the list, plus the list's offset in the scroll content.
+      row.measureLayout(
+        list,
+        (_x, y) => scroll.scrollTo({ y: Math.max(0, listY.current + y - space.s6), animated: !reduce }),
+        () => {},
+      );
+    } catch {
+      // Measuring can fail while the sheet is still mounted; the row is then simply not scrolled to.
+    }
+    if (reader) {
+      const node = findNodeHandle(row);
+      if (node) AccessibilityInfo.setAccessibilityFocus(node);
+    }
+  };
+
+  const choose = (field: AssessField, id: string) => {
+    const updated: AssessAnswers = { ...a, [field]: id };
+    set({ assess: updated });
+    setOpenField(null);
+    pending.current = step >= 0 ? nextEmptyField(step, updated, field) : null;
+  };
+
+  // Runs when the closed sheet has fully left the screen: the next empty row comes into view and,
+  // without a screen reader or Reduce Motion, its sheet opens. Never a setTimeout.
+  const dismissed = useCallback(() => {
+    const field = pending.current;
+    pending.current = null;
+    if (!field) return;
+    bringIntoView(field);
+    if (!reader && !reduce) setOpenField(field);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [reader, reduce]);
+
+  const toggleTalent = (s: string) => {
+    const picked = a.talent ?? [];
+    set({ assess: { ...a, talent: picked.includes(s) ? picked.filter((x) => x !== s) : [...picked, s] } });
+  };
+  const askTalent = a.goal === 'talent' || a.goal === 'unsure' || a.goal === SKIP || !a.goal;
+
+  const helper = ok ? undefined : missing.length === 1 ? t('assess2.leftOne') : t('assess2.left', { n: count(missing.length) });
 
   return (
     <Screen
+      scrollRef={scrollRef}
       footer={
         <>
           {/* A disabled button says why (tokens: disabled state); screen readers hear it once, as the hint. */}
-          {ok ? null : (
+          {helper ? (
             <T variant="caption" tone="fgMuted" accessibilityElementsHidden importantForAccessibility="no">
-              {t('assess2.needAnswer')}
+              {helper}
             </T>
-          )}
-          <Button label={intro ? t('assess2.begin') : step === total - 1 ? t('assess2.finish') : t('assess2.next')} onPress={next} disabled={!ok} hint={ok ? undefined : t('assess2.needAnswer')} />
+          ) : null}
+          <Button label={intro ? t('assess2.begin') : step === 1 ? t('assess2.finish') : t('assess2.next')} onPress={next} disabled={!ok} hint={helper} />
         </>
       }
     >
@@ -254,20 +207,8 @@ export default function Assessment() {
         <Button kind="link" icon={null} label={intro ? t('assess2.close') : t('assess2.back')} onPress={back} />
         {intro ? null : <Button kind="link" icon={null} label={t('assess2.close')} onPress={close} />}
       </View>
-      {intro ? null : (
-        <View style={{ gap: space.s2 }}>
-          <T variant="caption" tone="fgMuted">
-            {t('assess2.progress', { n: count(step + 1), total: count(total) })}
-          </T>
-          {/* Fills from the start edge, in both directions. */}
-          <View accessible={false} style={{ height: 4, backgroundColor: c.progressTrack, flexDirection: 'row' }}>
-            <View style={{ flex: step + 1, backgroundColor: c.progressFill }} />
-            <View style={{ flex: total - step - 1 }} />
-          </View>
-        </View>
-      )}
       <T ref={headingRef} variant="display-m" accessibilityRole="header">
-        {intro ? t('assess2.introTitle') : t(`assess2.q.${ASSESS_ORDER[step]}`)}
+        {intro ? t('assess2.introTitle') : step === 0 ? t('assess2.screens.you') : t('assess2.screens.money')}
       </T>
       {intro ? (
         <View style={{ gap: space.s3 }}>
@@ -278,7 +219,58 @@ export default function Assessment() {
           </T>
         </View>
       ) : (
-        <Question index={step} />
+        <>
+          <View style={{ gap: space.s2 }}>
+            <T variant="caption" tone="fgMuted">
+              {t('assess2.answered', { n: count(progress.n), total: count(progress.total) })}
+            </T>
+            {/* Decorative: the value is the text above. Fills from the start edge, in both directions. */}
+            <View accessible={false} importantForAccessibility="no-hide-descendants" style={{ height: 4, backgroundColor: c.progressTrack, flexDirection: 'row' }}>
+              <View style={{ flex: progress.n, backgroundColor: c.progressFill }} />
+              <View style={{ flex: Math.max(0, progress.total - progress.n) }} />
+            </View>
+          </View>
+          <View ref={listRef} onLayout={(e) => (listY.current = e.nativeEvent.layout.y)}>
+            <Ruled>
+              {ASSESS_SCREENS[step].flatMap((key) =>
+                fieldsOf(key, a).map((field) => {
+                  const r = rows[field as Exclude<AssessField, 'talent'>];
+                  return (
+                    <PickerRow
+                      key={field}
+                      rowRef={(node) => {
+                        rowRefs.current[field] = node;
+                      }}
+                      label={r.label}
+                      sheetTitle={r.sheetTitle}
+                      sub={r.sub}
+                      options={r.options}
+                      value={a[field] as string | undefined}
+                      onChange={(id) => choose(field, id)}
+                      open={openField === field}
+                      onOpenChange={(o) => setOpenField(o ? field : null)}
+                      onDismissed={dismissed}
+                    />
+                  );
+                }),
+              )}
+              {step === 1 && askTalent ? (
+                <PickerRow
+                  label={t('assess2.rows.talent')}
+                  sheetTitle={t('assess2.talent')}
+                  multiple
+                  options={TALENT_SIGNALS.map((s) => ({ id: s, label: t(`assess2.signals.${s}`) }))}
+                  value={a.talent ?? []}
+                  valueText={a.talent?.length ? t('assess2.selectedN', { n: count(a.talent.length) }) : undefined}
+                  onChange={toggleTalent}
+                  open={openField === 'talent'}
+                  onOpenChange={(o) => setOpenField(o ? 'talent' : null)}
+                  onDismissed={dismissed}
+                />
+              ) : null}
+            </Ruled>
+          </View>
+        </>
       )}
     </Screen>
   );

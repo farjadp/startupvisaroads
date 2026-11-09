@@ -1,13 +1,14 @@
-// News (3.1): cached first, then refreshed; offline banner with the saved
-// date; error with Retry; empty state that offers all news (spec 24, 26).
-import * as WebBrowser from 'expo-web-browser';
-import { useCallback, useEffect, useState } from 'react';
+// News (3.1, v4 §5): cached first, then synced on focus and pull-to-refresh;
+// offline banner with the saved date; error with Retry; empty state that
+// offers all news. Articles open in the in-app reader, not the browser.
+import { router, useFocusEffect } from 'expo-router';
+import { useCallback, useRef, useState } from 'react';
 import { FlatList, Pressable, RefreshControl, ScrollView, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { cachedFeed, fetchFeed, type Feed, type NewsItem } from '@/content/news';
 import { Image } from 'expo-image';
 import { routeV2 } from '@shared/routes-v2';
-import { COUNTRY_NAMES, COUNTRY_PHOTO, type Country } from '@/content/routes';
+import { COUNTRY_NAMES, COUNTRY_ORDER, COUNTRY_PHOTO, type Country } from '@/content/routes';
 import { useI18n } from '@/i18n/I18nProvider';
 import { useStore } from '@/state/store';
 import { useTheme } from '@/theme/ThemeProvider';
@@ -15,13 +16,12 @@ import { space } from '@/theme/tokens';
 import { Banner, Button, Chip, Heading } from '@/ui/kit';
 import { T } from '@/ui/T';
 
-const FILTERS: Country[] = ['CA', 'DK', 'FI', 'EE', 'NL', 'IT', 'TR', 'US'];
 type Filter = 'all' | 'mine' | Country;
 
 export default function News() {
   const { t, pick, meta, locale, date } = useI18n();
   const { c } = useTheme();
-  const { state, set } = useStore();
+  const { state } = useStore();
   const insets = useSafeAreaInsets();
   const lang = meta.siteLocale;
   // "My roads": the countries of the v2 routes the user follows (3B).
@@ -33,13 +33,20 @@ export default function News() {
   const [refreshing, setRefreshing] = useState(false);
   const [filter, setFilter] = useState<Filter>(mine ? 'mine' : 'all');
 
+  const lastSync = useRef(0);
   const load = useCallback(
     async (pull = false) => {
       if (pull) setRefreshing(true);
       const cached = await cachedFeed(lang);
       if (cached && !pull) setFeed(cached);
+      // Returning to the tab within half a minute shows the cache without asking the server again.
+      if (!pull && cached && Date.now() - lastSync.current < 30_000) {
+        setStatus((s) => (s === 'loading' ? 'ok' : s));
+        return;
+      }
       try {
         setFeed(await fetchFeed(lang));
+        lastSync.current = Date.now();
         setStatus('ok');
       } catch {
         setStatus(cached ? 'offline' : 'error');
@@ -50,17 +57,18 @@ export default function News() {
     [lang],
   );
 
-  useEffect(() => {
-    void load();
-  }, [load]);
+  useFocusEffect(
+    useCallback(() => {
+      void load();
+    }, [load]),
+  );
 
   const countries = filter === 'mine' ? myCountries : filter === 'all' ? null : [filter];
   const items = (feed?.items ?? []).filter((i) => !countries || i.countries.some((k) => countries.includes(k)));
 
-  const open = (item: NewsItem) => {
-    if (!state.newsRead) set({ newsRead: true });
-    void WebBrowser.openBrowserAsync(item.link);
-  };
+  // A chip per country that has at least one article, in the app's country order.
+  const present = COUNTRY_ORDER.filter((k) => (feed?.items ?? []).some((i) => i.countries.includes(k)));
+  const open = (item: NewsItem) => router.push({ pathname: '/(tabs)/news/[slug]', params: { slug: item.slug, lang: item.locale } });
 
   const header = (
     <View style={{ gap: space.s4, paddingTop: insets.top + space.s4, paddingBottom: space.s3 }}>
@@ -69,7 +77,7 @@ export default function News() {
         <View style={{ width: space.s6 - space.s2 }} />
         {mine ? <Chip label={t('news.myRoads')} selected={filter === 'mine'} onPress={() => setFilter('mine')} /> : null}
         <Chip label={t('news.all')} selected={filter === 'all'} onPress={() => setFilter('all')} />
-        {FILTERS.map((f) => (
+        {present.map((f) => (
           <Chip key={f} label={pick(COUNTRY_NAMES[f]).text} selected={filter === f} onPress={() => setFilter(f)} />
         ))}
         <View style={{ width: space.s6 - space.s2 }} />
@@ -88,7 +96,7 @@ export default function News() {
     <View style={{ flex: 1, backgroundColor: c.bg }}>
       <FlatList
         data={items}
-        keyExtractor={(i) => i.link}
+        keyExtractor={(i) => i.id}
         contentContainerStyle={{ paddingHorizontal: space.s6, paddingBottom: space.s10 }}
         ListHeaderComponent={header}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => void load(true)} tintColor={c.fg} colors={[c.fg]} />}
@@ -113,26 +121,24 @@ export default function News() {
         }
         renderItem={({ item }) => {
           const where = item.countries.map((k) => pick(COUNTRY_NAMES[k]).text).join(' · ');
-          const when = item.date ? date(item.date) : '';
+          const when = date(item.publishedAt);
           const first = item.countries.find((k) => k in COUNTRY_PHOTO) as keyof typeof COUNTRY_PHOTO | undefined;
-          const photo = first ? COUNTRY_PHOTO[first] : undefined;
+          const photo = item.coverImage ? { uri: item.coverImage } : first ? COUNTRY_PHOTO[first] : undefined;
+          const foreign = item.locale !== locale ? item.locale : undefined;
           return (
             <Pressable
               onPress={() => open(item)}
               accessibilityRole="link"
-              accessibilityLabel={[where, item.title, t('news.analysis'), when].filter(Boolean).join(', ')}
-              accessibilityHint={t('common.opensBrowser')}
+              accessibilityLabel={[where, item.title, when].filter(Boolean).join(', ')}
+              accessibilityHint={t('news4.opensArticle')}
               style={({ pressed }) => ({ flexDirection: 'row', alignItems: 'center', gap: space.s4, paddingVertical: space.s4, borderBottomWidth: 1, borderBottomColor: c.rule, backgroundColor: pressed ? c.rowPressed : 'transparent' })}
             >
               <View style={{ flex: 1, gap: space.s2 }}>
-              {where ? (
-                <T variant="label" tone="fgMuted">
-                  {where}
-                </T>
-              ) : null}
-              <T variant="headline">{item.title}</T>
-              <T variant="caption" tone="fgMuted">
-                {t('news.analysis')} · {when}
+              <T variant="label" tone="fgMuted">
+                {[where, when].filter(Boolean).join(' · ')}
+              </T>
+              <T variant="headline" lang={foreign}>
+                {item.title}
               </T>
               </View>
               {photo ? <Image source={photo} style={{ width: 64, height: 64 }} contentFit="cover" accessible={false} /> : null}

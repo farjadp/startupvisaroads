@@ -38,3 +38,18 @@ export function migrate<S extends { v: StoredVersion; following: string[]; sourc
   if (p.v !== 1) return null;
   return { ...p, v: 2, following: toV2Keys(p.following), sourcesOpened: toV2Keys(p.sourcesOpened) } as unknown as S;
 }
+
+/**
+ * assessStep (9 Nov 2026): the assessment went from ten screens to two, so a
+ * stored step is -1 (intro), 0 or 1; anything above 1 resumes on the last
+ * screen, anything unreadable at the intro.
+ */
+export function normaliseAssessStep(step: unknown): -1 | 0 | 1 {
+  if (typeof step !== 'number' || !Number.isFinite(step) || step < 0) return -1;
+  return step >= 1 ? 1 : 0;
+}
+
+/** crsAt (9 Nov 2026): an ISO time, or null for blobs from before the Express Entry screen. */
+export function normaliseCrsAt(at: unknown): string | null {
+  return typeof at === 'string' && !Number.isNaN(Date.parse(at)) ? at : null;
+}
