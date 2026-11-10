@@ -62,7 +62,7 @@ npx tsx scripts/case-studies/eval/run.ts --offline
 9. **Type B notes** are read only from `~/VisaRoads-private/cases/<id>/raw.md` by `redact-b`. Never open, quote, summarise or paste raw notes or `redacted.md` into chat. Report only the counts the script prints.
 10. **Posting:** only to `/api/agent-case-studies` via the `post` stage (base `CASE_STUDIES_POST_URL`, bearer `AGENT_REPORTS_TOKEN`). Drafts land IN_REVIEW. You never publish, approve, schedule or flip a switch; Farjad approves in admin.
 11. **Site content rules:** every figure cited to the decision or an official source, no company prices, no "applying from Canada" section, no immigration advice. The red-line scan enforces these; a hit fails trace.
-12. Secrets come from env vars only. Never print `ANTHROPIC_API_KEY` or `AGENT_REPORTS_TOKEN`.
+12. Secrets come from env vars only. Never print `GEMINI_API_KEY`, `ANTHROPIC_API_KEY` or `AGENT_REPORTS_TOKEN`.
 
 ## Report back
 

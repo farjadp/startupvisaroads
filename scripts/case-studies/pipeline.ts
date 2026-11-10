@@ -7,7 +7,7 @@
 //   stages: extract | ground | anonymise | write-en | write-fa | trace | payload | post | all
 //   npx tsx scripts/case-studies/pipeline.ts redact-b <client-case-id>   (stage 0, type B)
 //
-// Env: ANTHROPIC_API_KEY (model stages only), CASE_STUDIES_MODEL_EXTRACT / _WRITE / _VERIFY,
+// Env: CASE_STUDIES_PROVIDER (gemini default | claude), GEMINI_API_KEY or ANTHROPIC_API_KEY (model stages only), CASE_STUDIES_MODEL_EXTRACT / _WRITE / _VERIFY,
 //      CASE_STUDIES_DIR, CLIENT_CASES_DIR, CASE_STUDIES_POST_URL, AGENT_REPORTS_TOKEN.
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
