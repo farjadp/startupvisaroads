@@ -1,0 +1,14 @@
+{
+  "_note": "Spec §10. Official URLs only (decisions.fct-cf.gc.ca). Reserves have no verified document URL yet; find them on the Court's site and add the URL before fetching.",
+  "decisions": [
+    { "citation": "2025 FC 12", "route": "start-up-visa", "url": "https://decisions.fct-cf.gc.ca/fc-cf/decisions/en/527166/1/document.do", "reserve": false },
+    { "citation": "2025 FC 1599", "route": "start-up-visa", "url": "https://decisions.fct-cf.gc.ca/fc-cf/decisions/en/529046/1/document.do", "reserve": false },
+    { "citation": "2026 FC 146", "route": "start-up-visa", "url": "https://decisions.fct-cf.gc.ca/fc-cf/decisions/en/529828/1/document.do", "reserve": false },
+    { "citation": "2026 FC 158", "route": "work-permit-c11", "url": "https://decisions.fct-cf.gc.ca/fc-cf/decisions/en/529865/1/document.do", "reserve": false },
+    { "citation": "2026 FC 255", "route": "study-permit", "url": "https://decisions.fct-cf.gc.ca/fc-cf/decisions/en/529999/1/document.do", "reserve": false },
+    { "citation": "2025 FC 1598", "route": "study-permit", "url": null, "reserve": true },
+    { "citation": "2026 FC 503", "route": "start-up-visa", "url": null, "reserve": true },
+    { "citation": "2025 FC 1742", "route": "start-up-visa", "url": null, "reserve": true },
+    { "citation": "2025 FC 1604", "route": "study-permit", "url": null, "reserve": true }
+  ]
+}

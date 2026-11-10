@@ -1,0 +1,15 @@
+{
+  "_note": "Synthetic type B notes with planted personal data. Every planted value is invented. Pass bar: 0 planted items survive redact() in mode B (spec §6).",
+  "cases": [
+    { "id": "b-01", "category": "type-b", "names": ["Kaveh Testperson"], "terms": [], "raw": "Kaveh Testperson came to us in January 17, 2023 with a rough idea. His UCI is 11-2233-4455 and his email is kaveh.t@example.com.", "planted": ["Kaveh", "Testperson", "January 17, 2023", "11-2233-4455", "kaveh.t@example.com"] },
+    { "id": "b-02", "category": "type-b", "names": ["Shirin Example-Nadi"], "terms": ["Acme Widgets"], "raw": "Shirin worked at Acme Widgets Ltd in Tehran for six years before the 34-year-old founder moved on.", "planted": ["Shirin", "Acme Widgets", "Tehran", "34-year-old"] },
+    { "id": "b-03", "category": "type-b", "names": ["Arash Sample"], "terms": ["Northstar Incubator"], "raw": "Arash joined the Northstar Incubator. Passport K12345678, application W307123456.", "planted": ["Arash", "Northstar Incubator", "K12345678", "W307123456"] },
+    { "id": "b-04", "category": "type-b", "names": ["Nasrin Fakeham"], "terms": [], "raw": "Call Nasrin on +1 416 555 0199 or message @nasrin_builds; she lives in Richmond Hill.", "planted": ["Nasrin", "+1 416 555 0199", "@nasrin_builds", "Richmond Hill"] },
+    { "id": "b-05", "category": "type-b", "names": ["شیرین نمونه"], "terms": [], "raw": "شیرین نمونه در ۱۷ دی ۱۴۰۱ از تهران تماس گرفت. شماره پرونده ۱۱-۲۲۳۳-۴۴۵۵ است.", "planted": ["شیرین", "نمونه", "۱۷ دی ۱۴۰۱", "تهران", "۱۱-۲۲۳۳-۴۴۵۵"] },
+    { "id": "b-06", "category": "type-b", "names": ["Babak Placeholder"], "terms": ["Lumen Robotics"], "raw": "Mr. B. and his co-founder built Lumen Robotics; receipt no. RC-998877 came on 2023-01-17.", "planted": ["Mr. B", "Lumen Robotics", "RC-998877", "2023-01-17"] },
+    { "id": "b-07", "category": "type-b", "names": ["Leila Dummyfa"], "terms": ["University of Example"], "raw": "Leila studied at the University of Example and posts on instagram.com/leilabuilds. She is aged 29.", "planted": ["Leila", "University of Example", "instagram.com/leilabuilds", "aged 29"] },
+    { "id": "b-08", "category": "type-b", "names": ["Omid Mockname", "Sara Mockname"], "terms": [], "raw": "OMID MOCKNAME and his spouse Sara arrived in Vancouver; client ID 1122334455.", "planted": ["OMID", "MOCKNAME", "Sara", "Vancouver", "1122334455"] },
+    { "id": "b-09", "category": "type-b", "names": ["رضا آزمایشی"], "terms": ["شرکت نمونه‌سازان"], "raw": "رضا در شرکت نمونه‌سازان در اصفهان کار می‌کرد و ۴۱ ساله است. ایمیل او reza@example.org است.", "planted": ["رضا", "شرکت نمونه‌سازان", "اصفهان", "۴۱ ساله", "reza@example.org"] },
+    { "id": "b-10", "category": "type-b", "names": ["Mina Testova"], "terms": [], "raw": "Mina (K.T. in our notes) met us in Dubai on 3 March 2024; t.me/minatestova is her channel.", "planted": ["Mina", "K.T.", "Dubai", "3 March 2024", "t.me/minatestova"] }
+  ]
+}

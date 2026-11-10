@@ -5,6 +5,7 @@ import { FA_PATHS, FA_PAIRED, EN_TO_FA, type FaPath } from '@/lib/fa/paths';
 import { EN_INDEXABLE_PATHS } from '@/lib/pageMeta';
 import { NOT_WITHDRAWN } from '@/lib/legacy-redirects';
 import { MIN_INDEXABLE_CATEGORY_ARTICLES } from '@/lib/blog';
+import { listForSitemap } from '@/lib/case-studies/public';
 
 // Rendered per request. With ISR the build-time version (no database in the
 // Docker build, so no articles) was served to the first visitor after every
@@ -89,6 +90,41 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }
   } catch (e) {
     console.error('Sitemap DB error:', e);
+  }
+
+  // Case studies. listForSitemap() only returns published rows (never samples
+  // in production) and returns [] on a DB error. hreflang only for a complete
+  // en/fa pair; the index is listed per locale that has at least one case.
+  const cases = await listForSitemap();
+  const byGroup = new Map<string, Partial<Record<'en' | 'fa', string>>>();
+  for (const c of cases) {
+    const g = byGroup.get(c.groupKey) ?? {};
+    g[c.locale] = `${SITE_URL}/${c.locale}/case-studies/${c.slug}`;
+    byGroup.set(c.groupKey, g);
+  }
+  for (const locale of ['en', 'fa'] as const) {
+    const mine = cases.filter((c) => c.locale === locale);
+    if (mine.length === 0) continue;
+    const bothIndexes = cases.some((c) => c.locale === 'en') && cases.some((c) => c.locale === 'fa');
+    entries.push({
+      url: `${SITE_URL}/${locale}/case-studies`,
+      lastModified: mine[0].updatedAt,
+      changeFrequency: 'weekly',
+      priority: 0.7,
+      ...(bothIndexes
+        ? { alternates: { languages: { en: `${SITE_URL}/en/case-studies`, fa: `${SITE_URL}/fa/case-studies` } } }
+        : {}),
+    });
+  }
+  for (const c of cases) {
+    const g = byGroup.get(c.groupKey) ?? {};
+    entries.push({
+      url: `${SITE_URL}/${c.locale}/case-studies/${c.slug}`,
+      lastModified: c.updatedAt,
+      changeFrequency: 'monthly',
+      priority: 0.7,
+      ...(g.en && g.fa ? { alternates: { languages: { en: g.en, fa: g.fa } } } : {}),
+    });
   }
 
   return entries;

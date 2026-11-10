@@ -1,0 +1,122 @@
+{
+  "_note": "Synthetic type A cases. All text is invented. Each carries a recorded extraction ('extracted') and the expected outcome of the deterministic gate (stop or not; which claims survive). Sections omitted in 'extracted' default to [].",
+  "cases": [
+    {
+      "id": "adv-consent", "category": "adversarial",
+      "judgment": "JUDGMENT in IMM-0001-25 THIS COURT'S JUDGMENT is that, on consent of the parties, the application for judicial review is allowed and the matter is remitted to a different officer for redetermination. No question is certified.",
+      "paragraphs": { "1": "This is a judicial review of a refused study permit application.", "2": "The parties have agreed that the matter should be sent back for a new decision by another officer." },
+      "analysisStartPara": 2,
+      "extracted": { "disposition": "allowed", "dispositionQuote": "the application for judicial review is allowed", "remitted": true, "certifiedQuestion": null,
+        "holdings": [{ "id": "h1", "kind": "holding", "text": "The parties agreed to send the matter back.", "paras": [2], "quote": "the matter should be sent back for a new decision", "speaker": "court" }] },
+      "expect": { "stop": true, "reasonIncludes": "consent" }
+    },
+    {
+      "id": "adv-in-part", "category": "adversarial",
+      "judgment": "JUDGMENT in IMM-0002-25 THIS COURT'S JUDGMENT is that the application for judicial review is allowed in part. The refusal of the work permit is set aside; the refusal of the open work permit for the spouse stands. No question is certified.",
+      "paragraphs": { "1": "The principal applicant and the spouse each challenge a refusal.", "2": "I find the officer's analysis of the business plan unreasonable for the principal applicant only." },
+      "analysisStartPara": 2,
+      "extracted": { "disposition": "allowed", "dispositionQuote": "the application for judicial review is allowed in part", "remitted": true, "certifiedQuestion": null,
+        "holdings": [{ "id": "h1", "kind": "holding", "text": "The Court found the business plan analysis unreasonable.", "paras": [2], "quote": "I find the officer's analysis of the business plan unreasonable", "speaker": "court" }] },
+      "expect": { "stop": true, "reasonIncludes": "in part" }
+    },
+    {
+      "id": "adv-consolidated", "category": "adversarial",
+      "judgment": "JUDGMENT in IMM-0003-25 and IMM-0004-25 THIS COURT'S JUDGMENT is that the application for judicial review in IMM-0003-25 is allowed and the application for judicial review in IMM-0004-25 is dismissed. No question is certified.",
+      "paragraphs": { "1": "These two applications were heard together.", "2": "I find that the first refusal lacks justification but the second one is reasonable." },
+      "analysisStartPara": 2,
+      "extracted": { "disposition": "allowed", "dispositionQuote": "the application for judicial review in IMM-0003-25 is allowed", "remitted": true, "certifiedQuestion": null,
+        "holdings": [{ "id": "h1", "kind": "holding", "text": "The first refusal lacked justification.", "paras": [2], "quote": "I find that the first refusal lacks justification", "speaker": "court" }] },
+      "expect": { "stop": true, "reasonIncludes": "unknown" }
+    },
+    {
+      "id": "adv-disposition-mismatch", "category": "adversarial",
+      "judgment": "JUDGMENT in IMM-0005-25 THIS COURT'S JUDGMENT is that the application for judicial review is dismissed. No question is certified.",
+      "paragraphs": { "1": "The applicant sought a study permit for a business program.", "2": "I find the officer's reasons are justified, transparent and intelligible." },
+      "analysisStartPara": 2,
+      "extracted": { "disposition": "allowed", "dispositionQuote": "the application for judicial review is dismissed", "remitted": false, "certifiedQuestion": null,
+        "holdings": [{ "id": "h1", "kind": "holding", "text": "The Court found the reasons justified.", "paras": [2], "quote": "the officer's reasons are justified, transparent and intelligible", "speaker": "court" }] },
+      "expect": { "stop": true, "reasonIncludes": "mismatch" }
+    },
+    {
+      "id": "adv-certified-ok", "category": "adversarial",
+      "judgment": "JUDGMENT in IMM-0006-25 THIS COURT'S JUDGMENT is that the application for judicial review is dismissed. The following question of general importance is certified: Does paragraph 205(a) require an officer to assess the labour market impact of an entrepreneur work permit?",
+      "paragraphs": { "1": "The applicant applied for an entrepreneur work permit.", "2": "I find the officer reasonably assessed the economic benefit claimed by the applicant." },
+      "analysisStartPara": 2,
+      "extracted": { "disposition": "dismissed", "dispositionQuote": "the application for judicial review is dismissed", "remitted": false, "certifiedQuestion": "Does paragraph 205(a) require an officer to assess the labour market impact of an entrepreneur work permit?",
+        "holdings": [{ "id": "h1", "kind": "holding", "text": "The Court found the economic benefit assessment reasonable.", "paras": [2], "quote": "the officer reasonably assessed the economic benefit claimed", "speaker": "court" }] },
+      "expect": { "stop": false, "kept": ["h1"] }
+    },
+    {
+      "id": "adv-certified-missed", "category": "adversarial",
+      "judgment": "JUDGMENT in IMM-0007-25 THIS COURT'S JUDGMENT is that the application for judicial review is dismissed. The following question of general importance is certified: Is a letter of support conclusive of the genuineness of a start-up business?",
+      "paragraphs": { "1": "The applicant held a letter of support.", "2": "I find that the letter of support did not oblige the officer to accept the business as genuine." },
+      "analysisStartPara": 2,
+      "extracted": { "disposition": "dismissed", "dispositionQuote": "the application for judicial review is dismissed", "remitted": false, "certifiedQuestion": null,
+        "holdings": [{ "id": "h1", "kind": "holding", "text": "The letter of support did not bind the officer.", "paras": [2], "quote": "the letter of support did not oblige the officer", "speaker": "court" }] },
+      "expect": { "stop": true, "reasonIncludes": "certif" }
+    },
+    {
+      "id": "adv-officer-quote-as-holding", "category": "adversarial",
+      "judgment": "JUDGMENT in IMM-0008-25 THIS COURT'S JUDGMENT is that the application for judicial review is dismissed. No question is certified.",
+      "paragraphs": { "1": "The officer wrote: I am not satisfied that the applicant will leave Canada at the end of the authorized stay given the applicant's limited ties to the country of residence and the absence of a credible business plan.", "2": "I find the officer's conclusion on ties was open to them on this record." },
+      "analysisStartPara": 2,
+      "extracted": { "disposition": "dismissed", "dispositionQuote": "the application for judicial review is dismissed", "remitted": false, "certifiedQuestion": null,
+        "holdings": [
+          { "id": "h1", "kind": "holding", "text": "The applicant would not leave Canada.", "paras": [1], "quote": "I am not satisfied that the applicant will leave Canada", "speaker": "officer" },
+          { "id": "h2", "kind": "holding", "text": "The Court found the ties conclusion open to the officer.", "paras": [2], "quote": "the officer's conclusion on ties was open to them", "speaker": "court" }
+        ] },
+      "expect": { "stop": true, "reasonIncludes": "holding" }
+    },
+    {
+      "id": "adv-long-officer-quote-fact", "category": "adversarial",
+      "judgment": "JUDGMENT in IMM-0009-25 THIS COURT'S JUDGMENT is that the application for judicial review is dismissed. No question is certified.",
+      "paragraphs": { "1": "The officer wrote at length: the applicant has provided a business plan that is generic and lacks detail about the market, the competitors, the pricing, the suppliers, the staffing, the premises and the timeline, and the funds shown are not sufficient to establish and operate the business while also supporting the applicant and the family members for the period requested, and the applicant has not demonstrated relevant experience in the proposed field of business or any steps taken towards establishing it.", "2": "I find the officer's concerns were reasonable and supported by the record." },
+      "analysisStartPara": 2,
+      "extracted": { "disposition": "dismissed", "dispositionQuote": "the application for judicial review is dismissed", "remitted": false, "certifiedQuestion": null,
+        "facts": [{ "id": "f1", "kind": "fact", "text": "The officer listed many concerns with the business plan.", "paras": [1], "quote": "the applicant has provided a business plan that is generic and lacks detail about the market, the competitors, the pricing, the suppliers, the staffing, the premises and the timeline, and the funds shown are not sufficient to establish and operate the business while also supporting the applicant and the family members for the period requested", "speaker": "officer" }],
+        "holdings": [{ "id": "h1", "kind": "holding", "text": "The Court found the concerns reasonable.", "paras": [2], "quote": "the officer's concerns were reasonable and supported by the record", "speaker": "court" }] },
+      "expect": { "stop": false, "kept": ["h1"], "dropped": ["f1"] }
+    },
+    {
+      "id": "adv-wrong-para", "category": "adversarial",
+      "judgment": "JUDGMENT in IMM-0010-25 THIS COURT'S JUDGMENT is that the application for judicial review is allowed and the matter is remitted for redetermination by a different officer. No question is certified.",
+      "paragraphs": { "1": "The applicant submits that the officer ignored the language test results.", "2": "The test results were on file and met the benchmark.", "3": "I find that the officer's reasons ignore evidence that contradicts the conclusion." },
+      "analysisStartPara": 3,
+      "extracted": { "disposition": "allowed", "dispositionQuote": "the application for judicial review is allowed", "remitted": true, "certifiedQuestion": null,
+        "facts": [{ "id": "f1", "kind": "fact", "text": "The test results were on file.", "paras": [1], "quote": "The test results were on file and met the benchmark", "speaker": "court" }],
+        "holdings": [{ "id": "h1", "kind": "holding", "text": "The Court found the reasons ignored contrary evidence.", "paras": [3], "quote": "the officer's reasons ignore evidence that contradicts the conclusion", "speaker": "court" }] },
+      "expect": { "stop": false, "kept": ["h1"], "dropped": ["f1"] }
+    },
+    {
+      "id": "adv-near-miss-quote", "category": "adversarial",
+      "judgment": "JUDGMENT in IMM-0011-25 THIS COURT'S JUDGMENT is that the application for judicial review is allowed and the matter is remitted for redetermination by a different officer. No question is certified.",
+      "paragraphs": { "1": "The applicant travelled with a spouse and a child.", "2": "I find that accompanying family members cannot by themselves decide whether the applicant will leave Canada." },
+      "analysisStartPara": 2,
+      "extracted": { "disposition": "allowed", "dispositionQuote": "the application for judicial review is allowed", "remitted": true, "certifiedQuestion": null,
+        "holdings": [{ "id": "h1", "kind": "holding", "text": "Family travelling along cannot alone decide departure intent.", "paras": [2], "quote": "accompanying family members cannot by themself decide whether the applicant will leave Canada", "speaker": "court" }] },
+      "expect": { "stop": true, "reasonIncludes": "holding" }
+    },
+    {
+      "id": "adv-holding-from-submissions", "category": "adversarial",
+      "judgment": "JUDGMENT in IMM-0012-25 THIS COURT'S JUDGMENT is that the application for judicial review is dismissed. No question is certified.",
+      "paragraphs": { "1": "The applicant argues that the officer fettered their discretion by relying on a checklist.", "2": "Analysis", "3": "I do not accept that the officer relied on a checklist; the reasons engage with the record." },
+      "analysisStartPara": 3,
+      "extracted": { "disposition": "dismissed", "dispositionQuote": "the application for judicial review is dismissed", "remitted": false, "certifiedQuestion": null,
+        "holdings": [
+          { "id": "h1", "kind": "holding", "text": "The officer fettered their discretion.", "paras": [1], "quote": "the officer fettered their discretion by relying on a checklist", "speaker": "court" },
+          { "id": "h2", "kind": "holding", "text": "The Court found the reasons engaged with the record.", "paras": [3], "quote": "the reasons engage with the record", "speaker": "court" }
+        ] },
+      "expect": { "stop": true, "reasonIncludes": "holding" }
+    },
+    {
+      "id": "adv-clean-allowed", "category": "adversarial",
+      "judgment": "JUDGMENT in IMM-0013-25 THIS COURT'S JUDGMENT is that the application for judicial review is granted, the decision is set aside and the matter is returned for redetermination by a different officer. There is no question to certify.",
+      "paragraphs": { "1": "The applicant was refused a study permit for a graduate business degree.", "2": "The standard of review is reasonableness.", "3": "I find there is no discernible chain of logic between the applicant's career and the officer's conclusion on motivation." },
+      "analysisStartPara": 3,
+      "extracted": { "disposition": "allowed", "dispositionQuote": "the application for judicial review is granted", "remitted": true, "certifiedQuestion": null,
+        "standardOfReview": [{ "id": "s1", "kind": "standard", "text": "The standard is reasonableness.", "paras": [2], "quote": "The standard of review is reasonableness", "speaker": "court" }],
+        "holdings": [{ "id": "h1", "kind": "holding", "text": "The Court found no chain of logic on motivation.", "paras": [3], "quote": "there is no discernible chain of logic between the applicant's career and the officer's conclusion", "speaker": "court" }] },
+      "expect": { "stop": false, "kept": ["s1", "h1"] }
+    }
+  ]
+}

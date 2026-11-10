@@ -1,0 +1,785 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Case Studies: three directions to pick from (VisaRoads)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Space+Grotesk:wght@400;500;700&family=Vazirmatn:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+/* Values from design/tokens.json v1.1.0. Mockup only, not product code. */
+:root{
+  --paper:#F2F0E9; --ink:#1A1A1A; --acid:#CCFF00; --night:#121417;
+  --muted:#666562;          /* 5.11:1 on paper */
+  --faint:#82817D;          /* large text + non-text marks only */
+  --rule:rgba(26,26,26,.15);
+  --pressed:#E5E3DD;
+  --n-fg:#F2F0E9; --n-muted:#9D9C99; --n-rule:rgba(242,240,233,.16);
+  --display:"DM Serif Display",Georgia,serif;
+  --text:"Space Grotesk",system-ui,sans-serif;
+  --fa-display:"Estedad","Vazirmatn",sans-serif;
+  --fa-text:"Vazirmatn",system-ui,sans-serif;
+  --ease:cubic-bezier(.16,1,.3,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
+body{background:var(--paper);color:var(--ink);font:400 15px/1.5 var(--text);-webkit-font-smoothing:antialiased}
+a{color:inherit;text-underline-offset:3px}
+:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.night :focus-visible{outline-color:var(--acid)}
+h1,h2,h3{font-family:var(--display);font-weight:400}
+.label{font:700 11px/1.2 var(--text);letter-spacing:.15em;text-transform:uppercase}
+.cap{font-size:12px;line-height:1.5;color:var(--muted)}
+.wrap{max-width:1240px;margin:0 auto;padding:0 24px}
+
+/* ---------- switcher ---------- */
+.switch{position:sticky;top:0;z-index:20;background:var(--ink);color:var(--paper)}
+.switch .wrap{display:flex;gap:8px;align-items:center;min-height:56px;flex-wrap:wrap}
+.switch b{font:400 20px/1 var(--display);margin-inline-end:auto}
+.switch a{display:inline-flex;align-items:center;min-height:40px;padding:0 16px;border:1px solid var(--n-rule);border-radius:999px;text-decoration:none;font-weight:500;font-size:14px}
+.switch a:hover{border-color:var(--paper)}
+.switch a:focus-visible{outline-color:var(--acid)}
+
+/* ---------- header ---------- */
+header.brief{padding:56px 0 40px;border-bottom:1px solid var(--ink)}
+header.brief h1{font-size:52px;line-height:.95;letter-spacing:-.02em;max-width:16ch}
+header.brief h1 i{color:var(--faint)}
+header.brief .lede{max-width:64ch;margin-top:20px;font-size:17px}
+.howto{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:32px}
+.howto div{border-top:3px solid var(--ink);padding-top:12px}
+.howto p{font-size:14px}
+table.cmp{width:100%;border-collapse:collapse;margin-top:40px;font-size:14px}
+table.cmp th,table.cmp td{text-align:start;vertical-align:top;padding:12px 16px 12px 0;border-bottom:1px solid var(--rule)}
+table.cmp thead th{border-bottom:1px solid var(--ink)}
+table.cmp td:first-child{font:400 20px/1.15 var(--display);white-space:nowrap}
+.flag{display:inline-block;background:var(--acid);color:var(--ink);padding:2px 8px;font-weight:700;font-size:12px}
+.note{border-inline-start:3px solid var(--ink);padding:8px 16px;margin-top:24px;font-size:14px;max-width:80ch}
+
+/* ---------- option shell ---------- */
+section.opt{padding:72px 0;border-bottom:1px solid var(--ink)}
+.opt-head{display:grid;grid-template-columns:auto 1fr;gap:8px 32px;align-items:end;margin-bottom:40px}
+.opt-head .letter{font:400 120px/.8 var(--display)}
+.opt-head h2{font-size:40px;line-height:1}
+.opt-head h2::after{content:"";display:block;width:64px;height:3px;background:var(--acid);margin-top:12px;outline:1px solid var(--ink)}
+.opt-head p{grid-column:2;max-width:70ch}
+.part{margin-top:48px}
+.part > .label{display:block;margin-bottom:12px}
+.frame{border:1px solid var(--ink);background:var(--paper)}
+.bar{display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--ink);padding:8px 16px;font-size:12px;color:var(--muted)}
+.bar span:first-child{font-weight:700;color:var(--ink)}
+.page{padding:40px}
+
+/* shared atoms */
+.chip{display:inline-flex;align-items:center;gap:6px;min-height:40px;padding:0 14px;border:1px solid var(--ink);border-radius:999px;background:transparent;font:500 14px/1 var(--text);color:var(--ink);cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+.chip:hover{background:var(--pressed)}
+.chip[aria-pressed="true"]:hover{background:#3A3A39}
+.chip.static{cursor:default}
+.chip.static:hover{background:transparent}
+.chips{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.fgroup{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.fgroup > .label{min-width:72px;color:var(--muted)}
+.badge{display:inline-block;padding:4px 10px;font:700 11px/1.2 var(--text);letter-spacing:.15em;text-transform:uppercase}
+.badge.court{background:var(--ink);color:var(--paper)}
+.badge.client{border:1px solid var(--ink);color:var(--ink)}
+.night .badge.court{background:var(--paper);color:var(--night)}
+.cite{font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
+/* outcome marks: shape + words, never colour alone; acid is NOT used for "Allowed" */
+.oc{display:inline-flex;align-items:center;gap:8px;font-weight:700}
+.oc::before{content:"";width:10px;height:10px;flex:none;border:2px solid currentColor}
+.oc.allowed::before{border-radius:999px}
+.oc.dismissed::before{background:currentColor}
+
+/* ¶ chip: <details>, keyboard native (Tab, Enter/Space) */
+details.pin{display:inline}
+details.pin summary{display:inline-flex;align-items:center;min-height:24px;padding:0 8px;margin-inline-start:4px;border:1px solid var(--ink);border-radius:999px;font:700 12px/1 var(--text);cursor:pointer;list-style:none;vertical-align:baseline;position:relative}
+details.pin summary::after{content:"";position:absolute;inset:-10px -4px}  /* 44px hit area */
+details.pin summary::-webkit-details-marker{display:none}
+details.pin[open] summary{background:var(--ink);color:var(--paper)}
+details.pin .q{display:block;margin:8px 0 12px;padding:12px 16px;background:var(--acid);color:var(--ink);font-size:14px;border-inline-start:3px solid var(--ink)}
+details.pin .q em{display:block;font-style:normal;font-weight:700;font-size:12px;margin-bottom:4px}
+.night details.pin summary{border-color:var(--paper)}
+.night details.pin[open] summary{background:var(--acid);color:var(--ink);border-color:var(--acid)}
+
+.outcome{border:1px solid var(--ink);padding:16px 20px}
+.outcome .oc{font-size:17px}
+.outcome p{margin-top:6px;font-size:14px}
+.source{border-top:1px solid var(--ink);padding-top:16px;font-size:14px}
+.source dl{display:grid;grid-template-columns:auto 1fr;gap:4px 16px;margin:8px 0 12px}
+.source dt{color:var(--muted)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:0 20px;background:var(--ink);color:var(--paper);text-decoration:none;font-weight:700;font-size:14px}
+.btn:hover{background:#3A3A39}
+.night .btn{background:var(--paper);color:var(--night)}
+.disclaimer{font-size:12px;line-height:1.5;color:var(--muted);margin-top:16px;max-width:72ch}
+.placeholder{font-size:12px;color:var(--muted)}
+.prose p{max-width:66ch;margin-top:10px}
+.prose h3{font-size:24px;line-height:1.1;margin-top:32px}
+.prose ul{margin:10px 0 0 20px;max-width:66ch}
+.prose li{margin-top:6px}
+
+/* ---------- phones ---------- */
+.phones{display:flex;gap:32px;flex-wrap:wrap;align-items:flex-start}
+.phone{width:375px;max-width:100%;height:700px;border:1px solid var(--ink);background:var(--paper);position:relative;overflow:hidden;display:flex;flex-direction:column}
+.phone .status{height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;font-size:12px;font-weight:700}
+.phone .scr{flex:1;overflow:auto;padding:0 24px 24px}
+.phone .tabs{display:flex;border-top:1px solid var(--rule);height:64px}
+.phone .tabs span{flex:1;display:flex;align-items:center;justify-content:center;font:700 11px/1.2 var(--text);position:relative}
+.phone .tabs span.on::before{content:"";position:absolute;top:0;inset-inline:20%;height:3px;background:var(--ink)}
+.seg{display:flex;gap:0;overflow-x:auto;border-bottom:1px solid var(--rule);margin:0 -24px;padding:0 24px}
+.seg span{flex:none;min-height:48px;display:flex;align-items:center;padding:0 12px;font-size:14px;font-weight:500;position:relative}
+.seg span.on{font-weight:700}
+.seg span.on::after{content:"";position:absolute;bottom:-1px;inset-inline:8px;height:3px;background:var(--ink)}
+.prow{display:block;padding:14px 0;border-bottom:1px solid var(--rule);text-decoration:none}
+.prow .cite{font-size:12px}
+.prow b{display:block;font:400 20px/1.15 var(--display);margin:4px 0}
+.sheet{position:absolute;inset-inline:0;bottom:0;background:var(--paper);border-top:1px solid var(--ink);padding:12px 24px 32px;transform:translateY(100%);transition:transform 450ms var(--ease);visibility:hidden}
+.sheet:target{transform:none;visibility:visible}
+.sheet .grab{width:40px;height:4px;background:var(--faint);margin:0 auto 16px}
+.sheet .q{background:var(--acid);padding:12px 16px;margin:12px 0;font-size:14px}
+.scrim{position:absolute;inset:0;background:rgba(26,26,26,.4);display:none}
+.phone:has(.sheet:target) .scrim{display:block}
+.pinlink{display:inline-flex;align-items:center;min-height:24px;padding:0 8px;border:1px solid var(--ink);border-radius:999px;font:700 12px/1 var(--text);text-decoration:none;position:relative}
+.pinlink::after{content:"";position:absolute;inset:-10px -4px}
+.phone-note{max-width:320px;font-size:14px}
+.phone-note li{margin:6px 0 0 18px}
+
+/* ================= OPTION A: Docket ================= */
+.A-index .intro{display:grid;grid-template-columns:1.1fr 1fr;gap:40px;padding-bottom:24px;border-bottom:1px solid var(--ink)}
+.A-index h1{font-size:52px;line-height:.95;letter-spacing:-.02em}
+.A-filters{display:grid;gap:12px;padding:20px 0;border-bottom:1px solid var(--ink)}
+table.docket{width:100%;border-collapse:collapse;font-size:14px}
+table.docket th{text-align:start;padding:12px 12px 12px 0;border-bottom:1px solid var(--ink)}
+table.docket td{padding:14px 12px 14px 0;border-bottom:1px solid var(--rule);vertical-align:top}
+table.docket tr:hover td{background:var(--pressed)}
+table.docket td a{text-decoration:none;font-weight:500}
+table.docket td a:hover{text-decoration:underline}
+table.docket .route{color:var(--muted)}
+.count{font-size:14px;color:var(--muted);padding:12px 0}
+.A-case{display:grid;grid-template-columns:280px 1fr;gap:48px}
+.A-sheet{position:sticky;top:72px;align-self:start;border:1px solid var(--ink)}
+.A-sheet > div{padding:16px;border-bottom:1px solid var(--rule)}
+.A-sheet > div:last-child{border-bottom:0}
+.A-sheet .label{color:var(--muted);display:block;margin-bottom:6px}
+.A-sheet .big{font:400 34px/1.05 var(--display)}
+.A-case h1{font-size:40px;line-height:1.02;letter-spacing:-.01em;max-width:22ch}
+.oneline{font:400 20px/1.3 var(--display);margin-top:16px;max-width:40ch}
+.A-case .prose h3{display:flex;gap:12px;align-items:baseline;border-top:1px solid var(--ink);padding-top:12px}
+.A-case .prose h3 small{font:700 11px/1 var(--text);letter-spacing:.15em}
+
+/* ================= OPTION B: Editorial long-read ================= */
+.B-index .hero{padding:24px 0 40px;text-align:start}
+.B-index h1{font-size:72px;line-height:.9;letter-spacing:-.02em;max-width:12ch}
+.B-index h1 i{color:var(--faint)}
+.B-index .stand{font:400 20px/1.35 var(--display);max-width:44ch;margin-top:20px}
+.B-filters{display:flex;gap:24px;flex-wrap:wrap;border-top:1px solid var(--ink);border-bottom:1px solid var(--ink);padding:12px 0}
+.B-filters select{min-height:44px;border:1px solid var(--ink);background:var(--paper);font:500 14px var(--text);padding:0 12px;color:var(--ink);border-radius:0}
+.B-filters label{display:flex;gap:8px;align-items:center}
+.B-list{display:grid;grid-template-columns:repeat(2,1fr);gap:0 48px;margin-top:8px}
+.B-item{padding:28px 0;border-bottom:1px solid var(--rule)}
+.B-item.lead{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:48px;border-bottom:1px solid var(--ink)}
+.B-item h3{font-size:28px;line-height:1.05;margin:10px 0}
+.B-item.lead h3{font-size:44px}
+.B-item .kick{display:flex;gap:12px;flex-wrap:wrap;align-items:center;font-size:12px}
+.B-item blockquote{font:italic 400 24px/1.25 var(--display);color:var(--ink);border-inline-start:3px solid var(--ink);padding-inline-start:16px}
+.B-item a{text-decoration:none}
+.B-item a:hover h3{text-decoration:underline}
+.B-case .masthead{background:var(--night);color:var(--n-fg);padding:48px 40px}
+.B-case .masthead .cap{color:var(--n-muted)}
+.B-case .masthead h1{font-size:56px;line-height:.95;letter-spacing:-.02em;max-width:18ch;margin-top:16px}
+.B-case .masthead h1 i{color:var(--n-muted)}
+.B-case .masthead .meta{display:flex;gap:16px;flex-wrap:wrap;align-items:center;margin-top:24px}
+.B-case .masthead .chip{border-color:var(--n-fg);color:var(--n-fg)}
+.B-case .masthead .chip:hover{background:#242628}
+.B-case .masthead .oc{color:var(--acid)}
+.B-body{padding:40px}
+.B-row{display:grid;grid-template-columns:minmax(0,640px) 220px;gap:40px;padding-top:4px}
+.B-row p{font-size:17px;line-height:1.6;margin-top:14px}
+.B-row .dropcap::first-letter{font:400 64px/.8 var(--display);float:inline-start;margin:6px 8px 0 0}
+.B-rail{border-inline-start:1px solid var(--ink);padding-inline-start:16px;padding-top:16px;font-size:13px}
+.B-rail details.pin summary{margin:0}
+.B-rail .ref{color:var(--muted);display:block;font-size:12px;margin-top:4px}
+.B-h{font-size:32px;line-height:1.05;margin-top:40px;grid-column:1}
+.B-pull{grid-column:1/-1;font:italic 400 30px/1.2 var(--display);border-top:3px solid var(--ink);border-bottom:1px solid var(--ink);padding:20px 0;margin:32px 0 8px;max-width:880px}
+
+/* ================= OPTION C: Lesson-first ================= */
+.C-index h1{font-size:52px;line-height:.95;letter-spacing:-.02em;max-width:14ch}
+.C-index .intro{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:end;padding-bottom:28px}
+.C-filters{display:grid;gap:12px;padding:16px 0;border-top:1px solid var(--ink);border-bottom:1px solid var(--ink)}
+.lesson{display:grid;grid-template-columns:72px 1fr 1.2fr;gap:24px;padding:28px 0;border-bottom:1px solid var(--rule)}
+.lesson .n{font:400 64px/.9 var(--display);color:var(--faint)}
+.lesson h3{font-size:28px;line-height:1.05}
+.ev{border:1px solid var(--ink);padding:14px 16px;display:grid;gap:4px;text-decoration:none}
+.ev + .ev{margin-top:8px}
+.ev:hover{background:var(--pressed)}
+.ev .top{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:13px}
+.C-case .do{background:var(--ink);color:var(--paper);padding:32px}
+.C-case .do .label{color:var(--n-muted)}
+.C-case .do h1{font-size:44px;line-height:1;margin:12px 0 20px;max-width:20ch}
+.C-case .do ol{list-style:none;counter-reset:s;display:grid;gap:0}
+.C-case .do li{counter-increment:s;display:grid;grid-template-columns:40px 1fr;gap:12px;padding:14px 0;border-top:1px solid var(--n-rule);font-size:16px}
+.C-case .do li::before{content:counter(s);font:400 28px/1 var(--display);color:var(--acid)}
+.C-case .do a{color:var(--paper)}
+.C-case .do details.pin summary{border-color:var(--paper)}
+.C-case .do details.pin[open] summary{background:var(--acid);color:var(--ink);border-color:var(--acid)}
+.C-case .do .btn{background:var(--acid);color:var(--ink);margin-top:20px}
+.C-case .do .btn:hover{background:var(--paper)}
+.evidence{display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid var(--ink);margin-top:32px}
+.evidence > div{padding:20px;border-bottom:1px solid var(--rule)}
+.evidence > div:nth-child(odd){border-inline-end:1px solid var(--rule)}
+.evidence h3{font-size:22px;line-height:1.1;margin-bottom:6px}
+.evidence .full{grid-column:1/-1}
+
+/* ================= Persian ================= */
+.fa, .fa *{font-family:var(--fa-text);letter-spacing:0!important;text-transform:none!important}
+.fa{line-height:1.8}
+.fa h1,.fa h2,.fa h3,.fa .big,.fa .oneline{font-family:var(--fa-display);font-weight:900}
+.fa .A-case h1{font-size:30px;line-height:1.3}
+.fa .oneline{font-size:18px;line-height:1.6;font-weight:700}
+.fa .label{font:700 12px/1.4 var(--fa-text)}
+.fa .badge{font:700 12px/1.4 var(--fa-text)}
+.fa .A-sheet .big{font-size:26px;line-height:1.3}
+.fa .prose h3{font-size:20px;line-height:1.4}
+.fa .prose p,.fa .prose li{line-height:1.8}
+.fa .prose ul{margin:10px 20px 0 0}
+.fa details.pin summary{font:700 12px/1 var(--fa-text)}
+.ltr{direction:ltr;unicode-bidi:isolate}
+
+@media (max-width:900px){
+  .howto,.A-index .intro,.C-index .intro,.B-item.lead,.B-list,.evidence{grid-template-columns:1fr}
+  .A-case,.B-row{grid-template-columns:1fr}
+  .A-sheet{position:static}
+  .B-rail{border-inline-start:0;border-top:1px solid var(--rule);padding-inline-start:0}
+  .lesson{grid-template-columns:1fr}
+  .page,.B-body{padding:24px}
+  header.brief h1,.A-index h1,.C-index h1{font-size:40px}
+  .B-index h1{font-size:48px}
+  table.docket thead{display:none}
+  table.docket tr{display:grid;grid-template-columns:1fr auto;padding:12px 0;border-bottom:1px solid var(--rule)}
+  table.docket td{border:0;padding:2px 0}
+  .evidence > div:nth-child(odd){border-inline-end:0}
+}
+</style>
+</head>
+<body>
+
+<nav class="switch" aria-label="Jump to option">
+  <div class="wrap">
+    <b>Case Studies · directions</b>
+    <a href="#brief">Brief</a>
+    <a href="#opt-a">A · Docket</a>
+    <a href="#opt-b">B · Long-read</a>
+    <a href="#opt-c">C · Lesson-first</a>
+    <a href="#fa">فارسی (A)</a>
+  </div>
+</nav>
+
+<header class="brief" id="brief">
+  <div class="wrap">
+    <p class="label">Design options · spec only · 9 Nov 2026</p>
+    <h1>Case Studies: three ways <i>to read a refusal</i></h1>
+    <p class="lede">A new section that explains Federal Court judicial reviews of IRCC refusals (Type A) and, with consent, anonymised VisaRoads client cases (Type B). Each option below shows the same content three ways: the index at <span class="cite">/en/case-studies</span>, the single case page for <span class="cite">2025 FC 12</span>, and how it maps to the app. Pick one direction; high fidelity comes after.</p>
+
+    <div class="howto">
+      <div><p class="label">1 · Read the index</p><p>Can a refused applicant find a case like theirs in under ten seconds?</p></div>
+      <div><p class="label">2 · Open the case</p><p>Click any ¶ chip (or Tab to it and press Enter). Does every claim feel checkable?</p></div>
+      <div><p class="label">3 · Check the phone</p><p>Tap the ¶ chip in the right-hand phone; the quote opens as a bottom sheet.</p></div>
+    </div>
+
+    <table class="cmp">
+      <thead><tr><th scope="col">Option</th><th scope="col">Idea</th><th scope="col">Best for</th><th scope="col">Risk</th></tr></thead>
+      <tbody>
+        <tr><td>A · Docket <span class="flag">Recommended</span></td><td>A court register: ruled table index, a fixed case sheet beside a structured analysis, ¶ chips inline.</td><td>Scale (50+ cases), scanning by route and outcome, search snippets, legal safety: the structure forces a pin-cite per claim.</td><td>Reads cold; first-time visitors who just got refused may want reassurance before structure.</td></tr>
+        <tr><td>B · Long-read</td><td>An editorial feature: night masthead, big serif headline, reading column with a margin rail holding every ¶ cite.</td><td>Flagship decisions and social sharing; the most "worth staying in" reading.</td><td>Expensive to write per case; the rail collapses inline on mobile (where most /fa readers are), so its main idea disappears there.</td></tr>
+        <tr><td>C · Lesson-first</td><td>The index is grouped by lesson; the case page opens with "do this in your file", the decision sits below as evidence.</td><td>Conversion to the route checklist; readers who want an answer, not a judgment.</td><td>Over-generalising from one case. "Every case turns on its own facts" fights a page that leads with rules; lessons drift away from their pin-cites.</td></tr>
+      </tbody>
+    </table>
+
+    <p class="note"><strong>Placeholders.</strong> Paragraph numbers, quote text, the decision date and anything beyond the one-line summaries given by the CPO are unverified layout content. Quotes are marked "[illustrative placeholder — not a quote]". Nothing ships until each pin-cite is checked against the decision on decisions.fct-cf.gc.ca.</p>
+  </div>
+</header>
+
+<!-- =================================================================== -->
+<!-- OPTION A -->
+<!-- =================================================================== -->
+<section class="opt" id="opt-a" aria-labelledby="a-title">
+  <div class="wrap">
+    <div class="opt-head">
+      <span class="letter" aria-hidden="true">A</span>
+      <h2 id="a-title">Docket</h2>
+      <p><strong>Argument:</strong> the reader's first question is "is there a case like mine?", and a table answers that faster than cards. Outcome, route and citation sit in fixed columns, so 5 cases or 200 read the same. The single case uses a fixed headed structure, which makes it hard to publish a claim without a ¶ chip. The case sheet keeps the outcome and the official link visible while reading.</p>
+    </div>
+
+    <div class="part">
+      <span class="label">(a) Index · /en/case-studies</span>
+      <div class="frame">
+        <div class="bar"><span>visaroads.com/en/case-studies</span><span>desktop 1240</span></div>
+        <div class="page A-index">
+          <div class="intro">
+            <div>
+              <p class="label">Case studies · Canada</p>
+              <h1>Refused? Read how the Court looked at cases like yours.</h1>
+            </div>
+            <div>
+              <p>The Federal Court does not hear an appeal of a visa refusal and does not give anyone a visa. It only does a <strong>judicial review</strong>: it checks whether the officer's decision was reasonable and made fairly. If it was not, the file goes back to a different officer for a new decision.</p>
+              <p class="cap" style="margin-top:8px">Each case links the official decision. Applicants are never named.</p>
+            </div>
+          </div>
+          <div class="A-filters" role="group" aria-label="Filter cases">
+            <div class="fgroup"><span class="label">Route</span><div class="chips">
+              <button class="chip" aria-pressed="true">All</button><button class="chip" aria-pressed="false">Study permit</button><button class="chip" aria-pressed="false">Work permit</button><button class="chip" aria-pressed="false">C11 entrepreneur</button><button class="chip" aria-pressed="false">Start-up visa</button><button class="chip" aria-pressed="false">PNP</button></div></div>
+            <div class="fgroup"><span class="label">Outcome</span><div class="chips">
+              <button class="chip" aria-pressed="true">All</button><button class="chip" aria-pressed="false"><span class="oc allowed">Allowed</span></button><button class="chip" aria-pressed="false"><span class="oc dismissed">Dismissed</span></button></div></div>
+            <div class="fgroup"><span class="label">Country</span><div class="chips"><span class="chip static" aria-pressed="true" style="background:var(--ink);color:var(--paper)">Canada</span><span class="cap">More countries later</span></div></div>
+          </div>
+          <p class="count">6 cases · newest first</p>
+          <table class="docket">
+            <thead><tr><th scope="col">Citation</th><th scope="col">Route</th><th scope="col">What happened</th><th scope="col">Outcome</th></tr></thead>
+            <tbody>
+              <tr><td class="cite">2026 FC 255</td><td class="route">Study permit · R216(1)(b) · MBA</td><td><a href="#a-case">The officer did not engage with the study reasons or the ties to home</a></td><td><span class="oc allowed">Allowed</span></td></tr>
+              <tr><td class="cite">2026 FC 158</td><td class="route">C11 entrepreneur work permit</td><td><a href="#a-case">Doubts on business viability and on leaving Canada were enough</a></td><td><span class="oc dismissed">Dismissed</span></td></tr>
+              <tr><td class="cite">2026 FC 146</td><td class="route">Start-up visa work permit · with family</td><td><a href="#a-case">Travelling with a spouse and child cannot alone decide "will you leave Canada"</a></td><td><span class="oc allowed">Allowed</span></td></tr>
+              <tr><td class="cite">2025 FC 1599</td><td class="route">Start-up visa PR · IRPR 89(b)</td><td><a href="#a-case">"Artificial transaction": the procedural fairness letter that set out the concerns was enough</a></td><td><span class="oc dismissed">Dismissed</span></td></tr>
+              <tr><td class="cite">2025 FC 12</td><td class="route">Start-up visa work permit · R205(a)</td><td><a href="#a-case">The officer said language results were missing when they were on file</a></td><td><span class="oc allowed">Allowed</span></td></tr>
+              <tr><td><span class="badge client">Client case</span></td><td class="route">Start-up visa · before applying</td><td><a href="#a-case">Founder getting the designated organisation's letter of support</a><br><span class="cap">VisaRoads client, anonymised, shared with written consent · VisaRoads stage: pitch and business-plan review</span></td><td class="cap">No court outcome</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="part" id="a-case">
+      <span class="label">(b) Single case · /en/case-studies/2025-fc-12</span>
+      <div class="frame">
+        <div class="bar"><span>visaroads.com/en/case-studies/2025-fc-12</span><span>desktop 1240</span></div>
+        <div class="page">
+          <div class="A-case">
+            <aside class="A-sheet" aria-label="Case sheet">
+              <div><span class="badge court">Court decision</span></div>
+              <div><span class="label">Citation</span><span class="big">2025 FC 12</span></div>
+              <div><span class="label">Route</span><div class="chips"><span class="chip static">Start-up visa work permit</span><span class="chip static">Canada</span></div></div>
+              <div><span class="label">Decided</span>2025 <span class="placeholder">[exact date to verify]</span></div>
+              <div class="outcome" style="border:0;padding:16px">
+                <span class="label">Outcome</span>
+                <span class="oc allowed">Allowed</span>
+                <p>Sent back for a new decision by a different officer.</p>
+                <p class="cap">A won judicial review is not a visa. The application is decided again, from the start.</p>
+              </div>
+              <div><a class="btn" href="https://decisions.fct-cf.gc.ca/fc-cf/decisions/en/527166/1/document.do" rel="noopener external">Read the official decision ↗</a></div>
+            </aside>
+
+            <article class="prose">
+              <h1>Start-up visa work permit refused for "missing" language results that were on file</h1>
+              <p class="oneline">In one line: the officer refused because the language results were not provided, but they were in the file, so the Court sent the case back.<details class="pin"><summary aria-label="Paragraph 25, show the quote">¶ 25</summary><span class="q"><em>[illustrative placeholder — not a quote]</em>The decision rests on a finding that the record contradicts.</span></details></p>
+
+              <h3><small>01</small>Facts</h3>
+              <p>The applicant held a commitment from a designated organisation and applied for a work permit under R205(a) while the start-up visa application was in process.<details class="pin"><summary aria-label="Paragraph 3, show the quote">¶ 3</summary><span class="q"><em>[illustrative placeholder — not a quote]</em>The Applicant applied for a work permit in support of an application under the Start-up Business Class.</span></details> The officer refused, writing that the language test results had not been submitted.<details class="pin"><summary aria-label="Paragraph 6, show the quote">¶ 6</summary><span class="q"><em>[illustrative placeholder — not a quote]</em>The officer noted that no language test results were provided.</span></details></p>
+
+              <h3><small>02</small>The issue</h3>
+              <p>Was the refusal reasonable when its main reason did not match what was in the record?<details class="pin"><summary aria-label="Paragraph 12, show the quote">¶ 12</summary><span class="q"><em>[illustrative placeholder — not a quote]</em>The determinative issue is whether the decision is reasonable.</span></details></p>
+
+              <h3><small>03</small>What the Court held</h3>
+              <p>The judicial review was allowed. The results were in the record the officer had, and the reasons did not account for them.<details class="pin"><summary aria-label="Paragraph 22, show the quote">¶ 22</summary><span class="q"><em>[illustrative placeholder — not a quote]</em>The language results form part of the certified tribunal record.</span></details> The matter goes back to a different officer.<details class="pin"><summary aria-label="Paragraph 30, show the quote">¶ 30</summary><span class="q"><em>[illustrative placeholder — not a quote]</em>The matter is remitted for redetermination by a different officer.</span></details></p>
+
+              <h3><small>04</small>Why the officer erred</h3>
+              <p>A decision is unreasonable when it ignores or misstates evidence that goes to the heart of the reason given. Here the reason given was the missing document, and the document was there.<details class="pin"><summary aria-label="Paragraph 25, show the quote">¶ 25</summary><span class="q"><em>[illustrative placeholder — not a quote]</em>A decision that fails to account for evidence contradicting its central finding cannot stand.</span></details></p>
+
+              <h3><small>05</small>Lessons for your file</h3>
+              <ul>
+                <li>Name every upload so an officer finds it in seconds, and say in the cover letter where each document is.</li>
+                <li>Keep the upload confirmation for each document. It is your proof that something was on file.</li>
+                <li>If a refusal says something is missing that you sent, read the deadlines for leave in IRPA s. 72(2)(b) the same day.</li>
+              </ul>
+              <p><a href="#a-case">Start-up visa checklist: language results →</a> <span class="cap">(links to the route guide checklist anchor)</span></p>
+
+              <div class="source" style="margin-top:40px">
+                <p class="label">Source</p>
+                <dl><dt>Citation</dt><dd class="cite">2025 FC 12</dd><dt>Court</dt><dd>Federal Court of Canada</dd><dt>Date</dt><dd>2025 <span class="placeholder">[verify]</span></dd></dl>
+                <p><a href="https://decisions.fct-cf.gc.ca/fc-cf/decisions/en/527166/1/document.do" rel="noopener external">Read the official decision on decisions.fct-cf.gc.ca ↗</a></p>
+                <p class="cap" style="margin-top:8px">Source: Federal Court of Canada decisions database. This reproduction is not produced in affiliation with or endorsed by the Government of Canada.</p>
+                <p class="disclaimer">An educational summary of a public Federal Court of Canada decision, not legal or immigration advice and not the official version. The official text is on the Court's website (linked). Every case turns on its own facts. VisaRoads Inc. is not affiliated with or endorsed by the Government of Canada or the Court. For your own case, consult a lawyer or a licensed consultant (RCIC).</p>
+              </div>
+            </article>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="part">
+      <span class="label">(c) How it maps to the app · 375pt</span>
+      <div class="phones">
+        <div class="phone" aria-label="App: route page, Cases segment">
+          <div class="status"><span>9:41</span><span>Canada · Start-up visa</span></div>
+          <div class="scr">
+            <h3 style="font-size:34px;line-height:1.05;margin:8px 0 12px">Start-up visa</h3>
+            <div class="seg" role="tablist"><span>Overview</span><span>Steps</span><span>Papers</span><span>Money</span><span class="on" aria-selected="true">Cases</span></div>
+            <p class="cap" style="margin-top:12px">Court reviews, not appeals. A win sends the file back; it is not a visa.</p>
+            <a class="prow" href="#a-sheet-x"><span class="cite">2026 FC 146</span> · <span class="oc allowed">Allowed</span><b>Family travelling with you cannot alone decide "will you leave"</b></a>
+            <a class="prow" href="#a-sheet-x"><span class="cite">2025 FC 1599</span> · <span class="oc dismissed">Dismissed</span><b>"Artificial transaction": the fairness letter was enough</b></a>
+            <a class="prow" href="#a-sheet-x"><span class="cite">2025 FC 12</span> · <span class="oc allowed">Allowed</span><b>Language results "missing" that were on file</b></a>
+          </div>
+          <div class="tabs"><span>Today</span><span class="on">Routes</span><span>News</span><span>Me</span></div>
+        </div>
+
+        <div class="phone" aria-label="App: single case with paragraph sheet">
+          <div class="status"><span>9:41</span><span>‹ Cases</span></div>
+          <div class="scr">
+            <span class="badge court" style="margin-top:8px">Court decision</span>
+            <p class="cite" style="margin-top:12px">2025 FC 12</p>
+            <h3 style="font-size:28px;line-height:1.05;margin:4px 0 12px">Language results "missing" that were on file</h3>
+            <div class="outcome"><span class="oc allowed">Allowed</span><p>Sent back for a new decision by a different officer. Not a visa.</p></div>
+            <p style="margin-top:16px">The officer refused because the language results were not provided, but they were in the file. <a class="pinlink" href="#a-sheet" aria-label="Paragraph 25, show the quote">¶ 25</a></p>
+            <p class="label" style="margin-top:20px">Facts</p>
+            <p>The applicant applied for a work permit under R205(a) while the start-up visa application was in process.</p>
+          </div>
+          <div class="tabs"><span>Today</span><span class="on">Routes</span><span>News</span><span>Me</span></div>
+          <a class="scrim" href="#a-case" aria-label="Close"></a>
+          <div class="sheet" id="a-sheet" role="dialog" aria-label="Paragraph 25">
+            <div class="grab"></div>
+            <p class="label">Paragraph 25 · 2025 FC 12</p>
+            <p class="q"><strong>[illustrative placeholder — not a quote]</strong><br>A decision that fails to account for evidence contradicting its central finding cannot stand.</p>
+            <a class="btn" style="width:100%" href="https://decisions.fct-cf.gc.ca/fc-cf/decisions/en/527166/1/document.do">Open the official decision</a>
+            <p style="margin-top:12px;text-align:center"><a href="#a-case">Close</a></p>
+          </div>
+        </div>
+
+        <div class="phone-note">
+          <p class="label">Placement (head-of-mobile)</p>
+          <ul>
+            <li>5th route segment "Cases", only when the route has cases.</li>
+            <li>"News | Cases" switch at the top of News.</li>
+            <li>Today card: "New case on your route".</li>
+            <li>No new tab.</li>
+          </ul>
+          <p style="margin-top:12px">Docket rows translate 1:1 to list rows (48pt minimum, grow with text). Segment labels other than "Cases" are placeholders for the app's real ones.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =================================================================== -->
+<!-- OPTION B -->
+<!-- =================================================================== -->
+<section class="opt" id="opt-b" aria-labelledby="b-title">
+  <div class="wrap">
+    <div class="opt-head">
+      <span class="letter" aria-hidden="true">B</span>
+      <h2 id="b-title">Editorial long-read</h2>
+      <p><strong>Argument:</strong> a refusal is a story with a turning point, and people read stories to the end. The margin rail keeps the prose clean while showing that every sentence has a source beside it, like footnotes in a good law review. The night masthead makes a court decision feel distinct from blog articles. It costs more writing per case and its signature (the rail) only exists on wide screens.</p>
+    </div>
+
+    <div class="part">
+      <span class="label">(a) Index · /en/case-studies</span>
+      <div class="frame">
+        <div class="bar"><span>visaroads.com/en/case-studies</span><span>desktop 1240</span></div>
+        <div class="page B-index">
+          <div class="hero">
+            <p class="label">Case studies · Canada</p>
+            <h1>The refusal, <i>reviewed.</i></h1>
+            <p class="stand">The Federal Court does not hear an appeal. It only does a judicial review: was the officer's decision reasonable and fair? If not, a different officer decides again. It never hands out a visa.</p>
+          </div>
+          <div class="B-filters" role="group" aria-label="Filter cases">
+            <label><span class="label">Route</span><select><option>All routes</option><option>Study permit</option><option>Work permit</option><option>C11 entrepreneur</option><option>Start-up visa</option><option>PNP</option></select></label>
+            <label><span class="label">Outcome</span><select><option>All outcomes</option><option>Allowed</option><option>Dismissed</option></select></label>
+            <label><span class="label">Country</span><select disabled><option>Canada</option></select></label>
+          </div>
+          <div class="B-list">
+            <article class="B-item lead">
+              <a href="#b-case">
+                <div class="kick"><span class="badge court">Court decision</span><span class="cite">2026 FC 255</span><span>Study permit · MBA</span><span class="oc allowed">Allowed</span></div>
+                <h3>The officer never engaged with why the applicant wanted this MBA</h3>
+                <p>Study reasons and ties to home were in the file. The refusal did not deal with them.</p>
+              </a>
+              <blockquote>"[illustrative placeholder — not a quote] The reasons do not grapple with the evidence of the study plan."</blockquote>
+            </article>
+            <article class="B-item"><a href="#b-case"><div class="kick"><span class="cite">2026 FC 158</span><span>C11 work permit</span><span class="oc dismissed">Dismissed</span></div><h3>Viability and leaving-Canada doubts were enough</h3><p>The refusal stands.</p></a></article>
+            <article class="B-item"><a href="#b-case"><div class="kick"><span class="cite">2026 FC 146</span><span>Start-up visa work permit</span><span class="oc allowed">Allowed</span></div><h3>Bringing your family is not, alone, a reason to doubt you will leave</h3></a></article>
+            <article class="B-item"><a href="#b-case"><div class="kick"><span class="cite">2025 FC 1599</span><span>Start-up visa PR · 89(b)</span><span class="oc dismissed">Dismissed</span></div><h3>"Artificial transaction": the fairness letter was enough</h3></a></article>
+            <article class="B-item"><a href="#b-case"><div class="kick"><span class="cite">2025 FC 12</span><span>Start-up visa work permit</span><span class="oc allowed">Allowed</span></div><h3>Refused for "missing" language results that were on file</h3></a></article>
+            <article class="B-item" style="grid-column:1/-1"><a href="#b-case"><div class="kick"><span class="badge client">Client case</span><span>Start-up visa · before applying</span></div><h3>A founder on the road to the designated organisation's letter of support</h3><p class="cap">VisaRoads client, anonymised, shared with written consent · VisaRoads stage: pitch and business-plan review</p></a></article>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="part" id="b-case">
+      <span class="label">(b) Single case · /en/case-studies/2025-fc-12</span>
+      <div class="frame">
+        <div class="bar"><span>visaroads.com/en/case-studies/2025-fc-12</span><span>desktop 1240</span></div>
+        <div class="B-case">
+          <div class="masthead night">
+            <span class="badge court">Court decision</span>
+            <h1>"Missing" results <i>that were on file all along</i></h1>
+            <div class="meta">
+              <span class="chip static">Start-up visa work permit</span><span class="chip static">Canada</span>
+              <span class="cite">2025 FC 12</span><span class="cap">Decided 2025 [date to verify]</span>
+            </div>
+            <div class="meta" style="border-top:1px solid var(--n-rule);padding-top:16px">
+              <span class="oc allowed">Allowed — sent back for a new decision by a different officer</span>
+            </div>
+            <p class="cap" style="margin-top:6px">A won judicial review is not a visa. The application is decided again.</p>
+          </div>
+          <div class="B-body">
+            <div class="B-row">
+              <p class="dropcap"><strong>In one line:</strong> the refusal said the language results were not provided; they were in the file, and the Court said a decision built on that mistake cannot stand.</p>
+              <div class="B-rail"><details class="pin"><summary aria-label="Paragraph 25, show the quote">¶ 25</summary><span class="q"><em>[illustrative placeholder — not a quote]</em>The decision rests on a finding the record contradicts.</span></details><span class="ref">The core holding</span></div>
+            </div>
+            <h3 class="B-h">Facts</h3>
+            <div class="B-row">
+              <p>The applicant had a designated organisation's commitment and applied for a work permit under R205(a) while the start-up visa application was in process. The officer refused, writing that no language test results were submitted.</p>
+              <div class="B-rail"><details class="pin"><summary aria-label="Paragraph 3, show the quote">¶ 3</summary><span class="q"><em>[illustrative placeholder — not a quote]</em>The Applicant applied for a work permit.</span></details><span class="ref">The application</span><br><details class="pin"><summary aria-label="Paragraph 6, show the quote">¶ 6</summary><span class="q"><em>[illustrative placeholder — not a quote]</em>No language test results were provided.</span></details><span class="ref">The officer's reason</span></div>
+            </div>
+            <h3 class="B-h">The issue</h3>
+            <div class="B-row"><p>Can a refusal be reasonable when its central reason does not match the record?</p><div class="B-rail"><details class="pin"><summary aria-label="Paragraph 12, show the quote">¶ 12</summary><span class="q"><em>[illustrative placeholder — not a quote]</em>The issue is reasonableness.</span></details></div></div>
+            <p class="B-pull">The reason given was the missing document. The document was there.</p>
+            <h3 class="B-h">What the Court held, and why the officer erred</h3>
+            <div class="B-row"><p>The results were part of the record the officer had. Reasons that ignore evidence going to the heart of the decision are not reasonable. The judicial review was allowed and the file went back to a different officer.</p><div class="B-rail"><details class="pin"><summary aria-label="Paragraph 22, show the quote">¶ 22</summary><span class="q"><em>[illustrative placeholder — not a quote]</em>The results are in the tribunal record.</span></details><span class="ref">The record</span><br><details class="pin"><summary aria-label="Paragraph 30, show the quote">¶ 30</summary><span class="q"><em>[illustrative placeholder — not a quote]</em>Remitted to a different officer.</span></details><span class="ref">The order</span></div></div>
+            <h3 class="B-h">Lessons for your file</h3>
+            <div class="B-row"><p>Name every upload clearly, point to each document in the cover letter, and keep upload confirmations. If a refusal calls something missing that you sent, check the leave deadlines in IRPA s. 72(2)(b) that day. <a href="#b-case">Start-up visa checklist →</a></p><div class="B-rail"><span class="ref">Lessons are ours, not the Court's.</span></div></div>
+            <div class="source" style="margin-top:40px;max-width:640px">
+              <p class="label">Source</p>
+              <dl><dt>Citation</dt><dd class="cite">2025 FC 12</dd><dt>Court</dt><dd>Federal Court of Canada</dd><dt>Date</dt><dd>2025 [verify]</dd></dl>
+              <a class="btn" href="https://decisions.fct-cf.gc.ca/fc-cf/decisions/en/527166/1/document.do" rel="noopener external">Read the official decision ↗</a>
+              <p class="cap" style="margin-top:12px">Source: Federal Court of Canada decisions database. This reproduction is not produced in affiliation with or endorsed by the Government of Canada.</p>
+              <p class="disclaimer">An educational summary of a public Federal Court of Canada decision, not legal or immigration advice and not the official version. The official text is on the Court's website (linked). Every case turns on its own facts. VisaRoads Inc. is not affiliated with or endorsed by the Government of Canada or the Court. For your own case, consult a lawyer or a licensed consultant (RCIC).</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="part">
+      <span class="label">(c) How it maps to the app · 375pt</span>
+      <div class="phones">
+        <div class="phone" aria-label="App: News with Cases switch">
+          <div class="status"><span>9:41</span><span>News</span></div>
+          <div class="scr">
+            <div class="chips" style="margin:8px 0 16px"><span class="chip static">News</span><span class="chip static" style="background:var(--ink);color:var(--paper)">Cases</span></div>
+            <div style="background:var(--night);color:var(--n-fg);padding:20px;margin:0 -24px">
+              <span class="cite" style="font-size:12px">2026 FC 255 · Study permit</span>
+              <b style="display:block;font:400 28px/1.05 var(--display);margin:8px 0">The officer never engaged with why the applicant wanted this MBA</b>
+              <span class="oc allowed" style="color:var(--acid)">Allowed</span>
+            </div>
+            <a class="prow" href="#b-case"><span class="cite">2026 FC 158</span> · <span class="oc dismissed">Dismissed</span><b>Viability and leaving-Canada doubts were enough</b></a>
+            <a class="prow" href="#b-case"><span class="cite">2026 FC 146</span> · <span class="oc allowed">Allowed</span><b>Bringing your family is not, alone, a reason</b></a>
+          </div>
+          <div class="tabs"><span>Today</span><span>Routes</span><span class="on">News</span><span>Me</span></div>
+        </div>
+        <div class="phone" aria-label="App: long-read case with sheet">
+          <div class="status" style="background:var(--night);color:var(--n-fg)"><span>9:41</span><span>‹ Cases</span></div>
+          <div class="scr" style="padding:0">
+            <div style="background:var(--night);color:var(--n-fg);padding:16px 24px 24px">
+              <span class="cite" style="font-size:12px">2025 FC 12</span>
+              <b style="display:block;font:400 34px/1.05 var(--display);margin:8px 0">"Missing" results that were on file</b>
+              <span class="oc allowed" style="color:var(--acid)">Allowed · sent back, not a visa</span>
+            </div>
+            <div style="padding:16px 24px">
+              <p style="font-size:17px;line-height:1.6">The refusal said the language results were not provided; they were in the file. <a class="pinlink" href="#b-sheet" aria-label="Paragraph 25, show the quote">¶ 25</a></p>
+              <p class="cap" style="margin-top:12px">On mobile the margin rail becomes inline chips, so option B looks like option A here.</p>
+            </div>
+          </div>
+          <div class="tabs"><span>Today</span><span>Routes</span><span class="on">News</span><span>Me</span></div>
+          <a class="scrim" href="#b-case" aria-label="Close"></a>
+          <div class="sheet" id="b-sheet" role="dialog" aria-label="Paragraph 25">
+            <div class="grab"></div>
+            <p class="label">Paragraph 25 · 2025 FC 12</p>
+            <p class="q"><strong>[illustrative placeholder — not a quote]</strong><br>The decision rests on a finding the record contradicts.</p>
+            <p style="text-align:center"><a href="#b-case">Close</a></p>
+          </div>
+        </div>
+        <div class="phone-note"><p class="label">Mapping</p><p>Lives best in the "News | Cases" switch, where a feature-style lead fits the News rhythm. In the route "Cases" segment it degrades to plain rows. Today card: "New case on your route" with the night lead style.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =================================================================== -->
+<!-- OPTION C -->
+<!-- =================================================================== -->
+<section class="opt" id="opt-c" aria-labelledby="c-title">
+  <div class="wrap">
+    <div class="opt-head">
+      <span class="letter" aria-hidden="true">C</span>
+      <h2 id="c-title">Lesson-first</h2>
+      <p><strong>Argument:</strong> the job is "don't get refused" (or "refused, what now"), not "understand a judgment". Lead with what to do, and show the decision as the proof underneath. Strongest link to the route checklists. The danger is legal: one decision is not a rule, and a lesson without its ¶ chip turns into our advice dressed as the Court's.</p>
+    </div>
+
+    <div class="part">
+      <span class="label">(a) Index · /en/case-studies</span>
+      <div class="frame">
+        <div class="bar"><span>visaroads.com/en/case-studies</span><span>desktop 1240</span></div>
+        <div class="page C-index">
+          <div class="intro">
+            <div><p class="label">Case studies · Canada</p><h1>What refused files teach the next one</h1></div>
+            <p>Every lesson below comes from a real Federal Court decision. The Court does not hear an appeal; it only does a judicial review of whether the officer's decision was reasonable and fair. A win sends the file to a different officer. It is never a visa.</p>
+          </div>
+          <div class="C-filters" role="group" aria-label="Filter cases">
+            <div class="fgroup"><span class="label">Route</span><div class="chips"><button class="chip" aria-pressed="true">All</button><button class="chip" aria-pressed="false">Study permit</button><button class="chip" aria-pressed="false">Work permit</button><button class="chip" aria-pressed="false">C11</button><button class="chip" aria-pressed="false">Start-up visa</button><button class="chip" aria-pressed="false">PNP</button></div></div>
+            <div class="fgroup"><span class="label">Outcome</span><div class="chips"><button class="chip" aria-pressed="true">All</button><button class="chip" aria-pressed="false">Allowed</button><button class="chip" aria-pressed="false">Dismissed</button></div><span class="label" style="margin-inline-start:24px">Country</span><span class="chip static" style="background:var(--ink);color:var(--paper)">Canada</span></div>
+          </div>
+          <div class="lesson"><span class="n">1</span><h3>Make sure the officer can see what you sent</h3><div><a class="ev" href="#c-case"><span class="top"><span class="cite">2025 FC 12</span><span class="oc allowed">Allowed</span></span><span>Start-up visa work permit: language results called missing, though on file</span></a></div></div>
+          <div class="lesson"><span class="n">2</span><h3>Answer the fairness letter in full</h3><div><a class="ev" href="#c-case"><span class="top"><span class="cite">2025 FC 1599</span><span class="oc dismissed">Dismissed</span></span><span>Start-up visa PR, "artificial transaction" (IRPR 89(b)): the letter setting out the concerns was enough</span></a></div></div>
+          <div class="lesson"><span class="n">3</span><h3>Show why you will leave, with or without your family</h3><div><a class="ev" href="#c-case"><span class="top"><span class="cite">2026 FC 146</span><span class="oc allowed">Allowed</span></span><span>Start-up visa work permit: spouse and child travelling cannot alone decide it</span></a><a class="ev" href="#c-case"><span class="top"><span class="cite">2026 FC 158</span><span class="oc dismissed">Dismissed</span></span><span>C11 work permit: viability and departure doubts were enough</span></a></div></div>
+          <div class="lesson"><span class="n">4</span><h3>Explain why this programme, and what ties you home</h3><div><a class="ev" href="#c-case"><span class="top"><span class="cite">2026 FC 255</span><span class="oc allowed">Allowed</span></span><span>Study permit, MBA: officer did not engage with study reasons and ties</span></a></div></div>
+          <div class="lesson"><span class="n">5</span><h3>Before you apply: the letter of support</h3><div><a class="ev" href="#c-case"><span class="top"><span class="badge client">Client case</span></span><span>Start-up visa founder getting the designated organisation's letter of support</span><span class="cap">VisaRoads client, anonymised, shared with written consent · VisaRoads stage: pitch and business-plan review</span></a></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="part" id="c-case">
+      <span class="label">(b) Single case · /en/case-studies/2025-fc-12</span>
+      <div class="frame">
+        <div class="bar"><span>visaroads.com/en/case-studies/2025-fc-12</span><span>desktop 1240</span></div>
+        <div class="page C-case">
+          <div class="do night">
+            <span class="label">Lessons for your file · from 2025 FC 12</span>
+            <h1>Make sure the officer can see what you sent</h1>
+            <ol>
+              <li><span>Name every upload so it is found in seconds, and list each document in the cover letter. <details class="pin"><summary aria-label="Paragraph 6, show the quote">¶ 6</summary><span class="q"><em>[illustrative placeholder — not a quote]</em>No language test results were provided.</span></details></span></li>
+              <li><span>Keep the upload confirmation for each document; it proves what was on file. <details class="pin"><summary aria-label="Paragraph 22, show the quote">¶ 22</summary><span class="q"><em>[illustrative placeholder — not a quote]</em>The results are in the tribunal record.</span></details></span></li>
+              <li><span>Refused for something you sent? Check the leave deadlines in IRPA s. 72(2)(b) that day.</span></li>
+            </ol>
+            <a class="btn" href="#c-case">Open the start-up visa checklist</a>
+          </div>
+
+          <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:center;margin-top:32px">
+            <span class="badge court">Court decision</span><span class="cite">2025 FC 12</span><span class="chip static">Start-up visa work permit</span><span class="chip static">Canada</span><span class="cap">Decided 2025 [verify]</span>
+          </div>
+          <div class="outcome" style="margin-top:16px;max-width:720px"><span class="oc allowed">Allowed — sent back for a new decision by a different officer</span><p class="cap">A won judicial review is not a visa. The application is decided again.</p></div>
+          <p class="oneline"><strong>In one line:</strong> the officer refused for missing language results that were on file, so the refusal could not stand. <details class="pin"><summary aria-label="Paragraph 25, show the quote">¶ 25</summary><span class="q"><em>[illustrative placeholder — not a quote]</em>The decision rests on a finding the record contradicts.</span></details></p>
+
+          <div class="evidence">
+            <div><h3>Facts</h3><p>Work permit under R205(a) during a start-up visa application; refused for "no language results". <details class="pin"><summary aria-label="Paragraph 3, show the quote">¶ 3</summary><span class="q"><em>[illustrative placeholder — not a quote]</em>The Applicant applied for a work permit.</span></details></p></div>
+            <div><h3>The issue</h3><p>Is a refusal reasonable when its main reason contradicts the record? <details class="pin"><summary aria-label="Paragraph 12, show the quote">¶ 12</summary><span class="q"><em>[illustrative placeholder — not a quote]</em>The issue is reasonableness.</span></details></p></div>
+            <div><h3>What the Court held</h3><p>Allowed; returned to a different officer. <details class="pin"><summary aria-label="Paragraph 30, show the quote">¶ 30</summary><span class="q"><em>[illustrative placeholder — not a quote]</em>Remitted to a different officer.</span></details></p></div>
+            <div><h3>Why the officer erred</h3><p>The reasons did not account for evidence at the heart of the decision. <details class="pin"><summary aria-label="Paragraph 25, show the quote">¶ 25</summary><span class="q"><em>[illustrative placeholder — not a quote]</em>Fails to account for contradicting evidence.</span></details></p></div>
+            <div class="full source" style="border-top:0">
+              <p class="label">Source</p>
+              <p><span class="cite">2025 FC 12</span> · Federal Court of Canada · 2025 [verify] · <a href="https://decisions.fct-cf.gc.ca/fc-cf/decisions/en/527166/1/document.do" rel="noopener external">Read the official decision ↗</a></p>
+              <p class="cap" style="margin-top:8px">Source: Federal Court of Canada decisions database. This reproduction is not produced in affiliation with or endorsed by the Government of Canada.</p>
+              <p class="disclaimer">An educational summary of a public Federal Court of Canada decision, not legal or immigration advice and not the official version. The official text is on the Court's website (linked). Every case turns on its own facts. VisaRoads Inc. is not affiliated with or endorsed by the Government of Canada or the Court. For your own case, consult a lawyer or a licensed consultant (RCIC).</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="part">
+      <span class="label">(c) How it maps to the app · 375pt</span>
+      <div class="phones">
+        <div class="phone" aria-label="App: Today card">
+          <div class="status"><span>9:41</span><span>Today</span></div>
+          <div class="scr">
+            <h3 style="font-size:34px;line-height:1.05;margin:8px 0 16px">Today</h3>
+            <div style="border:1px solid var(--ink);padding:16px">
+              <p class="label">New case on your route</p>
+              <b style="display:block;font:400 22px/1.15 var(--display);margin:8px 0">Make sure the officer can see what you sent</b>
+              <p class="cap">From 2025 FC 12 · Allowed</p>
+              <a class="btn" style="width:100%;margin-top:12px" href="#c-sheet">Check my papers</a>
+            </div>
+            <p class="cap" style="margin-top:16px">The card leads with the lesson and opens the route checklist; the case is one tap further.</p>
+          </div>
+          <div class="tabs"><span class="on">Today</span><span>Routes</span><span>News</span><span>Me</span></div>
+        </div>
+        <div class="phone" aria-label="App: lesson-first case with sheet">
+          <div class="status"><span>9:41</span><span>‹ Cases</span></div>
+          <div class="scr">
+            <p class="label" style="margin-top:8px">Lessons · 2025 FC 12</p>
+            <h3 style="font-size:28px;line-height:1.05;margin:8px 0 12px">Make sure the officer can see what you sent</h3>
+            <p style="padding:12px 0;border-top:1px solid var(--rule)">1 · Name every upload and list it in the cover letter. <a class="pinlink" href="#c-sheet" aria-label="Paragraph 6, show the quote">¶ 6</a></p>
+            <p style="padding:12px 0;border-top:1px solid var(--rule)">2 · Keep the upload confirmation.</p>
+            <div class="outcome" style="margin-top:16px"><span class="oc allowed">Allowed</span><p>Sent back to a different officer. Not a visa.</p></div>
+          </div>
+          <div class="tabs"><span>Today</span><span class="on">Routes</span><span>News</span><span>Me</span></div>
+          <a class="scrim" href="#c-case" aria-label="Close"></a>
+          <div class="sheet" id="c-sheet" role="dialog" aria-label="Paragraph 6">
+            <div class="grab"></div>
+            <p class="label">Paragraph 6 · 2025 FC 12</p>
+            <p class="q"><strong>[illustrative placeholder — not a quote]</strong><br>No language test results were provided.</p>
+            <p style="text-align:center"><a href="#c-case">Close</a></p>
+          </div>
+        </div>
+        <div class="phone-note"><p class="label">Mapping</p><p>Strongest fit for the Today card ("New case on your route") because the lesson is the hook. Weakest in the route "Cases" segment, where one route's lessons repeat the Papers segment.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =================================================================== -->
+<!-- PERSIAN SAMPLE (Option A) -->
+<!-- =================================================================== -->
+<section class="opt" id="fa" aria-labelledby="fa-title">
+  <div class="wrap">
+    <div class="opt-head">
+      <span class="letter" aria-hidden="true">fa</span>
+      <h2 id="fa-title">Persian RTL sample · option A</h2>
+      <p>The case sheet moves to the right (start side), section numbers and ¶ chips mirror, citations and the URL stay LTR inside <code>&lt;bdi&gt;</code>. Titles use the searchers' word «ریجکتی»; the body uses formal terms. No letter-spacing, no uppercase, Estedad / Vazirmatn by script.</p>
+    </div>
+
+    <div class="frame fa" dir="rtl" lang="fa">
+      <div class="bar"><span><bdi class="ltr">visaroads.com/fa/case-studies/2025-fc-12</bdi></span><span>دسکتاپ</span></div>
+      <div class="page">
+        <div class="A-case">
+          <aside class="A-sheet" aria-label="خلاصه پرونده">
+            <div><span class="badge court">رأی دادگاه</span></div>
+            <div><span class="label">شماره رأی</span><span class="big"><bdi class="ltr">2025 FC 12</bdi></span></div>
+            <div><span class="label">مسیر</span><div class="chips"><span class="chip static">ورک‌پرمیت استارتاپ ویزا</span><span class="chip static">کانادا</span></div></div>
+            <div><span class="label">تاریخ رأی</span>۲۰۲۵ <span class="placeholder">[تاریخ دقیق باید بررسی شود]</span></div>
+            <div class="outcome" style="border:0;padding:16px">
+              <span class="label">نتیجه</span>
+              <span class="oc allowed">پذیرفته شد</span>
+              <p>پرونده برای تصمیم تازه به افسر دیگری برگشت.</p>
+              <p class="cap">پذیرفته شدن بازبینی قضایی به معنای گرفتن ویزا نیست؛ درخواست از نو بررسی می‌شود.</p>
+            </div>
+            <div><a class="btn" href="https://decisions.fct-cf.gc.ca/fc-cf/decisions/en/527166/1/document.do" rel="noopener external">متن رسمی رأی (انگلیسی) ↖</a></div>
+          </aside>
+
+          <article class="prose">
+            <h1>ریجکتی ورک‌پرمیت استارتاپ ویزا: افسر نوشت نتیجه آزمون زبان نیست، اما در پرونده بود</h1>
+            <p class="oneline">در یک جمله: افسر درخواست را رد کرد چون به نظرش نتیجه آزمون زبان ارسال نشده بود، در حالی که نتیجه در پرونده بود؛ دادگاه پرونده را برگرداند.<details class="pin"><summary aria-label="بند ۲۵، نمایش متن">بند ۲۵</summary><span class="q"><em>[نمونه برای چیدمان؛ نقل‌قول نیست]</em>تصمیم بر یافته‌ای استوار است که سوابق پرونده خلاف آن را نشان می‌دهد.</span></details></p>
+
+            <h3><small>۰۱</small>ماجرا</h3>
+            <p>متقاضی تعهدنامه یک سازمان منتخب را داشت و همزمان با بررسی درخواست استارتاپ ویزا، بر اساس بند <bdi class="ltr">R205(a)</bdi> برای ورک‌پرمیت اقدام کرد.<details class="pin"><summary aria-label="بند ۳، نمایش متن">بند ۳</summary><span class="q"><em>[نمونه برای چیدمان؛ نقل‌قول نیست]</em>متقاضی برای اجازه کار در کنار درخواست استارتاپ ویزا اقدام کرد.</span></details> افسر درخواست را رد کرد و نوشت نتیجه آزمون زبان ارائه نشده است.<details class="pin"><summary aria-label="بند ۶، نمایش متن">بند ۶</summary><span class="q"><em>[نمونه برای چیدمان؛ نقل‌قول نیست]</em>افسر نوشت نتیجه آزمون زبان ارائه نشده است.</span></details></p>
+
+            <h3><small>۰۲</small>پرسش اصلی</h3>
+            <p>وقتی دلیل اصلی رد با سوابق پرونده نمی‌خواند، آیا تصمیم با معیار معقول بودن سازگار است؟<details class="pin"><summary aria-label="بند ۱۲، نمایش متن">بند ۱۲</summary><span class="q"><em>[نمونه برای چیدمان؛ نقل‌قول نیست]</em>مسئله اصلی، معقول بودن تصمیم است.</span></details> <span class="placeholder">[اگر انصاف رویه‌ای هم مطرح شده، پس از تطبیق با رأی اضافه شود.]</span></p>
+
+            <h3><small>۰۳</small>حکم دادگاه</h3>
+            <p>درخواست بازبینی قضایی پذیرفته شد. نتیجه آزمون جزو سوابقی بود که افسر در اختیار داشت و دلایل تصمیم آن را در نظر نگرفته بود.<details class="pin"><summary aria-label="بند ۲۲، نمایش متن">بند ۲۲</summary><span class="q"><em>[نمونه برای چیدمان؛ نقل‌قول نیست]</em>نتیجه آزمون زبان در سوابق پرونده هست.</span></details> پرونده برای تصمیم دوباره به افسر دیگری سپرده شد.<details class="pin"><summary aria-label="بند ۳۰، نمایش متن">بند ۳۰</summary><span class="q"><em>[نمونه برای چیدمان؛ نقل‌قول نیست]</em>پرونده برای تصمیم‌گیری دوباره به افسر دیگری ارجاع می‌شود.</span></details></p>
+
+            <h3><small>۰۴</small>اشتباه افسر کجا بود</h3>
+            <p>تصمیمی که مدرکِ مربوط به دلیل اصلی خودش را نادیده بگیرد، معقول نیست. اینجا دلیل رد، نبودن مدرک بود و مدرک در پرونده بود.<details class="pin"><summary aria-label="بند ۲۵، نمایش متن">بند ۲۵</summary><span class="q"><em>[نمونه برای چیدمان؛ نقل‌قول نیست]</em>تصمیمی که مدرک مخالف یافته اصلی‌اش را در نظر نگیرد، پابرجا نمی‌ماند.</span></details></p>
+
+            <h3><small>۰۵</small>درس‌هایی برای پرونده شما</h3>
+            <ul>
+              <li>هر فایل را با نامی روشن بارگذاری کنید و در کاورلتر بنویسید هر مدرک کجاست.</li>
+              <li>تأییدیه بارگذاری هر مدرک را نگه دارید؛ همین ثابت می‌کند مدرک در پرونده بوده است.</li>
+              <li>اگر در نامه ریجکتی نوشته‌اند مدرکی نیست که فرستاده‌اید، همان روز مهلت‌های درخواست اجازه بازبینی را در بند <bdi class="ltr">72(2)(b)</bdi> قانون <bdi class="ltr">IRPA</bdi> بخوانید.</li>
+            </ul>
+            <p><a href="#fa">چک‌لیست استارتاپ ویزا: نتیجه آزمون زبان ←</a></p>
+
+            <div class="source" style="margin-top:40px">
+              <p class="label">منبع</p>
+              <dl><dt>شماره رأی</dt><dd><bdi class="ltr cite">2025 FC 12</bdi></dd><dt>دادگاه</dt><dd>دادگاه فدرال کانادا</dd><dt>تاریخ</dt><dd>۲۰۲۵ <span class="placeholder">[بررسی شود]</span></dd></dl>
+              <p><a href="https://decisions.fct-cf.gc.ca/fc-cf/decisions/en/527166/1/document.do" rel="noopener external">متن رسمی رأی در <bdi class="ltr">decisions.fct-cf.gc.ca</bdi></a></p>
+              <p class="cap" style="margin-top:8px">منبع: پایگاه آرای دادگاه فدرال کانادا. این بازنشر با همکاری یا تأیید دولت کانادا تهیه نشده است.</p>
+              <p class="disclaimer">این صفحه خلاصه‌ای آموزشی از یک رأی عمومی دادگاه فدرال کاناداست؛ نه مشاوره حقوقی یا مهاجرتی است و نه نسخه رسمی رأی. متن معتبر را در سایت دادگاه بخوانید (لینک بالا). هر پرونده با شرایط خودش سنجیده می‌شود. ویزا رودز هیچ وابستگی‌ای به دولت کانادا یا دادگاه ندارد. برای پرونده خودتان با وکیل یا مشاور مهاجرت دارای مجوز (RCIC) صحبت کنید.</p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="note" style="margin-top:32px">
+      <p><strong>RTL notes for engineering:</strong> use logical properties only (<code>margin-inline-start</code>, <code>border-inline-start</code>, <code>inset-inline</code>); the external-link arrow flips to ↖ and the "next" arrow to ←. Citations, statute references and URLs sit in <code>&lt;bdi dir="ltr"&gt;</code> so "2025 FC 12" never reorders. Persian digits for ¶ numbers («بند ۲۵»), section numbers and years in Persian prose; Latin digits inside citations. Body line-height 1.8 (body-arabic token). The English disclaimer's "Government of Canada attribution" line is translated; confirm the Persian attribution wording with counsel.</p>
+    </div>
+  </div>
+</section>
+
+<footer class="wrap" style="padding:32px 24px 64px">
+  <p class="cap">Mockup for direction choice only. Brand values from design/tokens.json v1.1.0. No VisaRoads prices, success rates or applicant names appear in this file or may appear on the pages it describes.</p>
+</footer>
+</body>
+</html>

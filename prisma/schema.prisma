@@ -315,3 +315,80 @@ model AgentReport {
   @@index([agent, createdAt])
   @@index([createdAt])
 }
+
+// Case studies (docs/product/case-studies-spec.md §7). One row per locale;
+// groupKey pairs the en and fa versions of the same case.
+model CaseStudy {
+  id                String         @id @default(cuid())
+  groupKey          String
+  locale            String // en | fa
+  slug              String // <route>-<year>-fc-<number>; never the applicant's name
+  type              String // FC_DECISION | CLIENT_CASE
+  status            String         @default("DRAFT") // DRAFT | IN_REVIEW | APPROVED | SCHEDULED | PUBLISHED | WITHDRAWN
+
+  // content
+  title             String
+  excerpt           String?
+  content           String // sanitised HTML
+  keyTakeaway       String?
+  summaryEn         String?
+
+  // decision
+  court             String?
+  citation          String?
+  decisionDate      DateTime?
+  judge             String?
+  route             String // e.g. start-up-visa | study-permit | work-permit-c11
+  country           String         @default("canada")
+  outcome           String? // allowed | dismissed (FC_DECISION); null for CLIENT_CASE
+  officialUrl       String?
+
+  // analysis, JSON stored as String
+  issues            String         @default("[]")
+  lessons           String         @default("[]")
+  claims            String         @default("[]") // [{id, kind, text, paras: number[], quote, verified: boolean}]
+  faq               String         @default("[]")
+  redLines          String         @default("[]") // red-line scan hits saved at ingest
+
+  // provenance
+  sourceSha256      String?
+  fetchedAt         DateTime?
+  certifiedQuestion String?
+  consentRecordId   String?
+  consentRecord     ConsentRecord? @relation(fields: [consentRecordId], references: [id], onDelete: Restrict)
+  aiModel           String?
+  sample            Boolean        @default(false) // seeded sample row; excluded from public queries in production
+
+  // workflow
+  approvedBy        String?
+  approvedAt        DateTime?
+  publishAt         DateTime?
+  publishedAt       DateTime?
+  withdrawnAt       DateTime?
+  withdrawnReason   String?
+  supersededById    String? // CaseStudy.id of the replacement; plain string, no relation
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+
+  @@unique([locale, slug])
+  @@unique([groupKey, locale])
+  @@index([locale, status, publishedAt])
+  @@index([status, publishAt])
+  @@index([consentRecordId])
+}
+
+// Written consent from a client for a CLIENT_CASE. Revoking it withdraws
+// every linked case.
+model ConsentRecord {
+  id            String      @id @default(cuid())
+  clientRef     String // internal client reference; never a name
+  scope         String      @default("{}") // JSON: what the client agreed to
+  signedAt      DateTime
+  documentUri   String? // private storage only, never a public URL
+  revokedAt     DateTime?
+  revokedReason String?
+  recordedBy    String
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  caseStudies   CaseStudy[]
+}
