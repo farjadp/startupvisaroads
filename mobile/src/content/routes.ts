@@ -108,7 +108,7 @@ export const ROUTES: Record<RouteKey, RouteContent> = {
     },
     unscoredEn: [
       'A signed agreement with an RVO-approved facilitator',
-      'A full year of funds — about €21,200 for one person and €29,700 for a family, but it changes every six months',
+      'A full year of funds — about €21,200 for one person and €30,300 for a family, but it changes every six months',
       'The first permit is one year at most and cannot be extended',
       'The product must be genuinely new to the Dutch market',
     ],
