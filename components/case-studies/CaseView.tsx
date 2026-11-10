@@ -50,8 +50,20 @@ function num(n: number, lang: Lang): string {
 }
 
 function Chip({ claim, c, lang }: { claim: PublicClaim; c: PublicCase; lang: Lang }) {
-  if (c.type !== 'FC_DECISION' || !claim.paras.length || !claim.quote) return null;
+  if (c.type !== 'FC_DECISION' || !claim.quote) return null;
   const t = COPY[lang];
+  if (claim.source === 'judgment') {
+    return (
+      <ParaChip
+        label={t.judgmentLabel}
+        ariaLabel={t.judgmentAria}
+        heading={t.judgmentHeading(c.citation)}
+        quote={claim.quote}
+        originalLabel={lang === 'fa' ? t.quoteLang : undefined}
+      />
+    );
+  }
+  if (!claim.paras.length) return null;
   return (
     <ParaChip
       label={t.paraLabel(claim.paras)}
@@ -159,8 +171,8 @@ export default function CaseView({ c }: { c: PublicCase }) {
                   {t.outcome}
                 </Label>
                 <OutcomeMark outcome={c.outcome} lang={lang} className="text-[17px]" />
-                <p className="mt-1.5 text-sm font-medium">{c.outcome === 'allowed' ? t.outcomeAllowedLine : t.outcomeDismissedLine}</p>
-                {c.outcome === 'allowed' && <p className="mt-1.5 text-xs leading-normal text-[#666562]">{t.notGranted}</p>}
+                <p className="mt-1.5 text-sm font-medium">{t.outcomeLine[c.outcome]}</p>
+                {t.outcomeNote[c.outcome] && <p className="mt-1.5 text-xs leading-normal text-[#666562]">{t.outcomeNote[c.outcome]}</p>}
               </div>
             )}
             {court && c.certifiedQuestion && (

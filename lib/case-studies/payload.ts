@@ -14,7 +14,9 @@ export const CASE_TYPES = ['FC_DECISION', 'CLIENT_CASE'] as const;
 export type CaseType = (typeof CASE_TYPES)[number];
 export const CASE_LOCALES = ['en', 'fa'] as const;
 export type CaseLocale = (typeof CASE_LOCALES)[number];
-export const OUTCOMES = ['allowed', 'dismissed'] as const;
+// mandamus_*: a delay case. The Court orders (or refuses to order) a decision;
+// nothing is set aside or sent back.
+export const OUTCOMES = ['allowed', 'dismissed', 'mandamus_granted', 'mandamus_refused'] as const; // = lib/case-studies/outcomes.ts
 export type Outcome = (typeof OUTCOMES)[number];
 
 export const FC_SLUG_RE = /^[a-z0-9-]+-(\d{4})-fc-(\d+)$/;
@@ -61,7 +63,7 @@ const ALLOWED_KEYS = new Set([
   'issues', 'lessons', 'claims', 'faq', 'sourceSha256', 'fetchedAt', 'certifiedQuestion',
   'consentRecordId', 'aiModel',
 ]);
-const CLAIM_KEYS = new Set(['id', 'kind', 'text', 'paras', 'quote', 'verified']);
+const CLAIM_KEYS = new Set(['id', 'kind', 'text', 'paras', 'quote', 'verified', 'source']);
 const CLAIM_KINDS = new Set<string>([...CLAIM_A_KINDS, ...CLAIM_B_KINDS]);
 const KEY_RE = /^[a-z0-9][a-z0-9-]{0,199}$/;
 
@@ -120,10 +122,15 @@ function parseClaims(raw: unknown, type: CaseType): StoredClaim[] {
     }
     const quote = c.quote ?? '';
     if (typeof quote !== 'string' || quote.length > 5000) throw new PayloadError(`${at}.quote must be a string`);
+    const source = c.source ?? null;
+    if (source !== null && source !== 'judgment') throw new PayloadError(`${at}.source must be "judgment" when present`);
     if (type === 'FC_DECISION') {
-      if (paras.length === 0) throw new PayloadError(`${at} needs at least one paragraph reference`);
+      // A judgment claim quotes the Court's order, which has no paragraph number.
+      if (source === 'judgment' ? paras.length !== 0 : paras.length === 0) {
+        throw new PayloadError(source === 'judgment' ? `${at}: a judgment claim cites no paragraph` : `${at} needs at least one paragraph reference`);
+      }
       if (!quote.trim()) throw new PayloadError(`${at} needs a quote`);
-    }
+    } else if (source) throw new PayloadError(`${at}.source is only for court decisions`);
     return {
       id: c.id,
       kind: c.kind as StoredClaim['kind'],
@@ -131,6 +138,7 @@ function parseClaims(raw: unknown, type: CaseType): StoredClaim[] {
       paras: paras as number[],
       quote: quote.trim(),
       verified: false, // never trusted from the poster
+      ...(source === 'judgment' ? { source: 'judgment' as const } : {}),
     };
   });
 }
@@ -220,7 +228,7 @@ export function parseCaseStudyPayload(body: unknown): ParsedPayload {
 
     const outcomeRaw = optString(body, 'outcome', 20);
     if (outcomeRaw !== null && !(OUTCOMES as readonly string[]).includes(outcomeRaw)) {
-      throw new PayloadError('outcome must be allowed or dismissed');
+      throw new PayloadError(`outcome must be one of ${OUTCOMES.join(', ')}`);
     }
     const outcome = outcomeRaw as Outcome | null;
     const citation = optString(body, 'citation', 50);

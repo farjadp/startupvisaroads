@@ -221,7 +221,7 @@ export function certifiedQuestionFrom(judgment: string): { status: 'none' | 'cer
   return { status: 'unknown', question: null };
 }
 
-const APP = String.raw`(?:the\s+|this\s+|his\s+|her\s+|their\s+)?(?:judicial\s+review\s+)?(?:application|applications|motion)(?:\s+for\s+(?:leave\s+and\s+(?:for\s+)?)?judicial\s+review)?(?:\s+in\s+(?:IMM|T)-\d+-\d+)?`;
+const APP = String.raw`(?:the\s+|this\s+|his\s+|her\s+|their\s+)?(?:judicial\s+review\s+)?(?:application|applications|motion)(?:\s+for\s+(?:leave\s+and\s+(?:for\s+)?)?judicial\s+review)?(?:\s+in\s+(?:IMM|T)-\d+-\d+)?(?:\s+and\s+the\s+(?:request|application)\s+for\s+(?:an\s+order\s+of\s+|a\s+writ\s+of\s+)?mandamus)?`;
 const RX = {
   consent: /\bon\s+consent\b|\bconsent\s+(?:judgment|order)\b|\bwith\s+the\s+consent\s+of\s+the\s+parties\b|\bparties\s+(?:have\s+)?(?:consented|agree[ds]?)\b|\bon\s+the\s+consent\b|\b(?:parties|respondent|applicants?)\s+having\s+consented\b/i,
   inPart: /\b(?:allowed|granted)\s+in\s+part\b|\bpartially\s+(?:allowed|granted)\b|\bin\s+part\s+(?:allowed|granted)\b/i,
@@ -290,4 +290,21 @@ export async function parseDecisionPdf(bytes: Uint8Array): Promise<ParsedDecisio
   const { text } = await extractText(pdf, { mergePages: false });
   const pages = Array.isArray(text) ? text : [text];
   return parseDecisionText(pages.join('\n'));
+}
+
+/**
+ * The Court's deadline order in a mandamus judgment, verbatim: e.g. "A decision
+ * shall be rendered on the Applicant's application within 90 days of this
+ * judgment." Null when the JUDGMENT block sets no deadline. Deterministic, so
+ * the quote is exact by construction.
+ */
+export function deadlineOrderFromJudgment(judgment: string | null | undefined): { quote: string; days: number } | null {
+  const text = (judgment ?? '').replace(/\s+/g, ' ');
+  // Split the numbered order items ("1. ... 2. ...").
+  const items = text.split(/\s(?=\d{1,2}\.\s+[A-Z])/).map((x) => x.replace(/^\d{1,2}\.\s+/, '').trim());
+  for (const item of items) {
+    const m = /^[^.]*?\b(?:decision|determination)\b[^.]*?\bwithin\s+(\d{1,3})\s+days\b[^.]*\./i.exec(item);
+    if (m) return { quote: m[0].trim(), days: Number(m[1]) };
+  }
+  return null;
 }

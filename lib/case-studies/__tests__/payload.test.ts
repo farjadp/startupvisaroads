@@ -19,6 +19,21 @@ const fcBody = (over: Record<string, unknown> = {}) => ({
 });
 
 describe('parseCaseStudyPayload', () => {
+  it('accepts a mandamus case with a judgment claim (the Court\'s order has no paragraph)', () => {
+    const r = parseCaseStudyPayload(fcBody({
+      outcome: 'mandamus_granted',
+      claims: [
+        { id: 'h1', kind: 'holding', text: 'The delay was unjustified.', paras: [43], quote: 'cannot be classified as a satisfactory justification' },
+        { id: 'o1', kind: 'holding', text: 'A decision within 90 days was ordered.', paras: [], quote: 'A decision shall be rendered within 90 days of this judgment.', source: 'judgment' },
+      ],
+    }));
+    expect(r.ok).toBe(true);
+    if (!r.ok) return;
+    expect(r.payload.outcome).toBe('mandamus_granted');
+    expect(r.payload.claims.find((c) => c.id === 'o1')?.source).toBe('judgment');
+  });
+
+
   it('accepts a valid FC payload, forces verified false and sanitises HTML', () => {
     const r = parseCaseStudyPayload(fcBody());
     expect(r.ok).toBe(true);
@@ -43,6 +58,9 @@ describe('parseCaseStudyPayload', () => {
     ['claim without quote', { claims: [{ id: 'c1', kind: 'holding', text: 't', paras: [3], quote: ' ' }] }],
     ['claim with unknown key', { claims: [{ id: 'c1', kind: 'holding', text: 't', paras: [3], quote: 'q', speaker: 'court' }] }],
     ['bad locale', { locale: 'fr' }],
+    ['unknown outcome', { outcome: 'granted' }],
+    ['judgment claim that cites a paragraph', { claims: [{ id: 'o1', kind: 'holding', text: 't', paras: [43], quote: 'q', source: 'judgment' }] }],
+    ['claim with an unknown source', { claims: [{ id: 'c1', kind: 'holding', text: 't', paras: [3], quote: 'q', source: 'blog' }] }],
     ['bad sha', { sourceSha256: 'abc' }],
     ['content only a script', { content: '<script>x</script>' }],
   ];

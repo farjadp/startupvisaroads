@@ -25,6 +25,8 @@ export interface ClaimA {
   speaker: Speaker;
   external?: boolean;
   basedOn?: string[];
+  /** 'judgment': quoted verbatim from the JUDGMENT block (the Court's order); paras is then []. */
+  source?: 'judgment';
 }
 
 export interface CaseA {
@@ -65,6 +67,8 @@ export type StoredClaim = {
   paras: number[];
   quote: string;
   verified: boolean;
+  /** 'judgment': the quote is from the JUDGMENT block, not a numbered paragraph. */
+  source?: 'judgment';
 };
 
 export const CASE_A_SECTIONS = ['standardOfReview', 'facts', 'issues', 'holdings', 'officerErred', 'lessons'] as const;
@@ -85,6 +89,7 @@ export function toStoredClaim(c: ClaimA | ClaimB, paras?: number[]): StoredClaim
     paras: 'paras' in c ? [...c.paras] : [...(paras ?? [])],
     quote: c.quote,
     verified: false,
+    ...('source' in c && c.source === 'judgment' ? { source: 'judgment' as const } : {}),
   };
 }
 
