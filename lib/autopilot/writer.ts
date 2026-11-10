@@ -8,7 +8,7 @@
 // ============================================================================
 import prisma from '@/lib/prisma';
 import { wrapDiagram, wrapPhoto } from '@/lib/ai';
-import { generateBrandImage, imagesBlocked } from './images';
+import { generateBrandImage, generateCover, imagesBlocked } from './images';
 import { createArticleFromPayload } from '@/lib/articles';
 import type { Locale } from '@/lib/seo';
 import { BRAND_FACTS, buildInventory, linkBlock, type Inventory } from './inventory';
@@ -259,7 +259,9 @@ async function writeOne(brief: Brief, inv: Inventory, opts: RunOpts, result: Gen
     }
     written.push({ title: d.title, content: body });
 
-    const coverImage = opts.dryRun ? null : await generateBrandImage(d.coverImagePrompt, 'cover');
+    const coverImage = opts.dryRun
+      ? null
+      : await generateCover({ title: d.title, locale: inv.locale, category: brief.category, tags: d.tags }, d.coverImagePrompt);
 
     if (opts.dryRun) {
       result.created.push({ id: 'dry-run', slug: d.slugEn || 'dry-run', title: d.title, status });

@@ -24,7 +24,7 @@ import type { Locale } from '@/lib/seo';
 import { BRAND_FACTS, buildInventory, linkBlock, type Inventory } from './inventory';
 import { originality, tooClose } from './originality';
 import { AIO_RULES, FACT_RULES, WRITER_MODEL, chatJson, chatText, expand, houseStyle, humanise, logErrors, quotaCount, type GenerateResult } from './pipeline';
-import { generateBrandImage, imagesBlocked } from './images';
+import { generateCover, imagesBlocked } from './images';
 import { markDocument, pendingCount, writableDocumentById, writableDocuments, type WritableDocument } from '@/lib/knowledge/queue';
 import { decidePlannedPublication, enforceLinks, sameSubject, wordCountHtml } from './text';
 import { applyCitations, buildEvidence, gateFigures, recordEvidenceUse, type Evidence } from './evidence';
@@ -390,7 +390,7 @@ export async function runFromSources(n: number, locale: Locale, opts: RunOpts = 
       }
       written.push({ title: d.title, content: body });
 
-      const coverImage = await generateBrandImage(d.coverImagePrompt, 'cover');
+      const coverImage = await generateCover({ title: d.title, locale: inv.locale, category: brief.category, tags: d.tags }, d.coverImagePrompt);
 
       const created = await createArticleFromPayload(
         {
