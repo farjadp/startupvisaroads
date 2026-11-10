@@ -21,12 +21,13 @@ export function provider(): Provider {
   throw new ClaudeError(`CASE_STUDIES_PROVIDER="${p}" is not gemini or claude.`);
 }
 
-// Defaults checked against aistudio.google.com/docs/models on 2026-11-10:
-// gemini-3.8-flash is the most capable Flash model, gemini-3.5-flash-lite the
-// stable low-cost one. The flagship gemini-4-argon carries no stable label
-// yet; opt in with CASE_STUDIES_MODEL_EXTRACT=gemini-4-argon.
+// Defaults checked against aistudio.google.com/docs/models on 2026-11-10.
+// Extract uses the flagship gemini-4-argon: on the 5 fc-real decisions it
+// found 3-4 holdings per case where gemini-3.8-flash found 1-2 (live run
+// 2026-11-10, docs/engineering/case-studies-pipeline.md). Argon has no
+// "stable" label yet; if it changes, set CASE_STUDIES_MODEL_EXTRACT.
 const DEFAULTS: Record<Provider, { extract: string; write: string; verify: string }> = {
-  gemini: { extract: 'gemini-3.8-flash', write: 'gemini-3.8-flash', verify: 'gemini-3.5-flash-lite' },
+  gemini: { extract: 'gemini-4-argon', write: 'gemini-3.8-flash', verify: 'gemini-3.5-flash-lite' },
   claude: { extract: 'claude-opus-5-5', write: 'claude-sonnet-5-5', verify: 'claude-haiku-5-5' },
 };
 

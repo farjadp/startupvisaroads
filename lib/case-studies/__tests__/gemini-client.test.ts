@@ -31,7 +31,7 @@ afterEach(() => {
 describe('provider selection', () => {
   it('defaults to gemini and its models', () => {
     expect(provider()).toBe('gemini');
-    expect(MODELS.extract()).toBe('gemini-3.8-flash');
+    expect(MODELS.extract()).toBe('gemini-4-argon');
     expect(MODELS.verify()).toBe('gemini-3.5-flash-lite');
   });
   it('switches to claude models', () => {
@@ -39,8 +39,8 @@ describe('provider selection', () => {
     expect(MODELS.extract()).toBe('claude-opus-5-5');
   });
   it('model env vars still override', () => {
-    process.env.CASE_STUDIES_MODEL_EXTRACT = 'gemini-4-argon';
-    expect(MODELS.extract()).toBe('gemini-4-argon');
+    process.env.CASE_STUDIES_MODEL_EXTRACT = 'gemini-3.8-flash';
+    expect(MODELS.extract()).toBe('gemini-3.8-flash');
   });
   it('rejects an unknown provider', () => {
     process.env.CASE_STUDIES_PROVIDER = 'openai';

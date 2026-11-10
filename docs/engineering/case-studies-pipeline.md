@@ -43,7 +43,7 @@ A failing gate writes `STOPPED.json` in the case folder and exits non-zero. Ther
 | `CASE_STUDIES_PROVIDER` | `gemini` (since 2026-11-10) or `claude` | `scripts/case-studies/lib/anthropic.ts` (dispatch) |
 | `GEMINI_API_KEY` | none (required for stages 3, 4, 6, 7 and the live eval when the provider is gemini) | `scripts/case-studies/lib/gemini.ts` |
 | `ANTHROPIC_API_KEY` | none (required when the provider is claude) | `scripts/case-studies/lib/anthropic.ts` |
-| `CASE_STUDIES_MODEL_EXTRACT` | gemini `gemini-3.8-flash` / claude `claude-opus-5-5` | stage 3 (opt in to `gemini-4-argon` here) |
+| `CASE_STUDIES_MODEL_EXTRACT` | gemini `gemini-4-argon` / claude `claude-opus-5-5` | stage 3 |
 | `CASE_STUDIES_MODEL_WRITE` | gemini `gemini-3.8-flash` / claude `claude-sonnet-5-5` | stages 6, 7 |
 | `CASE_STUDIES_MODEL_VERIFY` | gemini `gemini-3.5-flash-lite` / claude `claude-haiku-5-5` | stage 4 |
 | `CASE_STUDIES_DIR` | `~/VisaRoads-private/case-studies` | all stages |
@@ -116,6 +116,17 @@ en/fa claim parity check               100.0% (10/10)  bar 100%      PASS
 trace rules detection (stage 8)        100.0% (10/10)  bar 100%      PASS
 Persian rubric (live only)             not run         mean >= 4/5, none < 3   SKIP
 ```
+
+### First live run (Gemini, 2026-11-10)
+
+Extract + ground on the 5 fc-real decisions; verify on `gemini-3.5-flash-lite`.
+
+| Extract model | Disposition | Holding cites labelled para | Claims extracted / grounded | Miss |
+| --- | --- | --- | --- | --- |
+| `gemini-3.8-flash` | 5/5 | 4/5 | 54 / 50 | 2026 FC 255: one holding at para 28 only; label is the conclusion at para 15 |
+| `gemini-4-argon` | 5/5 | 4/5 | 83 / 79 | 2026 FC 146: cites the rule at para 13; label is the conclusion at para 12 |
+
+No case was stopped by a gate; the ground gate dropped 4–5 unsupported claims per run. Argon is the default for extract because it returns the full set of holdings (3–4 per decision against 1–2). Both misses are an adjacent or related paragraph, not a wrong holding. Five cases cannot show the 95% bar either way; that needs the remaining labelled decisions. Argon extract used about 8k input and 8k output tokens per decision.
 
 ### What the live eval still needs
 
