@@ -5,7 +5,8 @@
 // ----------------------------------------------------------------------------
 // Note: dangerouslySetInnerHTML does not run <script> tags, but it DOES run
 // inline event handlers (onerror/onload/...) and `javascript:` URLs. We remove
-// all of those, plus dangerous tags. data: URLs are only allowed for images.
+// all of those, plus dangerous tags. URL attributes go through a scheme
+// allowlist (isSafeUrl); data: URLs are only allowed for images.
 //
 // SVG IS allowed — AI-generated diagrams use inline SVG for crisp rendering.
 // However, dangerous SVG sub-elements (script, use[href], foreignObject) are
@@ -21,14 +22,51 @@ const DISALLOWED_TAGS = ['script', 'style', 'iframe', 'object', 'embed', 'form',
 // Dangerous tags that may appear inside <svg> and must be stripped.
 const DISALLOWED_SVG_CHILDREN = ['script', 'use', 'foreignObject', 'animate', 'set', 'animateMotion', 'animateTransform'];
 
-function isSafeUrl(value: string, attr: string): boolean {
-  const v = value.trim().toLowerCase();
-  if (v.startsWith('javascript:') || v.startsWith('vbscript:')) return false;
-  if (v.startsWith('data:')) {
-    // Only allow inline images, never data:text/html etc.
-    return attr === 'src' && v.startsWith('data:image/');
+// Every attribute the browser resolves as a URL (navigation, fetch or ping).
+const URL_ATTRS = new Set([
+  'href', 'src', 'xlink:href', 'action', 'formaction', 'poster', 'background', 'cite', 'data', 'ping', 'srcset',
+]);
+
+const SAFE_SCHEMES = new Set(['http', 'https', 'mailto', 'tel']);
+
+// Only these elements may carry an inline data:image/ in src/srcset.
+const DATA_IMAGE_TAGS = new Set(['img', 'source']);
+
+/**
+ * Characters removed before the scheme is read: all ASCII C0 controls, space,
+ * DEL and C1 controls, plus U+FFFD (what the HTML parser turns NUL into).
+ * Browsers drop tab/LF/CR anywhere in a URL and C0 controls/space at its
+ * ends, so `java\tscript:` and `\x01javascript:` run as javascript:. Removing
+ * them everywhere is stricter than the browser: it can only make a value look
+ * more like a scheme, never less, so the allowlist fails closed.
+ */
+const URL_IGNORED_CHARS = /[\u0000- \u007f-\u009f\ufffd]/g;
+
+/**
+ * Scheme allowlist for one URL attribute value (already entity-decoded by the
+ * parser). No scheme = relative path, #fragment, ?query or //host: allowed.
+ * data: only as data:image/ in src/srcset on img/source (SVG images included:
+ * an SVG loaded through <img> runs no script). Everything else must be
+ * http, https, mailto or tel.
+ */
+export function isSafeUrl(value: string, attr: string, tag = ''): boolean {
+  const v = value.replace(URL_IGNORED_CHARS, '').toLowerCase();
+  const m = /^([a-z][a-z0-9+.-]*):/.exec(v);
+  if (!m) return true;
+  const scheme = m[1];
+  if (scheme === 'data') {
+    return (attr === 'src' || attr === 'srcset') && DATA_IMAGE_TAGS.has(tag) && v.startsWith('data:image/');
   }
-  return true;
+  return SAFE_SCHEMES.has(scheme);
+}
+
+/** srcset: every candidate's URL (first token) must pass; one bad candidate drops the attribute. */
+function isSafeSrcset(value: string, tag: string): boolean {
+  return value
+    .split(',')
+    .map((candidate) => candidate.trim().split(/\s+/)[0] ?? '')
+    .filter((url) => url !== '')
+    .every((url) => isSafeUrl(url, 'srcset', tag));
 }
 
 export function sanitizeHtml(html: string): string {
@@ -39,18 +77,27 @@ export function sanitizeHtml(html: string): string {
   $(DISALLOWED_TAGS.join(',')).remove();
 
   // Strip dangerous elements that can appear inside <svg> blocks
-  $('svg').find(DISALLOWED_SVG_CHILDREN.join(',')).remove();
+  // Matched on the lowercased tag name: the parser keeps SVG camelCase
+  // (foreignObject, animateMotion), which a CSS type selector never matches.
+  const svgDenied = new Set(DISALLOWED_SVG_CHILDREN.map((t) => t.toLowerCase()));
+  $('svg')
+    .find('*')
+    .filter((_, el) => svgDenied.has(String((el as any).tagName || '').toLowerCase()))
+    .remove();
 
   // Strip SVG <use> elements that reference external URLs (href/xlink:href)
   $('svg use').each((_, el) => {
-    const href = $(el).attr('href') || $(el).attr('xlink:href') || '';
-    if (href.startsWith('http') || href.startsWith('//')) {
+    // Dead code today (`use` is removed above); kept as a backstop if it is ever
+    // allowed again. Only same-document #fragment references survive.
+    const href = ($(el).attr('href') || $(el).attr('xlink:href') || '').replace(URL_IGNORED_CHARS, '');
+    if (href !== '' && !href.startsWith('#')) {
       $(el).remove();
     }
   });
 
   $('*').each((_, node) => {
     const attribs: Record<string, string> = (node as any).attribs || {};
+    const tag = String((node as any).tagName || '').toLowerCase();
     for (const attr of Object.keys(attribs)) {
       const value = attribs[attr];
       const lower = attr.toLowerCase();
@@ -61,7 +108,7 @@ export function sanitizeHtml(html: string): string {
         continue;
       }
       // Neutralise dangerous URL protocols
-      if ((lower === 'href' || lower === 'src' || lower === 'xlink:href' || lower === 'srcset' || lower === 'action' || lower === 'formaction') && !isSafeUrl(value, lower)) {
+      if (URL_ATTRS.has(lower) && !(lower === 'srcset' ? isSafeSrcset(value, tag) : isSafeUrl(value, lower, tag))) {
         $(node).removeAttr(attr);
         continue;
       }
