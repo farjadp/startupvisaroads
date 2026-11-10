@@ -290,7 +290,7 @@ All of these go through `/api/admin/case-studies/*` with `getSessionFromRequest`
   - **The applicant's surname never goes in the slug.** This overrides the seo-strategist's proposal (`…-2025-fc-12-shoaie`), which breaks the naming rule.
   - Flat routes, no programme folder: simpler routing, and the route filter covers the same need.
 - `lib/fa/redirects.ts`: add `/case-studies/` to `DYNAMIC_PREFIXES`.
-- `lib/fa/paths.ts`: add `/case-studies` only when the first Persian case is published. Until then `/fa/case-studies` 301s to English, so there is never an empty Persian index.
+- `lib/fa/paths.ts`: add `/case-studies` only when the first Persian case is published. Until then `/fa/case-studies` redirects to English with a temporary 307 (a 301 would be cached and outlive the condition), so there is never an empty Persian index.
 - A case with only one locale: the other locale's URL 301s to it, as the blog does at `blog/[slug]/page.tsx:86`. If neither exists, 404.
 - Filters as query parameters. Filtered views are noindex, with the unfiltered index as canonical.
 
