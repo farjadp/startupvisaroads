@@ -105,6 +105,12 @@ describe('dispositionFromJudgment', () => {
     expect(dispositionFromJudgment('The decision of the Officer is set aside and the matter is returned for redetermination.')).toBe('allowed');
   });
 
+  it('mandamus: "the application ... and the request for mandamus is granted / dismissed" (2026 FC 1370 wording)', () => {
+    expect(dispositionFromJudgment('1. The application for judicial review and the request for an order of mandamus is granted. 2. A decision shall be rendered on the Applicant\'s application within 90 days of this judgment.')).toBe('allowed');
+    expect(dispositionFromJudgment('1. The application for judicial review and the request for a writ of mandamus is dismissed.')).toBe('dismissed');
+    expect(dispositionFromJudgment('The application for leave and judicial review and the application for mandamus are granted.')).toBe('allowed');
+  });
+
   it('dismissed', () => {
     expect(dispositionFromJudgment('1. The application for judicial review is dismissed. 2. No question is certified.')).toBe('dismissed');
     expect(dispositionFromJudgment('THIS COURT ORDERS that the Application for Judicial Review is dismissed.')).toBe('dismissed');

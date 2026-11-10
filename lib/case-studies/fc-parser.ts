@@ -221,7 +221,7 @@ export function certifiedQuestionFrom(judgment: string): { status: 'none' | 'cer
   return { status: 'unknown', question: null };
 }
 
-const APP = String.raw`(?:the\s+|this\s+|his\s+|her\s+|their\s+)?(?:judicial\s+review\s+)?(?:application|applications|motion)(?:\s+for\s+(?:leave\s+and\s+(?:for\s+)?)?judicial\s+review)?(?:\s+in\s+(?:IMM|T)-\d+-\d+)?`;
+const APP = String.raw`(?:the\s+|this\s+|his\s+|her\s+|their\s+)?(?:judicial\s+review\s+)?(?:application|applications|motion)(?:\s+for\s+(?:leave\s+and\s+(?:for\s+)?)?judicial\s+review)?(?:\s+in\s+(?:IMM|T)-\d+-\d+)?(?:\s+and\s+the\s+(?:request|application)\s+for\s+(?:an\s+order\s+of\s+|a\s+writ\s+of\s+)?mandamus)?`;
 const RX = {
   consent: /\bon\s+consent\b|\bconsent\s+(?:judgment|order)\b|\bwith\s+the\s+consent\s+of\s+the\s+parties\b|\bparties\s+(?:have\s+)?(?:consented|agree[ds]?)\b|\bon\s+the\s+consent\b|\b(?:parties|respondent|applicants?)\s+having\s+consented\b/i,
   inPart: /\b(?:allowed|granted)\s+in\s+part\b|\bpartially\s+(?:allowed|granted)\b|\bin\s+part\s+(?:allowed|granted)\b/i,
