@@ -4,7 +4,8 @@
 // rules are readable in one place. This is triage, not advice: it picks
 // which page the reader should read next and says why in two sentences.
 //
-// Since the Canada Start-up Visa closed to new applications (31 Dec 2025)
+// Since the Canada Start-up Visa stopped taking new applications (IRCC
+// announced the end on 19 Dec 2025; the last filing day was 30 Jun 2026)
 // the outcomes are: a European startup visa (Finland for teams, Italy for a
 // funded team chasing growth, Estonia or Denmark for a solo founder),
 // Türkiye when the founder needs runway more than a European passport, an
@@ -76,7 +77,7 @@ export function recommendPath(a: QuizAnswers): Recommendation {
   if (a.background === 'research' && !hasBusiness) {
     return result(
       'eb2niw',
-      'سابقه‌ی پژوهشی شما دقیقاً همان چیزی است که معیار دوم Dhanasar می‌خواهد، و NIW به کارفرما یا سرمایه نیاز ندارد. پیش از هر اقدامی، وضعیت فعلی محدودیت ورود اتباع ایران به آمریکا را با وکیل بررسی کنید.',
+      'سابقه‌ی پژوهشی شما دقیقاً همان چیزی است که معیار دوم Dhanasar می‌خواهد، و NIW به کارفرما یا سرمایه نیاز ندارد. اما از ۱ ژانویه‌ی ۲۰۲۶ صدور ویزای آمریکا برای پاسپورت ایرانی متوقف است؛ اگر تابعیت دوم ندارید، پیش از هر هزینه‌ای برنامه را با یک وکیل آمریکایی و با همین محدودیت بچینید.',
     );
   }
 
@@ -100,7 +101,7 @@ export function recommendPath(a: QuizAnswers): Recommendation {
   if (funded && a.background !== 'none' && (a.goal !== 'growth' || !hasBusiness)) {
     return result(
       'atlantic',
-      'سرمایه‌ی قابل انتقال و سابقه‌ی مدیریت شما از آستانه‌های مسیرهای کارآفرینی آتلانتیک کانادا رد می‌شود: سرمایه‌گذاری ۱۵۰ هزار و دارایی خالص ۴۰۰ تا ۶۰۰ هزار دلار. مجوز کار در بازه‌ی چند ماه، اقامت دائم پس از اجرای تعهدات — و کانادا، که SUV دیگر به آن نمی‌رسد.',
+      'سرمایه‌ی قابل انتقال و سابقه‌ی مدیریت شما از آستانه‌های مسیرهای کارآفرینی آتلانتیک کانادا رد می‌شود: در نیوبرانزویک دارایی خالص ۵۰۰ هزار و سرمایه‌گذاری ۱۵۰ هزار دلار، در نوااسکوشیا بیرون از هلیفکس ۴۰۰ و ۱۰۰ هزار. اول مجوز کار و اداره‌ی کسب‌وکار، بعد نامزدی استان و اقامت دائم — راهی به کانادا که بعد از بسته‌شدن ویزای استارتاپ هنوز باز است.',
     );
   }
 

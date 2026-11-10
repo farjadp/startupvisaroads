@@ -14,8 +14,12 @@
 // crescent and star are legislated geometry rather than plain bands, so that
 // one is the official artwork too, translated into a 0-origin frame.
 //
-// The United States has no entry: the fifty-star canton is not worth ten
-// kilobytes inlined for one page, so /fa/usa-eb2-niw keeps the acid rule.
+// The United States and the United Kingdom have codes ('us', 'gb') but no
+// path here, so no guide hero changes: only the route atlas on /fa/which-path
+// names them explicitly. Both are drawn from their specifications — the US
+// canton is computed from the Executive Order 10834 table, not inlined, and
+// the Union Flag is the Wikimedia public-domain construction (60x30, two
+// clip paths for the counterchanged saltire).
 //
 // Israel has no entry either, and for the first reason rather than the
 // second. The legislated spec fixes the field and the two blue bands exactly,
@@ -40,7 +44,7 @@
 // ids.
 // ============================================================================
 
-export type FlagCode = 'dk' | 'fi' | 'nl' | 'ee' | 'it' | 'es' | 'bg' | 'be' | 'tr' | 'ca' | 'au';
+export type FlagCode = 'dk' | 'fi' | 'nl' | 'ee' | 'it' | 'es' | 'bg' | 'be' | 'tr' | 'ca' | 'au' | 'gb' | 'us';
 
 const BY_PATH: Record<string, FlagCode> = {
   '/europe/denmark': 'dk',
@@ -81,6 +85,8 @@ export const FLAG_NAME: Record<FlagCode, string> = {
   tr: 'ترکیه',
   au: 'استرالیا',
   ca: 'کانادا',
+  gb: 'بریتانیا',
+  us: 'آمریکا',
 };
 
 /**
@@ -99,4 +105,6 @@ export const FLAG_RATIO: Record<FlagCode, { w: number; h: number }> = {
   tr: { w: 3, h: 2 }, // Türk Bayrağı Kanunu
   au: { w: 2, h: 1 }, // Flags Act 1953
   ca: { w: 2, h: 1 },
+  gb: { w: 2, h: 1 }, // Union Flag, 1:2 on land
+  us: { w: 19, h: 10 }, // Executive Order 10834 (A = 1.0, B = 1.9)
 };

@@ -35,9 +35,32 @@ const C = {
   caRed: '#D52B1E',
   auBlue: '#012169',
   auRed: '#E4002B',
+  gbBlue: '#012169',
+  gbRed: '#C8102E',
+  usRed: '#B31942',
+  usBlue: '#0A3161',
   eeBlack: '#000000',
   white: '#FFFFFF',
 };
+
+/** A five-pointed star of outer radius r centred on (cx, cy), point up. */
+function star(cx: number, cy: number, r: number): string {
+  const inner = r * 0.381966;
+  const pts: string[] = [];
+  for (let i = 0; i < 10; i++) {
+    const rad = i % 2 === 0 ? r : inner;
+    const a = -Math.PI / 2 + (i * Math.PI) / 5;
+    pts.push(`${(cx + rad * Math.cos(a)).toFixed(2)},${(cy + rad * Math.sin(a)).toFixed(2)}`);
+  }
+  return `M${pts.join('L')}Z`;
+}
+
+/** The fifty star centres: nine rows of 6 and 5, eleven column positions. */
+const US_STARS: [number, number][] = Array.from({ length: 9 }, (_, row) =>
+  Array.from({ length: 11 }, (_, col) => col)
+    .filter((col) => col % 2 === row % 2)
+    .map((col) => [6.3 + col * 6.3, 5.4 + row * 5.4] as [number, number]),
+).flat();
 
 function Shapes({ code }: { code: FlagCode }) {
   switch (code) {
@@ -176,6 +199,47 @@ function Shapes({ code }: { code: FlagCode }) {
           </g>
         </>
       );
+    // Union Flag: the Wikimedia Commons public-domain construction on 60x30.
+    // The saltire is counterchanged, which is what the two clip paths do.
+    case 'gb':
+      return (
+        <>
+          <defs>
+            <clipPath id="gb-s">
+              <path d="M0,0 v30 h60 v-30 z" />
+            </clipPath>
+            <clipPath id="gb-t">
+              <path d="M30,15 h30 v15 z v15 h-30 z h-30 v-15 z v-15 h30 z" />
+            </clipPath>
+          </defs>
+          <g clipPath="url(#gb-s)">
+            <path d="M0,0 v30 h60 v-30 z" fill={C.gbBlue} />
+            <path d="M0,0 L60,30 M60,0 L0,30" stroke={C.white} strokeWidth={6} />
+            <path d="M0,0 L60,30 M60,0 L0,30" clipPath="url(#gb-t)" stroke={C.gbRed} strokeWidth={4} />
+            <path d="M30,0 v30 M0,15 h60" stroke={C.white} strokeWidth={10} />
+            <path d="M30,0 v30 M0,15 h60" stroke={C.gbRed} strokeWidth={6} />
+          </g>
+        </>
+      );
+    // Executive Order 10834, in units of the hoist (A = 1.0, here 100):
+    // fly 1.9, canton 0.5385 x 0.76, stripes 1/13, star diameter 0.0616,
+    // rows E = F = 0.054 apart, columns G = H = 0.063 apart. Six-star rows
+    // sit on the even columns, five-star rows on the odd ones.
+    case 'us':
+      return (
+        <>
+          <rect width={190} height={100} fill={C.white} />
+          {Array.from({ length: 7 }, (_, i) => (
+            <rect key={i} y={(i * 2 * 100) / 13} width={190} height={100 / 13} fill={C.usRed} />
+          ))}
+          <rect width={76} height={53.85} fill={C.usBlue} />
+          <g fill={C.white}>
+            {US_STARS.map(([x, y]) => (
+              <path key={`${x}-${y}`} d={star(x, y, 3.08)} />
+            ))}
+          </g>
+        </>
+      );
     case 'ca':
       return (
         <>
@@ -199,7 +263,11 @@ export default function Flag({ code, className }: { code: FlagCode; className?: 
         ? { w: 90000, h: 60000 }
         : code === 'au'
           ? { w: 10080, h: 5040 }
-          : FLAG_RATIO[code];
+          : code === 'gb'
+            ? { w: 60, h: 30 }
+            : code === 'us'
+              ? { w: 190, h: 100 }
+              : FLAG_RATIO[code];
   const name = FLAG_NAME[code];
   return (
     <svg
