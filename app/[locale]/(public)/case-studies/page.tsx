@@ -2,11 +2,13 @@
 // app/[locale]/(public)/case-studies/page.tsx
 // Case studies hub (spec §3, §7, §9). Filters are query parameters; a filtered
 // view is noindex with its canonical on the unfiltered index. The Persian
-// index 301s to English while no Persian case is published.
+// index redirects to English while no Persian case is published. The redirect
+// is temporary (307): a 301/308 is cached by browsers and search engines, and
+// would keep sending readers to English after the first Persian case goes live.
 // ============================================================================
 import React from 'react';
 import type { Metadata } from 'next';
-import { permanentRedirect } from 'next/navigation';
+import { redirect } from 'next/navigation';
 import { setRequestLocale } from 'next-intl/server';
 import JsonLd from '@/components/JsonLd';
 import CaseIndex from '@/components/case-studies/CaseIndex';
@@ -59,7 +61,7 @@ export default async function CaseStudiesIndexPage({ params, searchParams }: Arg
   setRequestLocale(raw);
 
   const all = await listPublished({ locale });
-  if (locale === 'fa' && all.length === 0) permanentRedirect('/en/case-studies');
+  if (locale === 'fa' && all.length === 0) redirect('/en/case-studies');
 
   const filters = readFilters(await searchParams, Array.from(new Set(all.map((i) => i.route))));
 
