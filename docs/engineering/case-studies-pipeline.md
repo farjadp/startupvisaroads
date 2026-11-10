@@ -40,10 +40,12 @@ A failing gate writes `STOPPED.json` in the case folder and exits non-zero. Ther
 
 | Var | Default | Used by |
 | --- | --- | --- |
-| `ANTHROPIC_API_KEY` | none (required for stages 3, 4, 6, 7 and the live eval) | `scripts/case-studies/lib/anthropic.ts` |
-| `CASE_STUDIES_MODEL_EXTRACT` | `claude-opus-5-5` | stage 3 |
-| `CASE_STUDIES_MODEL_WRITE` | `claude-sonnet-5-5` | stages 6, 7 |
-| `CASE_STUDIES_MODEL_VERIFY` | `claude-haiku-5-5` | stage 4 |
+| `CASE_STUDIES_PROVIDER` | `gemini` (since 2026-11-10) or `claude` | `scripts/case-studies/lib/anthropic.ts` (dispatch) |
+| `GEMINI_API_KEY` | none (required for stages 3, 4, 6, 7 and the live eval when the provider is gemini) | `scripts/case-studies/lib/gemini.ts` |
+| `ANTHROPIC_API_KEY` | none (required when the provider is claude) | `scripts/case-studies/lib/anthropic.ts` |
+| `CASE_STUDIES_MODEL_EXTRACT` | gemini `gemini-3.8-flash` / claude `claude-opus-5-5` | stage 3 (opt in to `gemini-4-argon` here) |
+| `CASE_STUDIES_MODEL_WRITE` | gemini `gemini-3.8-flash` / claude `claude-sonnet-5-5` | stages 6, 7 |
+| `CASE_STUDIES_MODEL_VERIFY` | gemini `gemini-3.5-flash-lite` / claude `claude-haiku-5-5` | stage 4 |
 | `CASE_STUDIES_DIR` | `~/VisaRoads-private/case-studies` | all stages |
 | `CLIENT_CASES_DIR` | `~/VisaRoads-private/cases` | `redact-b` |
 | `CASE_STUDIES_POST_URL` | `http://localhost:3000` | stage 10 |
@@ -117,7 +119,7 @@ Persian rubric (live only)             not run         mean >= 4/5, none < 3   S
 
 ### What the live eval still needs
 
-- An `ANTHROPIC_API_KEY` with access to the three 5.5 models, for extract, verify, write-en and write-fa on the labelled decisions.
+- A `GEMINI_API_KEY` (default provider) or an `ANTHROPIC_API_KEY` with `CASE_STUDIES_PROVIDER=claude`, for extract, verify, write-en and write-fa on the labelled decisions. The bars were set before the switch to Gemini; the live eval decides whether Gemini clears them, especially exact-quote grounding and the Persian rubric.
 - About 8 hours of labelling: 35 more type A decisions, with disposition, remitted, certified question, a holding quote and paragraph, and the expected claim set. Fetch them with `fetch.ts`, parse them, then label from the private cache. Commit short quotes only.
 - A Farjad spot-check of 10 labels (the 5 fc-real labels are still pending his check).
 - The Persian rubric, scored on stage 7 output (mean 4/5 or higher, no case below 3). It cannot run offline.

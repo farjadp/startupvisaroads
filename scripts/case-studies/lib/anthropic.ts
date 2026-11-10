@@ -5,13 +5,35 @@
 // output via output_config.format (json_schema), adaptive thinking (the
 // default on the 5.5 models; never budget_tokens), server-side refusal
 // fallbacks ("default" form) on Opus/Sonnet 5.5.
+//
+// Provider: CASE_STUDIES_PROVIDER = gemini (default since 2026-11-10, Farjad's
+// choice) | claude. Gemini calls go through ./gemini.ts with the same contract.
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { callGeminiJson, requireGeminiKey } from './gemini';
+
+export type Provider = 'gemini' | 'claude';
+
+export function provider(): Provider {
+  const p = process.env.CASE_STUDIES_PROVIDER?.trim().toLowerCase();
+  if (!p || p === 'gemini') return 'gemini';
+  if (p === 'claude' || p === 'anthropic') return 'claude';
+  throw new ClaudeError(`CASE_STUDIES_PROVIDER="${p}" is not gemini or claude.`);
+}
+
+// Defaults checked against aistudio.google.com/docs/models on 2026-11-10:
+// gemini-3.8-flash is the most capable Flash model, gemini-3.5-flash-lite the
+// stable low-cost one. The flagship gemini-4-argon carries no stable label
+// yet; opt in with CASE_STUDIES_MODEL_EXTRACT=gemini-4-argon.
+const DEFAULTS: Record<Provider, { extract: string; write: string; verify: string }> = {
+  gemini: { extract: 'gemini-3.8-flash', write: 'gemini-3.8-flash', verify: 'gemini-3.5-flash-lite' },
+  claude: { extract: 'claude-opus-5-5', write: 'claude-sonnet-5-5', verify: 'claude-haiku-5-5' },
+};
 
 export const MODELS = {
-  extract: () => process.env.CASE_STUDIES_MODEL_EXTRACT?.trim() || 'claude-opus-5-5',
-  write: () => process.env.CASE_STUDIES_MODEL_WRITE?.trim() || 'claude-sonnet-5-5',
-  verify: () => process.env.CASE_STUDIES_MODEL_VERIFY?.trim() || 'claude-haiku-5-5',
+  extract: () => process.env.CASE_STUDIES_MODEL_EXTRACT?.trim() || DEFAULTS[provider()].extract,
+  write: () => process.env.CASE_STUDIES_MODEL_WRITE?.trim() || DEFAULTS[provider()].write,
+  verify: () => process.env.CASE_STUDIES_MODEL_VERIFY?.trim() || DEFAULTS[provider()].verify,
 };
 
 const API_URL = () => `${process.env.ANTHROPIC_BASE_URL?.trim() || 'https://api.anthropic.com'}/v1/messages`;
@@ -41,6 +63,7 @@ export type JsonCall = {
 export type JsonResult<T> = { value: T; model: string; usage: Usage; stopReason: string };
 
 export function requireApiKey(): string {
+  if (provider() === 'gemini') return requireGeminiKey();
   const key = process.env.ANTHROPIC_API_KEY?.trim();
   if (!key) {
     throw new ClaudeError('ANTHROPIC_API_KEY is not set. Export it in your shell (never commit it); offline eval needs no key: npx tsx scripts/case-studies/eval/run.ts --offline');
@@ -67,6 +90,7 @@ function usesFallbacks(model: string): boolean {
  * max_tokens stop is an error, never a partial result.
  */
 export async function callJson<T>(call: JsonCall, attempts = 4): Promise<JsonResult<T>> {
+  if (provider() === 'gemini') return callGeminiJson<T>(call, attempts);
   const key = requireApiKey();
   const headers: Record<string, string> = {
     'content-type': 'application/json',

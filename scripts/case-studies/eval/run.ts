@@ -1,6 +1,6 @@
 // Case Studies eval harness.
 //   npx tsx scripts/case-studies/eval/run.ts            (= --offline: deterministic, no key, CI-safe)
-//   npx tsx scripts/case-studies/eval/run.ts --live     (runs extract + ground gate on the fc-real cases; needs ANTHROPIC_API_KEY and the private cache)
+//   npx tsx scripts/case-studies/eval/run.ts --live     (runs extract + ground gate on the fc-real cases; needs GEMINI_API_KEY (or CASE_STUDIES_PROVIDER=claude + ANTHROPIC_API_KEY) and the private cache)
 // Exit code 1 when any pass bar fails, so CI can block a prompt or model change.
 import { execFileSync } from 'node:child_process';
 import { existsSync, readFileSync } from 'node:fs';
