@@ -13,6 +13,8 @@ const NETHERLANDS: RouteTheme = { accent: '#F97316', accentInk: '#1a1a1a', accen
 const ESTONIA: RouteTheme = { accent: '#0072CE', accentInk: '#FFFFFF', accentText: '#005EA8', primary: '#003A70', deep: '#0A1726', soft: '#E2EEFA', accentOnDark: '#7DB9F0' };
 const ITALY: RouteTheme = { accent: '#34D17D', accentInk: '#0A0E1A', accentText: '#00753A', primary: '#00753A', deep: '#0D1017', soft: '#DDF3E6' };
 const SPAIN: RouteTheme = { accent: '#FFC400', accentInk: '#1a1a1a', accentText: '#A30F1F', primary: '#A30F1F', deep: '#2B0A0F', soft: '#FFF4CC', accentOnDark: '#FFC400' };
+// Belgium has no English twin with a THEME constant: the flag's black, yellow and red (red darkened for AA text on white).
+const BELGIUM: RouteTheme = { accent: '#FDDA24', accentInk: '#1a1a1a', accentText: '#B5162B', primary: '#1a1a1a', deep: '#141414', soft: '#FFF7CC', accentOnDark: '#FDDA24' };
 const BULGARIA: RouteTheme = { accent: '#00966E', accentInk: '#00140E', accentText: '#00704F', primary: '#A51E10', deep: '#0B2A21', soft: '#DCF1E9', accentOnDark: '#2FC594' };
 const TURKEY: RouteTheme = { accent: '#E30A17', accentInk: '#FFFFFF', accentText: '#B5000F', primary: '#A3000F', deep: '#0A0E1A', soft: '#FCE6E7', accentOnDark: '#FF5A63' };
 const AUSTRALIA: RouteTheme = { accent: '#00843D', accentInk: '#FFFFFF', accentText: '#006B31', primary: '#0d1017', deep: '#0a0e1a', soft: '#E3F2E8', accentOnDark: '#5cb87f' };
@@ -33,6 +35,7 @@ const BY_PATH: Record<string, RouteTheme> = {
   '/europe/italy': ITALY,
   '/europe/spain': SPAIN,
   '/europe/bulgaria': BULGARIA,
+  '/europe/belgium': BELGIUM,
   '/turkey-tech-visa': TURKEY,
   '/australia': AUSTRALIA,
   '/canada-startup-visa': CANADA_SUV,

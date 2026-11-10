@@ -63,6 +63,7 @@ import Flag from '@/components/route/flags';
 import { RouteProvider, RouteRail, RouteStop, RouteFinish, type RouteStopDef, type RouteTheme } from '@/components/route/RouteProgress';
 import { CopyButton, OpenedTracker, ParallaxLayer, PerkOrCatch, StepWalker, type RouteStep } from '@/components/route/RouteWidgets';
 import { IntakeDots, JuryQuiz, ReadTracker, TeamCheck } from './TurkeyWidgets';
+import { Detail, NumberTiles, StepLine, WhyWatch, type Tile } from '@/components/guide/visual';
 
 export async function generateMetadata({
   params,
@@ -112,6 +113,13 @@ const criteria = [
   },
 ];
 
+const snapshotTiles: Tile[] = [
+  { value: '3 yrs', label: 'Work permit', sub: 'longest first permit here' },
+  { value: '22', label: 'Startups admitted', sub: 'Sep 2024 – Mar 2026' },
+  { value: '20%', label: 'Minimum shareholding', sub: 'per foreign partner' },
+  { value: '100+', label: 'Technoparks', sub: 'one of them judges you' },
+];
+
 const rejected = ['A simple online shop', 'Ordinary import and export', 'A digital marketing agency', 'Traditional service businesses generally'];
 
 const steps: RouteStep[] = [
@@ -156,6 +164,18 @@ const steps: RouteStep[] = [
     figureLabel: 'end to end',
   },
 ];
+
+// One chip per step, from the step's own figure and label.
+const stepChips = ['Completeness check only', '100+ accredited technoparks', 'Industry and academia', 'Work permit, up to 3 yrs', '3–6 months end to end'];
+
+const ruleTiles: Tile[] = [
+  { value: '20%', label: 'Shares, per foreign partner', sub: 'equal splits not required' },
+  { value: 'TRY 500,000', label: 'Capital, per foreign partner', sub: 'unless the capital share is USD 100,000 or more' },
+  { value: '5', label: 'Turkish employees per foreign employee', sub: 'from the seventh month; no blanket exemption found' },
+];
+
+const strengths = ['The longest first permit, at three years', 'Geographic proximity', 'A cost of living well below Western Europe', 'More than a hundred technoparks'];
+const weaknesses = ['A very young programme with a small intake', 'An inflationary economy that makes long-term planning hard', 'No path to EU membership or a European passport'];
 
 const howToJsonLd = {
   '@context': 'https://schema.org',
@@ -295,6 +315,12 @@ const reads = [
 // ─── Page ────────────────────────────────────────────────────────────────────
 
 const label = 'font-sans text-xs font-bold uppercase tracking-[0.18em]';
+
+// Each fold's reading time: its word count at 200 words a minute (measured
+// 9 Nov 2026); update it when a fold's text grows or shrinks a lot.
+const MIN = { snapshot: 1, gate: 1, steps: 2, rules: 1, life: 2, leads: 1 };
+// FAQ answers shown before the "More questions" fold.
+const FAQ_OPEN = 6;
 const th = 'px-4 py-3';
 
 // setRequestLocale before the first <Link>: without it next-intl reads
@@ -386,6 +412,7 @@ export default async function TurkeyPage({ params }: { params: Promise<{ locale:
           task="Read the four facts"
           completeOn="view"
           message="Snapshot read"
+          lead={<NumberTiles tiles={snapshotTiles} />}
           answer={
             <p>
               The Türkiye Tech Visa is a government programme in force since 16 September 2024, run by the Ministry of Industry and Technology with the
@@ -394,22 +421,8 @@ export default async function TurkeyPage({ params }: { params: Promise<{ locale:
             </p>
           }
         >
-          <dl className="grid grid-cols-2 gap-3 md:grid-cols-4">
-            {[
-              { stat: '3 yrs', label: 'Work permit', sub: 'longest first permit here' },
-              { stat: '22', label: 'Startups admitted', sub: 'Sep 2024 – Mar 2026' },
-              { stat: '20%', label: 'Minimum shareholding', sub: 'per foreign partner' },
-              { stat: '100+', label: 'Technoparks', sub: 'one of them judges you' },
-            ].map((s) => (
-              <div key={s.label} className="flex flex-col rounded-2xl border border-[#1a1a1a]/10 bg-white p-5 transition-transform hover:-translate-y-1">
-                <dt className="order-2 mt-2 font-sans text-sm font-bold">{s.label}</dt>
-                <dd className="order-1 font-serif text-4xl text-[#A3000F]">{s.stat}</dd>
-                <dd className="order-3 font-sans text-xs text-[#1a1a1a]/55">{s.sub}</dd>
-              </div>
-            ))}
-          </dl>
-
-          <div className="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-2">
+          <Detail minutes={MIN.snapshot}>
+          <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
             <div className="grid content-start gap-4 font-sans text-[15px] leading-relaxed text-[#1a1a1a]/70">
               <h3 className="font-serif text-2xl text-[#1a1a1a]">The Ministry is the gateway</h3>
               <p>
@@ -450,6 +463,7 @@ export default async function TurkeyPage({ params }: { params: Promise<{ locale:
               </div>
             </div>
           </div>
+          </Detail>
           <ReadTracker stopId="snapshot" message="Snapshot read" />
         </RouteStop>
 
@@ -461,6 +475,22 @@ export default async function TurkeyPage({ params }: { params: Promise<{ locale:
           eyebrow="What the jury is sensitive to"
           question="Who qualifies for the Türkiye Tech Visa?"
           task="Answer all four"
+          lead={
+            <JuryQuiz stopId="gate" criteria={criteria} compact>
+              <h3 className="font-serif text-xl">Set aside at assessment</h3>
+              <ul className="grid gap-1.5 font-sans text-sm text-[#1a1a1a]/65">
+                {rejected.map((r) => (
+                  <li key={r} className="flex items-center gap-3">
+                    <span aria-hidden="true" className="h-px w-4 bg-[#E30A17]" />
+                    {r}
+                  </li>
+                ))}
+              </ul>
+              <Link href="/book-meeting" className="inline-flex w-fit items-center gap-2 rounded-full bg-[#E30A17] px-5 py-3 font-sans text-sm font-bold text-white transition-transform hover:-translate-y-0.5">
+                Get a free read on your file <ArrowRight className="h-4 w-4" />
+              </Link>
+            </JuryQuiz>
+          }
           answer={
             <p>
               A technology-based startup: software development or genuine technological novelty with commercialisation potential and global
@@ -469,28 +499,23 @@ export default async function TurkeyPage({ params }: { params: Promise<{ locale:
             </p>
           }
         >
-          <JuryQuiz stopId="gate" criteria={criteria}>
-            <h3 className="font-serif text-xl">Set aside at assessment</h3>
-            <ul className="grid gap-1.5 font-sans text-sm text-[#1a1a1a]/65">
-              {rejected.map((r) => (
-                <li key={r} className="flex items-center gap-3">
-                  <span aria-hidden="true" className="h-px w-4 bg-[#E30A17]" />
-                  {r}
-                </li>
+          <Detail minutes={MIN.gate}>
+            <dl className="grid max-w-5xl grid-cols-1 gap-x-8 gap-y-4 font-sans text-[15px] leading-relaxed md:grid-cols-2">
+              {criteria.map((c) => (
+                <div key={c.title}>
+                  <dt className="font-bold text-[#1a1a1a]">{c.title}</dt>
+                  <dd className="text-[#1a1a1a]/70">{c.body}</dd>
+                </div>
               ))}
-            </ul>
-            <Link href="/book-meeting" className="inline-flex w-fit items-center gap-2 rounded-full bg-[#E30A17] px-5 py-3 font-sans text-sm font-bold text-white transition-transform hover:-translate-y-0.5">
-              Get a free read on your file <ArrowRight className="h-4 w-4" />
-            </Link>
-          </JuryQuiz>
-
-          <div className="mt-8 max-w-3xl border-l-2 border-[#E30A17] pl-6">
-            <p className="font-sans text-sm leading-relaxed text-[#1a1a1a]/70">
-              <strong className="text-[#1a1a1a]">A warning that comes from practice on this route:</strong> padding the team with unrelated people — older
-              family members, or generic roles like &ldquo;social media manager&rdquo; — raises jury scrutiny and endangers the whole file. If you cannot
-              explain in a paragraph why a person is necessary to this startup, their presence weakens you.
-            </p>
-          </div>
+            </dl>
+            <div className="mt-8 max-w-3xl border-l-2 border-[#E30A17] pl-6">
+              <p className="font-sans text-sm leading-relaxed text-[#1a1a1a]/70">
+                <strong className="text-[#1a1a1a]">A warning that comes from practice on this route:</strong> padding the team with unrelated people — older
+                family members, or generic roles like &ldquo;social media manager&rdquo; — raises jury scrutiny and endangers the whole file. If you cannot
+                explain in a paragraph why a person is necessary to this startup, their presence weakens you.
+              </p>
+            </div>
+          </Detail>
         </RouteStop>
 
         {/* 03 — How to apply */}
@@ -499,7 +524,10 @@ export default async function TurkeyPage({ params }: { params: Promise<{ locale:
           number={3}
           eyebrow="Portal to residence card"
           question="How do you apply for the Türkiye Tech Visa?"
-          task="Walk to step 5"
+          task="See the five steps"
+          completeOn="view"
+          message="Steps seen"
+          lead={<StepLine steps={steps.map((st, i) => ({ label: st.title, who: st.who, chip: stepChips[i] }))} />}
           answer={
             <p>
               File your CV, business plan and personal details on turkiyetechvisa.gov.tr. The Ministry of Industry and Technology checks the file is
@@ -508,12 +536,14 @@ export default async function TurkeyPage({ params }: { params: Promise<{ locale:
             </p>
           }
         >
-          <StepWalker stopId="steps" steps={steps} />
-          <p className="mt-6 max-w-[68ch] font-sans text-sm text-[#1a1a1a]/65">
-            <strong className="text-[#1a1a1a]">Realistic timeline:</strong> three to six months from first filing to a residence card, in the standard
-            case. What lengthens it is predictable: files returned by the jury for correction or re-translation, waiting lists at oversubscribed
-            technoparks, and opening a corporate bank account as a foreign national.
-          </p>
+          <Detail minutes={MIN.steps}>
+            <StepWalker stopId="steps" steps={steps} />
+            <p className="mt-6 max-w-[68ch] font-sans text-sm text-[#1a1a1a]/65">
+              <strong className="text-[#1a1a1a]">Realistic timeline:</strong> three to six months from first filing to a residence card, in the standard
+              case. What lengthens it is predictable: files returned by the jury for correction or re-translation, waiting lists at oversubscribed
+              technoparks, and opening a corporate bank account as a foreign national.
+            </p>
+          </Detail>
         </RouteStop>
 
         {/* Photo band */}
@@ -550,7 +580,10 @@ export default async function TurkeyPage({ params }: { params: Promise<{ locale:
           tone="white"
           eyebrow="The general rules · make or break the team"
           question="What shareholding, capital and hiring rules apply to a Tech Visa team?"
-          task="Size your team"
+          task="See the two rules"
+          completeOn="view"
+          message="Team rules seen"
+          lead={<NumberTiles tiles={ruleTiles} surface="white" label="The two general rules for a foreign company partner" />}
           answer={
             <p>
               Two general Turkish work-permit rules, not the programme&rsquo;s own. Each foreign partner must hold at least 20% of the shares and contribute
@@ -559,49 +592,51 @@ export default async function TurkeyPage({ params }: { params: Promise<{ locale:
             </p>
           }
         >
-          <TeamCheck stopId="rules" />
+          <Detail minutes={MIN.rules}>
+            <TeamCheck stopId="rules" />
 
-          <div className="mt-8 overflow-x-auto">
-            <table className="w-full min-w-[640px] overflow-hidden rounded-2xl bg-[#F2F0E9] font-sans text-sm">
-              <caption className="pb-2 text-left font-bold">General Turkish work-permit conditions for a foreign company partner</caption>
-              <thead>
-                <tr className="border-b border-[#1a1a1a]/10 text-left text-[11px] uppercase tracking-[0.1em] text-[#1a1a1a]/55">
-                  <th scope="col" className={th}>Condition</th>
-                  <th scope="col" className={th}>Rule</th>
-                  <th scope="col" className={th}>Note</th>
-                </tr>
-              </thead>
-              <tbody>
-                {partnerRules.map((r) => (
-                  <tr key={r.condition} className="border-b border-[#1a1a1a]/10 last:border-0">
-                    <th scope="row" className={`${th} text-left font-bold`}>{r.condition}</th>
-                    <td className={th}>{r.rule}</td>
-                    <td className={`${th} text-xs text-[#1a1a1a]/60`}>{r.note}</td>
+            <div className="mt-8 overflow-x-auto">
+              <table className="w-full min-w-[640px] overflow-hidden rounded-2xl bg-[#F2F0E9] font-sans text-sm">
+                <caption className="pb-2 text-left font-bold">General Turkish work-permit conditions for a foreign company partner</caption>
+                <thead>
+                  <tr className="border-b border-[#1a1a1a]/10 text-left text-[11px] uppercase tracking-[0.1em] text-[#1a1a1a]/55">
+                    <th scope="col" className={th}>Condition</th>
+                    <th scope="col" className={th}>Rule</th>
+                    <th scope="col" className={th}>Note</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          <div className="mt-8 grid max-w-5xl grid-cols-1 gap-6 font-sans text-sm leading-relaxed text-[#1a1a1a]/70 md:grid-cols-2">
-            <p>
-              <strong className="text-[#1a1a1a]">Neither belongs to the programme.</strong> Both are the general Turkish work-permit rules for a foreign
-              company partner, which is exactly why founders meet them late. The TRY 500,000 condition is not the minimum company registration capital, which is
-              lower. Equal splits are not required — three co-founders at roughly a third each clear 20% comfortably, and the rule itself caps a foreign
-              founding team at five.
-            </p>
-            <div className="rounded-2xl border-l-4 border-[#E30A17] bg-[#FCE6E7] p-5">
-              <p className="flex gap-2 text-[#1a1a1a]/80">
-                <ShieldAlert className="mt-0.5 h-4 w-4 shrink-0 text-[#B5000F]" aria-hidden="true" />
-                <span>
-                  <strong className="text-[#1a1a1a]">We could not find explicit official text granting a blanket exemption.</strong> Programme write-ups
-                  say Tech Visa startups are exempt, and technopark companies are in practice assessed more flexibly. For three foreign founders,
-                  &ldquo;exempt&rdquo; against &ldquo;treated flexibly&rdquo; is zero hires against fifteen — and you find out in month seven. Get this in
-                  writing from the technopark or the Ministry of Labour before you commit money.
-                </span>
-              </p>
+                </thead>
+                <tbody>
+                  {partnerRules.map((r) => (
+                    <tr key={r.condition} className="border-b border-[#1a1a1a]/10 last:border-0">
+                      <th scope="row" className={`${th} text-left font-bold`}>{r.condition}</th>
+                      <td className={th}>{r.rule}</td>
+                      <td className={`${th} text-xs text-[#1a1a1a]/60`}>{r.note}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
-          </div>
+
+            <div className="mt-8 grid max-w-5xl grid-cols-1 gap-6 font-sans text-sm leading-relaxed text-[#1a1a1a]/70 md:grid-cols-2">
+              <p>
+                <strong className="text-[#1a1a1a]">Neither belongs to the programme.</strong> Both are the general Turkish work-permit rules for a foreign
+                company partner, which is exactly why founders meet them late. The TRY 500,000 condition is not the minimum company registration capital, which is
+                lower. Equal splits are not required — three co-founders at roughly a third each clear 20% comfortably, and the rule itself caps a foreign
+                founding team at five.
+              </p>
+              <div className="rounded-2xl border-l-4 border-[#E30A17] bg-[#FCE6E7] p-5">
+                <p className="flex gap-2 text-[#1a1a1a]/80">
+                  <ShieldAlert className="mt-0.5 h-4 w-4 shrink-0 text-[#B5000F]" aria-hidden="true" />
+                  <span>
+                    <strong className="text-[#1a1a1a]">We could not find explicit official text granting a blanket exemption.</strong> Programme write-ups
+                    say Tech Visa startups are exempt, and technopark companies are in practice assessed more flexibly. For three foreign founders,
+                    &ldquo;exempt&rdquo; against &ldquo;treated flexibly&rdquo; is zero hires against fifteen — and you find out in month seven. Get this in
+                    writing from the technopark or the Ministry of Labour before you commit money.
+                  </span>
+                </p>
+              </div>
+            </div>
+          </Detail>
         </RouteStop>
 
         {/* 05 — Rights and catches */}
@@ -610,7 +645,10 @@ export default async function TurkeyPage({ params }: { params: Promise<{ locale:
           number={5}
           eyebrow="Perk or catch?"
           question="What does the Türkiye Tech Visa give you and your family?"
-          task="Guess all eight"
+          task="See the perks and the catches"
+          completeOn="view"
+          message="Perks and catches seen"
+          lead={<WhyWatch why={{ heading: 'Perks', items: rights.filter((r) => r.positive).map((r) => r.title) }} watch={{ heading: 'Catches', items: rights.filter((r) => !r.positive).map((r) => r.title) }} />}
           answer={
             <p>
               A work permit of up to three years, a simplified residence process for family, six months of free legal, financial and technical
@@ -619,30 +657,32 @@ export default async function TurkeyPage({ params }: { params: Promise<{ locale:
             </p>
           }
         >
-          <PerkOrCatch stopId="life" items={rights} />
+          <Detail minutes={MIN.life}>
+            <PerkOrCatch stopId="life" items={rights} />
 
-          <div className="mt-10 grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.3fr)]">
-            <div className="grid content-start gap-4 font-sans text-[15px] leading-relaxed text-[#1a1a1a]/70">
-              <h3 className="font-serif text-2xl text-[#1a1a1a]">What the government actually provides</h3>
-              <p>
-                The programme&rsquo;s own site lists the support below. Two practical limits: free workspace depends on the technopark having capacity, and
-                in Istanbul it is competitive; and the health claim is not Türkiye&rsquo;s social security system (SGK), under which a founder pays a
-                monthly contribution.
-              </p>
-              <p>
-                <strong className="text-[#1a1a1a]">No language certificate</strong> is required, neither English nor Turkish. But the plan and the pitch have
-                to be professional, and if you are not fluent in Turkish at the notary you will need a sworn translator, which is a separate cost.
-              </p>
+            <div className="mt-10 grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.3fr)]">
+              <div className="grid content-start gap-4 font-sans text-[15px] leading-relaxed text-[#1a1a1a]/70">
+                <h3 className="font-serif text-2xl text-[#1a1a1a]">What the government actually provides</h3>
+                <p>
+                  The programme&rsquo;s own site lists the support below. Two practical limits: free workspace depends on the technopark having capacity, and
+                  in Istanbul it is competitive; and the health claim is not Türkiye&rsquo;s social security system (SGK), under which a founder pays a
+                  monthly contribution.
+                </p>
+                <p>
+                  <strong className="text-[#1a1a1a]">No language certificate</strong> is required, neither English nor Turkish. But the plan and the pitch have
+                  to be professional, and if you are not fluent in Turkish at the notary you will need a sworn translator, which is a separate cost.
+                </p>
+              </div>
+              <ul className="grid grid-cols-1 content-start gap-3 sm:grid-cols-2">
+                {provides.map((p) => (
+                  <li key={p.title} className="rounded-xl border border-[#1a1a1a]/10 bg-white p-4">
+                    <h4 className="font-sans text-sm font-bold">{p.title}</h4>
+                    <p className="mt-1 font-sans text-sm text-[#1a1a1a]/65">{p.body}</p>
+                  </li>
+                ))}
+              </ul>
             </div>
-            <ul className="grid grid-cols-1 content-start gap-3 sm:grid-cols-2">
-              {provides.map((p) => (
-                <li key={p.title} className="rounded-xl border border-[#1a1a1a]/10 bg-white p-4">
-                  <h4 className="font-sans text-sm font-bold">{p.title}</h4>
-                  <p className="mt-1 font-sans text-sm text-[#1a1a1a]/65">{p.body}</p>
-                </li>
-              ))}
-            </ul>
-          </div>
+          </Detail>
         </RouteStop>
 
         {/* 06 — Where it leads */}
@@ -655,6 +695,7 @@ export default async function TurkeyPage({ params }: { params: Promise<{ locale:
           task="Read where it leads"
           completeOn="view"
           message="Horizon checked"
+          lead={<WhyWatch why={{ heading: 'Strengths', items: strengths }} watch={{ heading: 'Weaknesses', items: weaknesses }} />}
           answer={
             <p>
               No. This route does not reach EU membership or a European passport; if Europe is your horizon, Denmark or Estonia is the page you want. If
@@ -663,84 +704,81 @@ export default async function TurkeyPage({ params }: { params: Promise<{ locale:
             </p>
           }
         >
-          <div className="grid grid-cols-1 gap-10 lg:grid-cols-12">
-            <div className="grid content-start gap-6 lg:col-span-5">
-              <figure>
-                <span className="relative block aspect-[16/9] overflow-hidden rounded-2xl">
-                  <Image
-                    src="/fa/img/turkey-3.webp"
-                    alt="A white passenger ferry at an Istanbul pier on a grey, rainy evening: commuters walk off the gangway while a crowd waits under umbrellas"
-                    fill
-                    sizes="(min-width: 1024px) 40vw, 100vw"
-                    className="object-cover"
-                  />
-                </span>
-                <figcaption className="mt-2 font-sans text-xs text-[#1a1a1a]/55">An Istanbul ferry pier at rush hour</figcaption>
-              </figure>
-              <div className="overflow-x-auto">
-                <table className="w-full min-w-[300px] overflow-hidden rounded-2xl bg-[#F2F0E9] font-sans text-sm">
-                  <caption className="pb-2 text-left font-bold">Length of the first permit, routes on this site</caption>
-                  <thead>
-                    <tr className="border-b border-[#1a1a1a]/10 text-left text-[11px] uppercase tracking-[0.1em] text-[#1a1a1a]/55">
-                      <th scope="col" className={th}>Route</th>
-                      <th scope="col" className={th}>First permit</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {firstPermits.map((p) => (
-                      <tr key={p.route} className="border-b border-[#1a1a1a]/10 last:border-0">
-                        <th scope="row" className={`${th} text-left font-normal`}>{p.route}</th>
-                        <td className={`${th} tabular-nums`}>{p.length}</td>
+          <Detail minutes={MIN.leads}>
+            <div className="grid grid-cols-1 gap-10 lg:grid-cols-12">
+              <div className="grid content-start gap-6 lg:col-span-5">
+                <figure>
+                  <span className="relative block aspect-[16/9] overflow-hidden rounded-2xl">
+                    <Image
+                      src="/fa/img/turkey-3.webp"
+                      alt="A white passenger ferry at an Istanbul pier on a grey, rainy evening: commuters walk off the gangway while a crowd waits under umbrellas"
+                      fill
+                      sizes="(min-width: 1024px) 40vw, 100vw"
+                      className="object-cover"
+                    />
+                  </span>
+                  <figcaption className="mt-2 font-sans text-xs text-[#1a1a1a]/55">An Istanbul ferry pier at rush hour</figcaption>
+                </figure>
+                <div className="overflow-x-auto">
+                  <table className="w-full min-w-[300px] overflow-hidden rounded-2xl bg-[#F2F0E9] font-sans text-sm">
+                    <caption className="pb-2 text-left font-bold">Length of the first permit, routes on this site</caption>
+                    <thead>
+                      <tr className="border-b border-[#1a1a1a]/10 text-left text-[11px] uppercase tracking-[0.1em] text-[#1a1a1a]/55">
+                        <th scope="col" className={th}>Route</th>
+                        <th scope="col" className={th}>First permit</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody>
+                      {firstPermits.map((p) => (
+                        <tr key={p.route} className="border-b border-[#1a1a1a]/10 last:border-0">
+                          <th scope="row" className={`${th} text-left font-normal`}>{p.route}</th>
+                          <td className={`${th} tabular-nums`}>{p.length}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
-            </div>
 
-            <div className="grid content-start gap-6 font-sans text-base leading-relaxed text-[#1a1a1a]/70 lg:col-span-7">
-              <p>
-                <strong className="text-[#1a1a1a]">This route does not reach EU membership or a European passport.</strong> If Europe is your horizon,
-                Türkiye is not your destination, and <Link href="/country/denmark" className="underline decoration-[#E30A17] underline-offset-2 hover:text-[#B5000F]">Denmark</Link> or
-                Estonia is the page you want. We would rather say that here than after you have signed.
-              </p>
-              <p>
-                If your horizon is building a real business on sane time and cost, it is the most serious option on that list. Three years of permit, over
-                a hundred technoparks, and a cost of living well below Western Europe.
-              </p>
-              <p>
-                Two more things to plan around. An inflationary economy means a lira budget needs rewriting every few months — set long-term planning in
-                euros or dollars and keep lira only for day-to-day payments. And opening a corporate bank account as a foreign national takes time; assume
-                it for the first months rather than hoping.
-              </p>
-              <div className="grid grid-cols-1 gap-4 text-sm sm:grid-cols-2">
-                <div className="rounded-2xl border border-[#1a1a1a]/10 p-5">
-                  <h3 className={`mb-2 text-[#B5000F] ${label}`}>Strengths</h3>
-                  <ul className="grid list-disc gap-1 pl-4">
-                    <li>The longest first permit, at three years</li>
-                    <li>Geographic proximity</li>
-                    <li>A cost of living well below Western Europe</li>
-                    <li>More than a hundred technoparks</li>
-                  </ul>
-                </div>
-                <div className="rounded-2xl border border-[#1a1a1a]/10 p-5">
-                  <h3 className={`mb-2 text-[#B4531A] ${label}`}>Weaknesses</h3>
-                  <ul className="grid list-disc gap-1 pl-4">
-                    <li>A very young programme with a small intake</li>
-                    <li>An inflationary economy that makes long-term planning hard</li>
-                    <li>No path to EU membership or a European passport</li>
-                  </ul>
-                </div>
-              </div>
-              <div className="border-l-4 border-[#E30A17] bg-[#F2F0E9] p-6">
-                <p className="text-sm leading-relaxed text-[#1a1a1a]/80">
-                  We deliberately publish no lira figures for fees and running costs. Turkish inflation moves them month to month, and last year&rsquo;s
-                  number is worse than no number — you budget against it and come up short. The structure is on this page; the day&rsquo;s estimate
-                  belongs in a conversation.
+              <div className="grid content-start gap-6 font-sans text-base leading-relaxed text-[#1a1a1a]/70 lg:col-span-7">
+                <p>
+                  <strong className="text-[#1a1a1a]">This route does not reach EU membership or a European passport.</strong> If Europe is your horizon,
+                  Türkiye is not your destination, and <Link href="/country/denmark" className="underline decoration-[#E30A17] underline-offset-2 hover:text-[#B5000F]">Denmark</Link> or
+                  Estonia is the page you want. We would rather say that here than after you have signed.
                 </p>
+                <p>
+                  If your horizon is building a real business on sane time and cost, it is the most serious option on that list. Three years of permit, over
+                  a hundred technoparks, and a cost of living well below Western Europe.
+                </p>
+                <p>
+                  Two more things to plan around. An inflationary economy means a lira budget needs rewriting every few months — set long-term planning in
+                  euros or dollars and keep lira only for day-to-day payments. And opening a corporate bank account as a foreign national takes time; assume
+                  it for the first months rather than hoping.
+                </p>
+                <div className="grid grid-cols-1 gap-4 text-sm sm:grid-cols-2">
+                  <div className="rounded-2xl border border-[#1a1a1a]/10 p-5">
+                    <h3 className={`mb-2 text-[#B5000F] ${label}`}>Strengths</h3>
+                    <ul className="grid list-disc gap-1 pl-4">
+                      {strengths.map((x) => <li key={x}>{x}</li>)}
+                    </ul>
+                  </div>
+                  <div className="rounded-2xl border border-[#1a1a1a]/10 p-5">
+                    <h3 className={`mb-2 text-[#B4531A] ${label}`}>Weaknesses</h3>
+                    <ul className="grid list-disc gap-1 pl-4">
+                      {weaknesses.map((x) => <li key={x}>{x}</li>)}
+                    </ul>
+                  </div>
+                </div>
+                <div className="border-l-4 border-[#E30A17] bg-[#F2F0E9] p-6">
+                  <p className="text-sm leading-relaxed text-[#1a1a1a]/80">
+                    We deliberately publish no lira figures for fees and running costs. Turkish inflation moves them month to month, and last year&rsquo;s
+                    number is worse than no number — you budget against it and come up short. The structure is on this page; the day&rsquo;s estimate
+                    belongs in a conversation.
+                  </p>
+                </div>
               </div>
             </div>
-          </div>
+          </Detail>
           <ReadTracker stopId="leads" message="Horizon checked" />
         </RouteStop>
 
@@ -758,10 +796,21 @@ export default async function TurkeyPage({ params }: { params: Promise<{ locale:
             </p>
           }
         >
-          <div className="max-w-4xl border-t border-[#1a1a1a]/10">
-            {faqs.map((f) => (
-              <FaqItem key={f.q} q={f.q} a={f.a} />
-            ))}
+          {/* The second half sits behind one fold: every answer stays in the HTML
+              (and in the FAQPage JSON-LD), the phone page gets shorter. */}
+          <div className="grid max-w-4xl gap-8">
+            <div className="border-t border-[#1a1a1a]/10">
+              {faqs.slice(0, FAQ_OPEN).map((f) => (
+                <FaqItem key={f.q} q={f.q} a={f.a} />
+              ))}
+            </div>
+            <Detail label={`More questions (${faqs.length - FAQ_OPEN})`} closeLabel="Hide these questions">
+              <div className="border-t border-[#1a1a1a]/10">
+                {faqs.slice(FAQ_OPEN).map((f) => (
+                  <FaqItem key={f.q} q={f.q} a={f.a} />
+                ))}
+              </div>
+            </Detail>
           </div>
           <OpenedTracker stopId="faq" need={3} message="Questions answered" />
         </RouteStop>

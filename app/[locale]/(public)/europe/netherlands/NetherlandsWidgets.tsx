@@ -38,7 +38,18 @@ const word = (n: number) => WORDS[n] ?? String(n);
 
 /* ── Eligibility quiz ───────────────────────────────────────────────────── */
 
-export function RulesQuiz({ stopId, criteria, children }: { stopId: string; criteria: { title: string; body: string }[]; children?: React.ReactNode }) {
+export function RulesQuiz({
+  stopId,
+  criteria,
+  compact = false,
+  children,
+}: {
+  stopId: string;
+  criteria: { title: string; body: string }[];
+  /** Titles and answers only; the page carries each rule's wording in its fold. */
+  compact?: boolean;
+  children?: React.ReactNode;
+}) {
   const { complete } = useRoute();
   const [answers, setAnswers] = useState<Record<number, boolean>>({});
   const total = criteria.length;
@@ -67,19 +78,24 @@ export function RulesQuiz({ stopId, criteria, children }: { stopId: string; crit
 
   return (
     <div className="grid grid-cols-1 gap-5 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)]">
-      <ol className="rounded-2xl border border-[#1a1a1a]/10 bg-white p-6">
+      <ol className={`rounded-2xl border border-[#1a1a1a]/10 bg-white ${compact ? 'px-5 py-4' : 'p-6'}`}>
         {criteria.map((c, i) => (
-          <li key={c.title} className="grid gap-1.5 border-b border-dashed border-[#1a1a1a]/10 py-4 first:pt-0 last:border-0 last:pb-0">
-            <h3 className="font-serif text-xl">{c.title}</h3>
-            <p className="font-sans text-sm leading-relaxed text-[#1a1a1a]/65">{c.body}</p>
-            <div className="mt-1 flex gap-1.5">
+          <li
+            key={c.title}
+            className={`border-b border-dashed border-[#1a1a1a]/10 first:pt-0 last:border-0 last:pb-0 ${
+              compact ? 'flex flex-wrap items-center justify-between gap-x-4 gap-y-2 py-3' : 'grid gap-1.5 py-4'
+            }`}
+          >
+            {compact ? <p className="font-serif text-lg leading-snug">{c.title}</p> : <h3 className="font-serif text-xl">{c.title}</h3>}
+            {!compact && <p className="font-sans text-sm leading-relaxed text-[#1a1a1a]/65">{c.body}</p>}
+            <div className={`flex gap-1.5 ${compact ? '' : 'mt-1'}`}>
               <Toggle pressed={answers[i] === true} onClick={() => setAnswers((p) => ({ ...p, [i]: true }))}>We have this</Toggle>
               <Toggle pressed={answers[i] === false} onClick={() => setAnswers((p) => ({ ...p, [i]: false }))}>Not yet</Toggle>
             </div>
           </li>
         ))}
       </ol>
-      <div className="grid content-start gap-4 self-start rounded-2xl border border-[#1a1a1a]/10 bg-white p-6 lg:sticky lg:top-28">
+      <div className={`grid content-start gap-4 self-start rounded-2xl border border-[#1a1a1a]/10 bg-white lg:sticky lg:top-28 ${compact ? 'px-5 py-4' : 'p-6'}`}>
         <div aria-live="polite">
           <p className="font-sans text-xs font-bold uppercase tracking-[0.18em] text-[var(--ra-text)]">Your readiness</p>
           <div className="my-3 h-3 overflow-hidden rounded-full bg-[#1a1a1a]/10">

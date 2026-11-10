@@ -62,6 +62,13 @@ import Flag from '@/components/route/flags';
 import { RouteProvider, RouteRail, RouteStop, RouteFinish, type RouteStopDef, type RouteTheme } from '@/components/route/RouteProgress';
 import { CopyButton, GateQuiz, OpenedTracker, ParallaxLayer, PerkOrCatch, StepWalker, type RouteStep } from '@/components/route/RouteWidgets';
 import { DoorPicker, RenewalLadder, TeamCap, type Door, type Rung } from './ItalyWidgets';
+import { CheckRows, Detail, NumberTiles, StepLine, WhyWatch, YearsLine, type CheckRow, type Milestone, type Tile } from '@/components/guide/visual';
+
+// Visual first (9 Nov 2026, the Spain pattern): each stop opens with a
+// code-drawn visual that restates figures already on the page, then the
+// answer, then the rest folded in <Detail> (still in the server HTML). Each
+// fold's `minutes` is its word count at 200 words a minute, measured on
+// 9 Nov 2026; update it when a fold's text grows or shrinks a lot.
 
 export async function generateMetadata({
   params,
@@ -135,6 +142,9 @@ const steps: RouteStep[] = [
     figureLabel: 'from arrival',
   },
 ];
+
+// The chip under each step on the line: the figure and what it measures.
+const stepChips = steps.map((s) => `${s.figure} · ${s.figureLabel}`);
 
 const howToJsonLd = {
   '@context': 'https://schema.org',
@@ -245,6 +255,43 @@ const rungs: Rung[] = [
   },
   { year: 3, title: 'Second renewal, for a further two', body: 'If, after renewal, the company no longer meets the article 25 requirements, the residence permit is not revoked.' },
   { year: 5, title: 'EU long-term residence permit', body: 'After five years you can apply for the EU long-term residence permit, which does not expire — provided you have not been outside Italy for more than six continuous months.' },
+];
+
+const snapshotTiles: Tile[] = [
+  { value: '30 days', label: 'To a decision', sub: 'from the complete file' },
+  { value: '€50k', label: 'Funds required', sub: 'for the whole team' },
+  { value: '5', label: 'Certificates per startup', sub: 'ten only exceptionally' },
+  { value: '€0', label: 'Cost of assessment', sub: 'the committee charges nothing' },
+];
+
+const teamTiles: Tile[] = [
+  { value: '5', label: 'Certificates per startup', sub: 'the maximum in the guidelines' },
+  { value: '10', label: 'Never more than', sub: 'only in exceptional circumstances' },
+  { value: '+€50,000', label: 'To join a certified project', sub: 'on top of what the original team declared' },
+];
+
+const moneyTiles: Tile[] = [
+  { value: '€50,000', label: 'Found a new startup', sub: 'for the whole team; may be pooled' },
+  { value: '€100,000', label: 'Join an existing one', sub: 'your own money; operating at least 3 years' },
+  { value: '~€8,400', label: 'Previous-year income', sub: 'per applicant' },
+  { value: '€0', label: 'Committee assessment', sub: 'the committee charges nothing' },
+];
+
+const hubChecks: CheckRow[] = [
+  { label: 'Any valid Italian residence permit', note: 'Study, work or family' },
+  { label: 'No need to leave Italy', note: 'You convert the permit you hold' },
+  { label: 'No consulate appointment' },
+  { label: 'A certificate in around twenty days', note: 'The certificate of no impediment, usually' },
+];
+
+const why = ['Startup Act fee and investor tax measures', 'Permit not revoked if the company stops qualifying after renewal', 'Free, by email, decided in 30 days', 'Five founders per startup'];
+const watch = ['24% IRES, with regional IRAP on top', 'No profit distribution while an innovative startup', 'Local bureaucracy, not in English', 'A three-month and an eight-day deadline'];
+
+const years: Milestone[] = [
+  { at: 0, year: 'Y0', label: 'Arrive on the one-year visa', sub: 'Residence permit filed within 8 days' },
+  { at: 1, year: 'Y1', label: 'First renewal', sub: 'For up to two years' },
+  { at: 3, year: 'Y3', label: 'Second renewal', sub: 'For a further two' },
+  { at: 5, year: 'Y5', label: 'EU long-term permit', sub: 'Does not expire; no more than six continuous months outside Italy' },
 ];
 
 const faqs = [
@@ -370,6 +417,9 @@ const reads = [
   },
 ];
 
+// Reading time of each fold, in minutes (words / 200, measured 9 Nov 2026).
+const MIN = { snapshot: 1, team: 1, gate: 1, steps: 2, money: 2, hub: 1, life: 2, residence: 1 };
+
 // ─── Page ────────────────────────────────────────────────────────────────────
 
 const label = 'font-sans text-xs font-bold uppercase tracking-[0.18em]';
@@ -473,6 +523,7 @@ export default async function ItalyPage({ params }: { params: Promise<{ locale: 
           task="Read the four facts"
           completeOn="view"
           message="Snapshot read"
+          lead={<NumberTiles tiles={snapshotTiles} />}
           answer={
             <p>
               The Italia Startup Visa is a simplified, fast-track version of Italy&apos;s self-employment visa for people founding an innovative startup. A
@@ -481,21 +532,8 @@ export default async function ItalyPage({ params }: { params: Promise<{ locale: 
             </p>
           }
         >
-          <dl className="grid grid-cols-2 gap-3 md:grid-cols-4">
-            {[
-              { stat: '30 days', label: 'To a decision', sub: 'from the complete file' },
-              { stat: '€50k', label: 'Funds required', sub: 'for the whole team' },
-              { stat: '5', label: 'Certificates per startup', sub: 'ten only exceptionally' },
-              { stat: '€0', label: 'Cost of assessment', sub: 'the committee charges nothing' },
-            ].map((s) => (
-              <div key={s.label} className="flex flex-col rounded-2xl border border-[#1a1a1a]/10 bg-white p-5 transition-transform hover:-translate-y-1">
-                <dt className="order-2 mt-2 font-sans text-sm font-bold">{s.label}</dt>
-                <dd className="order-1 font-serif text-4xl text-[#00753A]">{s.stat}</dd>
-                <dd className="order-3 font-sans text-xs text-[#1a1a1a]/55">{s.sub}</dd>
-              </div>
-            ))}
-          </dl>
-          <div className={`mt-8 grid max-w-5xl grid-cols-1 gap-6 md:grid-cols-3 ${prose}`}>
+          <Detail minutes={MIN.snapshot}>
+          <div className={`grid max-w-5xl grid-cols-1 gap-6 md:grid-cols-3 ${prose}`}>
             <p>
               <strong className="text-[#1a1a1a]">The programme.</strong> Italy recognised the &ldquo;innovative startup&rdquo; in law in 2012 and attached a
               package of tax, funding and labour measures to it. The Italia Startup Visa is that law&rsquo;s immigration branch: a simplified, digitised,
@@ -511,6 +549,7 @@ export default async function ItalyPage({ params }: { params: Promise<{ locale: 
               happens first, and happens on paper. The certificate is not residence. It is the key that turns the next lock.
             </p>
           </div>
+          </Detail>
         </RouteStop>
 
         {/* 02 — The cap */}
@@ -521,6 +560,9 @@ export default async function ItalyPage({ params }: { params: Promise<{ locale: 
           eyebrow="The cap nobody mentions"
           question="How many founders can apply for the Italia Startup Visa?"
           task="Count your team"
+          completeOn="view"
+          message="Team counted"
+          lead={<NumberTiles tiles={teamTiles} surface="white" label="The founder cap" />}
           answer={
             <p>
               A maximum of five certificates of no impediment per innovative startup. In exceptional circumstances, depending on the nature of the business,
@@ -529,6 +571,7 @@ export default async function ItalyPage({ params }: { params: Promise<{ locale: 
             </p>
           }
         >
+          <Detail minutes={MIN.team}>
           <TeamCap stopId="team" />
           <div className={`mt-8 grid max-w-5xl grid-cols-1 gap-6 md:grid-cols-2 ${prose}`}>
             <p>
@@ -542,6 +585,7 @@ export default async function ItalyPage({ params }: { params: Promise<{ locale: 
               investor, and nobody joins as an employee. Anyone joining a project that has already received certificates must show a further €50,000.
             </p>
           </div>
+          </Detail>
         </RouteStop>
 
         {/* 03 — Who qualifies */}
@@ -551,6 +595,19 @@ export default async function ItalyPage({ params }: { params: Promise<{ locale: 
           eyebrow="What the committee is sensitive to"
           question="Who qualifies for the Italia Startup Visa?"
           task="Answer all five"
+          lead={
+            <GateQuiz
+              stopId="gate"
+              criteria={criteria}
+              compact
+              strongNote="There is no interview: what you send is what is judged, so each of these has to be evidenced in the file, not asserted."
+              gapNote="After a refusal, a new file is only considered if it contains significant new elements."
+            >
+              <Link href="/book-meeting" className="inline-flex w-fit items-center gap-2 rounded-full bg-[#34D17D] px-5 py-3 font-sans text-sm font-bold text-[#0A0E1A] transition-transform hover:-translate-y-0.5">
+                Get a free read on your file <ArrowRight className="h-4 w-4" />
+              </Link>
+            </GateQuiz>
+          }
           answer={
             <p>
               You must found an innovative startup that evidences one of three indicators: 15% of costs on R&amp;D, a qualified team, or a patent or registered
@@ -559,12 +616,16 @@ export default async function ItalyPage({ params }: { params: Promise<{ locale: 
             </p>
           }
         >
-          <GateQuiz
-            stopId="gate"
-            criteria={criteria}
-            strongNote="There is no interview: what you send is what is judged, so each of these has to be evidenced in the file, not asserted."
-            gapNote="After a refusal, a new file is only considered if it contains significant new elements."
-          >
+          <Detail minutes={MIN.gate}>
+            <dl className="mb-8 grid max-w-5xl grid-cols-1 gap-x-8 gap-y-4 font-sans text-[15px] leading-relaxed md:grid-cols-2">
+              {criteria.map((c) => (
+                <div key={c.title}>
+                  <dt className="font-bold text-[#1a1a1a]">{c.title}</dt>
+                  <dd className="text-[#1a1a1a]/70">{c.body}</dd>
+                </div>
+              ))}
+            </dl>
+            <div className="grid max-w-5xl grid-cols-1 gap-6 md:grid-cols-2">
             <div>
               <h3 className="mb-2 font-serif text-xl">Refused on the definition</h3>
               <ul className="grid gap-1.5">
@@ -582,10 +643,8 @@ export default async function ItalyPage({ params }: { params: Promise<{ locale: 
               them is current; the startup-law definition in them is not. If you build the file from the PDF alone, you have built it on something
               incomplete.
             </p>
-            <Link href="/book-meeting" className="inline-flex w-fit items-center gap-2 rounded-full bg-[#34D17D] px-5 py-3 font-sans text-sm font-bold text-[#0A0E1A] transition-transform hover:-translate-y-0.5">
-              Get a free read on your file <ArrowRight className="h-4 w-4" />
-            </Link>
-          </GateQuiz>
+            </div>
+          </Detail>
         </RouteStop>
 
         {/* 04 — How to apply */}
@@ -595,7 +654,10 @@ export default async function ItalyPage({ params }: { params: Promise<{ locale: 
           tone="white"
           eyebrow="An email to a residence card"
           question="How do you apply for the Italia Startup Visa?"
-          task="Walk to step 5"
+          task="See the five steps"
+          completeOn="view"
+          message="Steps seen"
+          lead={<StepLine steps={steps.map((s, i) => ({ label: s.title, who: s.who, chip: stepChips[i] }))} />}
           answer={
             <p>
               Email the application to the MIMIT committee with proof of at least €50,000, pass the secretariat&apos;s completeness check and the
@@ -604,12 +666,14 @@ export default async function ItalyPage({ params }: { params: Promise<{ locale: 
             </p>
           }
         >
+          <Detail minutes={MIN.steps}>
           <StepWalker stopId="steps" steps={steps} />
           <p className="mt-6 max-w-[68ch] font-sans text-sm text-[#1a1a1a]/65">
             <strong className="text-[#1a1a1a]">Thirty days is the decision, not the journey.</strong> That clock starts only on a complete file, and the
             commonest cause of months of delay is a file that never started it. The three-month life of the certificate and the eight-day deadline after
             arrival have each killed applications whose substance was fine.
           </p>
+          </Detail>
         </RouteStop>
 
         {/* 05 — Money */}
@@ -618,7 +682,10 @@ export default async function ItalyPage({ params }: { params: Promise<{ locale: 
           number={5}
           eyebrow="Two doors · funds and fees"
           question="How much money do you need for the Italia Startup Visa?"
-          task="Choose your door"
+          task="See the two doors"
+          completeOn="view"
+          message="Money worked out"
+          lead={<NumberTiles tiles={moneyTiles} label="Funds and fees" />}
           answer={
             <p>
               €50,000 to found a new innovative startup, for the whole team rather than per founder, and it may be pooled. €100,000 of your own money to join
@@ -627,6 +694,7 @@ export default async function ItalyPage({ params }: { params: Promise<{ locale: 
             </p>
           }
         >
+          <Detail minutes={MIN.money}>
           <p className="mb-6 max-w-[68ch] font-sans text-sm text-[#1a1a1a]/65">
             The thresholds are not close together, and the second door is far less travelled than the consultancies advertising it suggest.
           </p>
@@ -687,6 +755,7 @@ export default async function ItalyPage({ params }: { params: Promise<{ locale: 
               total.
             </p>
           </div>
+          </Detail>
         </RouteStop>
 
         {/* Photo band */}
@@ -723,6 +792,7 @@ export default async function ItalyPage({ params }: { params: Promise<{ locale: 
           task="Read the shortcut"
           completeOn="view"
           message="Shortcut read"
+          lead={<CheckRows items={hubChecks} surface="white" label="Italia Startup Hub" />}
           answer={
             <p>
               Yes, through Italia Startup Hub. Holders of any valid Italian residence permit — study, work or family — can convert it to a self-employment
@@ -731,6 +801,7 @@ export default async function ItalyPage({ params }: { params: Promise<{ locale: 
             </p>
           }
         >
+          <Detail minutes={MIN.hub}>
           <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-12">
             <div className={`grid gap-5 lg:col-span-7 ${prose}`}>
               <p>
@@ -756,6 +827,7 @@ export default async function ItalyPage({ params }: { params: Promise<{ locale: 
               <figcaption className="mt-2 font-sans text-xs text-[#1a1a1a]/55">Central Turin</figcaption>
             </figure>
           </div>
+          </Detail>
         </RouteStop>
 
         {/* 07 — Rights and restrictions */}
@@ -764,7 +836,10 @@ export default async function ItalyPage({ params }: { params: Promise<{ locale: 
           number={7}
           eyebrow="Perk or catch?"
           question="What does the Italia Startup Visa give you, and what does it cost you?"
-          task="Guess all eight"
+          task="Weigh perks and catches"
+          completeOn="view"
+          message="Perks and catches weighed"
+          lead={<WhyWatch why={{ heading: 'Why Italy', items: why }} watch={{ heading: 'Watch out', items: watch }} />}
           answer={
             <p>
               The Startup Act gives exemption from stamp duty and Business Register fees, investor tax relief, flexible labour rules, simplified loan
@@ -773,6 +848,7 @@ export default async function ItalyPage({ params }: { params: Promise<{ locale: 
             </p>
           }
         >
+          <Detail minutes={MIN.life}>
           <PerkOrCatch stopId="life" items={rights} />
 
           <div className="mt-10 grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)]">
@@ -802,6 +878,7 @@ export default async function ItalyPage({ params }: { params: Promise<{ locale: 
               </p>
             </div>
           </div>
+          </Detail>
         </RouteStop>
 
         {/* 08 — Renewals to long-term residence */}
@@ -811,7 +888,10 @@ export default async function ItalyPage({ params }: { params: Promise<{ locale: 
           tone="white"
           eyebrow="Renewals · EU long-term permit"
           question="How do you get permanent residence in Italy through the startup visa?"
-          task="Slide to year 5"
+          task="See the road to year 5"
+          completeOn="view"
+          message="Road to year 5 seen"
+          lead={<YearsLine milestones={years} surface="white" caption="From arrival to the EU long-term permit" />}
           answer={
             <p>
               Renew at the Questura up to 60 days before the first permit expires: it renews for up to two years, then a further two. After five years you can
@@ -820,11 +900,13 @@ export default async function ItalyPage({ params }: { params: Promise<{ locale: 
             </p>
           }
         >
+          <Detail minutes={MIN.residence}>
           <RenewalLadder stopId="residence" rungs={rungs} />
           <p className="mt-4 max-w-[68ch] font-sans text-sm text-[#1a1a1a]/65">
             <strong className="text-[#1a1a1a]">The first year has to be worked.</strong> The cushion against a failed startup speaks to the position after
             renewal; the first renewal still needs a registered company and sufficient income.
           </p>
+          </Detail>
         </RouteStop>
 
         {/* 09 — FAQ */}
@@ -972,22 +1054,25 @@ export default async function ItalyPage({ params }: { params: Promise<{ locale: 
 }
 
 function FaqGroups() {
-  const groups = [
-    { heading: 'The application', items: faqs.slice(0, FAQ_SPLIT) },
-    { heading: 'After the decision', items: faqs.slice(FAQ_SPLIT) },
-  ];
+  const group = (heading: string, items: { q: string; a: string }[]) => (
+    <div>
+      <h3 className={`mb-2 text-[#00753A] ${label}`}>{heading}</h3>
+      <div className="border-t border-[#1a1a1a]/10">
+        {items.map((f) => (
+          <FaqItem key={f.q} q={f.q} a={f.a} />
+        ))}
+      </div>
+    </div>
+  );
+  const after = faqs.slice(FAQ_SPLIT);
+  // The second group sits behind one fold: every answer stays in the HTML
+  // (and in the FAQPage JSON-LD), the phone page gets shorter.
   return (
     <div className="grid max-w-4xl gap-12">
-      {groups.map((g) => (
-        <div key={g.heading}>
-          <h3 className={`mb-2 text-[#00753A] ${label}`}>{g.heading}</h3>
-          <div className="border-t border-[#1a1a1a]/10">
-            {g.items.map((f) => (
-              <FaqItem key={f.q} q={f.q} a={f.a} />
-            ))}
-          </div>
-        </div>
-      ))}
+      {group('The application', faqs.slice(0, FAQ_SPLIT))}
+      <Detail label={`More questions (${after.length})`} closeLabel="Hide these questions">
+        {group('After the decision', after)}
+      </Detail>
     </div>
   );
 }

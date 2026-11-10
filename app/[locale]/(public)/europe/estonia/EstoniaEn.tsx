@@ -56,6 +56,7 @@ import {
   type RoadmapCopy,
   type RouteStep,
 } from '@/components/route/RouteWidgets';
+import { CheckRows, CompareCards, Detail, NumberTiles, StepLine, WhyWatch, YearsLine, type Milestone, type Tile } from '@/components/guide/visual';
 
 export const EN_META = {
   title: 'Estonia Startup Visa 2026: Committee, MVP, Costs, Steps',
@@ -337,6 +338,63 @@ const deepDiveFaqs = [
   },
 ];
 
+// ─── Visuals: drawn in code from the data above ──────────────────────────────
+// Every figure below is already on the page, with its source. Each fold's
+// `minutes` is its word count at 200 words a minute (measured 9 Nov 2026).
+
+const snapshotTiles: Tile[] = [
+  { value: '€880', label: 'Personal funds a month', sub: 'four times the €220 subsistence level, 2026' },
+  { value: '10 days', label: 'Committee decision', sub: 'working days, from a complete file' },
+  { value: 'None', label: 'Required investment', sub: 'one founder is enough' },
+  { value: 'MVP', label: 'Product required', sub: 'an idea on paper is refused' },
+];
+
+const bodies = [
+  { label: 'Startup Committee', who: 'Is your company a startup in law?', chip: '10 working days · free' },
+  { label: 'Startup code', who: 'On approval', chip: 'The key, not residence' },
+  { label: 'Police and Border Guard Board', who: 'PPA', chip: 'D visa or residence permit' },
+];
+
+const stepChips = steps.map((s) => `${s.figure} · ${s.figureLabel}`);
+
+const moneyTiles: Tile[] = [
+  { value: '€880', label: 'A month, per founder', sub: '4 × €220 subsistence level, 2026' },
+  { value: '€10,560', label: 'For one year', sub: 'about; more with a spouse and children' },
+  { value: '€120', label: 'D visa', sub: 'committee evaluation free' },
+  { value: '€350', label: 'Residence permit', sub: '€380 at a foreign representation' },
+];
+
+const taxTiles: Tile[] = taxRows.map((r) => ({ value: r.value, label: r.label, sub: r.note }));
+
+const years: Milestone[] = [
+  { at: 0, year: 'Y0', label: roadmap.arrive.title, sub: roadmap.arrive.sub },
+  { at: 1, year: 'Y1', label: 'TRP, up to 5 years', sub: 'At least 183 days a year in Estonia' },
+  { at: 5, year: 'Y5', label: 'Long-term resident', sub: 'Estonian at B1, stable legal income' },
+  { at: 8, year: 'Y8', label: 'Citizenship', sub: 'Only if you give up your other citizenship' },
+];
+
+const compareRows = [
+  { code: 'ee' as const, country: 'Estonia', plus: '10 working days; solo founders accepted; the cheapest of the three.', minus: 'An MVP is mandatory, a smaller ecosystem and home market, and no dual citizenship.' },
+  { code: 'dk' as const, country: 'Denmark', plus: 'A plan on paper is assessed too; solo founders accepted; dual citizenship allowed since 2015.', minus: 'A hard cap of 75 places and a higher cost of living.' },
+  { code: 'fi' as const, country: 'Finland', plus: 'A stronger ecosystem; the business and team are judged.', minus: 'Two founders required, a longer evaluation and a very high refusal rate.' },
+];
+
+const sanctionedShort = [
+  'No Estonian representation in Iran: Abu Dhabi or Ankara',
+  'Book the appointment before you travel',
+  'Funds in Iranian banks are not accepted in practice',
+  'Banking is hard at first',
+  'Do not define your market as Iran',
+  'No dual citizenship: the route ends at permanent residence',
+];
+
+const workPhases = [
+  { label: 'Plan, deck and MVP documentation', who: 'Idea review, market check', chip: 'First instalment on signing' },
+  { label: 'Committee approval', who: 'Through to the startup code', chip: 'Second instalment with the approval' },
+  { label: 'Visa or residence filing', who: 'Support preparing documents' },
+  { label: 'Residence issued', who: 'You and your family', chip: 'Third instalment' },
+];
+
 const sources = [
   { name: 'Police and Border Guard Board (PPA) — For start-up entrepreneurs', href: 'https://www.politsei.ee/en/instructions/residence-permit-for-business/for-start-up-entrepreneurs', what: 'The expert committee, the 10 working days, permit length, four times the subsistence level, the 90-day decision deadline.' },
   { name: 'PPA — State fee amounts: residence permit and rights of residence', href: 'https://www.politsei.ee/en/instructions/state-fee-amounts/residence-permit-and-rights-of-residence', what: '€350 in Estonia, €380 at a foreign representation, from 1 January 2025.' },
@@ -475,6 +533,7 @@ export default function EstoniaEn() {
           task="Read the nine facts"
           completeOn="view"
           message="Snapshot read"
+          lead={<NumberTiles tiles={snapshotTiles} />}
           answer={
             <p>
               One founder is enough and no investment is required, but you must have a working MVP. Each founder shows €880 a month in personal funds.
@@ -483,6 +542,7 @@ export default function EstoniaEn() {
             </p>
           }
         >
+          <Detail label="All nine facts" minutes={1}>
           <dl className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {snapshot.map((s) => (
               <div key={s.label} className="flex flex-col rounded-2xl border border-[#1a1a1a]/10 bg-white p-5">
@@ -492,6 +552,7 @@ export default function EstoniaEn() {
               </div>
             ))}
           </dl>
+          </Detail>
         </RouteStop>
 
         {/* 02 — What it is */}
@@ -504,6 +565,7 @@ export default function EstoniaEn() {
           task="Read the difference"
           completeOn="view"
           message="Difference understood"
+          lead={<StepLine steps={bodies} caption="Two bodies, one route" />}
           answer={
             <p>
               It is a route for non-EU founders of technology-based, scalable businesses. The Startup Committee, drawn from Estonia’s startup community,
@@ -512,6 +574,7 @@ export default function EstoniaEn() {
             </p>
           }
         >
+          <Detail minutes={1}>
           <div className="grid max-w-5xl grid-cols-1 gap-6 font-sans text-[15px] leading-relaxed text-[#1a1a1a]/70 md:grid-cols-2">
             <p>
               <strong className="text-[#1a1a1a]">The committee’s approval is not residence.</strong> It is the key that turns the next lock. The Ministry of
@@ -532,6 +595,7 @@ export default function EstoniaEn() {
               product.
             </p>
           </div>
+          </Detail>
         </RouteStop>
 
         {/* 03 — The gate */}
@@ -541,6 +605,19 @@ export default function EstoniaEn() {
           eyebrow="The Startup Committee’s tests"
           question="What does Estonia’s Startup Committee look for?"
           task="Answer all four"
+          lead={
+            <GateQuiz
+              stopId="gate"
+              criteria={criteria}
+              compact
+              strongNote="Now make the file prove it: MVP documentation, real numbers, and a team whose CVs show they can execute this idea."
+              gapNote="A missing MVP is the most common reason for refusal, and an incomplete file never starts the 10-day clock."
+            >
+              <Link href="/book-meeting" className="inline-flex w-fit items-center gap-2 rounded-full bg-[#0072CE] px-5 py-3 font-sans text-sm font-bold text-white transition-transform hover:-translate-y-0.5">
+                Get a free read on your startup <ArrowRight className="h-4 w-4" />
+              </Link>
+            </GateQuiz>
+          }
           answer={
             <p>
               Three qualities at once — technology-based, innovative and scalable — plus a built MVP, ideally with first users or transactions. Innovation
@@ -549,23 +626,23 @@ export default function EstoniaEn() {
             </p>
           }
         >
-          <GateQuiz
-            stopId="gate"
-            criteria={criteria}
-            strongNote="Now make the file prove it: MVP documentation, real numbers, and a team whose CVs show they can execute this idea."
-            gapNote="A missing MVP is the most common reason for refusal, and an incomplete file never starts the 10-day clock."
-          >
+          <Detail minutes={1}>
+            <dl className="mb-8 grid max-w-5xl grid-cols-1 gap-x-8 gap-y-4 font-sans text-[15px] leading-relaxed md:grid-cols-2">
+              {criteria.map((c) => (
+                <div key={c.title}>
+                  <dt className="font-bold text-[#1a1a1a]">{c.title}</dt>
+                  <dd className="text-[#1a1a1a]/70">{c.body}</dd>
+                </div>
+              ))}
+            </dl>
             <h3 className="font-serif text-xl">Refused outright</h3>
-            <ul className="flex flex-wrap gap-1.5 font-sans text-xs">
+            <ul className="mt-2 flex flex-wrap gap-1.5 font-sans text-xs">
               {rejected.map((r) => (
                 <li key={r} className="rounded-full border border-[#1a1a1a]/15 px-2.5 py-1 text-[#1a1a1a]/70">{r}</li>
               ))}
             </ul>
-            <p className="font-sans text-sm text-[#1a1a1a]/65">The rule behind every one: if revenue is tied to your hours, it is not a startup.</p>
-            <Link href="/book-meeting" className="inline-flex w-fit items-center gap-2 rounded-full bg-[#0072CE] px-5 py-3 font-sans text-sm font-bold text-white transition-transform hover:-translate-y-0.5">
-              Get a free read on your startup <ArrowRight className="h-4 w-4" />
-            </Link>
-          </GateQuiz>
+            <p className="mt-3 font-sans text-sm text-[#1a1a1a]/65">The rule behind every one: if revenue is tied to your hours, it is not a startup.</p>
+          </Detail>
         </RouteStop>
 
         {/* 04 — Steps */}
@@ -576,6 +653,7 @@ export default function EstoniaEn() {
           eyebrow="The process"
           question="How do you apply for the Estonia startup visa?"
           task="Walk to step 5"
+          lead={<StepLine steps={steps.map((s, i) => ({ label: s.title, who: s.who, chip: stepChips[i] }))} />}
           answer={
             <p>
               Prepare an English business plan, pitch deck, team CVs and MVP documentation; apply to the Startup Committee through Startup Estonia; get
@@ -584,11 +662,13 @@ export default function EstoniaEn() {
             </p>
           }
         >
+          <Detail label="Walk the five steps" minutes={1}>
           <StepWalker stopId="steps" steps={steps} />
           <p className="mt-6 max-w-[68ch] font-sans text-sm text-[#1a1a1a]/65">
             <strong className="text-[#1a1a1a]">The ten working days start only when the file is complete.</strong> An incomplete file never starts the clock —
             and the most common gap is missing MVP documentation. Building the MVP and the file usually takes longer than any government review.
           </p>
+          </Detail>
         </RouteStop>
 
         {/* Photo band */}
@@ -624,6 +704,7 @@ export default function EstoniaEn() {
           task="Read both tables"
           completeOn="view"
           message="Money mapped"
+          lead={<NumberTiles tiles={moneyTiles} />}
           answer={
             <p>
               Each founder must show four times the subsistence level: €880 a month at the 2026 level, about €10,560 for a year, more with a spouse and
@@ -632,6 +713,7 @@ export default function EstoniaEn() {
             </p>
           }
         >
+          <Detail minutes={1}>
           <div className="grid grid-cols-1 gap-8 xl:grid-cols-2">
             <div className="overflow-x-auto">
               <table className="w-full min-w-[440px] overflow-hidden rounded-2xl bg-white font-sans text-sm">
@@ -695,6 +777,7 @@ export default function EstoniaEn() {
               year and which the €880 is four times of, and the state fees, last changed on 1 January 2025. Recalculate before you apply.
             </p>
           </div>
+          </Detail>
         </RouteStop>
 
         {/* 06 — Tax */}
@@ -707,6 +790,7 @@ export default function EstoniaEn() {
           task="Read the four rates"
           completeOn="view"
           message="Tax read"
+          lead={<NumberTiles tiles={taxTiles} surface="white" />}
           answer={
             <p>
               Only on profit you keep: Estonia charges no corporate income tax while profit stays in the company and is reinvested. Distributed profit is
@@ -715,6 +799,7 @@ export default function EstoniaEn() {
             </p>
           }
         >
+          <Detail minutes={1}>
           <div className="overflow-x-auto">
             <table className="w-full min-w-[520px] max-w-4xl overflow-hidden rounded-2xl bg-[#F2F0E9] font-sans text-sm">
               <caption className="pb-2 text-left font-bold">Estonian company tax, the numbers that matter</caption>
@@ -740,6 +825,7 @@ export default function EstoniaEn() {
             For a startup that ploughs profit back into growth for years, the 0% on retained profit is a real lever. Build your financial model on 0% for
             retained profit and 22% for distributed profit — not on “Estonia has no tax”.
           </p>
+          </Detail>
         </RouteStop>
 
         {/* 07 — Life */}
@@ -749,6 +835,7 @@ export default function EstoniaEn() {
           eyebrow="Perk or catch?"
           question="What do you get with the Estonia startup visa, and what are the catches?"
           task="Guess all eight"
+          lead={<WhyWatch why={{ heading: 'Why Estonia', items: perks.filter((p) => p.positive).map((p) => p.title) }} watch={{ heading: 'Watch out', items: perks.filter((p) => !p.positive).map((p) => p.title) }} />}
           answer={
             <p>
               You can apply alone, invest nothing, bring your family — your spouse may work and study — and switch to an employment basis if the startup
@@ -757,6 +844,7 @@ export default function EstoniaEn() {
             </p>
           }
         >
+          <Detail label="Guess all eight, then read the detail" minutes={2}>
           <PerkOrCatch stopId="life" items={perks} />
           <div className="mt-8 max-w-4xl font-sans text-[15px] leading-relaxed text-[#1a1a1a]/70">
             <h3 className="mb-2 font-serif text-2xl text-[#1a1a1a]">If the startup does not work out</h3>
@@ -767,6 +855,7 @@ export default function EstoniaEn() {
               routes where the permit is tied entirely to one company.
             </p>
           </div>
+          </Detail>
         </RouteStop>
 
         {/* 08 — PR and citizenship */}
@@ -777,6 +866,7 @@ export default function EstoniaEn() {
           eyebrow="The end of the road"
           question="How do you get permanent residence and citizenship in Estonia?"
           task="Drag yourself through the years"
+          lead={<YearsLine milestones={years} surface="white" caption="From arrival to an Estonian passport" />}
           answer={
             <p>
               After five years of continuous residence you can apply for a long-term resident’s permit with B1 Estonian, a stable legal income, health
@@ -785,6 +875,7 @@ export default function EstoniaEn() {
             </p>
           }
         >
+          <Detail label="Drag yourself through the years" minutes={1}>
           <YearsRoadmap stopId="residence" routes={prRoutes} defaultRoute={0} copy={roadmap} />
           <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
             <div className="font-sans text-[15px] leading-relaxed text-[#1a1a1a]/70">
@@ -816,6 +907,7 @@ export default function EstoniaEn() {
               </Link>
             </div>
           </div>
+          </Detail>
         </RouteStop>
 
         {/* Photo band */}
@@ -849,6 +941,13 @@ export default function EstoniaEn() {
           task="Compare the three"
           completeOn="view"
           message="Routes compared"
+          lead={
+            <CompareCards
+              rows={compareRows.map((c) => ({ flag: <Flag code={c.code} uid={`cmpc-${c.code}`} width={22} />, country: c.country, plus: c.plus, minus: c.minus, self: c.code === 'ee' }))}
+              heads={['Country', 'In its favour', 'Against it']}
+              caption="Estonia against Denmark and Finland"
+            />
+          }
           answer={
             <p>
               It depends on what you have and where you want to end up. If you have a built product and want a fast, low-cost way into Europe, Estonia.
@@ -857,6 +956,7 @@ export default function EstoniaEn() {
             </p>
           }
         >
+          <Detail minutes={1}>
           <div className="overflow-x-auto">
             <table className="w-full min-w-[720px] overflow-hidden rounded-2xl bg-white font-sans text-sm">
               <caption className="pb-2 text-left font-bold">Three European startup routes side by side</caption>
@@ -895,6 +995,7 @@ export default function EstoniaEn() {
             <Link href="/country/finland" className="font-bold text-[#005EA8] hover:underline">Finland guide</Link> ·{' '}
             <Link href="/country/denmark" className="font-bold text-[#005EA8] hover:underline">Denmark guide</Link>
           </p>
+          </Detail>
         </RouteStop>
 
         {/* 10 — Applicants from sanctioned countries */}
@@ -907,6 +1008,7 @@ export default function EstoniaEn() {
           task="Read the six notes"
           completeOn="view"
           message="Notes read"
+          lead={<CheckRows items={sanctionedShort.map((l) => ({ label: l }))} icon="alert" surface="white" label="Six notes for applicants from sanctioned countries" />}
           answer={
             <p>
               Practical friction rather than different rules. There is no Estonian representation in Iran for these services, so you file in Abu Dhabi or
@@ -915,9 +1017,11 @@ export default function EstoniaEn() {
             </p>
           }
         >
+          <Detail minutes={1}>
           <ol className="grid max-w-5xl list-decimal grid-cols-1 gap-3 pl-5 font-sans text-[15px] leading-relaxed text-[#1a1a1a]/70 md:grid-cols-2">
             {sanctionedNotes.map((n) => <li key={n} className="pl-1">{n}</li>)}
           </ol>
+          </Detail>
         </RouteStop>
 
         {/* 11 — FAQ */}
@@ -943,6 +1047,7 @@ export default function EstoniaEn() {
           task="Read the terms"
           completeOn="view"
           message="Terms read"
+          lead={<StepLine steps={workPhases} caption="Four phases, three instalments, a twelve-month contract" />}
           answer={
             <p>
               We are not Estonian immigration lawyers and we do not file your PPA application. Our work comes before it: getting you to the Startup
@@ -951,6 +1056,7 @@ export default function EstoniaEn() {
             </p>
           }
         >
+          <Detail minutes={2}>
           <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
             <div className="font-sans text-[15px] leading-relaxed text-[#1a1a1a]/70">
               <h3 className="mb-2 font-serif text-2xl text-[#1a1a1a]">What we do</h3>
@@ -991,6 +1097,7 @@ export default function EstoniaEn() {
               </p>
             </div>
           </div>
+          </Detail>
         </RouteStop>
 
         {/* Sources */}
@@ -1142,7 +1249,8 @@ function FaqGroups() {
   ];
   return (
     <div className="grid max-w-4xl gap-12">
-      {groups.map((g) => (
+      {groups.map((g, gi) => {
+        const group = (
         <div key={g.heading}>
           <h3 className={`mb-2 text-[#005EA8] ${label}`}>{g.heading}</h3>
           {g.blurb && <p className="mb-4 max-w-2xl font-sans text-sm text-[#1a1a1a]/55">{g.blurb}</p>}
@@ -1158,7 +1266,14 @@ function FaqGroups() {
             ))}
           </div>
         </div>
-      ))}
+        );
+        // The second group sits behind one fold: every answer stays in the HTML (and in the FAQPage JSON-LD).
+        return gi === 0 ? group : (
+          <Detail key={g.heading} label={`More questions (${deepDiveFaqs.length})`} closeLabel="Hide these questions">
+            {group}
+          </Detail>
+        );
+      })}
     </div>
   );
 }

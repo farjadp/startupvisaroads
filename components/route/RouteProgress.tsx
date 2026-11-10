@@ -180,7 +180,7 @@ export function RouteRail() {
       <div className="container mx-auto flex items-center gap-3 px-6 py-1.5">
         <div className="flex shrink-0 items-end gap-1.5" title={labels.railTitle}>
           <FlagPole progress={done.size / stops.length} code={flag} uid="rail" width={26} />
-          <span className={`${labels.font} text-xs tabular-nums text-[#1a1a1a]/60`}>
+          <span className={`${labels.font} text-xs tabular-nums text-[#1a1a1a]/70`}>
             {formatDigits(fillCount(labels.count, done.size, stops.length), labels.digits)}
           </span>
         </div>
@@ -223,8 +223,8 @@ export function RouteFinish() {
 
 type Tone = 'paper' | 'white' | 'night';
 const TONES: Record<Tone, { section: string; eyebrow: string; muted: string; number: string; answer: string }> = {
-  paper: { section: 'bg-[#F2F0E9] text-[#1a1a1a]', eyebrow: 'text-[var(--ra-text)]', muted: 'text-[#1a1a1a]/60', number: 'border-[#1a1a1a]/15 text-[#1a1a1a]/50', answer: 'text-[#1a1a1a]/85' },
-  white: { section: 'bg-white text-[#1a1a1a]', eyebrow: 'text-[var(--ra-text)]', muted: 'text-[#1a1a1a]/60', number: 'border-[#1a1a1a]/15 text-[#1a1a1a]/50', answer: 'text-[#1a1a1a]/85' },
+  paper: { section: 'bg-[#F2F0E9] text-[#1a1a1a]', eyebrow: 'text-[var(--ra-text)]', muted: 'text-[#1a1a1a]/70', number: 'border-[#1a1a1a]/15 text-[#1a1a1a]/70', answer: 'text-[#1a1a1a]/85' },
+  white: { section: 'bg-white text-[#1a1a1a]', eyebrow: 'text-[var(--ra-text)]', muted: 'text-[#1a1a1a]/70', number: 'border-[#1a1a1a]/15 text-[#1a1a1a]/70', answer: 'text-[#1a1a1a]/85' },
   night: { section: 'bg-[var(--rd)] text-white', eyebrow: 'text-[var(--ra-dark)]', muted: 'text-white/60', number: 'border-white/20 text-white/55', answer: 'text-white/80' },
 };
 

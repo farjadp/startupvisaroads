@@ -63,7 +63,8 @@ import { MAIN_CONTACT } from '@/content/contact';
 import Flag from '@/components/route/flags';
 import { RouteProvider, RouteRail, RouteStop, RouteFinish, type RouteStopDef, type RouteTheme } from '@/components/route/RouteProgress';
 import { CopyButton, OpenedTracker, ParallaxLayer } from '@/components/route/RouteWidgets';
-import { PerkOrCatchNL, RulesQuiz, SeenTracker, StepTrail, TimelineSlider, type Milestone, type TrailStep } from './NetherlandsWidgets';
+import { PerkOrCatchNL, RulesQuiz, StepTrail, TimelineSlider, type Milestone, type TrailStep } from './NetherlandsWidgets';
+import { CheckRows, Detail, NumberTiles, StepLine, WhyWatch, YearsLine, type Milestone as YearMark, type Tile } from '@/components/guide/visual';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
@@ -258,6 +259,43 @@ const reads = [
   },
 ];
 
+// ─── Visuals: drawn in code from the data above ──────────────────────────────
+// Each fold's `minutes` is its word count at 200 words a minute (measured
+// 9 Nov 2026); update it when a fold's text grows or shrinks a lot.
+
+const snapshotTiles: Tile[] = [
+  { value: '12 mo', label: 'Trial period', sub: 'not a permanent or multi-year permit' },
+  { value: '1', label: 'Facilitator contract', sub: 'with an approved incubator, mandatory' },
+  { value: '€423', label: 'IND fee', sub: 'the official application fee, 2026' },
+  { value: '~€21.2k', label: 'Funds to show', sub: 'single, for 12 months; ~€30,300 with family' },
+];
+
+// What a facilitator does: the titles of the six cards in the fold.
+const facilitatorDoes = [
+  { t: 'You find them via the RVO', b: 'Find approved Facilitators via the RVO. Pitch online, pass interviews, and sign the official mentorship agreement.' },
+  { t: 'They interview you hard', b: 'You will face deep technical interviews with facilitators. If you didn\'t write it, you will freeze and face rejection.' },
+  { t: 'The RVO assesses your plan', b: 'You or your authorised representative apply to the IND. The RVO assesses your step-by-step plan and advises the IND.' },
+  { t: 'They can house your BSN', b: 'A high-quality facilitator will allow you to use their official office address as your temporary postal address so you can get your BSN immediately.' },
+  { t: 'You register the company together', b: 'You and your facilitator must commit to registering your startup with the Dutch Chamber of Commerce (KvK) as soon as you arrive.' },
+  { t: 'Their statement helps in year two', b: 'After a year you apply for a self-employed residence permit. A statement from your facilitator can simplify the transition; without one you must meet the standard self-employed requirements.' },
+];
+
+// Each step's figure and its label, as printed on the step card in the fold.
+const stepChips = steps.map((s) => `${s.figure} ${s.figureLabel}`);
+
+const moneyTiles: Tile[] = [
+  { value: '€423', label: 'IND application fee', sub: 'start-up permit, 2026; the same for the self-employed permit after it' },
+  { value: '~€21.2k', label: 'Means of support, single', sub: 'for 12 months; follows the minimum wage' },
+  { value: '~€30.3k', label: 'Means of support, family', sub: 'for 12 months; changes 1 January and 1 July' },
+  { value: '€500–1k', label: 'Facilitator, a month', sub: 'a private market range, not a government fee' },
+];
+
+const years: YearMark[] = [
+  { at: 0, year: 'Y0', label: 'The Dutch Landing', sub: 'The 1-year startup permit' },
+  { at: 1, year: 'Y1', label: 'Self-employed permit', sub: 'A new application, scored on RVO\'s points system' },
+  { at: 5, year: 'Y5', label: 'The Endgame', sub: 'Permanent Residency or Citizenship' },
+];
+
 // ─── Page ────────────────────────────────────────────────────────────────────
 
 const label = 'font-sans text-xs font-bold uppercase tracking-[0.18em]';
@@ -358,6 +396,9 @@ export default async function NetherlandsPage({ params }: { params: Promise<{ lo
           eyebrow="At a glance"
           question="What is the Netherlands startup visa?"
           task="Read the four facts"
+          completeOn="view"
+          message="Snapshot read"
+          lead={<NumberTiles tiles={snapshotTiles} />}
           answer={
             <p>
               The Netherlands startup visa is a strict one-year temporary residence permit for founders of an innovative business, and it is not extended.
@@ -366,21 +407,8 @@ export default async function NetherlandsPage({ params }: { params: Promise<{ lo
             </p>
           }
         >
-          <dl className="grid grid-cols-2 gap-3 md:grid-cols-4">
-            {[
-              { stat: '12 mo', label: 'Trial period', sub: 'not a permanent or multi-year permit' },
-              { stat: '1', label: 'Facilitator contract', sub: 'with an approved incubator, mandatory' },
-              { stat: '€423', label: 'IND fee', sub: 'the official application fee, 2026' },
-              { stat: '~€21.2k', label: 'Funds to show', sub: 'single, for 12 months; ~€30,300 with family' },
-            ].map((s) => (
-              <div key={s.label} className="flex flex-col rounded-2xl border border-[#1a1a1a]/10 bg-white p-5 transition-transform hover:-translate-y-1">
-                <dt className="order-2 mt-2 font-sans text-sm font-bold">{s.label}</dt>
-                <dd className="order-1 font-serif text-4xl text-[#21468B]">{s.stat}</dd>
-                <dd className="order-3 font-sans text-xs text-[#1a1a1a]/55">{s.sub}</dd>
-              </div>
-            ))}
-          </dl>
-          <div className="mt-8 max-w-5xl">
+          <Detail minutes={1}>
+          <div className="max-w-5xl">
             <h3 className="mb-3 font-serif text-2xl">Not a permanent pass. A 12-month trial.</h3>
             <div className="grid grid-cols-1 gap-6 font-sans text-[15px] leading-relaxed text-[#1a1a1a]/70 md:grid-cols-2">
               <p>
@@ -393,7 +421,7 @@ export default async function NetherlandsPage({ params }: { params: Promise<{ lo
               </p>
             </div>
           </div>
-          <SeenTracker stopId="snapshot" message="Snapshot read" />
+          </Detail>
         </RouteStop>
 
         {/* 02 — Who qualifies */}
@@ -403,6 +431,13 @@ export default async function NetherlandsPage({ params }: { params: Promise<{ lo
           eyebrow="5 Non-Negotiable Rules"
           question="Who qualifies for the Netherlands startup visa?"
           task="Answer all five"
+          lead={
+            <RulesQuiz stopId="rules" criteria={rules} compact>
+              <Link href="/book-meeting" className="inline-flex w-fit items-center gap-2 rounded-full bg-[#F97316] px-5 py-3 font-sans text-sm font-bold text-[#1a1a1a] transition-transform hover:-translate-y-0.5">
+                Get a free read on your idea <ArrowRight className="h-4 w-4" />
+              </Link>
+            </RulesQuiz>
+          }
           answer={
             <p>
               You qualify if you meet five rules: a signed agreement with an approved facilitator, a truly innovative business that is new to the Dutch
@@ -411,8 +446,16 @@ export default async function NetherlandsPage({ params }: { params: Promise<{ lo
             </p>
           }
         >
-          <RulesQuiz stopId="rules" criteria={rules}>
-            <div className="rounded-xl bg-[#1a1a1a] p-5 text-[#F2F0E9]">
+          <Detail minutes={1}>
+            <dl className="mb-8 grid max-w-5xl grid-cols-1 gap-x-8 gap-y-4 font-sans text-[15px] leading-relaxed md:grid-cols-2">
+              {rules.map((r) => (
+                <div key={r.title}>
+                  <dt className="font-bold text-[#1a1a1a]">{r.title}</dt>
+                  <dd className="text-[#1a1a1a]/70">{r.body}</dd>
+                </div>
+              ))}
+            </dl>
+            <div className="max-w-3xl rounded-xl bg-[#1a1a1a] p-5 text-[#F2F0E9]">
               <h3 className="mb-4 font-serif text-2xl text-[#F97316]">The 3 Agency Lies</h3>
               <ul className="grid gap-4">
                 {lies.map((l) => (
@@ -423,14 +466,11 @@ export default async function NetherlandsPage({ params }: { params: Promise<{ lo
                 ))}
               </ul>
             </div>
-            <Link href="/book-meeting" className="inline-flex w-fit items-center gap-2 rounded-full bg-[#F97316] px-5 py-3 font-sans text-sm font-bold text-[#1a1a1a] transition-transform hover:-translate-y-0.5">
-              Get a free read on your idea <ArrowRight className="h-4 w-4" />
-            </Link>
-          </RulesQuiz>
-          <p className="mt-6 max-w-[68ch] font-sans text-sm text-[#1a1a1a]/65">
-            <strong className="text-[#1a1a1a]">What innovative means here:</strong> your business cannot be a traditional shop or service. It must introduce
-            new technology, a novel market approach, or an innovative social process.
-          </p>
+            <p className="mt-6 max-w-[68ch] font-sans text-sm text-[#1a1a1a]/65">
+              <strong className="text-[#1a1a1a]">What innovative means here:</strong> your business cannot be a traditional shop or service. It must introduce
+              new technology, a novel market approach, or an innovative social process.
+            </p>
+          </Detail>
         </RouteStop>
 
         {/* 03 — The facilitator */}
@@ -441,6 +481,9 @@ export default async function NetherlandsPage({ params }: { params: Promise<{ lo
           eyebrow="The gatekeeper"
           question="What does a facilitator do for the Netherlands startup visa?"
           task="Read what they do"
+          completeOn="view"
+          message="Facilitator understood"
+          lead={<CheckRows items={facilitatorDoes.map((x) => ({ label: x.t }))} icon="number" columns={3} surface="white" label="What a facilitator does" />}
           answer={
             <p>
               A facilitator is an experienced mentor or incubator recognised by the RVO. You pitch to them, pass their interviews and sign a mentorship
@@ -449,16 +492,9 @@ export default async function NetherlandsPage({ params }: { params: Promise<{ lo
             </p>
           }
         >
+          <Detail minutes={1}>
           <ol className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {[
-              { t: 'You find them via the RVO', b: 'Find approved Facilitators via the RVO. Pitch online, pass interviews, and sign the official mentorship agreement.' },
-              { t: 'They interview you hard', b: 'You will face deep technical interviews with facilitators. If you didn\'t write it, you will freeze and face rejection.' },
-              { t: 'The RVO assesses your plan', b: 'You or your authorised representative apply to the IND. The RVO assesses your step-by-step plan and advises the IND.' },
-              { t: 'They can house your BSN', b: 'A high-quality facilitator will allow you to use their official office address as your temporary postal address so you can get your BSN immediately.' },
-              { t: 'You register the company together', b: 'You and your facilitator must commit to registering your startup with the Dutch Chamber of Commerce (KvK) as soon as you arrive.' },
-              { t: 'Their statement helps in year two', b: 'After a year you apply for a self-employed residence permit. A statement from your facilitator can simplify the transition; without one you must meet the standard self-employed requirements.' },
-            ].map((x, i) => (
-              <li key={x.t} className="rounded-2xl border border-[#1a1a1a]/10 bg-[#F2F0E9] p-5">
+            {facilitatorDoes.map((x, i) => (              <li key={x.t} className="rounded-2xl border border-[#1a1a1a]/10 bg-[#F2F0E9] p-5">
                 <span className="font-sans text-xs tabular-nums text-[#B4400A]">{String(i + 1).padStart(2, '0')}</span>
                 <h3 className="mt-1 font-serif text-xl">{x.t}</h3>
                 <p className="mt-1.5 font-sans text-sm leading-relaxed text-[#1a1a1a]/65">{x.b}</p>
@@ -470,7 +506,7 @@ export default async function NetherlandsPage({ params }: { params: Promise<{ lo
             mentoring, and administrative support. That is a private market range, not a government fee and not a VisaRoads price: facilitators are
             private organisations, so costs and conditions vary.
           </p>
-          <SeenTracker stopId="facilitator" message="Facilitator understood" />
+          </Detail>
         </RouteStop>
 
         {/* 04 — How to apply */}
@@ -480,6 +516,9 @@ export default async function NetherlandsPage({ params }: { params: Promise<{ lo
           eyebrow="The process"
           question="How do you apply for the Netherlands startup visa?"
           task="Walk to step 4"
+          completeOn="view"
+          message="Steps seen"
+          lead={<StepLine steps={steps.map((x, i) => ({ label: x.title, who: x.who, chip: stepChips[i] }))} />}
           answer={
             <p>
               Build your idea, MVP and pitch deck yourself first. Finding an RVO-recognised facilitator and signing the agreement usually takes 2 to 3
@@ -488,7 +527,9 @@ export default async function NetherlandsPage({ params }: { params: Promise<{ lo
             </p>
           }
         >
-          <StepTrail stopId="steps" steps={steps} />
+          <Detail minutes={1}>
+            <StepTrail stopId="steps" steps={steps} />
+          </Detail>
         </RouteStop>
 
         {/* Photo band */}
@@ -523,6 +564,9 @@ export default async function NetherlandsPage({ params }: { params: Promise<{ lo
           eyebrow="Fees and solvency"
           question="How much money do you need for the Netherlands startup visa?"
           task="Read the four figures"
+          completeOn="view"
+          message="Money mapped"
+          lead={<NumberTiles tiles={moneyTiles} />}
           answer={
             <p>
               The IND application fee is €423 in 2026. You must also show about €21,200 (single) or €30,300 (family) for twelve months; the amounts
@@ -531,6 +575,7 @@ export default async function NetherlandsPage({ params }: { params: Promise<{ lo
             </p>
           }
         >
+          <Detail minutes={1}>
           <div className="overflow-x-auto">
             <table className="w-full min-w-[640px] overflow-hidden rounded-2xl bg-white font-sans text-sm">
               <caption className="pb-2 text-left font-bold">What the Netherlands startup visa costs: official fee, funds to show and facilitator</caption>
@@ -569,7 +614,7 @@ export default async function NetherlandsPage({ params }: { params: Promise<{ lo
               claiming Dutch social welfare benefits during your first year.
             </p>
           </div>
-          <SeenTracker stopId="money" message="Money mapped" />
+          </Detail>
         </RouteStop>
 
         {/* 06 — Life on the permit */}
@@ -580,6 +625,12 @@ export default async function NetherlandsPage({ params }: { params: Promise<{ lo
           eyebrow="Perk or catch?"
           question="What rights and restrictions come with the Netherlands startup visa?"
           task="Guess all eight"
+          lead={
+            <WhyWatch
+              why={{ heading: 'Perks', items: rights.filter((r) => r.positive).map((r) => r.title) }}
+              watch={{ heading: 'Catches', items: rights.filter((r) => !r.positive).map((r) => r.title) }}
+            />
+          }
           answer={
             <p>
               In most cases your spouse or partner gets unrestricted working rights and can work for any Dutch employer. You, the main applicant, may only work on your
@@ -588,6 +639,7 @@ export default async function NetherlandsPage({ params }: { params: Promise<{ lo
             </p>
           }
         >
+          <Detail minutes={2}>
           <PerkOrCatchNL stopId="life" items={rights} />
 
           <div className="mt-10 grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)]">
@@ -614,6 +666,7 @@ export default async function NetherlandsPage({ params }: { params: Promise<{ lo
               </p>
             </div>
           </div>
+          </Detail>
         </RouteStop>
 
         {/* 07 — After the first year */}
@@ -623,6 +676,7 @@ export default async function NetherlandsPage({ params }: { params: Promise<{ lo
           eyebrow="Zero to Citizenship"
           question="What happens after the first year of the Netherlands startup visa?"
           task="Drag to the endgame"
+          lead={<YearsLine milestones={years} caption="From landing to the endgame" />}
           answer={
             <p>
               The startup visa is not extended. Before your 12 months end, you file a new application for a self-employed residence permit, scored on
@@ -631,6 +685,7 @@ export default async function NetherlandsPage({ params }: { params: Promise<{ lo
             </p>
           }
         >
+          <Detail minutes={1}>
           <TimelineSlider stopId="after" milestones={milestones} />
           <div className="mt-6 grid max-w-5xl grid-cols-1 gap-4 font-sans text-sm leading-relaxed text-[#1a1a1a]/70 md:grid-cols-2">
             <p>
@@ -642,6 +697,7 @@ export default async function NetherlandsPage({ params }: { params: Promise<{ lo
               you must show a working prototype (MVP), active networking, or initial clients.
             </p>
           </div>
+          </Detail>
         </RouteStop>
 
         {/* 08 — The 20 facts */}
@@ -659,14 +715,21 @@ export default async function NetherlandsPage({ params }: { params: Promise<{ lo
             </p>
           }
         >
-          <div className="grid grid-cols-1 gap-x-16 border-t border-[#1a1a1a]/10 lg:grid-cols-2 lg:border-t-0">
-            {[facts.slice(0, 10), facts.slice(10)].map((col, c) => (
-              <div key={c} className="lg:border-t lg:border-[#1a1a1a]/10">
-                {col.map((f, i) => (
-                  <FaqItem key={f.q} n={c * 10 + i + 1} fact={f.fact} q={f.q} a={f.a} />
+          {/* The second ten sit behind one fold: every answer stays in the HTML
+              (and in the FAQPage JSON-LD), the phone page gets shorter. */}
+          <div className="grid max-w-4xl gap-12">
+            <div className="border-t border-[#1a1a1a]/10">
+              {facts.slice(0, 10).map((f, i) => (
+                <FaqItem key={f.q} n={i + 1} fact={f.fact} q={f.q} a={f.a} />
+              ))}
+            </div>
+            <Detail label={`More facts (${facts.length - 10})`} closeLabel="Hide these facts">
+              <div className="border-t border-[#1a1a1a]/10">
+                {facts.slice(10).map((f, i) => (
+                  <FaqItem key={f.q} n={i + 11} fact={f.fact} q={f.q} a={f.a} />
                 ))}
               </div>
-            ))}
+            </Detail>
           </div>
           <OpenedTracker stopId="faq" need={3} message="Questions answered" />
         </RouteStop>
