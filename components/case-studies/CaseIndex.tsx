@@ -7,7 +7,8 @@
 // ============================================================================
 import React from 'react';
 import Link from 'next/link';
-import type { CaseFilters, CaseListItem, CaseOutcome } from '@/lib/case-studies/public';
+import type { CaseFilters, CaseListItem } from '@/lib/case-studies/public';
+import { CASE_OUTCOMES } from '@/lib/case-studies/outcomes';
 import { COPY, courtDate, routeLabel, type Lang } from './copy';
 import { Label, Ltr, OutcomeMark, SampleBanner, TypeBadge } from './Marks';
 
@@ -55,7 +56,7 @@ function FilterGroup({ lang, label, children }: { lang: Lang; label: string; chi
 export default function CaseIndex({ lang, all, filters }: Props) {
   const t = COPY[lang];
   const routes = Array.from(new Set(all.map((i) => i.route)));
-  const outcomes = (['allowed', 'dismissed'] as CaseOutcome[]).filter((o) => all.some((i) => i.outcome === o));
+  const outcomes = CASE_OUTCOMES.filter((o) => all.some((i) => i.outcome === o));
   const items = all.filter((i) => (!filters.route || i.route === filters.route) && (!filters.outcome || i.outcome === filters.outcome));
   const filtered = !!(filters.route || filters.outcome);
   const anySample = all.some((i) => i.sample);

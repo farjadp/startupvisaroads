@@ -24,7 +24,8 @@ import { enabledCaseTypes, getCaseStudySettings, type CaseStudySettings } from '
 
 export type CaseLocale = 'en' | 'fa';
 export type CaseType = 'FC_DECISION' | 'CLIENT_CASE';
-export type CaseOutcome = 'allowed' | 'dismissed';
+import { asOutcome, type CaseOutcome } from '@/lib/case-studies/outcomes';
+export type { CaseOutcome } from '@/lib/case-studies/outcomes';
 
 export type PublicClaim = {
   id: string;
@@ -32,6 +33,8 @@ export type PublicClaim = {
   text: string;
   paras: number[];
   quote: string;
+  /** 'judgment': quoted from the JUDGMENT block (the order), no paragraph. */
+  source?: 'judgment';
 };
 
 export type PublicLesson = {
@@ -193,7 +196,7 @@ export function parseClaims(json: string | null | undefined): PublicClaim[] {
     const paras = Array.isArray(r.paras)
       ? r.paras.filter((n): n is number => typeof n === 'number' && Number.isInteger(n) && n > 0)
       : [];
-    out.push({ id, kind: str(r.kind) || 'fact', text, paras, quote: str(r.quote) });
+    out.push({ id, kind: str(r.kind) || 'fact', text, paras, quote: str(r.quote), ...(r.source === 'judgment' ? { source: 'judgment' as const } : {}) });
   }
   return out;
 }
@@ -265,7 +268,6 @@ export function parseFaq(json: string | null | undefined): PublicFaq[] {
 
 const asLocale = (l: string): CaseLocale => (l === 'fa' ? 'fa' : 'en');
 const asType = (t: string): CaseType => (t === 'CLIENT_CASE' ? 'CLIENT_CASE' : 'FC_DECISION');
-const asOutcome = (o: string | null): CaseOutcome | null => (o === 'allowed' || o === 'dismissed' ? o : null);
 
 type ListRow = Prisma.CaseStudyGetPayload<{ select: typeof LIST_SELECT }>;
 type PageRow = Prisma.CaseStudyGetPayload<{ select: typeof PAGE_SELECT }>;

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { certifiedQuestionFrom, dispositionFromJudgment, htmlToLines, parseDecisionHtml, parseDecisionText, remittedFromJudgment } from '../fc-parser';
+import { certifiedQuestionFrom, deadlineOrderFromJudgment, dispositionFromJudgment, htmlToLines, parseDecisionHtml, parseDecisionText, remittedFromJudgment } from '../fc-parser';
 
 // A synthetic decision laid out like the Court's PDFs (header, BETWEEN block,
 // numbered paragraphs across a page break, JUDGMENT, solicitors of record).
@@ -149,5 +149,16 @@ describe('remitted and certified question', () => {
     expect(c.status).toBe('certified');
     expect(c.question).toBe('Does paragraph 89(b) apply to work permits?');
     expect(certifiedQuestionFrom('1. The application is dismissed.').status).toBe('unknown');
+  });
+});
+
+describe('deadlineOrderFromJudgment', () => {
+  it('reads the mandamus deadline verbatim (2026 FC 1370)', () => {
+    const j = "JUDGMENT in IMM-17672-25 THIS COURT'S JUDGMENT is that: 1. The application for judicial review and the request for an order of mandamus is granted. 2. A decision shall be rendered on the Applicant's application within 90 days of this judgment. 3. There is no question for certification and no order regarding costs.";
+    expect(deadlineOrderFromJudgment(j)).toEqual({ quote: "A decision shall be rendered on the Applicant's application within 90 days of this judgment.", days: 90 });
+  });
+  it('is null when no deadline is set', () => {
+    expect(deadlineOrderFromJudgment('1. The application for judicial review is dismissed. 2. No question is certified.')).toBeNull();
+    expect(deadlineOrderFromJudgment(null)).toBeNull();
   });
 });

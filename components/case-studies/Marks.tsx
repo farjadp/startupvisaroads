@@ -6,7 +6,7 @@
 // a filled square for Dismissed. Acid is not used for "Allowed".
 // ============================================================================
 import React from 'react';
-import type { CaseOutcome } from '@/lib/case-studies/public';
+import { isFavourable, type CaseOutcome } from '@/lib/case-studies/outcomes';
 import { COPY, type Lang } from './copy';
 
 export function OutcomeMark({ outcome, lang, className = '' }: { outcome: CaseOutcome; lang: Lang; className?: string }) {
@@ -14,9 +14,9 @@ export function OutcomeMark({ outcome, lang, className = '' }: { outcome: CaseOu
     <span className={`inline-flex items-center gap-2 font-bold ${className}`}>
       <span
         aria-hidden
-        className={`h-2.5 w-2.5 flex-none border-2 border-current ${outcome === 'allowed' ? 'rounded-full' : 'bg-current'}`}
+        className={`h-2.5 w-2.5 flex-none border-2 border-current ${isFavourable(outcome) ? 'rounded-full' : 'bg-current'}`}
       />
-      {outcome === 'allowed' ? COPY[lang].allowed : COPY[lang].dismissed}
+      {COPY[lang].outcomeLabel[outcome]}
     </span>
   );
 }

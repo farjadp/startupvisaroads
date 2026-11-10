@@ -14,9 +14,11 @@ import { join } from 'node:path';
 import { MODELS, callJson, fence, loadPrompt, type Usage } from './lib/anthropic';
 import { findDecision, pageSlug, readJson, readMeta, runMain, writeJson, type PublicParsed } from './lib/case-files';
 import { gateCase, renderHtml, traceCheck, type Draft } from './lib/rules';
+import { deadlineOrderFromJudgment } from '../../lib/case-studies/fc-parser';
 import { clientCasesDir, assertOutsideRepo } from './lib/paths';
 import { CASE_A_SECTIONS, CLAIM_A_KINDS, PROGRAMMES, SPEAKERS, allClaims, toStoredClaim, validateCaseA, type CaseA, type StoredClaim } from '../../lib/case-studies/claims';
 import { findPii, redact } from '../../lib/case-studies/anonymise';
+import { courtOutcome, type CaseOutcome } from '../../lib/case-studies/outcomes';
 import { DISCLAIMERS } from '../../lib/case-studies/redlines';
 import type { PrivateParties } from '../../lib/case-studies/fc-parser';
 
@@ -190,20 +192,31 @@ async function anonymise(citation: string): Promise<void> {
   if (holdingsLost.length && holdingsLost.length === c.holdings.length) stop(citation, [`every holding carries identifying data (${notes.join('; ')}); re-extract with a different quote`]);
   const out: CaseA = { ...c };
   for (const s of CASE_A_SECTIONS) out[s] = c[s].filter((x) => !drop.has(x.id));
+  // The Court's order (e.g. a mandamus deadline) lives in the JUDGMENT block,
+  // which has no paragraph number; add it as a deterministic, verbatim claim.
+  const order = deadlineOrderFromJudgment(parsed.judgmentText);
+  if (order && !out.holdings.some((h) => h.source === 'judgment')) {
+    out.holdings = [...out.holdings, {
+      id: 'o1', kind: 'holding', speaker: 'court', paras: [], source: 'judgment', external: false, basedOn: [],
+      text: `The Court ordered that a decision be made on the application within ${order.days} days of the judgment.`,
+      quote: order.quote,
+    }];
+  }
   writeJson(citation, 'claims.json', out);
   console.log(`${citation}: anonymised; ${drop.size} claim(s) dropped for identifying data${notes.length ? ` (${notes.join('; ')})` : ''}`);
 }
 
 function caseHeader(citation: string, c: CaseA): string {
   const d = findDecision(citation);
-  return JSON.stringify({ citation: c.citation, court: 'Federal Court of Canada', decisionDate: c.decisionDate, route: d.route, outcome: c.disposition, remitted: c.remitted, certifiedQuestion: c.certifiedQuestion });
+  const parsed = readJson<PublicParsed>(citation, 'parsed.json');
+  return JSON.stringify({ citation: c.citation, court: 'Federal Court of Canada', decisionDate: c.decisionDate, route: d.route, outcome: courtOutcome(c.disposition, parsed.judgmentText), remitted: c.remitted, certifiedQuestion: c.certifiedQuestion });
 }
 
 async function write(citation: string, locale: 'en' | 'fa'): Promise<void> {
   const c = readJson<CaseA>(citation, 'claims.json');
   const claims = allClaims(c).map(({ id, kind, text, paras }) => ({ id, kind, text, paras }));
   // Stage 7 is fed the same claims as stage 6 and never the English draft.
-  const prompt = loadPrompt(locale === 'en' ? 'write-en.v1' : 'write-fa.v1');
+  const prompt = loadPrompt(locale === 'en' ? 'write-en.v2' : 'write-fa.v2');
   const res = await callJson<Draft>({
     model: MODELS.write(),
     system: prompt.text,
@@ -248,7 +261,7 @@ export type CaseStudyBody = {
   judge?: string;
   route: string;
   country?: string;
-  outcome?: 'allowed' | 'dismissed';
+  outcome?: CaseOutcome;
   officialUrl?: string;
   issues?: unknown[];
   lessons?: unknown[];
@@ -289,7 +302,7 @@ async function payload(citation: string): Promise<void> {
       judge: parsed.judge ?? undefined,
       route: d.route,
       country: 'canada',
-      outcome: c.disposition,
+      outcome: courtOutcome(c.disposition, parsed.judgmentText),
       officialUrl: meta.url,
       issues: c.issues.map((x) => x.id),
       lessons: c.lessons.map((x) => x.id),

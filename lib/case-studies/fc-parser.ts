@@ -291,3 +291,20 @@ export async function parseDecisionPdf(bytes: Uint8Array): Promise<ParsedDecisio
   const pages = Array.isArray(text) ? text : [text];
   return parseDecisionText(pages.join('\n'));
 }
+
+/**
+ * The Court's deadline order in a mandamus judgment, verbatim: e.g. "A decision
+ * shall be rendered on the Applicant's application within 90 days of this
+ * judgment." Null when the JUDGMENT block sets no deadline. Deterministic, so
+ * the quote is exact by construction.
+ */
+export function deadlineOrderFromJudgment(judgment: string | null | undefined): { quote: string; days: number } | null {
+  const text = (judgment ?? '').replace(/\s+/g, ' ');
+  // Split the numbered order items ("1. ... 2. ...").
+  const items = text.split(/\s(?=\d{1,2}\.\s+[A-Z])/).map((x) => x.replace(/^\d{1,2}\.\s+/, '').trim());
+  for (const item of items) {
+    const m = /^[^.]*?\b(?:decision|determination)\b[^.]*?\bwithin\s+(\d{1,3})\s+days\b[^.]*\./i.exec(item);
+    if (m) return { quote: m[0].trim(), days: Number(m[1]) };
+  }
+  return null;
+}

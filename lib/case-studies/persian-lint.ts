@@ -53,6 +53,7 @@ const FA = '[\\u0600-\\u06FF]';
 const MI_STEMS = 'شود|شوند|شد|شدند|کند|کنند|کنیم|کنید|کرد|کردند|توان|تواند|توانند|توانید|توانیم|دهد|دهند|دهیم|گیرد|گیرند|رود|روند|آید|آیند|خواهد|خواهند|داند|دانند|دانیم|بیند|بینند|گوید|گویند|ماند|مانند|رسد|رسند|پرسد|یابد|خواند|نویسد|نویسند';
 
 const RULES: LintRule[] = [
+  { rule: 'mandamus-damages', message: 'mandamus is a discretionary remedy, not compensation; never «جبران خسارت/غرامت» for it', re: /مانداموس[^.؟!]{0,80}(?:جبران\s*خسارت|غرامت)|(?:جبران\s*خسارت|غرامت)[^.؟!]{0,80}مانداموس/g },
   { rule: 'arabic-ye', message: 'Arabic ي/ى; use Persian ی', re: /[يى]/g },
   { rule: 'arabic-kaf', message: 'Arabic ك; use Persian ک', re: /ك/g },
   { rule: 'arabic-digits', message: 'Arabic-Indic digits; use Persian digits ۰–۹', re: /[٠-٩]/g },
