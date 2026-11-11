@@ -47,6 +47,10 @@ RUN adduser --system --uid 1001 nextjs
 
 COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/prisma ./prisma
+# Code-drawn article covers (lib/cover-art): fonts, flags and the mark.
+# Pango finds the fonts through this fontconfig file.
+COPY --from=builder --chown=nextjs:nodejs /app/assets ./assets
+ENV FONTCONFIG_FILE=/app/assets/covers/fonts.conf
 COPY --from=builder --chown=nextjs:nodejs /app/node_modules ./node_modules
 COPY --from=builder --chown=nextjs:nodejs /app/package.json ./package.json
 

@@ -15,7 +15,9 @@
 import * as cheerio from 'cheerio';
 import prisma from '@/lib/prisma';
 import { wrapPhoto } from '@/lib/ai';
-import { generateBrandImage, imagesBlocked } from '@/lib/autopilot/images';
+import { coverStyle, generateBrandImage, imagesBlocked } from '@/lib/autopilot/images';
+import { coverSpec, makeBrandCover } from '@/lib/cover-art';
+import { isStorageConfigured } from '@/lib/storage';
 import { chatJson } from '@/lib/autopilot/pipeline';
 
 export type BackfillOptions = {
@@ -88,9 +90,17 @@ export async function backfillCovers(opts: BackfillOptions = {}): Promise<Backfi
   const force = Boolean(opts.forceAll) || Boolean(opts.force && opts.slug);
   const result: BackfillResult = { blocked: null, considered: 0, done: [], failed: [] };
 
-  // The same gate the autopilot uses — no point paying for an image that
-  // production would only inline as base64.
-  const blocked = opts.dryRun ? null : imagesBlocked();
+  // The same gate the autopilot uses — no point making an image that
+  // production would only inline as base64. A brand cover needs storage
+  // only; a photo also needs a provider.
+  const brand = coverStyle() === 'brand';
+  const blocked = opts.dryRun
+    ? null
+    : brand
+      ? !isStorageConfigured() && process.env.NODE_ENV === 'production'
+        ? 'object storage not configured (S3_*); refusing to inline base64 in production'
+        : null
+      : imagesBlocked();
   if (blocked) {
     result.blocked = blocked;
     return result;
@@ -105,12 +115,40 @@ export async function backfillCovers(opts: BackfillOptions = {}): Promise<Backfi
     },
     orderBy: { createdAt: 'desc' },
     take: limit,
-    select: { id: true, slug: true, title: true, excerpt: true, keyTakeaway: true },
+    select: {
+      id: true, slug: true, title: true, excerpt: true, keyTakeaway: true,
+      locale: true, createdAt: true, topicSeed: true,
+      category: { select: { name: true } },
+      tags: { select: { name: true } },
+    },
   });
   result.considered = articles.length;
 
   for (const article of articles) {
     try {
+      if (brand) {
+        // Drawn from the article itself: no model call, no scene to write.
+        const subject = {
+          title: article.title,
+          locale: article.locale,
+          category: article.category?.name,
+          tags: article.tags.map((t) => t.name),
+          topicSeed: article.topicSeed,
+          date: article.createdAt,
+        };
+        const spec = coverSpec(subject);
+        const scene = `brand cover: ${spec.country?.code ?? 'no country'} · ${spec.label}`;
+        if (opts.dryRun) {
+          result.done.push({ slug: article.slug, scene, coverImage: null });
+          continue;
+        }
+        const coverImage = await makeBrandCover(subject);
+        if (!coverImage) throw new Error('brand cover render failed');
+        await prisma.article.update({ where: { id: article.id }, data: { coverImage } });
+        result.done.push({ slug: article.slug, scene, coverImage });
+        console.log(`covers: ${article.slug} ← ${coverImage}`);
+        continue;
+      }
       const scene = await coverScene(article);
       if (opts.dryRun) {
         result.done.push({ slug: article.slug, scene, coverImage: null });
