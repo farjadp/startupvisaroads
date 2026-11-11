@@ -21,6 +21,7 @@ import { applyCitations, buildEvidence, gateFigures, recordEvidenceUse, type Evi
 import { classify, seedTags } from './diversity';
 import { closestOwnArticle, qualityVerdict, type OwnArticle } from './quality';
 import { ownCorpus } from './own-corpus';
+import { insertNumberFigures, numberFiguresOn } from '@/lib/number-figure';
 
 type Visual =
   | { type: 'PHOTO'; prompt: string; caption: string }
@@ -211,6 +212,16 @@ async function writeOne(brief: Brief, inv: Inventory, opts: RunOpts, result: Gen
     const cited = applyCitations(body, evidence.pack, inv.locale);
     body = cited.html;
     if (cited.dropped.length) console.warn(`autopilot/writer: dropped citation markers naming nothing: ${cited.dropped.join(', ')}`);
+
+    // "The number": the article's own key figure drawn in code, after the
+    // paragraph that cites it to an official source. Runs after the citations
+    // exist, because they decide which sentences qualify. Off unless
+    // NUMBER_FIGURES=1; see lib/number-figure.
+    if (numberFiguresOn()) {
+      const fig = insertNumberFigures(body, inv.locale);
+      body = fig.html;
+      if (fig.figures.length) console.log(`autopilot/writer: "${d.title}" ← number figure ${fig.figures.map((f) => f.headline).join(', ')}`);
+    }
 
     const publication = decidePlannedPublication(!!opts.publish, linked.officialCitationCount);
     if (publication.warning) {
