@@ -1,8 +1,7 @@
 // ============================================================================
 // lib/cover-art/render.ts
 // Draws an article cover in code: the country's colour edge to edge, the
-// country's name huge and faint behind, the VisaRoads mark in its ink tile,
-// and the headline on a paper card with the site's hard offset shadow. The
+// country's name huge and faint behind, and the headline on a paper card with the site's hard offset shadow. The
 // real flag sits small at the head of the card. No image model is involved,
 // so a cover is never off-subject, never off-brand, and costs nothing.
 //
@@ -131,7 +130,6 @@ const MAX_TITLE_LINES = 3;
 const G = {
   edge: 86, // side margin of the card and the mark tile
   bottom: 80,
-  top: 72,
   cardWidth: 900,
   padX: 48,
   padTop: 40,
@@ -140,9 +138,6 @@ const G = {
   shadow: 19,
   flagHeight: 33,
   flagBorder: 2,
-  tileMark: 112,
-  tilePadX: 26,
-  tilePadY: 22,
   footerMark: 84,
 };
 
@@ -189,17 +184,12 @@ export async function renderCover(spec: CoverSpec): Promise<Buffer> {
   const cardY = H - G.bottom - cardH;
   const shadowX = cardX + (rtl ? -G.shadow : G.shadow);
 
-  const tileMark = await asset(sharp, 'mark-acid.png', { width: G.tileMark });
-  const tileW = tileMark.width + G.tilePadX * 2;
-  const tileH = tileMark.height + G.tilePadY * 2;
-  const tileX = rtl ? G.edge : W - G.edge - tileW;
-
   // ── the flat shapes, in one transparent SVG laid over the giant name ──
+  // No mark in the corner: the brand sits once, in the card's footer.
   const shapes = Buffer.from(
     `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}">` +
       `<rect x="${shadowX}" y="${cardY + G.shadow}" width="${G.cardWidth}" height="${cardH}" fill="${C.ink}"/>` +
       `<rect x="${cardX}" y="${cardY}" width="${G.cardWidth}" height="${cardH}" fill="${C.paper}"/>` +
-      `<rect x="${tileX}" y="${G.top}" width="${tileW}" height="${tileH}" fill="${C.ink}"/>` +
       (flag
         ? `<rect x="${rtl ? cardX + G.cardWidth - G.padX - flagBox.w : cardX + G.padX}" y="${cardY + G.padTop + (headH - flagBox.h) / 2}" width="${flagBox.w}" height="${flagBox.h}" fill="${C.ink}"/>`
         : '') +
@@ -220,7 +210,6 @@ export async function renderCover(spec: CoverSpec): Promise<Buffer> {
 
   await push(giant, giantX, giantY);
   layers.push({ input: await sharp(shapes).png().toBuffer(), left: 0, top: 0 });
-  await push(tileMark, tileX + G.tilePadX, G.top + G.tilePadY);
 
   const headY = cardY + G.padTop;
   const innerStart = cardX + G.padX;
