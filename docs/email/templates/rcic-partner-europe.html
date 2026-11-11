@@ -14,7 +14,8 @@
   Fill before each send (search for "FILL"):
     1. PERSONAL paragraph — one per firm or per segment (see the brief).
     2. MAILING ADDRESS in the footer — required by CASL.
-  The VisaRoads sender appends its own signed unsubscribe link after this body.
+  The VisaRoads sender replaces {{unsubscribe_url}} with the signed link (lib/unsubscribe-footer.ts).
+  Social icons load from visaroads.com/img/email/, live only after this branch is deployed.
 -->
 <style>
   body,table,td,a{-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%}
@@ -160,16 +161,37 @@
   </td></tr>
 
   <!-- Footer -->
-  <tr><td class="px" style="background:#1A1A1A;padding:24px 40px;font-family:Helvetica,Arial,sans-serif;font-size:12px;line-height:19px;color:#9A9A92;">
-    <p style="margin:0 0 8px 0;color:#9A9A92;">
+  <tr><td class="px" align="center" style="background:#1A1A1A;padding:32px 40px 12px 40px;">
+    <!-- Social follow -->
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center"><tr>
+      <td style="padding:0 6px;"><a href="https://www.linkedin.com/company/ashavid/"><img src="https://visaroads.com/img/email/linkedin.png" width="32" height="32" alt="LinkedIn" style="display:block;width:32px;height:32px;"></a></td>
+      <td style="padding:0 6px;"><a href="https://www.youtube.com/@ashavidgroup"><img src="https://visaroads.com/img/email/youtube.png" width="32" height="32" alt="YouTube" style="display:block;width:32px;height:32px;"></a></td>
+      <td style="padding:0 6px;"><a href="https://www.instagram.com/ashavidgroup/"><img src="https://visaroads.com/img/email/instagram.png" width="32" height="32" alt="Instagram" style="display:block;width:32px;height:32px;"></a></td>
+      <td style="padding:0 6px;"><a href="https://x.com/ashavidgroup"><img src="https://visaroads.com/img/email/x.png" width="32" height="32" alt="X" style="display:block;width:32px;height:32px;"></a></td>
+      <td style="padding:0 6px;"><a href="https://t.me/visaroads"><img src="https://visaroads.com/img/email/telegram.png" width="32" height="32" alt="Telegram" style="display:block;width:32px;height:32px;"></a></td>
+    </tr></table>
+  </td></tr>
+  <tr><td class="px" align="center" style="background:#1A1A1A;padding:16px 40px 8px 40px;font-family:Helvetica,Arial,sans-serif;font-size:12px;line-height:19px;color:#9A9A92;">
+    <p style="margin:0 0 12px 0;color:#9A9A92;">
       VisaRoads mentors founders on the business side of startup immigration. We are not a law firm or a licensed consultant and do not give immigration advice; that work stays with you.
     </p>
-    <p style="margin:0 0 8px 0;color:#9A9A92;">
-      You are receiving this because your business contact details are publicly listed and this message concerns your practice. Not interested? Reply &ldquo;no&rdquo; or use the unsubscribe link below and we will not write again.
+    <p style="margin:0 0 4px 0;color:#F2F0E9;font-weight:700;">Our mailing address is:</p>
+    <p style="margin:0 0 12px 0;color:#F2F0E9;">
+      VisaRoads Inc., an Ashavid company<br>[FILL: MAILING ADDRESS]<br>Ontario, Canada
     </p>
-    <p style="margin:0;color:#F2F0E9;">
-      VisaRoads Inc., an Ashavid company&nbsp;·&nbsp;[FILL: MAILING ADDRESS], Ontario, Canada
+    <p style="margin:0 0 4px 0;color:#F2F0E9;font-weight:700;">Why did I get this?</p>
+    <p style="margin:0 0 20px 0;color:#9A9A92;">
+      Your business contact details are publicly listed and this message concerns your practice. We will not write again if you unsubscribe.
     </p>
+    <!-- Unsubscribe button: the sender replaces {{unsubscribe_url}} with the signed link -->
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center"><tr>
+      <td style="border:1px solid #F2F0E9;">
+        <a href="{{unsubscribe_url}}" style="display:inline-block;padding:10px 22px;font-family:Helvetica,Arial,sans-serif;font-size:13px;font-weight:700;color:#F2F0E9;text-decoration:none;">Unsubscribe from these emails</a>
+      </td>
+    </tr></table>
+  </td></tr>
+  <tr><td class="px" align="center" style="background:#1A1A1A;padding:20px 40px 28px 40px;font-family:Helvetica,Arial,sans-serif;font-size:11px;line-height:17px;color:#6B6B66;">
+    &copy; 2026 VisaRoads Inc. All rights reserved.
   </td></tr>
 
 </table>

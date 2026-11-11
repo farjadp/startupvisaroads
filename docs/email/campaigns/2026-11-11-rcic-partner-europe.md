@@ -36,9 +36,12 @@ The agent reads the firm's own site and writes 1–3 sentences. Rules:
 
 ## Known limits of the sending system (for cto, via cro)
 1. No per-contact merge fields, so a fully personal email means one campaign per firm. Request: a `{{personal}}` field on MarketingContact, filled from the import CSV.
-2. The unsubscribe footer is appended after `</html>`. It renders in most clients, but it should be inserted before `</body>`.
+2. Done on this branch: a template can place `{{unsubscribe_url}}` itself (this one does, as a button), and the fallback footer now goes before `</body>` (`lib/unsubscribe-footer.ts`).
 3. There is no `List-Unsubscribe` / `List-Unsubscribe-Post` header. Not required at 20 a day, but it helps inbox placement.
 4. There is no reply-to setting, so replies go to the sender address. That address must be a mailbox Farjad reads.
+
+## Footer (Mailchimp-style)
+Social follow icons (LinkedIn, YouTube, Instagram, X, Telegram @visaroads) hosted at `visaroads.com/img/email/`; a short description of what VisaRoads does and does not do; "Our mailing address is"; "Why did I get this?"; an Unsubscribe button; and a copyright line. The icons and the button only work once this branch is merged and deployed.
 
 ## Compliance
 - CASL: conspicuous publication, meaning the address is on the public register or the firm's site and the message concerns their practice. Keep the source per contact. Check the CICC register's terms of use before the first send (legal-compliance-specialist).

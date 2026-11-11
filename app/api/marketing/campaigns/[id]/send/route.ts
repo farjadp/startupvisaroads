@@ -3,6 +3,7 @@ import prisma from '@/lib/prisma';
 import { getSessionFromRequest } from '@/lib/auth';
 import { getMarketingSettings, sendEmail, sendSms, getTodaySentCount, selectRecipients } from '@/lib/marketing';
 import * as cheerio from 'cheerio';
+import { applyUnsubscribe } from '@/lib/unsubscribe-footer';
 import { assertLinkSigningConfigured, buildUnsubscribeUrl, clickSignature } from '@/lib/signed-links';
 
 async function checkAuth(req: NextRequest) {
@@ -95,7 +96,7 @@ export async function POST(
       
       const unsubBase = unsubscribeUrl || `${siteUrl}/unsubscribe`;
       const unsubUrl = buildUnsubscribeUrl(unsubBase, testEmail);
-      let html = appendUnsubscribeFooter(campaign.body, unsubUrl);
+      let html = applyUnsubscribe(campaign.body, unsubUrl);
       
       html = trackifyHtml(html, 'test-log-id', siteUrl);
       
@@ -206,7 +207,7 @@ async function processCampaignInBackground({
 
           const unsubBase = unsubscribeUrl || `${siteUrl}/unsubscribe`;
           const unsubUrl = buildUnsubscribeUrl(unsubBase, contact.email);
-          let html = appendUnsubscribeFooter(campaign.body, unsubUrl);
+          let html = applyUnsubscribe(campaign.body, unsubUrl);
           
           html = trackifyHtml(html, logId, siteUrl);
 
@@ -306,12 +307,3 @@ function trackifyHtml(html: string, logId: string, siteUrl: string): string {
   return $.html();
 }
 
-function appendUnsubscribeFooter(html: string, url: string): string {
-  if (!url) return html;
-  return (
-    html +
-    `<div style="margin-top:32px;padding-top:16px;border-top:1px solid #eee;font-size:12px;color:#999;text-align:center;font-family:sans-serif;" dir="auto">
-      <a href="${url}" style="color:#999;text-decoration:underline;">لغو عضویت / Unsubscribe</a>
-    </div>`
-  );
-}
