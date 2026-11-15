@@ -58,6 +58,16 @@ const edge = (rtl: boolean, x: number, w = 0) => (rtl ? W - x - w : x);
 
 const num = (n: number) => n.toFixed(1).replace(/\.0$/, '');
 
+/**
+ * Width kept free after the longest bar for its value text. SVG text cannot
+ * be measured here, so this is an estimate: about 0.58 em per character, which
+ * holds for digits and for both typefaces, plus the gap before the text.
+ */
+export function roomFor(displays: string[], fontSize: number): number {
+  const longest = Math.max(...displays.map((d) => d.length), 0);
+  return Math.min(W * 0.6, Math.max(96, Math.ceil(longest * fontSize * 0.58) + 14));
+}
+
 function barMark(rtl: boolean, y: number, w: number, tone: BarTone, height = 14): string {
   const x = num(edge(rtl, 0, w));
   if (tone === 'hollow') {
@@ -71,7 +81,7 @@ function barMark(rtl: boolean, y: number, w: number, tone: BarTone, height = 14)
 export function barsSvg(rows: BarRow[], locale: ChartLocale): string {
   const rtl = locale === 'fa';
   const max = Math.max(...rows.map((r) => r.value), 0) || 1;
-  const room = 96; // value text after the longest bar
+  const room = roomFor(rows.map((r) => r.display), 13);
   const rowH = 42;
   const parts: string[] = [];
   rows.forEach((r, i) => {
@@ -94,7 +104,7 @@ export function barsSvg(rows: BarRow[], locale: ChartLocale): string {
 export function pairedBarsSvg(rows: PairRow[], legend: { a: string; b: string }, locale: ChartLocale): string {
   const rtl = locale === 'fa';
   const max = Math.max(...rows.flatMap((r) => [r.a, r.b]), 0) || 1;
-  const room = 96;
+  const room = roomFor(rows.flatMap((r) => [r.aDisplay, r.bDisplay]), 12);
   const top = 26;
   const rowH = 58;
   const parts: string[] = [
@@ -137,6 +147,11 @@ export function chartFigure(svg: string, text: FigureText, locale: ChartLocale):
     `<span class="border-t border-[#F2F0E9]/15 pt-4 ${t.src} text-[#9D9C99]">${sourceLabel}: ${esc(text.source)}</span>` +
     `</div></figure>`
   );
+}
+
+/** A table wider than the article column scrolls sideways inside this wrapper instead of pushing the page. */
+export function scrollTable(tableHtml: string): string {
+  return `<div class="my-6 overflow-x-auto">${tableHtml}</div>`;
 }
 
 export function barChart(rows: BarRow[], text: FigureText, locale: ChartLocale): string {

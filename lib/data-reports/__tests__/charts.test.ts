@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { barChart, barsSvg, pairedBarChart } from '@/lib/data-reports/charts';
+import { barChart, barsSvg, pairedBarChart, roomFor } from '@/lib/data-reports/charts';
 import { sanitizeHtml } from '@/lib/sanitize';
 
 const rows = [
@@ -9,6 +9,12 @@ const rows = [
 const text = { eyebrow: 'October 2026', title: 'Vacancies', caption: 'cap', source: 'Job Bank open data' };
 
 describe('data report charts', () => {
+  it('leaves more room after the bars when the value text is long', () => {
+    expect(roomFor(['548'], 13)).toBe(96);
+    expect(roomFor(['548 vacancies · 237 postings'], 13)).toBeGreaterThan(200);
+    expect(roomFor(['x'.repeat(200)], 13)).toBe(240); // never more than 60% of the width
+  });
+
   it('scales bars to the largest value and labels every row for screen readers', () => {
     const svg = barsSvg(rows, 'en');
     expect(svg).toContain('aria-label="North Okanagan-Shuswap: 548 · Claresholm: 17"');
