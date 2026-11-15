@@ -84,6 +84,12 @@ export default function CaseIndex({ lang, all, filters }: Props) {
           <div className="self-end">
             <p className={fa ? 'text-base leading-[1.9]' : 'text-[17px] leading-relaxed'}>{t.directAnswer}</p>
             <p className="mt-2 text-xs leading-normal text-[#666562]">{t.hubNote}</p>
+            <p className="mt-2 text-xs leading-normal text-[#666562]">
+              {fa ? 'دنبال آمار هستید، نه رأی دادگاه؟ ' : 'Looking for statistics rather than rulings? '}
+              <Link href={`/${lang}/data-reports`} className="font-medium text-ink underline underline-offset-[3px] hover:no-underline">
+                {fa ? 'گزارش‌های آماری' : 'Data reports'}
+              </Link>
+            </p>
           </div>
         </header>
 
