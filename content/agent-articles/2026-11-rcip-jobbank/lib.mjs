@@ -54,6 +54,9 @@ export const SRC = {
   irccJobOffer: 'https://www.canada.ca/en/immigration-refugees-citizenship/services/immigrate-canada/rural-franco-pilots/rural-immigration-program/job-offer.html',
   irccEligibility: 'https://www.canada.ca/en/immigration-refugees-citizenship/services/immigrate-canada/rural-franco-pilots/rural-immigration-program/eligibility.html',
   irccDesignation: 'https://www.canada.ca/en/immigration-refugees-citizenship/services/immigrate-canada/rural-franco-pilots/hire/designation.html',
+  irccLanguage: 'https://www.canada.ca/en/immigration-refugees-citizenship/services/immigrate-canada/rural-franco-pilots/rural-immigration-program/eligibility/language-test.html',
+  irccWorkExp: 'https://www.canada.ca/en/immigration-refugees-citizenship/services/immigrate-canada/rural-franco-pilots/rural-immigration-program/eligibility/work-experience.html',
+  irccImm0247: 'https://www.canada.ca/en/immigration-refugees-citizenship/services/application/application-forms-guides/imm0247.html',
   irccCandidate: 'https://www.canada.ca/en/immigration-refugees-citizenship/services/immigrate-canada/rural-franco-pilots/hire/candidate.html',
   noc: 'https://noc.esdc.gc.ca/',
   naics: 'https://www.statcan.gc.ca/en/subjects/standard/naics/2022/v1/index',
@@ -86,7 +89,7 @@ export const COMMUNITY_FA = {
   'Pictou County': 'پیکتو کانتی',
   'North Okanagan-Shuswap': 'اوکاناگان شمالی-شوسواپ',
   'West Kootenay': 'کوتنی غربی',
-  'Northeast BC (Peace Liard)': 'پیس لیارد، شمال‌شرق بی‌سی',
+  'Northeast BC (Peace Liard)': 'پیس لیارد (شمال‌شرق بی‌سی)',
 };
 export const PROVINCE = {
   en: { ON: 'Ontario', BC: 'British Columbia', SK: 'Saskatchewan', MB: 'Manitoba', NS: 'Nova Scotia', AB: 'Alberta' },
@@ -183,10 +186,10 @@ export function listDate(locale, raw) {
   return locale === 'fa' ? `${f.plain(Number(m[3]))} ${month} ${year}` : `${Number(m[3])} ${month} ${year}`;
 }
 
-/** The public page a list was read from. One list is served from a data endpoint, not a page; link its site instead. */
+/** The public page a list was read from. North Bay's list is served from a data endpoint; link the page that shows it. */
 export function listLink(c) {
   const u = new URL(c.list_source_url);
-  return u.pathname.includes('admin-ajax') ? `${u.origin}/` : c.list_source_url;
+  return u.pathname.includes('admin-ajax') ? `${u.origin}/designated-employers/` : c.list_source_url;
 }
 
 export const by = (key, dir = -1) => (x, y) => dir * (x[key] - y[key]);

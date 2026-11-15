@@ -33,8 +33,8 @@ const methodBox = () => `
 const sources = (extra = '') => `
 <h2>Sources</h2>
 <ul>
-<li>${a(SRC.jobBank, 'Job Bank open data: all job postings')}, Employment and Social Development Canada, October ${f.plain(2026)} file. Contains information licensed under the ${a(SRC.ogl, 'Open Government Licence – Canada')}.</li>
-<li>Designated-employer lists published by the 14 communities, read on the dates shown in ${a(path(L, 1), 'part one')}.</li>
+<li>${a(SRC.jobBank, 'Job Bank open data (Job Postings Advertised on Canada\'s National Job Bank Website)')}, Employment and Social Development Canada, October ${f.plain(2026)} file. Contains information licensed under the ${a(SRC.ogl, 'Open Government Licence – Canada')}.</li>
+<li>Designated-employer lists published by the 14 communities, listed with their dates in ${a(path(L, 1), 'the table in part one')}.</li>
 <li>Immigration, Refugees and Citizenship Canada: ${a(SRC.irccPilot, 'Rural Community Immigration Pilot')} and ${a(SRC.irccProgram, 'Rural Community Immigration Program')}.</li>${extra}
 </ul>
 <p>The calculations are ours. VisaRoads is not an immigration representative and this is not immigration advice.</p>`;
@@ -97,7 +97,7 @@ ${byVac.map((c) => `<tr><td>${c.name}, ${c.province}</td><td>${f.n(c.listings)}<
 
   const listTable = `
 ${scrollTable(`<table>
-<thead><tr><th>Community</th><th>Listings</th><th>List dated</th><th>Published list</th></tr></thead>
+<thead><tr><th>Community</th><th>Listings</th><th>List version</th><th>Published list</th></tr></thead>
 <tbody>
 ${cs.map((c) => `<tr><td>${c.name}</td><td>${f.n(c.listings)}</td><td>${listDate(L, c.list_as_of)}</td><td>${a(listLink(c), new URL(c.list_source_url).hostname.replace(/^www\./, ''))}</td></tr>`).join('\n')}
 </tbody>
@@ -117,14 +117,14 @@ ${cs.map((c) => `<tr><td>${c.name}</td><td>${f.n(c.listings)}</td><td>${listDate
 ${vacChart}
 <p><strong>The two British Columbia interior communities are large.</strong> North Okanagan-Shuswap (Vernon, Salmon Arm and the towns around them) and West Kootenay together account for a third of all vacancies. Part of that is seasonal: ${f.n(nos.seasonal_harvest_vacancies)} of North Okanagan-Shuswap's vacancies and ${f.n(C('West Kootenay').seasonal_harvest_vacancies)} of West Kootenay's were harvest labour, which an RCIP job offer cannot be. Without them the two still hold ${f.n(nos.vacancies_excluding_harvest)} and ${f.n(C('West Kootenay').vacancies_excluding_harvest)} vacancies.</p>
 <p><strong>Timmins advertises in bulk.</strong> It had only ${f.n(tim.postings)} postings but ${f.n(tim.vacancies)} vacancies, ${f.r(tim.vacancies_per_posting)} per posting, the highest ratio among the larger communities. Mining explains it: ${f.n(miners.postings)} postings for underground miners asked for ${f.n(miners.largest_posting_vacancies)} people each.</p>
-<p><strong>Sudbury has many small postings.</strong> It leads on postings (${f.n(sud.postings)}) with ${f.r(sud.vacancies_per_posting)} vacancies per posting: many employers each hiring one person.</p>
+<p><strong>Sudbury has many small postings.</strong> It leads on postings (${f.n(sud.postings)}) with ${f.r(sud.vacancies_per_posting)} vacancies per posting: many postings, each for one person.</p>
 ${table}
 
 <h2>Where is hiring busy next to the size of the employer list?</h2>
 <p>A long list of designated employers does not mean a lot of open jobs. Dividing postings by listings gives a rough gauge.</p>
 ${rateChart}
 <p>Brandon had ${f.d(bra.postings_per_100_listings)} postings for every 100 listings, and Moose Jaw ${f.d(mj.postings_per_100_listings)}. In both, the local job market is bigger than the designated list, so a good share of advertised jobs are probably with employers who are not designated. Brandon's list has ${f.n(bra.listings)} listings.</p>
-<p>Thunder Bay is the opposite case. It has the longest list of all, ${f.n(tb.listings)} listings, and ${f.d(tb.postings_per_100_listings)} postings per 100. Part of the reason is on the list itself: ${f.n(tb.listings_closed_to_new_applications)} of its listings carry a note that fast food, gas station and convenience store employers are excluded for ${f.plain(2026)}. North Okanagan-Shuswap marks ${f.n(nos.listings_closed_to_new_applications)} listings the same way.</p>
+<p>Thunder Bay is the opposite case. It has the longest list of all, ${f.n(tb.listings)} listings, and ${f.d(tb.postings_per_100_listings)} postings per 100. Part of the reason is on the list itself: ${f.n(tb.listings_closed_to_new_applications)} of its listings, mostly fast food, gas stations and convenience stores, sit under the heading "designated, but currently excluded from ${f.plain(2026)} RCIP". North Okanagan-Shuswap marks ${f.n(nos.listings_closed_to_new_applications)} fast food and gas station listings as no longer accepting applications.</p>
 <p>Read the gauge with care. The postings are not limited to designated employers, about half have no industry code, and the lists were read on different dates.</p>
 
 <h2>What do the wages show?</h2>
@@ -153,11 +153,11 @@ ${scrollTable(`<table>
 <li>Start from the designated-employer list rather than from Job Bank. Only an offer from a designated employer counts. The lists are linked below.</li>
 <li>Check the shape of the job. IRCC requires an RCIP job offer to be full time, non-seasonal and without an end date. ${f.n(O.permanent_full_time_postings)} of the ${f.n(O.postings)} postings (${f.pc(O.permanent_full_time_share_pct)}) said both "full time" and "permanent"; ${f.n(O.term_not_stated_postings)} did not state a term at all. Our guide to the ${a(GUIDE[L].rules, 'RCIP job offer rules')} has the full list.</li>
 <li>Do not rank communities on one month. A community that looks quiet in October may hire in spring. We will repeat this count monthly so that a pattern can be seen.</li>
-<li>The program is changing its name and keeping its communities. IRCC has said the pilot closes on ${f.plain(1)} January ${f.plain(2027)} and a permanent program opens the same day with the same 14 communities. See ${a(GUIDE[L].permanent, 'what changes on that date')}.</li>
+<li>The pilot is becoming a permanent program. IRCC says the pilot closes on ${f.plain(1)} January ${f.plain(2027)} and the permanent program opens that day, and that it intends to continue with the 14 current communities. See ${a(GUIDE[L].permanent, 'what changes on that date')}.</li>
 </ul>
 
 <h2>Where is each community's list?</h2>
-<p>Each community publishes its own list and updates it on its own schedule. These are the versions we counted.</p>
+<p>Each community publishes its own list and updates it on its own schedule. These are the versions we counted. The date is the one printed on the list or in its file name; where a list prints none, it is the date of the copy we read.</p>
 ${listTable}
 <p>Claresholm's list was dated June ${f.plain(2025)} when we read it and Altona/Rhineland's carried no date, so their listing counts may be out of date.</p>
 ${methodBox()}
@@ -243,14 +243,14 @@ ${clusterRow('Health and social services', K.health_social)}
 </tbody>
 </table>`)}
 <p><strong>Trades and transport</strong> is the largest group and the only one present in all 14 communities, with ${f.pc(K.trades_transport.full_time_share_pct)} of postings full time. Transport truck drivers lead it (${f.n(truck.vacancies)} vacancies, median ${f.w(truck.median_wage_hr)}), followed by heavy-duty equipment mechanics (${f.n(hdm.vacancies)} vacancies, ${f.w(hdm.median_wage_hr)}), automotive and truck mechanics, construction labourers, carpenters and welders. Several of these are certified trades in Canada. Certification is a separate step from immigration and differs by province.</p>
-<p><strong>Food service</strong> is where the sheer number of employers is. Cooks (${f.n(cooks.postings)} postings in ${f.n(cooks.communities)} communities) and food service supervisors (${f.n(fss.postings)} postings in ${f.n(fss.communities)}) are advertised almost everywhere, at a median of ${f.w(cooks.median_wage_hr)} an hour. Two cautions: these are the lowest wages in the table, and at least two communities' lists show fast food employers as excluded for ${f.plain(2026)} (see part one).</p>
-<p><strong>Health and social services</strong> advertises less than its weight on the designated-employer lists would suggest, and only ${f.pc(K.health_social.full_time_share_pct)} are full time. Licensed practical nurses advertise a median of ${f.w(lpn.median_wage_hr)}, social and community service workers ${f.w(scw.median_wage_hr)}. Hospitals and health authorities often recruit through their own sites, which Job Bank does not capture.</p>
+<p><strong>Food service</strong> postings are the most widespread. Cooks (${f.n(cooks.postings)} postings in ${f.n(cooks.communities)} communities) and food service supervisors (${f.n(fss.postings)} postings in ${f.n(fss.communities)}) are advertised almost everywhere, at a median of ${f.w(cooks.median_wage_hr)} an hour. Two cautions: these are the lowest wages in the table, and at least two communities' lists set fast food employers aside (see part one).</p>
+<p><strong>Health and social services</strong> advertises less than its weight on the designated-employer lists would suggest, and only ${f.pc(K.health_social.full_time_share_pct)} are full time. Licensed practical nurses advertise a median of ${f.w(lpn.median_wage_hr)}, social and community service workers ${f.w(scw.median_wage_hr)}. This data cannot say why. Some health employers recruit on their own sites, so check their career pages too.</p>
 
 <h2>What happened to retail sales, the original number one?</h2>
 <p>In the raw data the top occupation was retail salespersons, with ${f.n(X.top_occupation.postings)} postings and a median wage of ${f.w(X.top_occupation.median_wage_hr)} an hour. That figure was produced by the remote sales advertisement described in part one. With it removed, retail salespersons have ${f.n(retail.postings)} postings, ${f.n(retail.vacancies)} vacancies and a median of ${f.w(retail.median_wage_hr)}. That is a normal retail wage, and it puts the occupation fifth.</p>
 
 <h2>How does the skill level of a posting connect to RCIP?</h2>
-<p>Every NOC code belongs to a TEER category from 0 to 5 (training, education, experience and responsibilities). Under ${a(SRC.irccEligibility, 'IRCC\'s eligibility rules')}, the TEER of the job you are offered sets the language level you need and which past work experience counts.</p>
+<p>Every NOC code belongs to a TEER category from 0 to 5 (training, education, experience and responsibilities). Under IRCC's rules, the TEER of the job you are offered sets ${a(SRC.irccLanguage, 'the language level you need')} and ${a(SRC.irccWorkExp, 'which past work experience counts')}.</p>
 ${scrollTable(`<table>
 <thead><tr><th>TEER of the job</th><th>Share of postings</th><th>Vacancies</th><th>Minimum language level (IRCC)</th></tr></thead>
 <tbody>
@@ -264,12 +264,12 @@ ${scrollTable(`<table>
 <h2>Does a posting in one of these occupations qualify for RCIP?</h2>
 <p>Not by itself. Four tests sit between a posting and an eligible job offer, and this data can only speak to the first.</p>
 <ol>
-<li><strong>The job's shape.</strong> ${a(SRC.irccJobOffer, 'IRCC requires')} the offer to be full time (at least 30 paid hours a week), non-seasonal and without an end date. ${f.pc(O.permanent_full_time_share_pct)} of postings said both "full time" and "permanent".</li>
+<li><strong>The job's shape.</strong> ${a(SRC.irccCandidate, 'IRCC requires')} the offer to be full time (at least 30 paid hours a week), non-seasonal and without an end date. ${f.pc(O.permanent_full_time_share_pct)} of postings said both "full time" and "permanent".</li>
 <li><strong>The employer.</strong> Only a designated employer can make the offer. The open data has no employer names, so we cannot tell you which postings pass.</li>
-<li><strong>The community's priorities.</strong> Each community sets its own priority sectors and occupations, and recommends only within them. We did not check the postings against the 14 priority lists, and they change. Read your community's current list before relying on any occupation in this report.</li>
-<li><strong>The wage.</strong> IRCC compares the offered wage with the Job Bank wage for that occupation and region. The medians here are the minimums that postings state. They are not that benchmark.</li>
+<li><strong>The community's priorities.</strong> Each community sets its own priority sectors and occupations, and ${a(SRC.irccJobOffer, 'recommends only within them')}. We did not check the postings against the 14 priority lists, and they change. Read your community's current list before relying on any occupation in this report.</li>
+<li><strong>The wage.</strong> IRCC's ${a(SRC.irccImm0247, 'job offer form guide')} compares the offered wage with the Job Bank wage for that occupation and region. The medians here are the minimums that postings state. They are not that benchmark.</li>
 </ol>
-<p>One more row to treat with care: ${f.n(farm.vacancies)} of the vacancies for livestock workers and farm machinery operators come from a single seasonal posting.</p>
+<p>One more row to treat with care: ${f.n(farm.vacancies)} of the vacancies for livestock workers and farm machinery operators come from a single posting.</p>
 ${methodBox()}
 ${seriesNote(2)}
 ${sources(`\n<li>Employment and Social Development Canada: ${a(SRC.noc, 'National Occupational Classification 2021')}.</li>`)}`;
@@ -346,25 +346,25 @@ ${secs.map((s) => `<tr><td>${s.name}</td><td>${f.n(s.listings)}</td><td>${f.pc(s
 <p>* Fewer than ${f.n(M.method.min_n_for_median)} wages: an indication only.</p>
 
 <h2>Where is the list large but the hiring quiet?</h2>
-<p><strong>Health care and social assistance.</strong> ${f.n(health.listings)} listings (${f.pc(health.listing_share_pct)}) but ${f.n(health.postings)} postings, ${f.d(health.postings_per_100_listings)} per 100. The wage is good, a median of ${f.w(health.median_wage_hr)}. A lack of jobs is not the likeliest explanation. Clinics, care homes and health authorities tend to recruit on their own sites. If health is your field, go to the designated employers' career pages rather than waiting for Job Bank.</p>
+<p><strong>Health care and social assistance.</strong> ${f.n(health.listings)} listings (${f.pc(health.listing_share_pct)}) but ${f.n(health.postings)} postings, ${f.d(health.postings_per_100_listings)} per 100. The wage is good, a median of ${f.w(health.median_wage_hr)}. This data cannot say why. Some health employers recruit on their own sites, so if health is your field, check the career pages of the designated employers as well as Job Bank.</p>
 <p><strong>Manufacturing.</strong> ${f.n(manuf.listings)} listings and only ${f.n(manuf.postings)} postings, ${f.d(manuf.postings_per_100_listings)} per 100, the lowest ratio among the large sectors.</p>
-<p><strong>Professional services and wholesale.</strong> ${f.n(prof.listings)} and ${f.n(whole.listings)} listings, ${f.n(prof.postings)} and ${f.n(whole.postings)} postings. These are mostly small offices and distributors that hire rarely.</p>
-<p>Quiet on Job Bank in one October does not mean closed. It does mean that a designated employer in these sectors is more likely to be reached directly than found through a posting.</p>
+<p><strong>Professional services and wholesale.</strong> ${f.n(prof.listings)} and ${f.n(whole.listings)} listings, ${f.n(prof.postings)} and ${f.n(whole.postings)} postings.</p>
+<p>Quiet on Job Bank in one October does not mean closed. It does mean that in these sectors the designated list tells you more than Job Bank does about who might hire.</p>
 
 <h2>Where does hiring run ahead of the list?</h2>
 <p><strong>Transportation and warehousing.</strong> ${f.n(transp.listings)} listings, ${f.n(transp.postings)} postings, but ${f.n(transp.vacancies)} vacancies, because trucking firms advertise several seats at once. Median wage ${f.w(transp.median_wage_hr)}.</p>
-<p><strong>Mining.</strong> ${f.n(mining.listings)} listings and ${f.n(mining.postings)} postings carrying ${f.n(mining.vacancies)} vacancies, in ${f.n(mining.communities_with_postings)} communities. The median of ${f.w(mining.median_wage_hr)} is the highest of any sector, on a small sample. As part two showed, most of these vacancies come from a few large postings in Timmins.</p>
-<p><strong>Public administration.</strong> ${f.n(pub.postings)} postings against ${f.n(pub.listings)} listings, more postings than listings. Municipalities and public bodies advertise steadily and few of them are on the designated lists.</p>
+<p><strong>Mining.</strong> ${f.n(mining.listings)} listings and ${f.n(mining.postings)} postings carrying ${f.n(mining.vacancies)} vacancies, in ${f.n(mining.communities_with_postings)} communities. The median of ${f.w(mining.median_wage_hr)} is the highest of any sector, on a small sample. As part one showed, Timmins had ${f.n(occ('83100').postings)} postings for ${f.n(occ('83100').vacancies)} underground miners.</p>
+<p><strong>Public administration.</strong> ${f.n(pub.postings)} postings against ${f.n(pub.listings)} listings, more postings than listings. Public bodies advertised more postings than there are listings this month, and few of them are on the designated lists.</p>
 <p><strong>Accommodation and food.</strong> The ratio is ordinary, ${f.d(food.postings_per_100_listings)} per 100, but the volume is the largest of all: ${f.n(food.vacancies)} vacancies at a median of ${f.w(food.median_wage_hr)}.</p>
 
 <h2>What about agriculture?</h2>
 <p>Agriculture has the most striking ratio in the table, ${f.n(agri.postings)} postings for ${f.n(agri.listings)} listings, and ${f.n(agri.vacancies)} vacancies. It is also the least useful number for an RCIP applicant. ${f.n(agri.harvest_vacancies)} of those vacancies are harvest labour. More harvest work is filed under other sectors: ${f.n(retail.harvest_vacancies)} vineyard vacancies are coded as retail trade and ${f.n(manuf.harvest_vacancies)} as manufacturing.</p>
-<p>IRCC requires an RCIP job offer to be non-seasonal. Year-round farm jobs exist, but this data cannot separate them cleanly from the seasonal ones, and only ${f.n(agri.listings)} listings on the designated lists are farm businesses.</p>
+<p>IRCC requires an RCIP job offer to be non-seasonal. Year-round farm jobs exist, but this data cannot separate them cleanly from the seasonal ones, and only ${f.n(agri.listings)} listings on the designated lists are agriculture, forestry or fishing businesses.</p>
 
 <h2>What should a reader take from this?</h2>
 <ul>
 <li>The designated lists lean heavily on hospitality, health, retail and construction: those four sectors hold ${f.n(dv(food.listings + health.listings + retail.listings + constr.listings, 'listings of sectors 72 + 62 + 44-45 + 23'))} of the ${f.n(S.listings.classified)} classified listings.</li>
-<li>Where your industry is on the list but silent on Job Bank, the list is the better tool. Use it to approach employers directly.</li>
+<li>Where your industry is on the list but silent on Job Bank, the list is the better tool. Use it to find the employers, then apply to vacancies they post themselves. Several communities ask candidates not to send unsolicited requests for job offers.</li>
 <li>Where Job Bank is loud but the list is short, as in public administration and farming, expect many of the advertised jobs to be with employers who cannot make an RCIP offer.</li>
 <li>Staffing agencies cannot be designated at all under ${a(SRC.irccDesignation, 'IRCC\'s designation rules')}, so postings from employment services are outside the program.</li>
 </ul>
@@ -379,15 +379,15 @@ ${sources(`\n<li>Statistics Canada: ${a(SRC.naics, 'North American Industry Clas
     locale: L,
     slug: path(L, 3).split('/').pop(),
     title: 'RCIP job market, October 2026: designated employers and open postings by industry',
-    excerpt: `Hospitality and health dominate the designated-employer lists of the 14 RCIP communities, but health barely advertises on Job Bank. Where the lists are large and quiet, where hiring runs ahead of them, and why the farm numbers mislead.`,
+    excerpt: `Hospitality and health dominate the designated-employer lists of the 14 RCIP communities, but health has few postings on Job Bank. Where the lists are large and quiet, where hiring runs ahead of them, and why the farm numbers mislead.`,
     category: CATEGORY,
     tags: [...TAGS, 'Designated employers', 'NAICS'],
     keyTakeaway: `The 14 RCIP communities list ${f.n(S.listings.total)} designated-employer listings; accommodation and food (${f.n(food.listings)}) and health care (${f.n(health.listings)}) are the largest groups. On Job Bank in October 2026, food services also led postings (${f.n(food.postings)}), while health had ${f.d(health.postings_per_100_listings)} postings per 100 listings. Transport, mining and public administration advertised more than their share of the lists. ${f.pc(O.unknown_industry_share_pct)} of postings state no industry, so all ratios are understated.`,
     summaryEn: `A statistical report comparing designated-employer listings with Job Bank postings by NAICS sector in the 14 Rural Community Immigration Pilot communities, October 2026: where listings are large but postings few (health, manufacturing), where postings outrun listings (transport, mining, public administration), and why seasonal agriculture inflates the vacancy count.`,
     faq: [
       { q: 'Which industries have the most RCIP designated employers?', a: `Accommodation and food services (${f.n(food.listings)} listings), health care and social assistance (${f.n(health.listings)}), retail trade (${f.n(retail.listings)}) and construction (${f.n(constr.listings)}), counted on the 14 community lists.` },
-      { q: 'Why are there so few health care postings in RCIP communities on Job Bank?', a: `Health had ${f.n(health.postings)} postings against ${f.n(health.listings)} listings in October 2026. Clinics, care homes and health authorities usually recruit on their own career sites, which Job Bank open data does not include.` },
-      { q: 'Are mining jobs available through RCIP?', a: `Mining has ${f.n(mining.listings)} designated-employer listings. In October 2026 it had ${f.n(mining.postings)} postings for ${f.n(mining.vacancies)} vacancies, most of them from a few large postings in Timmins. Whether a given job qualifies depends on the employer and the community's priority list.` },
+      { q: 'Why are there so few health care postings in RCIP communities on Job Bank?', a: `Health had ${f.n(health.postings)} postings against ${f.n(health.listings)} listings in October 2026. This data cannot say why. Some health employers recruit on their own career sites, so check those too.` },
+      { q: 'Are mining jobs available through RCIP?', a: `Mining has ${f.n(mining.listings)} designated-employer listings. In October 2026 it had ${f.n(mining.postings)} postings for ${f.n(mining.vacancies)} vacancies, many of them in a few large postings. Whether a given job qualifies depends on the employer and the community's priority list.` },
       { q: 'Do farm jobs in RCIP communities qualify?', a: 'Seasonal harvest work does not, because IRCC requires a non-seasonal job offer. Most farm vacancies advertised in October 2026 were harvest labour.' },
     ],
     internalLinks: [INDEX[L], path(L, 1), path(L, 2), GUIDE[L].rules],
