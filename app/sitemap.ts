@@ -6,6 +6,7 @@ import { EN_INDEXABLE_PATHS } from '@/lib/pageMeta';
 import { NOT_WITHDRAWN } from '@/lib/legacy-redirects';
 import { MIN_INDEXABLE_CATEGORY_ARTICLES } from '@/lib/blog';
 import { listForSitemap } from '@/lib/case-studies/public';
+import { countDataReports, dataReportsUrl } from '@/lib/data-reports';
 
 // Rendered per request. With ISR the build-time version (no database in the
 // Docker build, so no articles) was served to the first visitor after every
@@ -124,6 +125,22 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: 'monthly',
       priority: 0.7,
       ...(g.en && g.fa ? { alternates: { languages: { en: g.en, fa: g.fa } } } : {}),
+    });
+  }
+
+  // Data reports index: listed per locale once it has a report (the reports
+  // themselves are articles, already listed above). hreflang only when both
+  // locales have one.
+  const reports = await countDataReports();
+  const bothReportIndexes = reports.en.count > 0 && reports.fa.count > 0;
+  for (const locale of ['en', 'fa'] as const) {
+    if (reports[locale].count === 0) continue;
+    entries.push({
+      url: dataReportsUrl(locale),
+      lastModified: reports[locale].lastModified ?? undefined,
+      changeFrequency: 'monthly',
+      priority: 0.7,
+      ...(bothReportIndexes ? { alternates: { languages: { en: dataReportsUrl('en'), fa: dataReportsUrl('fa') } } } : {}),
     });
   }
 

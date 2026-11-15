@@ -140,6 +140,8 @@ export const EN_TO_FA: ReadonlyMap<string, string> = new Map(
 export function localeSwitchTarget(path: string, to: 'en' | 'fa'): string {
   const clean = normalise(path);
   if (clean.startsWith('/blog/')) return '/blog';
+  // The Data reports index exists in both languages but is not a static page (it lists articles).
+  if (clean === '/data-reports') return '/data-reports';
   if (to === 'fa') return EN_TO_FA.get(clean) ?? (isFaPath(clean) ? clean : '');
   return FA_PAIRED[clean as FaPath] ?? '';
 }
