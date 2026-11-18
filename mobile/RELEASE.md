@@ -36,3 +36,19 @@ eas update:rollback
 **`eas.json` and `app.json` are part of the fingerprint.** Any edit to them, even the submit profile, changes the runtime version, so updates stop reaching the builds already on phones. Change them only when a new store build follows. (On 15 Oct 2026 adding `ascAppId` to the submit profile cut builds 1.0.0 (3)/(4) off from updates; it was reverted. Re-add it with the next native build.)
 
 `runtimeVersion` uses the `fingerprint` policy. Any native change (a new native package, an `app.json` plugin, icon or permission change, an Expo SDK upgrade) changes the fingerprint. Builds with the old fingerprint ignore updates for the new one. Those changes need a new store build.
+
+## Store versions and the runtime (checked 17 Nov 2026)
+
+Measured from a fresh `npm ci` at main `b949679` (same app code as `0877184`):
+
+| Change | iOS runtime | Android runtime |
+|---|---|---|
+| none (1.0.0, builds iOS 8 / Android 11) | `99a8c4c3` | `38452566` |
+| `version` 1.0.0 → 1.0.1 in `app.json` | `7cf56aa4` | `c525597e` |
+| `ascAppId` in the submit profile | `5166d86d` | `a21e9ed9` |
+
+So a new store version (`version` bump) always starts a new runtime on both platforms. After it, builds on 1.0.0 only get updates published from a checkout whose `app.json` still says 1.0.0. Until most phones are on the new version, publish each OTA twice: once from main, once from a clean worktree of main with `version` set back to the old value. Verify each with `npx expo-updates fingerprint:generate --platform <p>` before publishing.
+
+What can change without a build:
+- Google Play: every store-listing field and graphic, any time.
+- App Store: only the promotional text (170 characters). Description, What's New, keywords and screenshots belong to an App Store version, and a new version needs a new build with a higher `version`.
