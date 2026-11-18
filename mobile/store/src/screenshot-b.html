@@ -1,0 +1,93 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<!-- Store screenshot frame, option B (kicker + large headline + drawn phone silhouette).
+     Rendered headless by store/src/render.py:
+     ?img=<abs path>&cap=<caption>&dir=ltr|rtl&lang=<bcp47>&script=latin|arabic|han&dark=0|1&w=&h=
+      [&kicker=01 · TODAY][&tone=paper|ink]
+     tone: canvas colour. Default = ink when dark=1, else paper. Pass tone by slide index
+     (odd = paper, even = ink) to alternate across the set.
+     The phone is plain CSS (rounded rect, bezel, no buttons, no notch): generic, not vendor device art.
+     All sizes derive from --w / --h only. -->
+<style>
+@font-face { font-family: 'DMSerif'; src: url('fonts/DMSerifDisplay_400Regular.ttf'); font-weight: 400; }
+@font-face { font-family: 'SpaceGrotesk'; src: url('fonts/SpaceGrotesk_700Bold.ttf'); font-weight: 700; }
+@font-face { font-family: 'Vazirmatn'; src: url('fonts/Vazirmatn-Bold.ttf'); font-weight: 700; }
+@font-face { font-family: 'Vazirmatn'; src: url('fonts/Vazirmatn-Black.ttf'); font-weight: 900; }
+
+:root {
+  --w: 1320px; --h: 2868px;
+  --u: min(calc(var(--w) / 100), calc(var(--h) / 190));
+  --pad: calc(var(--w) * 0.08);
+  /* paper tone */
+  --bg: #F2F0E9; --fg: #1A1A1A; --bezel: #1A1A1A; --edge: #1A1A1A;
+}
+html, body { margin: 0; padding: 0; }
+body { width: var(--w); height: var(--h); overflow: hidden; background: var(--bg); color: var(--fg); }
+/* ink tone: ink canvas, paper headline; bezel is night with a hairline so it reads against ink */
+body.ink { --bg: #1A1A1A; --fg: #F2F0E9; --bezel: #121417; --edge: #6A6A67; }
+
+.frame { box-sizing: border-box; width: 100%; height: 100%; display: flex; flex-direction: column;
+  padding: calc(var(--u) * 9) var(--pad) 0; }
+
+/* Kicker: ink text on an acid plate (16:1). Acid is never text colour. */
+.kicker { align-self: flex-start; margin: 0 0 calc(var(--u) * 4.2); padding: calc(var(--u) * 1.1) calc(var(--u) * 1.8);
+  background: #CCFF00; color: #1A1A1A; font-family: 'SpaceGrotesk', sans-serif; font-weight: 700;
+  font-size: calc(var(--u) * 3.1); line-height: 1; letter-spacing: 0.1em; text-transform: uppercase;
+  font-variant-numeric: tabular-nums; white-space: nowrap; }
+.kicker:empty { display: none; }
+.arabic .kicker { font-family: 'Vazirmatn', sans-serif; letter-spacing: 0; text-transform: none;
+  font-size: calc(var(--u) * 3.4); line-height: 1.2; padding-block: calc(var(--u) * 0.7) calc(var(--u) * 0.9); }
+.han .kicker { font-family: 'PingFang SC', sans-serif; font-weight: 600; letter-spacing: 0.06em; }
+
+.cap { flex: none; margin: 0; max-width: 14em; text-wrap: balance; font-weight: 400; white-space: pre-line;
+  font-size: calc(var(--u) * 9); line-height: 1.0; letter-spacing: -0.015em; }
+.latin .cap { font-family: 'DMSerif', Georgia, serif; }
+.arabic .cap { font-family: 'Vazirmatn', sans-serif; font-weight: 900; font-size: calc(var(--u) * 8.2);
+  line-height: 1.38; letter-spacing: 0; max-width: 12em; }
+.han .cap { font-family: 'PingFang SC', 'Hiragino Sans GB', sans-serif; font-weight: 600; font-size: calc(var(--u) * 8.2);
+  line-height: 1.28; letter-spacing: 0; max-width: 10em;
+  word-break: keep-all; overflow-wrap: anywhere; }
+.han .cap.loose { word-break: normal; }
+
+/* Phone silhouette: full width of the content column, bleeds off the bottom edge. */
+.stage { flex: 1; min-height: 0; display: flex; justify-content: center; align-items: flex-start;
+  margin-top: calc(var(--u) * 7.5); margin-inline: calc(var(--pad) * -1); container-type: size; overflow: hidden; }
+/* Width: >= 84% of the canvas and wide enough to run past the bottom edge; <= 92%. */
+.phone { box-sizing: border-box; width: min(92cqw, max(84cqw, calc(100cqh / 2.05)));
+  padding: calc(var(--u) * 2.1) calc(var(--u) * 2.1) 0; background: var(--bezel);
+  border: calc(var(--u) * 0.3) solid var(--edge); border-bottom: 0;
+  border-radius: calc(var(--u) * 12) calc(var(--u) * 12) 0 0; }
+.screen { border-radius: calc(var(--u) * 9.9) calc(var(--u) * 9.9) 0 0; overflow: hidden; background: #F2F0E9; }
+.screen img { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<div class="frame">
+  <p class="kicker" id="kicker"></p>
+  <h1 class="cap" id="cap"></h1>
+  <div class="stage"><div class="phone"><div class="screen"><img id="img" alt=""></div></div></div>
+</div>
+<script>
+const q = new URLSearchParams(location.search);
+const root = document.documentElement.style;
+if (q.get('w')) root.setProperty('--w', q.get('w') + 'px');
+if (q.get('h')) root.setProperty('--h', q.get('h') + 'px');
+document.documentElement.dir = q.get('dir') || 'ltr';
+document.documentElement.lang = q.get('lang') || 'en';
+document.body.classList.add(q.get('script') || 'latin');
+const tone = q.get('tone') || (q.get('dark') === '1' ? 'ink' : 'paper');
+if (tone === 'ink') document.body.classList.add('ink');
+// Glue a spaced dash to the word before it so it never opens a line (fa / ar / en alike).
+const capText = (q.get('cap') || '').replace(/ ([\u2014\u2013]) /g, '\u00A0$1 ');
+const capEl = document.getElementById('cap');
+capEl.textContent = capText;
+// Chinese: break only at punctuation when the caption has some; otherwise let balance split it evenly.
+if ((q.get('script') || 'latin') === 'han' && !/[\uFF0C\u3001\uFF1A\uFF1B\u3002]/.test(capText)) capEl.classList.add('loose');
+document.getElementById('kicker').textContent = q.get('kicker') || '';
+const img = q.get('img');
+if (img) document.getElementById('img').src = img.startsWith('file:') ? img : 'file://' + img;
+</script>
+</body>
+</html>
