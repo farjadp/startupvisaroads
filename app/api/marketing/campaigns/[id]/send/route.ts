@@ -1,10 +1,18 @@
+// ============================================================================
+// GET  /api/marketing/campaigns/:id/send   campaign with true send counts
+// POST /api/marketing/campaigns/:id/send   test send only
+//
+// Real sends no longer start here. The old in-process loop died with the
+// revision on 18 Nov 2026; campaigns now go through ./queue and the worker in
+// lib/campaign-queue/worker.ts.
+// ============================================================================
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { getSessionFromRequest } from '@/lib/auth';
-import { getMarketingSettings, sendEmail, sendSms, getTodaySentCount, selectRecipients } from '@/lib/marketing';
-import * as cheerio from 'cheerio';
-import { applyUnsubscribe } from '@/lib/unsubscribe-footer';
-import { assertLinkSigningConfigured, buildUnsubscribeUrl, clickSignature } from '@/lib/signed-links';
+import { getMarketingSettings, sendEmail, sendSms } from '@/lib/marketing';
+import { assertLinkSigningConfigured } from '@/lib/signed-links';
+import { classifyFailure } from '@/lib/campaign-queue/failures';
+import { renderCampaignEmail, senderFrom } from '@/lib/campaign-queue/render';
 
 async function checkAuth(req: NextRequest) {
   const session = await getSessionFromRequest(req);
@@ -29,10 +37,13 @@ export async function GET(
 
   if (!campaign) return NextResponse.json({ error: 'Not found' }, { status: 404 });
 
-  const sent = campaign.logs.filter((l) => l.status === 'SENT').length;
-  const failed = campaign.logs.filter((l) => l.status === 'FAILED').length;
+  const [sent, failed, total] = await Promise.all([
+    prisma.campaignLog.count({ where: { campaignId: id, status: 'SENT' } }),
+    prisma.campaignLog.count({ where: { campaignId: id, status: 'FAILED' } }),
+    prisma.campaignLog.count({ where: { campaignId: id } }),
+  ]);
 
-  return NextResponse.json({ campaign, stats: { sent, failed, total: campaign.logs.length } });
+  return NextResponse.json({ campaign, stats: { sent, failed, total } });
 }
 
 function getSiteUrl(req: NextRequest): string {
@@ -52,18 +63,16 @@ export async function POST(
   if (!(await checkAuth(req))) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   const { id } = await params;
-  const siteUrl = getSiteUrl(req);
-  const bodyData = await req.json().catch(() => ({}));
-  const { testEmail, testPhone } = bodyData;
+  const { testEmail, testPhone } = await req.json().catch(() => ({}));
 
-  const campaign = await prisma.campaign.findUnique({
-    where: { id },
-    include: { groups: { include: { group: { include: { contacts: true } } } } },
-  });
-
+  const campaign = await prisma.campaign.findUnique({ where: { id } });
   if (!campaign) return NextResponse.json({ error: 'Not found' }, { status: 404 });
-  if (campaign.status === 'SENDING') {
-    return NextResponse.json({ error: 'Already sending' }, { status: 409 });
+
+  if (!testEmail && !testPhone) {
+    return NextResponse.json(
+      { error: 'Campaigns are sent through the daily queue. Set it up on the campaign page.' },
+      { status: 410 },
+    );
   }
 
   const settings = await getMarketingSettings();
@@ -71,14 +80,9 @@ export async function POST(
   const twilioSid = settings['marketing_twilio_sid'];
   const twilioToken = settings['marketing_twilio_token'];
   const twilioFrom = settings['marketing_twilio_from'];
-  const senderName = settings['marketing_sender_name'] || 'Startup Visa Roads';
-  const senderEmail = settings['marketing_sender_email'] || 'noreply@farjadp.info';
-  const maxEmailsPerDay = parseInt(settings['marketing_max_emails_per_day'] || '20000');
-  const maxSmsPerDay = parseInt(settings['marketing_max_sms_per_day'] || '1000');
-  const unsubscribeUrl = settings['marketing_unsubscribe_url'] || '';
 
   // Unsubscribe and external click links are HMAC-signed; without a key the
-  // recipients could not unsubscribe, so refuse to send at all.
+  // recipient could not unsubscribe, so refuse to send at all.
   try {
     assertLinkSigningConfigured();
   } catch (e) {
@@ -86,224 +90,55 @@ export async function POST(
     return NextResponse.json({ error: 'Link signing secret not configured' }, { status: 500 });
   }
 
-  // ── Test send mode ──────────────────────────────────────────────────────────
-  if (testEmail || testPhone) {
-    let emailResult = null;
-    let smsResult = null;
+  let emailResult = null;
+  let smsResult = null;
 
-    if (testEmail && (campaign.type === 'EMAIL' || campaign.type === 'BOTH')) {
-      if (!resendKey) return NextResponse.json({ error: 'Resend API Key not configured' }, { status: 422 });
-      
-      const unsubBase = unsubscribeUrl || `${siteUrl}/unsubscribe`;
-      const unsubUrl = buildUnsubscribeUrl(unsubBase, testEmail);
-      let html = applyUnsubscribe(campaign.body, unsubUrl);
-      
-      html = trackifyHtml(html, 'test-log-id', siteUrl);
-      
-      try {
-        emailResult = await sendEmail({
-          to: testEmail,
-          subject: campaign.subject ?? campaign.name,
-          html,
-          fromName: senderName,
-          fromEmail: senderEmail,
-          apiKey: resendKey,
-        });
-      } catch (e: unknown) {
-        return NextResponse.json({ error: `Email failed: ${String(e)}` }, { status: 500 });
-      }
+  if (testEmail && (campaign.type === 'EMAIL' || campaign.type === 'BOTH')) {
+    if (!resendKey) return NextResponse.json({ error: 'Resend API Key not configured' }, { status: 422 });
+
+    const sender = senderFrom(settings);
+    const html = renderCampaignEmail({
+      body: campaign.body,
+      to: testEmail,
+      logId: 'test-log-id',
+      siteUrl: getSiteUrl(req),
+      settings,
+    });
+
+    try {
+      emailResult = await sendEmail({
+        to: testEmail,
+        subject: campaign.subject ?? campaign.name,
+        html,
+        fromName: sender.name,
+        fromEmail: sender.email,
+        apiKey: resendKey,
+      });
+    } catch (e: unknown) {
+      return NextResponse.json({ error: `Email failed: ${String(e)}` }, { status: 500 });
     }
-
-    if (testPhone && (campaign.type === 'SMS' || campaign.type === 'BOTH')) {
-      if (!twilioSid || !twilioToken || !twilioFrom) {
-        return NextResponse.json({ error: 'Twilio not configured' }, { status: 422 });
-      }
-      try {
-        smsResult = await sendSms({
-          to: testPhone,
-          body: campaign.smsBody ?? '',
-          accountSid: twilioSid,
-          authToken: twilioToken,
-          from: twilioFrom,
-        });
-      } catch (e: unknown) {
-        return NextResponse.json({ error: `SMS failed: ${String(e)}` }, { status: 500 });
-      }
-    }
-
-    return NextResponse.json({ test: true, emailResult, smsResult });
-  }
-
-  // ── Full send (Background execution) ──────────────────────────────────────────
-  const contacts = selectRecipients(campaign.groups);
-
-  if (campaign.type === 'EMAIL' || campaign.type === 'BOTH') {
-    const todayEmails = await getTodaySentCount('EMAIL');
-    if (todayEmails + contacts.length > maxEmailsPerDay) {
-      return NextResponse.json({ error: `Daily email limit (${maxEmailsPerDay}) would be exceeded` }, { status: 429 });
-    }
-  }
-  if (campaign.type === 'SMS' || campaign.type === 'BOTH') {
-    const todaySms = await getTodaySentCount('SMS');
-    if (todaySms + contacts.length > maxSmsPerDay) {
-      return NextResponse.json({ error: `Daily SMS limit (${maxSmsPerDay}) would be exceeded` }, { status: 429 });
+    // Resend reports refusals in the result rather than by throwing.
+    if (emailResult?.error) {
+      return NextResponse.json({ error: `Email failed: ${classifyFailure(emailResult.error).message}` }, { status: 500 });
     }
   }
 
-  await prisma.campaign.update({ where: { id }, data: { status: 'SENDING' } });
+  if (testPhone && (campaign.type === 'SMS' || campaign.type === 'BOTH')) {
+    if (!twilioSid || !twilioToken || !twilioFrom) {
+      return NextResponse.json({ error: 'Twilio not configured' }, { status: 422 });
+    }
+    try {
+      smsResult = await sendSms({
+        to: testPhone,
+        body: campaign.smsBody ?? '',
+        accountSid: twilioSid,
+        authToken: twilioToken,
+        from: twilioFrom,
+      });
+    } catch (e: unknown) {
+      return NextResponse.json({ error: `SMS failed: ${String(e)}` }, { status: 500 });
+    }
+  }
 
-  // Fire and forget (Node.js will process this asynchronously)
-  processCampaignInBackground({
-    id,
-    contacts,
-    campaign,
-    siteUrl,
-    resendKey,
-    twilioSid,
-    twilioToken,
-    twilioFrom,
-    senderName,
-    senderEmail,
-    unsubscribeUrl,
-  }).catch(e => console.error("Background campaign error:", e));
-
-  return NextResponse.json({ success: true, message: 'Campaign sending started in the background.', total: contacts.length });
+  return NextResponse.json({ test: true, emailResult, smsResult });
 }
-
-async function processCampaignInBackground({
-  id,
-  contacts,
-  campaign,
-  siteUrl,
-  resendKey,
-  twilioSid,
-  twilioToken,
-  twilioFrom,
-  senderName,
-  senderEmail,
-  unsubscribeUrl,
-}: any) {
-  let sentCount = 0;
-  let failedCount = 0;
-
-  for (const contact of contacts) {
-    if ((campaign.type === 'EMAIL' || campaign.type === 'BOTH') && contact.email) {
-      if (!resendKey) {
-        await logResult(id, contact.id, 'EMAIL', 'FAILED', 'Resend API Key not configured');
-        failedCount++;
-      } else {
-        let logId = '';
-        try {
-          // Pre-create the log to get a unique CUID for tracking
-          const logRecord = await prisma.campaignLog.create({
-            data: {
-              campaignId: id,
-              contactId: contact.id,
-              channel: 'EMAIL',
-              status: 'SENT',
-            },
-          });
-          logId = logRecord.id;
-
-          const unsubBase = unsubscribeUrl || `${siteUrl}/unsubscribe`;
-          const unsubUrl = buildUnsubscribeUrl(unsubBase, contact.email);
-          let html = applyUnsubscribe(campaign.body, unsubUrl);
-          
-          html = trackifyHtml(html, logId, siteUrl);
-
-          await sendEmail({
-            to: contact.email,
-            subject: campaign.subject ?? campaign.name,
-            html,
-            fromName: senderName,
-            fromEmail: senderEmail,
-            apiKey: resendKey,
-          });
-          
-          sentCount++;
-        } catch (e: unknown) {
-          if (logId) {
-            await prisma.campaignLog.update({
-              where: { id: logId },
-              data: {
-                status: 'FAILED',
-                error: String(e),
-              },
-            });
-          } else {
-            await logResult(id, contact.id, 'EMAIL', 'FAILED', String(e));
-          }
-          failedCount++;
-        }
-      }
-    }
-
-    if ((campaign.type === 'SMS' || campaign.type === 'BOTH') && contact.phone) {
-      if (!twilioSid || !twilioToken || !twilioFrom) {
-        await logResult(id, contact.id, 'SMS', 'FAILED', 'Twilio not configured');
-        failedCount++;
-      } else {
-        try {
-          await sendSms({
-            to: contact.phone,
-            body: campaign.smsBody ?? '',
-            accountSid: twilioSid,
-            authToken: twilioToken,
-            from: twilioFrom,
-          });
-          await logResult(id, contact.id, 'SMS', 'SENT', null);
-          sentCount++;
-        } catch (e: unknown) {
-          await logResult(id, contact.id, 'SMS', 'FAILED', String(e));
-          failedCount++;
-        }
-      }
-    }
-  }
-
-  const finalStatus = contacts.length === 0 ? 'DONE' : (failedCount === contacts.length ? 'FAILED' : 'DONE');
-  await prisma.campaign.update({
-    where: { id },
-    data: { status: finalStatus, sentAt: new Date() },
-  });
-}
-
-async function logResult(
-  campaignId: string,
-  contactId: string,
-  channel: string,
-  status: string,
-  error: string | null,
-) {
-  await prisma.campaignLog.create({
-    data: { campaignId, contactId, channel, status, error: error ?? undefined },
-  });
-}
-
-function trackifyHtml(html: string, logId: string, siteUrl: string): string {
-  if (!html) return html;
-  
-  const $ = cheerio.load(html);
-  
-  // 1. Rewrite all link hrefs (excluding anchors, mailto/tel, and unsubscribe)
-  $('a').each((_, elem) => {
-    const href = $(elem).attr('href');
-    if (href && !href.startsWith('#') && !href.startsWith('mailto:') && !href.startsWith('tel:')) {
-      if (!href.includes('/unsubscribe') && !href.includes('/track/')) {
-        const trackingUrl = `${siteUrl}/api/marketing/track/click?logId=${logId}&url=${encodeURIComponent(href)}&sig=${clickSignature(href)}`;
-        $(elem).attr('href', trackingUrl);
-      }
-    }
-  });
-
-  // 2. Append the tracking pixel at the end of body
-  const pixelHtml = `<img src="${siteUrl}/api/marketing/track/open?logId=${logId}" width="1" height="1" alt="" style="display:none;" />`;
-  if ($('body').length > 0) {
-    $('body').append(pixelHtml);
-  } else {
-    $.root().append(pixelHtml);
-  }
-
-  return $.html();
-}
-

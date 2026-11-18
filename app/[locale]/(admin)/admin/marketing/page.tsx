@@ -21,7 +21,9 @@ export default async function MarketingDashboard() {
     switch (status) {
       case 'DONE': return <CheckCircle className="w-4 h-4 text-green-500" />;
       case 'FAILED': return <XCircle className="w-4 h-4 text-red-500" />;
-      case 'SENDING': return <Loader className="w-4 h-4 text-blue-500 animate-spin" />;
+      case 'QUEUED': return <Loader className="w-4 h-4 text-blue-500" />;
+      case 'PAUSED': return <Clock className="w-4 h-4 text-orange-500" />;
+      case 'SENDING': return <XCircle className="w-4 h-4 text-red-500" />;
       case 'SCHEDULED': return <Clock className="w-4 h-4 text-yellow-500" />;
       default: return <div className="w-4 h-4 rounded-full border-2 border-[#1a1a1a]/20" />;
     }
@@ -31,7 +33,9 @@ export default async function MarketingDashboard() {
     switch (status) {
       case 'DONE': return 'bg-green-100 text-green-700';
       case 'FAILED': return 'bg-red-100 text-red-700';
-      case 'SENDING': return 'bg-blue-100 text-blue-700';
+      case 'QUEUED': return 'bg-blue-100 text-blue-700';
+      case 'PAUSED': return 'bg-orange-100 text-orange-700';
+      case 'SENDING': return 'bg-red-100 text-red-700';
       case 'SCHEDULED': return 'bg-yellow-100 text-yellow-700';
       default: return 'bg-[#1a1a1a]/5 text-[#1a1a1a]/60';
     }
@@ -135,7 +139,7 @@ export default async function MarketingDashboard() {
                     </td>
                     <td className="px-6 py-4">
                       <span className={`flex items-center gap-1.5 w-fit text-xs px-2 py-1 rounded-full font-bold ${statusColor(c.status)}`}>
-                        {statusIcon(c.status)} {c.status}
+                        {statusIcon(c.status)} {c.status === 'SENDING' ? 'INTERRUPTED' : c.status}
                       </span>
                     </td>
                     <td className="px-6 py-4 text-right font-bold text-[#1a1a1a]/70">{c._count.logs}</td>

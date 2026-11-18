@@ -9,6 +9,9 @@ const db = vi.hoisted(() => ({
     update: vi.fn(async (..._a: unknown[]): Promise<any> => ({})),
     deleteMany: vi.fn(async (..._a: unknown[]): Promise<any> => ({ count: 1 })),
   },
+  marketingSuppression: {
+    upsert: vi.fn(async (..._a: unknown[]): Promise<any> => ({})),
+  },
 }));
 vi.mock('@/lib/prisma', () => ({ default: db }));
 

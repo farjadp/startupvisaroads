@@ -1,4 +1,5 @@
 import prisma from './prisma';
+import { normaliseAddress, suppressionKey } from './campaign-queue/address';
 
 // ─── Settings Helpers ────────────────────────────────────────────────────────
 
@@ -76,20 +77,6 @@ export async function sendSms({
   return message;
 }
 
-// ─── Rate Limit Check ────────────────────────────────────────────────────────
-
-export async function getTodaySentCount(channel: 'EMAIL' | 'SMS') {
-  const startOfDay = new Date();
-  startOfDay.setHours(0, 0, 0, 0);
-  return prisma.campaignLog.count({
-    where: {
-      channel,
-      status: 'SENT',
-      sentAt: { gte: startOfDay },
-    },
-  });
-}
-
 // ─── Unsubscribe tag ─────────────────────────────────────────────────────────
 // A reversible "do not send" marker, used by the CASL grace path in
 // /api/unsubscribe (tokenless links from emails sent before signed tokens).
@@ -140,12 +127,30 @@ export function maskEmail(email: string): string {
   return `${email[0]}***${email.slice(at)}`;
 }
 
+/**
+ * Remembers an unsubscribe by hashed address, for the email and any phone on
+ * its contacts. The contact row may be deleted and the list imported again
+ * later; this is what still stops the queue from writing to them.
+ */
+export async function suppressContactAddresses(email: string, phones: (string | null)[]): Promise<void> {
+  const keys = new Set([suppressionKey('EMAIL', email)]);
+  for (const phone of phones) {
+    const address = normaliseAddress('SMS', { phone });
+    if (address) keys.add(suppressionKey('SMS', address));
+  }
+  await Promise.all(
+    [...keys].map((key) => prisma.marketingSuppression.upsert({ where: { key }, update: {}, create: { key } })),
+  );
+}
+
 /** Tags every contact with this exact (already normalised) email. Deletes nothing. */
 export async function markUnsubscribed(email: string): Promise<number> {
   const contacts = await prisma.marketingContact.findMany({
     where: { email },
-    select: { id: true, tags: true },
+    select: { id: true, tags: true, phone: true },
   });
+  // Tokenless callers reach this, so only addresses we actually hold are recorded.
+  if (contacts.length > 0) await suppressContactAddresses(email, contacts.map((c) => c.phone));
   let tagged = 0;
   for (const c of contacts) {
     if (isUnsubscribed(c.tags)) continue;

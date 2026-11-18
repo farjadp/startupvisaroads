@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Plus, Trash2, Copy, CheckCircle, XCircle, Clock, Loader, Send, Eye } from 'lucide-react';
+import { Plus, Trash2, Copy, CheckCircle, XCircle, Clock, Loader, Send, Eye, Pause, AlertTriangle } from 'lucide-react';
 
 interface Campaign {
   id: string;
@@ -19,7 +19,9 @@ interface Campaign {
 const STATUS_CONFIG: Record<string, { icon: React.ReactNode; cls: string }> = {
   DRAFT: { icon: <div className="w-3 h-3 rounded-full border-2 border-current" />, cls: 'bg-[#1a1a1a]/5 text-[#1a1a1a]/60' },
   SCHEDULED: { icon: <Clock className="w-3 h-3" />, cls: 'bg-yellow-100 text-yellow-700' },
-  SENDING: { icon: <Loader className="w-3 h-3 animate-spin" />, cls: 'bg-blue-100 text-blue-700' },
+  QUEUED: { icon: <Loader className="w-3 h-3" />, cls: 'bg-blue-100 text-blue-700' },
+  PAUSED: { icon: <Pause className="w-3 h-3" />, cls: 'bg-orange-100 text-orange-700' },
+  SENDING: { icon: <AlertTriangle className="w-3 h-3" />, cls: 'bg-red-100 text-red-700' },
   DONE: { icon: <CheckCircle className="w-3 h-3" />, cls: 'bg-green-100 text-green-700' },
   FAILED: { icon: <XCircle className="w-3 h-3" />, cls: 'bg-red-100 text-red-700' },
 };
@@ -40,11 +42,15 @@ export default function CampaignsPage() {
 
   const handleDelete = async (id: string, name: string) => {
     if (!confirm(`Delete campaign "${name}"? This will also delete all send logs.`)) return;
-    await fetch('/api/marketing/campaigns', {
+    const res = await fetch('/api/marketing/campaigns', {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ id }),
     });
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      alert(data.error ?? 'Could not delete this campaign.');
+    }
     load();
   };
 
@@ -110,7 +116,7 @@ export default function CampaignsPage() {
                       {c.name}
                     </Link>
                     <span className={`flex items-center gap-1 text-xs px-2 py-1 rounded-full font-bold whitespace-nowrap ${s.cls}`}>
-                      {s.icon} {c.status}
+                      {s.icon} {c.status === 'SENDING' ? 'INTERRUPTED' : c.status}
                     </span>
                     <span className="text-xs px-2 py-1 rounded font-bold bg-[#1a1a1a]/5 text-[#1a1a1a]/60 whitespace-nowrap">
                       {c.type}
@@ -137,7 +143,7 @@ export default function CampaignsPage() {
                 <div className="flex items-center gap-1.5">
                   <div className="text-right mr-4">
                     <p className="text-2xl font-bold font-serif text-[#1a1a1a]">{c._count.logs}</p>
-                    <p className="text-xs text-[#1a1a1a]/40 font-sans">sent</p>
+                    <p className="text-xs text-[#1a1a1a]/40 font-sans">logged</p>
                   </div>
                   <Link href={`/en/admin/marketing/campaigns/${c.id}`}
                     className="p-2 rounded-xl border border-[#1a1a1a]/10 hover:bg-[#1a1a1a]/5 transition-colors" title="View Report">
