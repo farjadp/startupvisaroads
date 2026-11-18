@@ -4,8 +4,9 @@
 
 ## گوگل پلی (همه را شما کلیک می‌کنید)
 
-### ۱. بیلد ۱۱ به production
-1. Play Console › VisaRoads › **Test and release › Production** را باز کنید. اگر نسخه‌ی ۱۱ در Internal یا Closed testing است، در همان track دکمه‌ی **Promote release › Production** را بزنید. اگر در هیچ track نیست: **Create new release** › **Add from library** › versionCode **11 (1.0.0)**.
+### ۱. بیلد ۱۲ (1.0.1) به production
+0. فایل AAB بیلد ۱۲ را از EAS دانلود کنید (لینک در بخش «لینک‌ها» پایین همین صفحه). بیلد ۱۲ همان کد بیلد ۱۱ است و فقط نسخه‌اش 1.0.1 شده. **بیلد ۱۱ را دیگر promote نکنید.** اگر قبلاً آن را فرستاده‌اید، اشکالی ندارد: بیلد ۱۲ جای آن را می‌گیرد.
+1. Play Console › VisaRoads › **Test and release › Production** › **Create new release** › **Upload** › فایل `.aab` بیلد ۱۲.
 2. در **Release notes** متن زیر را کامل paste کنید (پنج زبان، تگ‌ها همان زبان‌های لیستینگ است):
 
 ```
@@ -35,15 +36,32 @@
 
 **Save** را بزنید. این تغییر همراه با همان review (قدم ۱.۴) فرستاده می‌شود.
 
-### ۳. گرافیک‌ها
-بعداً اضافه می‌شود، وقتی اسکرین‌شات‌های جدید و feature graphic آماده شد. تا آن موقع به عکس‌های فعلی دست نزنید.
+### ۳. گرافیک‌ها (از PR #108، پوشه‌ی `mobile/store/build-v3/play/`)
+در **Main store listing**، برای هر زبان:
+- **Phone screenshots**: عکس‌های قبلی را حذف کنید و هشت فایل `screenshots/<زبان>/01-today.png` تا `08-news.png` را به همین ترتیب آپلود کنید. نام پوشه‌ها: `en-US`، `fa`، `fr-FR`، `zh-CN`، `ar`.
+- **Feature graphic**: فایل `feature-graphic.png`. فعلاً فقط نسخه‌ی انگلیسی آن هست و برای همه‌ی زبان‌ها همان می‌ماند.
+- **App icon**: فایل `icon-512.png`، فقط اگر با آیکون فعلی فرق دارد.
 
-## اپ استور — فقط Promotional text، همین امروز
+## اپ استور — قدم ۱: Promotional text، همین امروز
 App Store Connect › VisaRoads › نسخه‌ی **1.0.0** (Ready for Distribution) › برای هر زبان، فیلد **Promotional Text** را با «Promotional text» همان زبان در `listing-v3.md` عوض کنید › **Save**. این فیلد review لازم ندارد.
 - زبان انگلیسی در نسخه‌ی اول **English (Canada)** بود (en-CA)، نه en-US. متن را در زبانی بگذارید که در App Store Connect هست.
 - فارسی در App Store Connect وجود ندارد.
-- بقیه‌ی فیلدها (Description، What's New، Keywords، اسکرین‌شات‌ها) با نسخه‌ی **1.0.1** عوض می‌شوند. تصمیم ۱۷ نوامبر: 1.0.1 را وقتی می‌سازیم که اسکرین‌شات‌ها آماده باشد.
-- What's New مربوط به 1.0.1 باید از نو نوشته شود. متن فعلی v3 تغییراتی را می‌شمارد که کاربران iOS از اول در 1.0.0 داشته‌اند.
+
+## اپ استور — قدم ۲: نسخه‌ی 1.0.1 و Submit for Review
+بیلد iOS 1.0.1 (9) با `eas submit` به App Store Connect فرستاده شده است. پردازشش در TestFlight حدود ۱۰ تا ۳۰ دقیقه طول می‌کشد.
+1. App Store Connect › VisaRoads › کنار **iOS App** دکمه‌ی **+** › شماره‌ی نسخه را **1.0.1** بنویسید.
+2. برای هر زبان (English، French، Chinese Simplified، Arabic) از بخش App Store همان زبان در `listing-v3.md` این فیلدها را پر کنید:
+   - **What's New in This Version** ← «What's New, App Store 1.0.1»
+   - **Description** ← Description
+   - **Keywords** ← Keywords
+   - **Promotional Text** ← از قدم ۱
+3. **Screenshots** (از PR #108، پوشه‌ی `mobile/store/build-v3/app-store/screenshots/`): برای هر زبان، عکس‌های قبلی را پاک کنید.
+   - بخش **6.9" Display**: هشت فایل پوشه‌ی `<زبان>/6.9in/` را به ترتیب `01` تا `08` بکشید.
+   - بخش **6.5" Display**: فایل‌های پوشه‌ی `<زبان>/6.5in/` را بگذارید. اگر App Store Connect فقط 6.9" خواست، این بخش لازم نیست.
+   - نام پوشه‌ها `en-US`، `fr-FR`، `zh-Hans` و `ar-SA` است. پوشه‌ی `en-US` را برای زبان انگلیسی‌ای بگذارید که در App Store Connect دارید (احتمالاً English (Canada)).
+4. بخش **Build** › **+** › بیلد **1.0.1 (9)** را انتخاب کنید. اگر سؤال export compliance پرسید، جوابش «None of the algorithms mentioned» است؛ این مورد در `ITSAppUsesNonExemptEncryption=false` تنظیم شده است.
+5. **Add for Review** › **Submit for Review**. بخش «App Review Information» را تغییر ندهید، مگر اینکه ایراد گرفت.
+- **Name** و **Subtitle** را فقط اگر با متن v3 فرق دارند عوض کنید. این دو فیلد هم همراه همین نسخه بررسی می‌شوند.
 
 ## موارد باز
 - fa What's New تاریخ میلادی دارد («۲۷ اکتبر»، «۹ نوامبر») اما اپ در فارسی تاریخ شمسی می‌نویسد. معادل شمسی: «۵ آبان» و «۱۸ آبان». تصمیمش با فرجاد است.
@@ -52,3 +70,10 @@ App Store Connect › VisaRoads › نسخه‌ی **1.0.0** (Ready for Distribut
 - برچسب خانواده‌ی `express` در اپ برای همه‌ی کشورها «Express Entry» است، حتی برای کارت قرمز-سفید-قرمز اتریش. این را می‌شود با OTA درست کرد.
 - در صفحه‌ی نتیجه، بالای کارت اول یک مستطیل خاکستری تیره هست (عکس کشور، در شبیه‌ساز). همین کد الان روی گوشی‌ها و iOS هم هست. روی یک گوشی واقعی چک شود.
 - بازبینی متن ar، zh و fr توسط کسی که زبان مادری‌اش است (فهرست در `listing-v3.md`، بند ۹).
+
+## بعد از انتشار — OTA دو بار منتشر می‌شود
+از وقتی 1.0.1 روی گوشی‌ها برود، دو runtime فعال داریم: 1.0.0 (iOS `99a8c4c3`، اندروید `38452566`) و 1.0.1 (iOS `7cf56aa4`، اندروید `c525597e`). هر آپدیت OTA را دو بار منتشر کنید: یک بار از main، و یک بار از یک worktree تمیزِ main که در آن `version` به 1.0.0 برگردانده شده است. روشش در `mobile/RELEASE.md` نوشته شده.
+
+## لینک‌ها
+- بیلد اندروید ۱۲: https://expo.dev/accounts/ashavid/projects/visaroads/builds/f507aef2-f84e-43be-a40e-85438059cb2b
+- بیلد iOS 1.0.1 (9): https://expo.dev/accounts/ashavid/projects/visaroads/builds/36fd44c8-ee97-46fc-9f79-fb5ed4af4d2e

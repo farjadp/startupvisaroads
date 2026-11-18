@@ -60,17 +60,9 @@ VisaRoads is a product of Ashavid, based in Ontario, Canada. We are not immigrat
 فارسی
 برنامه‌ی VisaRoads به زبان فارسی هم کامل در دسترس است: ۶۸ مسیر مهاجرت در ۱۷ کشور، با منبع رسمی هر مسیر. درصد مطابقت یعنی میزان مطابقت شما با شرایط منتشرشده، نه شانس قبولی.
 ```
-**What's New (997/4000)**
+**What's New, App Store 1.0.1 (323/4000)**
 ```
-What's new
-
-• 17 countries, 68 routes. Australia, Austria, Norway, Ireland and Sweden joined on 27 October; Spain and Bulgaria on 9 November.
-• Home now opens on Today: your next step on a road you follow, or your closest road after the assessment, and, once you have calculated it, your Express Entry score beside the last general draw.
-• Express Entry in the app: a score calculator on IRCC's grid, what would add the most points, the latest rounds of invitations and the category-draw lists for your occupation.
-• News inside the app: visaroads.com guides and analysis by country, kept on your phone for offline reading.
-• Route pages in four tabs (Do, Rules, Money, After), with status marks, a household money bar and a years-to-citizenship timeline.
-• The assessment now runs on two screens. It is still ten questions, each skippable, with no account.
-• Fixed: text cut off at the right edge on iPhone.
+Version 1.0.1: a maintenance release. Everything works as before: 68 routes in 17 countries, the ten-question assessment and the Express Entry calculator are where you left them. Route figures and news keep updating in the background.
 
 A match is not a chance of approval. Nothing in the app is legal or immigration advice.
 ```
@@ -145,16 +137,9 @@ VisaRoads: مسیرهای مهاجرت
 ما که هستیم
 برنامه‌ی VisaRoads محصولی از آشاوید است، مستقر در انتاریوی کانادا. ما وکیل مهاجرت یا مشاور رسمی مهاجرت نیستیم. بخش کسب‌وکاری پرونده را آماده می‌کنیم (طرح کسب‌وکار، مدل مالی، پیچ‌دک و منتورینگ بنیان‌گذار) و درخواست را ثبت نمی‌کنیم. VisaRoads به هیچ دولتی وابسته نیست.
 ```
-**What's New (896/4000)**
+**What's New, App Store 1.0.1 (288/4000)**
 ```
-تازه‌ها
-
-• ۱۷ کشور، ۶۸ مسیر. استرالیا، اتریش، نروژ، ایرلند و سوئد ۲۷ اکتبر اضافه شدند؛ اسپانیا و بلغارستان ۹ نوامبر.
-• «خانه» حالا با «امروز» باز می‌شود: گام بعدیِ مسیری که دنبال می‌کنید، یا نزدیک‌ترین مسیر بعد از ارزیابی، و اگر امتیازتان را حساب کرده باشید، امتیاز اکسپرس اینتری کنار آخرین قرعه‌کشی عمومی.
-• اکسپرس اینتری داخل برنامه: ماشین‌حساب امتیاز روی جدول IRCC، چیزهایی که بیشترین امتیاز را اضافه می‌کنند، آخرین دورهای دعوت و فهرست قرعه‌کشی‌های دسته‌ای برای شغل شما.
-• اخبار داخل برنامه: راهنماها و تحلیل‌های visaroads.com به تفکیک کشور، با نسخه‌ی ذخیره‌شده برای خواندن بدون اینترنت.
-• صفحه‌ی هر مسیر چهار بخش دارد (کارها، قوانین، پول، پس از ورود)، با نشان وضعیت، نوار پول خانوار و خط زمانی سال‌ها تا تابعیت.
-• ارزیابی حالا در دو صفحه است. هنوز ده سؤال است، از هرکدام می‌شود گذشت و حساب کاربری لازم نیست.
+نسخه‌ی ۱.۰.۱: به‌روزرسانی نگه‌داری. همه‌چیز مثل قبل کار می‌کند: ۶۸ مسیر در ۱۷ کشور، ارزیابی ده‌سؤالی و ماشین‌حساب اکسپرس اینتری سر جایشان هستند. ارقام مسیرها و اخبار مثل همیشه در پس‌زمینه به‌روز می‌شوند.
 
 درصد مطابقت، شانس قبولی نیست. هیچ‌چیز در این برنامه مشاوره‌ی حقوقی یا مهاجرتی نیست.
 ```
@@ -226,16 +211,9 @@ HONNÊTE PAR CONCEPTION
 QUI NOUS SOMMES
 VisaRoads est un produit d’Ashavid, établie en Ontario, au Canada. Nous ne sommes ni avocats en immigration ni consultants en immigration agréés. Nous préparons le volet commercial d’un dossier (plans d’affaires, modèles financiers, présentations pour investisseurs et mentorat de fondateurs) ; nous ne déposons pas de demandes. VisaRoads n’est affilié à aucun gouvernement.
 ```
-**What's New (1171/4000)**
+**What's New, App Store 1.0.1 (401/4000)**
 ```
-Nouveautés
-
-• 17 pays, 68 parcours. L’Australie, l’Autriche, la Norvège, l’Irlande et la Suède sont arrivées le 27 octobre ; l’Espagne et la Bulgarie le 9 novembre.
-• L’onglet Accueil s’ouvre sur « Aujourd’hui » : la prochaine étape d’un parcours que vous suivez, ou le parcours le plus proche après l’évaluation, et, si vous l’avez calculé, votre score Entrée express à côté du dernier tirage général.
-• Entrée express dans l’application : un calculateur de score sur la grille d’IRCC, ce qui ajouterait le plus de points, les dernières rondes d’invitations et les listes de tirages par catégorie pour votre profession.
-• Les actualités dans l’application : guides et analyses de visaroads.com par pays, conservés sur votre téléphone pour une lecture hors ligne.
-• Les pages de parcours en quatre onglets (Faire, Règles, Argent, Après), avec des repères d’état, une barre d’argent du foyer et une frise des années jusqu’à la citoyenneté.
-• L’évaluation tient maintenant sur deux écrans. Toujours dix questions, chacune facultative, sans compte.
+Version 1.0.1 : une version de maintenance. Tout fonctionne comme avant : 68 parcours dans 17 pays, l’évaluation en dix questions et le calculateur Express Entry restent à leur place. Les chiffres des parcours et les actualités continuent de se mettre à jour en arrière-plan.
 
 Une correspondance n’est pas une chance d’approbation. Rien dans l’application n’est un conseil juridique ou en immigration.
 ```
@@ -308,16 +286,9 @@ VisaRoads 帮助创业者、专业人士和学生了解哪些移民路径适合�
 关于我们
 VisaRoads 是 Ashavid 的产品，公司位于加拿大安大略省。我们不是移民律师，也不是持牌移民顾问。我们负责案件的商业部分（商业计划书、财务模型、融资路演材料和创始人辅导），不递交申请。VisaRoads 与任何政府均无关联。
 ```
-**What's New (367/4000)**
+**What's New, App Store 1.0.1 (113/4000)**
 ```
-更新内容
-
-• 17 个国家，68 条路径。澳大利亚、奥地利、挪威、爱尔兰和瑞典于 10 月 27 日加入；西班牙和保加利亚于 11 月 9 日加入。
-• “首页”现在打开的是“今天”：显示你关注路径的下一步，或评估后最接近的路径；如果你算过快速通道分数，还会把它和最近一次综合抽签并列显示。
-• 应用内的快速通道：基于 IRCC 评分表的分数计算器、加分最多的一项、最近几轮邀请，以及与你职业相关的分类抽签清单。
-• 应用内的资讯：visaroads.com 按国家分类的指南和分析，保存在手机上，可离线阅读。
-• 路径页分为四个标签（要做、规则、资金、之后），带状态标记、家庭资金条和距入籍年数的时间线。
-• 评估现在分两页。仍是十个问题，每题都可跳过，无需账号。
+1.0.1 版：维护更新。一切照旧：17 个国家的 68 条路线、十道题的评估和 Express Entry 计算器都在原处。路线数据和资讯仍会在后台自动更新。
 
 匹配并不等于获批几率。应用中的任何内容都不构成法律或移民建议。
 ```
@@ -390,16 +361,9 @@ VisaRoads: مسارات الهجرة
 من نحن
 تطبيق VisaRoads منتج من Ashavid، ومقرها أونتاريو في كندا. لسنا محامي هجرة ولا مستشاري هجرة مرخّصين. نعدّ الجانب التجاري من الملف (خطط الأعمال والنماذج المالية وعروض المستثمرين وإرشاد المؤسسين)، ولا نقدّم الطلبات. VisaRoads غير تابع لأي حكومة.
 ```
-**What's New (791/4000)**
+**What's New, App Store 1.0.1 (273/4000)**
 ```
-الجديد
-
-• 17 دولة و68 مسارًا. انضمت أستراليا والنمسا والنرويج وأيرلندا والسويد في 27 أكتوبر، وإسبانيا وبلغاريا في 9 نوفمبر.
-• «الرئيسية» تفتح الآن على «اليوم»: الخطوة التالية في مسار تتابعه، أو أقرب مسار بعد التقييم، وإن كنت قد حسبت نقاطك في الدخول السريع فتظهر بجانب آخر سحب عام.
-• الدخول السريع داخل التطبيق: حاسبة نقاط على جدول IRCC، وما يضيف أكثر النقاط، وآخر جولات الدعوات، وقوائم سحوبات الفئات لمهنتك.
-• الأخبار داخل التطبيق: أدلة وتحليلات من visaroads.com بحسب الدولة، محفوظة على هاتفك للقراءة بلا إنترنت.
-• صفحة كل مسار بأربعة أقسام (المهام، القواعد، المال، بعد الوصول)، مع علامات الحالة وشريط مال الأسرة وخط زمني للسنوات حتى الجنسية.
-• التقييم صار على شاشتين. ما زال عشرة أسئلة، يمكن تخطي كل منها، بلا حساب.
+الإصدار 1.0.1: تحديث صيانة. كل شيء يعمل كما كان: 68 مسارًا في 17 دولة، والتقييم المكوّن من عشرة أسئلة، وحاسبة Express Entry في أماكنها. وتستمر أرقام المسارات والأخبار في التحديث تلقائيًا في الخلفية.
 
 التطابق ليس فرصة قبول. لا شيء في التطبيق استشارة قانونية أو استشارة هجرة.
 ```
