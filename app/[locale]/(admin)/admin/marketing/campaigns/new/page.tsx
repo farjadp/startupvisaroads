@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
-import { Mail, MessageSquare, Layers, ArrowLeft, Send, TestTube, Calendar, Users, ChevronDown } from 'lucide-react';
+import { Mail, MessageSquare, Layers, ArrowLeft, Send, TestTube, Users } from 'lucide-react';
 
 const MarketingEditor = dynamic(() => import('@/components/admin/marketing/MarketingEditor'), { ssr: false });
 
@@ -67,13 +67,11 @@ export default function NewCampaignPage() {
   const [emailBody, setEmailBody] = useState(EMAIL_TEMPLATES[0].body);
   const [smsBody, setSmsBody] = useState('');
   const [selectedGroupIds, setSelectedGroupIds] = useState<string[]>([]);
-  const [scheduledAt, setScheduledAt] = useState('');
   const [selectedTemplate, setSelectedTemplate] = useState(0);
   const [saving, setSaving] = useState(false);
   const [testEmail, setTestEmail] = useState('');
   const [testPhone, setTestPhone] = useState('');
   const [testStatus, setTestStatus] = useState('');
-  const [showSchedule, setShowSchedule] = useState(false);
 
   useEffect(() => {
     fetch('/api/marketing/groups').then((r) => r.json()).then((d) => setGroups(d.groups ?? []));
@@ -90,7 +88,7 @@ export default function NewCampaignPage() {
     );
   };
 
-  const handleSave = async (sendNow = false) => {
+  const handleSave = async (setUpSending = false) => {
     if (!name) return;
     setSaving(true);
     const res = await fetch('/api/marketing/campaigns', {
@@ -103,18 +101,14 @@ export default function NewCampaignPage() {
         body: emailBody,
         smsBody,
         groupIds: selectedGroupIds,
-        scheduledAt: scheduledAt || null,
       }),
     });
     const data = await res.json();
     const id = data.campaign?.id;
 
-    if (sendNow && id) {
-      await fetch(`/api/marketing/campaigns/${id}/send`, { method: 'POST' });
-    }
-
     setSaving(false);
-    router.push('/en/admin/marketing/campaigns');
+    // Sending is set up on the campaign page: daily limit, days, confirmation.
+    router.push(setUpSending && id ? `/en/admin/marketing/campaigns/${id}` : '/en/admin/marketing/campaigns');
   };
 
   const handleTest = async () => {
@@ -332,23 +326,6 @@ export default function NewCampaignPage() {
             )}
           </div>
 
-          {/* Schedule */}
-          <div className="bg-white rounded-2xl border border-[#1a1a1a]/5 shadow-sm p-6">
-            <button type="button" onClick={() => setShowSchedule(!showSchedule)}
-              className="w-full flex items-center justify-between font-serif text-lg">
-              <span className="flex items-center gap-2"><Calendar className="w-4 h-4 text-[#1a1a1a]/40" /> Schedule</span>
-              <ChevronDown className={`w-4 h-4 text-[#1a1a1a]/40 transition-transform ${showSchedule ? 'rotate-180' : ''}`} />
-            </button>
-            {showSchedule && (
-              <div className="mt-4">
-                <label className="block font-sans text-xs font-bold text-[#1a1a1a]/50 uppercase tracking-widest mb-2">Send at</label>
-                <input type="datetime-local" value={scheduledAt} onChange={(e) => setScheduledAt(e.target.value)}
-                  className="w-full border border-[#1a1a1a]/10 rounded-xl px-4 py-3 font-sans text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#1a1a1a]/20" />
-                <p className="text-xs text-[#1a1a1a]/30 mt-1 font-sans">Leave empty to send immediately.</p>
-              </div>
-            )}
-          </div>
-
           {/* Actions */}
           <div className="space-y-3">
             <button
@@ -364,10 +341,10 @@ export default function NewCampaignPage() {
               className="w-full py-3 bg-[#1a1a1a] text-white font-bold font-sans text-sm rounded-xl hover:bg-[#1a1a1a]/80 disabled:opacity-50 transition-colors flex items-center justify-center gap-2"
             >
               <Send className="w-4 h-4" />
-              {saving ? 'Sending…' : `Send to ${totalContacts || '…'} contacts`}
+              {saving ? 'Saving…' : 'Save and set up sending'}
             </button>
             {selectedGroupIds.length === 0 && (
-              <p className="text-xs text-center text-[#1a1a1a]/40 font-sans">Select at least one group to send.</p>
+              <p className="text-xs text-center text-[#1a1a1a]/40 font-sans">Select at least one group to continue.</p>
             )}
           </div>
         </div>

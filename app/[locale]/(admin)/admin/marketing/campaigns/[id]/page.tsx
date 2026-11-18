@@ -3,7 +3,8 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import prisma from '@/lib/prisma';
 import { ArrowLeft, CheckCircle, XCircle, Mail, MessageSquare, Users, Clock } from 'lucide-react';
-import CampaignSendButton from './CampaignSendButton';
+import { getCampaignQueueSummary } from '@/lib/campaign-queue/admin';
+import CampaignQueuePanel from './CampaignQueuePanel';
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -12,35 +13,38 @@ interface Props {
 export default async function CampaignDetailPage({ params }: Props) {
   const { id } = await params;
 
-  const campaign = await prisma.campaign.findUnique({
-    where: { id },
-    include: {
-      groups: { include: { group: { select: { id: true, name: true, color: true } } } },
-      logs: { orderBy: { sentAt: 'desc' }, take: 100 },
-    },
-  });
+  const [campaign, summary, byChannel] = await Promise.all([
+    prisma.campaign.findUnique({
+      where: { id },
+      include: {
+        groups: { include: { group: { select: { id: true, name: true, color: true } } } },
+        logs: { orderBy: { sentAt: 'desc' }, take: 100 },
+      },
+    }),
+    getCampaignQueueSummary(id),
+    prisma.campaignLog.groupBy({
+      by: ['channel', 'status'],
+      where: { campaignId: id },
+      _count: { _all: true },
+    }),
+  ]);
 
-  if (!campaign) notFound();
+  if (!campaign || !summary) notFound();
 
-  const sent = campaign.logs.filter((l) => l.status === 'SENT').length;
-  const failed = campaign.logs.filter((l) => l.status === 'FAILED').length;
-  const emailLogs = campaign.logs.filter((l) => l.channel === 'EMAIL');
-  const smsLogs = campaign.logs.filter((l) => l.channel === 'SMS');
+  // Every figure here comes from database counts; campaign.logs is only the
+  // latest 100 rows for the table below.
+  const countFor = (channel: string, status?: string) =>
+    byChannel
+      .filter((row) => row.channel === channel && (!status || row.status === status))
+      .reduce((sum, row) => sum + row._count._all, 0);
+  const emailTotal = countFor('EMAIL');
+  const smsTotal = countFor('SMS');
+  const { sent, failed, opened: opens, clicked: clicks } = summary;
+  const finished = sent + failed;
 
-  const opens = campaign.logs.filter((l) => l.openCount > 0).length;
-  const clicks = campaign.logs.filter((l) => l.clickCount > 0).length;
-
-  const successRate = campaign.logs.length > 0
-    ? Math.round((sent / campaign.logs.length) * 100)
-    : 0;
-
-  const openRate = sent > 0
-    ? Math.round((opens / sent) * 100)
-    : 0;
-
-  const clickRate = sent > 0
-    ? Math.round((clicks / sent) * 100)
-    : 0;
+  const successRate = finished > 0 ? Math.round((sent / finished) * 100) : 0;
+  const openRate = sent > 0 ? Math.round((opens / sent) * 100) : 0;
+  const clickRate = sent > 0 ? Math.round((clicks / sent) * 100) : 0;
 
   return (
     <div>
@@ -52,28 +56,23 @@ export default async function CampaignDetailPage({ params }: Props) {
         <div className="flex-1">
           <div className="flex items-center gap-3">
             <h1 className="font-serif text-3xl text-[#1a1a1a]">{campaign.name}</h1>
-            <span className={`text-xs px-2 py-1 rounded-full font-bold ${
-              campaign.status === 'DONE' ? 'bg-green-100 text-green-700' :
-              campaign.status === 'FAILED' ? 'bg-red-100 text-red-700' :
-              campaign.status === 'SENDING' ? 'bg-blue-100 text-blue-700' :
-              campaign.status === 'SCHEDULED' ? 'bg-yellow-100 text-yellow-700' :
-              'bg-[#1a1a1a]/5 text-[#1a1a1a]/60'
-            }`}>{campaign.status}</span>
             <span className="text-xs px-2 py-1 rounded font-bold bg-[#1a1a1a]/5 text-[#1a1a1a]/60">{campaign.type}</span>
           </div>
           {campaign.subject && (
             <p className="font-sans text-[#1a1a1a]/50 text-sm mt-1">Subject: {campaign.subject}</p>
           )}
         </div>
-        {(campaign.status === 'DRAFT' || campaign.status === 'SCHEDULED') && (
-          <CampaignSendButton campaignId={campaign.id} />
-        )}
       </div>
+
+      <CampaignQueuePanel
+        campaignId={campaign.id}
+        summary={{ ...summary, nextSendAt: summary.nextSendAt?.toISOString() ?? null }}
+      />
 
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-5 mb-8">
         {[
-          { label: 'Total Sent', value: sent, color: 'text-[#1a1a1a]', bg: 'bg-[#1a1a1a]/5' },
+          { label: 'Total Sent', value: sent.toLocaleString('en-CA'), color: 'text-[#1a1a1a]', bg: 'bg-[#1a1a1a]/5' },
           { label: 'Opened', value: `${opens} (${openRate}%)`, color: 'text-blue-600', bg: 'bg-blue-50' },
           { label: 'Clicked', value: `${clicks} (${clickRate}%)`, color: 'text-purple-600', bg: 'bg-purple-50' },
           { label: 'Delivery Success', value: `${successRate}%`, color: successRate > 80 ? 'text-green-600' : 'text-orange-500', bg: successRate > 80 ? 'bg-green-50' : 'bg-orange-50' },
@@ -88,47 +87,47 @@ export default async function CampaignDetailPage({ params }: Props) {
       <div className="grid grid-cols-3 gap-8">
         <div className="col-span-2 space-y-6">
           {/* SVG Bar Chart */}
-          {campaign.logs.length > 0 && (
+          {emailTotal + smsTotal > 0 && (
             <div className="bg-white rounded-2xl border border-[#1a1a1a]/5 shadow-sm p-6">
               <h3 className="font-serif text-xl mb-4">Delivery Summary</h3>
               <div className="flex items-end gap-4 h-32">
                 {/* Email bar */}
-                {emailLogs.length > 0 && (
+                {emailTotal > 0 && (
                   <div className="flex flex-col items-center gap-2 flex-1">
                     <div className="w-full flex flex-col gap-0.5 justify-end" style={{ height: '100px' }}>
                       <div
-                        style={{ height: `${(emailLogs.filter(l => l.status === 'SENT').length / Math.max(emailLogs.length, 1)) * 100}px` }}
+                        style={{ height: `${(countFor('EMAIL', 'SENT') / emailTotal) * 100}px` }}
                         className="w-full bg-green-400 rounded-t-lg"
                       />
                       <div
-                        style={{ height: `${(emailLogs.filter(l => l.status === 'FAILED').length / Math.max(emailLogs.length, 1)) * 100}px` }}
+                        style={{ height: `${(countFor('EMAIL', 'FAILED') / emailTotal) * 100}px` }}
                         className="w-full bg-red-400 rounded-b-lg"
                       />
                     </div>
                     <div className="text-center">
                       <Mail className="w-4 h-4 mx-auto text-[#1a1a1a]/40 mb-1" />
                       <p className="text-xs font-bold font-sans text-[#1a1a1a]/60">Email</p>
-                      <p className="text-xs text-[#1a1a1a]/40">{emailLogs.length} total</p>
+                      <p className="text-xs text-[#1a1a1a]/40">{emailTotal.toLocaleString('en-CA')} total</p>
                     </div>
                   </div>
                 )}
                 {/* SMS bar */}
-                {smsLogs.length > 0 && (
+                {smsTotal > 0 && (
                   <div className="flex flex-col items-center gap-2 flex-1">
                     <div className="w-full flex flex-col gap-0.5 justify-end" style={{ height: '100px' }}>
                       <div
-                        style={{ height: `${(smsLogs.filter(l => l.status === 'SENT').length / Math.max(smsLogs.length, 1)) * 100}px` }}
+                        style={{ height: `${(countFor('SMS', 'SENT') / smsTotal) * 100}px` }}
                         className="w-full bg-blue-400 rounded-t-lg"
                       />
                       <div
-                        style={{ height: `${(smsLogs.filter(l => l.status === 'FAILED').length / Math.max(smsLogs.length, 1)) * 100}px` }}
+                        style={{ height: `${(countFor('SMS', 'FAILED') / smsTotal) * 100}px` }}
                         className="w-full bg-red-400 rounded-b-lg"
                       />
                     </div>
                     <div className="text-center">
                       <MessageSquare className="w-4 h-4 mx-auto text-[#1a1a1a]/40 mb-1" />
                       <p className="text-xs font-bold font-sans text-[#1a1a1a]/60">SMS</p>
-                      <p className="text-xs text-[#1a1a1a]/40">{smsLogs.length} total</p>
+                      <p className="text-xs text-[#1a1a1a]/40">{smsTotal.toLocaleString('en-CA')} total</p>
                     </div>
                   </div>
                 )}
@@ -145,7 +144,8 @@ export default async function CampaignDetailPage({ params }: Props) {
           {/* Logs table */}
           <div className="bg-white rounded-2xl border border-[#1a1a1a]/5 shadow-sm overflow-hidden">
             <div className="p-6 border-b border-[#1a1a1a]/5">
-              <h3 className="font-serif text-xl">Send Logs</h3>
+              <h3 className="font-serif text-xl">Latest Send Logs</h3>
+              <p className="font-sans text-xs text-[#1a1a1a]/40 mt-1">The most recent 100 rows. The totals above cover the whole campaign.</p>
             </div>
             <table className="w-full text-sm font-sans">
               <thead className="bg-[#1a1a1a]/[0.02] border-b border-[#1a1a1a]/5">
@@ -176,9 +176,9 @@ export default async function CampaignDetailPage({ params }: Props) {
                       </span>
                     </td>
                     <td className="px-4 py-3">
-                      <span className={`flex items-center gap-1 text-xs font-bold w-fit px-2 py-0.5 rounded-full ${log.status === 'SENT' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-600'}`}>
-                        {log.status === 'SENT' ? <CheckCircle className="w-3 h-3" /> : <XCircle className="w-3 h-3" />}
-                        {log.status}
+                      <span className={`flex items-center gap-1 text-xs font-bold w-fit px-2 py-0.5 rounded-full ${log.status === 'SENT' ? 'bg-green-100 text-green-700' : log.status === 'CLAIMED' ? 'bg-orange-100 text-orange-700' : 'bg-red-100 text-red-600'}`}>
+                        {log.status === 'SENT' ? <CheckCircle className="w-3 h-3" /> : log.status === 'CLAIMED' ? <Clock className="w-3 h-3" /> : <XCircle className="w-3 h-3" />}
+                        {log.status === 'CLAIMED' ? 'UNCONFIRMED' : log.status}
                       </span>
                     </td>
                     <td className="px-4 py-3 text-center">

@@ -14,6 +14,7 @@ import { runPendingJobs } from '@/lib/knowledge/ingest';
 import { authorisedCron } from '@/lib/cron-auth';
 import { releaseScheduled } from '@/lib/agent-articles';
 import { releaseDueCaseStudies } from '@/lib/case-studies/workflow';
+import { runCampaignQueue } from '@/lib/campaign-queue/worker';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 300;
@@ -41,6 +42,13 @@ export async function GET(req: NextRequest) {
   } catch (e) {
     console.error('[sources] releaseDueCaseStudies', e);
   }
+  // Queued marketing campaigns too (lib/campaign-queue/worker.ts). Bounded to
+  // about 40 seconds, which fits beside the 200-second ingest budget.
+  const campaignQueue = await runCampaignQueue().catch((e) => {
+    console.error('[sources] runCampaignQueue', e);
+    return null;
+  });
+  if (campaignQueue?.campaigns) console.info('[sources] campaign queue', campaignQueue);
   const result = await runPendingJobs({ limit, sourceId, budgetMs: 200_000 });
-  return NextResponse.json({ ok: true, seconds: Math.round((Date.now() - started) / 1000), released, caseStudies, ...result });
+  return NextResponse.json({ ok: true, seconds: Math.round((Date.now() - started) / 1000), released, caseStudies, campaignQueue, ...result });
 }

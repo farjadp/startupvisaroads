@@ -76,20 +76,6 @@ export async function sendSms({
   return message;
 }
 
-// ─── Rate Limit Check ────────────────────────────────────────────────────────
-
-export async function getTodaySentCount(channel: 'EMAIL' | 'SMS') {
-  const startOfDay = new Date();
-  startOfDay.setHours(0, 0, 0, 0);
-  return prisma.campaignLog.count({
-    where: {
-      channel,
-      status: 'SENT',
-      sentAt: { gte: startOfDay },
-    },
-  });
-}
-
 // ─── Unsubscribe tag ─────────────────────────────────────────────────────────
 // A reversible "do not send" marker, used by the CASL grace path in
 // /api/unsubscribe (tokenless links from emails sent before signed tokens).

@@ -149,7 +149,7 @@ export async function POST(req: NextRequest) {
             update: {
               name: item.name,
               type: item.type,
-              status: item.status,
+              status: item.status === 'QUEUED' ? 'PAUSED' : item.status,
               subject: item.subject,
               body: item.body,
               smsBody: item.smsBody,
@@ -162,7 +162,7 @@ export async function POST(req: NextRequest) {
               id: item.id,
               name: item.name,
               type: item.type,
-              status: item.status,
+              status: item.status === 'QUEUED' ? 'PAUSED' : item.status,
               subject: item.subject,
               body: item.body,
               smsBody: item.smsBody,

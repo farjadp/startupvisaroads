@@ -119,16 +119,32 @@ model Campaign {
   id          String          @id @default(cuid())
   name        String
   type        String          @default("EMAIL") // EMAIL | SMS | BOTH
-  status      String          @default("DRAFT")  // DRAFT | SCHEDULED | SENDING | DONE | FAILED
+  status      String          @default("DRAFT")  // DRAFT | SCHEDULED | QUEUED | PAUSED | DONE | FAILED; SENDING = interrupted legacy send
   subject     String?
   body        String          @default("")       // HTML for email
   smsBody     String?                            // plain text for SMS
   scheduledAt DateTime?
   sentAt      DateTime?
+
+  // Drip queue. A campaign is only ever sent by the worker, and only while
+  // status = QUEUED, which nothing but an admin action sets. All times and
+  // days are read in America/Toronto. See lib/campaign-queue/.
+  dailyLimit      Int?
+  sendStartAt     DateTime?
+  sendDays        String?   // ISO weekdays, "1,2,3,4" = Mon-Thu
+  sendWindowStart Int?      // minutes after local midnight
+  sendWindowEnd   Int?
+  queuedAt        DateTime? // last time an admin queued or resumed it
+  pausedReason    String?
+  leaseId         String?   // the worker tick that holds this campaign
+  leaseUntil      DateTime?
+
   groups      CampaignGroup[]
   logs        CampaignLog[]
   createdAt   DateTime        @default(now())
   updatedAt   DateTime        @updatedAt
+
+  @@index([status])
 }
 
 model CampaignGroup {
@@ -145,7 +161,7 @@ model CampaignLog {
   campaign    Campaign  @relation(fields: [campaignId], references: [id], onDelete: Cascade)
   contactId   String
   channel     String    // EMAIL | SMS
-  status      String    // SENT | FAILED | BOUNCED
+  status      String    // CLAIMED | SENT | FAILED | BOUNCED
   error       String?
   sentAt      DateTime  @default(now())
 
@@ -156,8 +172,15 @@ model CampaignLog {
   clickedAt   DateTime?
   clickedUrls String    @default("[]") // JSON list of urls
 
+  // The "never twice" guards. campaignId:channel:contactId and
+  // campaignId:channel:normalised-address. Nullable so that duplicate rows
+  // from before the queue can stay; only the first of each set holds the key.
+  sendKey     String?   @unique
+  addressKey  String?   @unique
+
   @@index([campaignId])
   @@index([campaignId, status])
+  @@index([channel, sentAt])
 }
 
 /// One attempt to publish one article to one social destination.
