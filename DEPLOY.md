@@ -262,10 +262,18 @@ MIGRATE_ATTEMPTS=5  tries before giving up (5s, 10s, 15s, 20s backoff)
 
 That is a guard, not a cure. Two things still want doing:
 
-**Bound the Prisma pool.** Each instance opens its own pool, so a handful of
-instances exhausts f1-micro on their own. `DATABASE_URL` is a Secret Manager
-secret; add `?connection_limit=3&pool_timeout=20` to it and deploy a new
-version, or move the instance to `db-g1-small` (~50 slots).
+**Keep the connection budget.** `db-f1-micro` allows 25 connections and reserves
+3 for superusers, which leaves 22 for the app. `lib/prisma.ts` keeps one Prisma
+client per server process and limits it to 2 connections with a 20-second queue
+(`DB_CONNECTION_LIMIT`, `DB_POOL_TIMEOUT_SECONDS`; a limit written into
+`DATABASE_URL` wins). Keep this true:
+
+```
+maxScale x DB_CONNECTION_LIMIT + connections for the deploy overlap and migrate <= 22
+```
+
+With a limit of 2, `maxScale=8` uses 16 and leaves 6. Do not raise either number
+without moving the instance to a larger tier first.
 
 **Run migrations as their own step.** Once they run before the deploy rather
 than during it, set `RUN_MIGRATIONS=0` on the service and boot stops touching
