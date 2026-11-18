@@ -24,8 +24,10 @@ import {
   parseGa4Report,
   rankGa4,
   rankRows,
+  searchOpportunities,
   splitDailyRows,
   type DailyPoint,
+  type Opportunities,
   type Ga4RankedRow,
   type Ga4Report,
   type GscRow,
@@ -48,6 +50,8 @@ export interface SearchConsoleData {
   split: Record<'en' | 'fa', { current: GscTotals; previous: GscTotals }>;
   pages: RankedRow[];
   queries: RankedRow[];
+  /** Always whole-site, so the suggestions do not change with the en/fa switch. */
+  opportunities: Opportunities;
 }
 
 export interface Ga4Data {
@@ -159,6 +163,7 @@ export function shapeSearchConsole(raw: GscRaw, windows: Windows, site: SiteFilt
       site === 'all'
         ? rankRows(raw.queriesCurrent, raw.queriesPrevious)
         : rankRows(raw.queryPageCurrent, raw.queryPagePrevious, { keyIndex: 0, pageIndex: 1, site }),
+    opportunities: searchOpportunities(raw.pagesCurrent, raw.pagesPrevious, raw.queriesCurrent),
   };
 }
 
