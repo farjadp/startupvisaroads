@@ -1,0 +1,139 @@
+{
+  "_about": "Store screenshots for the v4 app (17 countries, Today tab). Captions set over the screenshots; Persian on Google Play only; fr/zh/ar need native review. Render: python3 store/src/render.py <raw> <out> store/screenshots-v3.json Kickers are the app's own screen names (messages/<locale>.ts). Slot 04 figures come from assess.introBody ({routes} routes in {countries} countries). Layout: option B (chosen by Farjad 17 Nov 2026), paper/ink alternating.",
+  "screens": [
+    "01-today",
+    "02-results",
+    "03-route",
+    "04-countries",
+    "05-express",
+    "06-assess",
+    "07-funds",
+    "08-news"
+  ],
+  "featureGraphic": {
+    "h1": "Which road",
+    "h1em": "is yours?",
+    "tagline": "Immigration routes · official sources"
+  },
+  "locales": {
+    "en": {
+      "playLocale": "en-US",
+      "appStoreLocale": "en-US",
+      "captions": [
+        "Your next step, today",
+        "Match with criteria, not odds",
+        "Do, Rules, Money, After",
+        "68 routes in 17 countries",
+        "Your Express Entry score, live",
+        "Ten questions. Skip any.",
+        "Funds to show, in your currency",
+        "News on your roads"
+      ],
+      "kickers": [
+        "Today",
+        "Your last result",
+        "Rules",
+        "Countries",
+        "Express Entry",
+        "Get assessed",
+        "Funds to show",
+        "News"
+      ]
+    },
+    "fa": {
+      "playLocale": "fa",
+      "captions": [
+        "گام بعدی شما، امروز",
+        "تطابق با شرایط، نه شانس",
+        "کارها، قوانین، پول، پس از ورود",
+        "۶۸ مسیر در ۱۷ کشور",
+        "امتیاز اکسپرس اینتری، لحظه‌ای",
+        "ده سؤال. بدون ثبت‌نام.",
+        "تمکن مالی، به ارز خودتان",
+        "اخبار مسیرهای شما"
+      ],
+      "kickers": [
+        "امروز",
+        "آخرین نتیجه‌ی شما",
+        "قوانین",
+        "کشورها",
+        "اکسپرس اینتری",
+        "ارزیابی شوید",
+        "تمکن مالی",
+        "اخبار"
+      ]
+    },
+    "fr": {
+      "playLocale": "fr-FR",
+      "appStoreLocale": "fr-FR",
+      "captions": [
+        "Votre prochaine étape, aujourd’hui",
+        "Correspondance aux critères publiés",
+        "Faire, Règles, Argent, Après",
+        "68 parcours dans 17 pays",
+        "Votre score Entrée express",
+        "Dix questions, sans inscription",
+        "Fonds à prouver, dans votre devise",
+        "Actualités de vos parcours"
+      ],
+      "kickers": [
+        "Aujourd’hui",
+        "Votre dernier résultat",
+        "Règles",
+        "Pays",
+        "Entrée express",
+        "Faire l’évaluation",
+        "Fonds à prouver",
+        "Actualités"
+      ]
+    },
+    "zh": {
+      "playLocale": "zh-CN",
+      "appStoreLocale": "zh-Hans",
+      "captions": [
+        "今天的下一步",
+        "与公布条件的匹配度",
+        "要做、规则、资金、之后",
+        "17 个国家，68 条路径",
+        "实时快速通道分数",
+        "10 个问题，每题可跳过",
+        "资金证明，按你的币种",
+        "关注路径的资讯"
+      ],
+      "kickers": [
+        "今天",
+        "你最近的结果",
+        "规则",
+        "国家",
+        "快速通道",
+        "开始评估",
+        "资金证明",
+        "资讯"
+      ]
+    },
+    "ar": {
+      "playLocale": "ar",
+      "appStoreLocale": "ar-SA",
+      "captions": [
+        "خطوتك التالية، اليوم",
+        "تطابق مع الشروط المنشورة",
+        "المهام، القواعد، المال، بعد الوصول",
+        "68 مسارًا في 17 دولة",
+        "نقاط الدخول السريع لديك",
+        "10 أسئلة، دون تسجيل",
+        "الأموال المطلوب إثباتها، بعملتك",
+        "أخبار مساراتك"
+      ],
+      "kickers": [
+        "اليوم",
+        "نتيجتك الأخيرة",
+        "القواعد",
+        "الدول",
+        "الدخول السريع",
+        "قيّم نفسك",
+        "الأموال المطلوب إثباتها",
+        "الأخبار"
+      ]
+    }
+  }
+}

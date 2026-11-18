@@ -3,10 +3,11 @@
 <head>
 <meta charset="utf-8">
 <!-- Google Play feature graphic, 1024x500. Rendered by store/src/render.py with
-     ?logo=<abs path>&shot=<abs path>. Brand: ink canvas, acid rule, the official
+     ?logo=<abs path>&shot=<abs path>[&h1=&h1em=&tag=]. Brand: ink canvas, acid rule, the official
      logo in white, a real app screenshot. No illustration. -->
 <style>
 @font-face { font-family: 'DMSerif'; src: url('fonts/DMSerifDisplay_400Regular.ttf'); }
+@font-face { font-family: 'DMSerif'; font-style: italic; src: url('fonts/DMSerifDisplay_400Regular_Italic.ttf'); }
 @font-face { font-family: 'Grotesk'; src: url('fonts/SpaceGrotesk_700Bold.ttf'); font-weight: 700; }
 html, body { margin: 0; width: 1024px; height: 500px; overflow: hidden; background: #1A1A1A; color: #F2F0E9; }
 .wrap { position: relative; width: 1024px; height: 500px; }
@@ -24,9 +25,9 @@ p { font-family: 'Grotesk', sans-serif; font-weight: 700; font-size: 17px; lette
 <div class="wrap">
   <div class="left">
     <img class="logo" id="logo" alt="">
-    <h1>Which road<br><em>is yours?</em></h1>
+    <h1><span id="h1">Which road</span><br><em id="h1em">is yours?</em></h1>
     <div class="rule"></div>
-    <p>Startup visa routes · official sources</p>
+    <p id="tag">Immigration routes · official sources</p>
   </div>
   <div class="phone"><img id="shot" alt=""></div>
 </div>
@@ -34,6 +35,7 @@ p { font-family: 'Grotesk', sans-serif; font-weight: 700; font-size: 17px; lette
 const q = new URLSearchParams(location.search);
 document.getElementById('logo').src = 'file://' + q.get('logo');
 document.getElementById('shot').src = 'file://' + q.get('shot');
+for (const id of ['h1', 'h1em', 'tag']) if (q.get(id)) document.getElementById(id).textContent = q.get(id);
 </script>
 </body>
 </html>
