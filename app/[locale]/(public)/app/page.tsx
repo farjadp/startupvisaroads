@@ -21,7 +21,7 @@ const PATH = '/app';
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
   // Safari's own install banner, on this page only: the visitor came for the
-  // app, and the site's phone prompt (components/AppPrompt) never runs here.
+  // app, and the phone card lives in blog articles only.
   return { ...metaFor(PATH, locale), itunes: { appId: APP_STORE_ID } };
 }
 
