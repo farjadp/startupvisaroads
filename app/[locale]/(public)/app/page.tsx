@@ -1,10 +1,10 @@
 // ============================================================================
 // Page: /app — introduces the VisaRoads mobile app (en + fa).
 // Counts come from lib/routes-v2 and the funds figure from lib/funds.ts, so
-// the page says what the app says. No store links until the listings exist.
+// the page says what the app says. Store links come from lib/app-links.ts.
 // ============================================================================
 import type { Metadata } from 'next';
-import { APP_STORE_LINKS } from '@/lib/app-links';
+import { APP_STORE_ID, APP_STORE_LINKS } from '@/lib/app-links';
 import { setRequestLocale } from 'next-intl/server';
 import { metaFor, pageCopy } from '@/lib/pageMeta';
 import { SITE_URL, schemaLanguage } from '@/lib/seo';
@@ -20,7 +20,9 @@ const PATH = '/app';
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
-  return metaFor(PATH, locale);
+  // Safari's own install banner, on this page only: the visitor came for the
+  // app, and the site's phone prompt (components/AppPrompt) never runs here.
+  return { ...metaFor(PATH, locale), itunes: { appId: APP_STORE_ID } };
 }
 
 function facts(locale: string): ShowcaseFacts {
@@ -49,6 +51,7 @@ export default async function AppPage({ params }: Props) {
   setRequestLocale(locale);
   const copy = pageCopy(PATH, locale);
   const url = `${SITE_URL}/${locale}${PATH}`;
+  const listings = [APP_STORE_LINKS.appStore, APP_STORE_LINKS.googlePlay].filter((l): l is string => Boolean(l));
 
   return (
     <>
@@ -64,9 +67,9 @@ export default async function AppPage({ params }: Props) {
           // Only the platforms with a live listing (lib/app-links.ts).
           operatingSystem: APP_STORE_LINKS.appStore ? 'iOS, Android' : 'Android',
           applicationCategory: 'ReferenceApplication',
-          installUrl: APP_STORE_LINKS.googlePlay ?? undefined,
-          downloadUrl: APP_STORE_LINKS.googlePlay ?? undefined,
-          sameAs: [APP_STORE_LINKS.googlePlay, APP_STORE_LINKS.appStore].filter(Boolean),
+          installUrl: listings,
+          downloadUrl: listings,
+          sameAs: listings,
           offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
           publisher: { '@type': 'Organization', name: 'Ashavid Inc.' },
         }}

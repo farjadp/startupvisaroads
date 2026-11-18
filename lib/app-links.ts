@@ -4,6 +4,10 @@
 export const APP_STORE_LINKS: { googlePlay: string | null; appStore: string | null } = {
   // Live since Nov 2026 (Farjad, 2 Nov 2026).
   googlePlay: 'https://play.google.com/store/apps/details?id=com.ashavid.visaroads',
-  // Not on the App Store yet (iTunes lookup for the bundle id returned 0 results on 2 Nov 2026).
-  appStore: null,
+  // Live since 17 Nov 2026. No storefront in the path, so Apple opens the
+  // visitor's own country instead of the US store.
+  appStore: 'https://apps.apple.com/app/visaroads-immigration-routes/id6823019451',
 };
+
+/** The numeric App Store id, for Apple's Smart App Banner on /app. */
+export const APP_STORE_ID = '6823019451';
