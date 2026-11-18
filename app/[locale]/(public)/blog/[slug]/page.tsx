@@ -25,9 +25,14 @@ import {
   ArrowRight
 } from 'lucide-react';
 import { ScrollProgressBar, ShareButtons } from '@/components/blog/BlogClientHelper';
+import ArticleAppCard from '@/components/blog/ArticleAppCard';
+import { appCardCopy } from '@/content/app-card';
+import { ROUTES_V2 } from '@/lib/routes-v2';
 import { faDate, isoDate } from '@/lib/fa/format';
 import { faCategoryLabel } from '@/lib/fa/categories';
 import { NOT_WITHDRAWN } from '@/lib/legacy-redirects';
+
+const ARTICLE_BODY_ID = 'article-body';
 
 // Incrementally regenerate article pages (ISR) — fast, cacheable, SEO-friendly.
 export const revalidate = 3600;
@@ -406,8 +411,17 @@ export default async function BlogPostPage({ params }: { params: Promise<{ local
 
       {/* Render HTML content safely */}
       <article
+        id={ARTICLE_BODY_ID}
         className={`prose prose-lg md:prose-xl ${T.body} prose-headings:font-bold prose-a:text-[#1a1a1a] prose-a:underline max-w-none text-[#1a1a1a]/80`}
         dangerouslySetInnerHTML={{ __html: safeContent }}
+      />
+
+      {/* Phones only, added after load below the reader's position; absent from the server HTML. */}
+      <ArticleAppCard
+        key={article.slug}
+        articleId={ARTICLE_BODY_ID}
+        locale={articleLocale}
+        copy={appCardCopy(articleLocale, ROUTES_V2.length, new Set(ROUTES_V2.map((r) => r.country)).size)}
       />
 
       {/* Structured FAQ (autopilot articles) */}

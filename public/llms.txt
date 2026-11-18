@@ -40,7 +40,8 @@ Several immigration programs have changed or closed. Always verify current statu
 - https://visaroads.com/fa/usa/assessment — US readiness assessment (Persian)
 - https://visaroads.com/en/faq — FAQ on entrepreneur immigration routes (Canada, Europe, Atlantic PNP, EB-2 NIW)
 - https://visaroads.com/en/app — The VisaRoads mobile app: match against published criteria for 68 routes in 17 countries, official source on every figure
-- https://play.google.com/store/apps/details?id=com.ashavid.visaroads — VisaRoads on Google Play (Android). Not on the App Store yet.
+- https://play.google.com/store/apps/details?id=com.ashavid.visaroads — VisaRoads on Google Play (Android)
+- https://apps.apple.com/app/visaroads-immigration-routes/id6823019451 — VisaRoads on the App Store (iPhone)
 - https://visaroads.com/fa/faq — Persian FAQ on entrepreneur immigration routes
 
 ## Route guides

@@ -8,7 +8,7 @@
 // drift. The funds figure on the phone comes from lib/funds.ts (official
 // source, dated). Store links come from lib/app-links.ts: a live listing is
 // linked ("Get it on"), one that is not live yet says "coming soon".
-// Android is on Google Play since Nov 2026; iOS is not on the App Store yet.
+// Both stores are live: Google Play since 2 Nov 2026, the App Store since 17 Nov 2026.
 // ============================================================================
 
 export type AppLocale = 'en' | 'fa';
@@ -148,7 +148,7 @@ const en: AppPageCopy = {
     points: ['No account', 'No ads', 'No tracking', 'Delete in one tap'],
   },
   who: 'VisaRoads is a product of Ashavid Inc., based in Ontario, Canada. We are not immigration lawyers or licensed immigration consultants.',
-  final: { title: 'Start on the road that fits.', body: 'Download the app on Google Play. The iPhone version is on its way to the App Store; until then, a mentor can walk you through your routes.' },
+  final: { title: 'Start on the road that fits.', body: 'Download the app from the App Store or Google Play. If you would rather talk it through, a mentor can walk you through your routes.' },
   screens: {
     exampleTag: 'Example',
     start: { hello: 'Where to?', choose: 'Choose a road', chooseSub: '15 countries', assess: 'Get assessed', assessSub: '10 questions · 3 min' },
@@ -264,7 +264,7 @@ const fa: AppPageCopy = {
     points: ['بدون حساب کاربری', 'بدون تبلیغ', 'بدون ردیابی', 'پاک‌کردن با یک لمس'],
   },
   who: 'VisaRoads محصولی از آشاوید است، مستقر در انتاریوی کانادا. ما وکیل مهاجرت یا مشاور رسمی مهاجرت نیستیم.',
-  final: { title: 'از مسیری شروع کنید که به شما می‌خورد.', body: 'نسخه‌ی اندروید را از گوگل پلی دانلود کنید. نسخه‌ی آیفون در راه اپ استور است؛ تا آن موقع، ارزیابی رایگان سایت یا یک منتور همراه‌تان است.' },
+  final: { title: 'از مسیری شروع کنید که به شما می‌خورد.', body: 'اپ را از اپ استور یا گوگل پلی دانلود کنید. اگر ترجیح می‌دهید با کسی حرف بزنید، یک منتور مسیرها را با شما مرور می‌کند.' },
   screens: {
     exampleTag: 'نمونه',
     start: { hello: 'کجا می‌روید؟', choose: 'انتخاب مسیر', chooseSub: '۱۵ کشور', assess: 'ارزیابی', assessSub: '۱۰ سؤال · ۳ دقیقه' },

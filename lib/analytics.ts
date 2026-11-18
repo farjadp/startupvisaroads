@@ -34,3 +34,14 @@ export function trackLead(form: LeadForm, locale: string, eventId?: string): voi
     window.oaiq('measure', 'lead_created', { type: 'customer_action' }, { event_id: eventId });
   }
 }
+
+export type AppPromptEvent = 'app_prompt_shown' | 'app_prompt_click' | 'app_prompt_dismiss';
+
+/** The phone "get the app" card in articles (components/blog/ArticleAppCard.tsx). */
+export function trackAppPrompt(
+  event: AppPromptEvent,
+  params: { platform: 'ios' | 'android'; locale: string; browser: 'in_app' | 'standard' },
+): void {
+  if (typeof window === 'undefined' || typeof window.gtag !== 'function') return;
+  window.gtag('event', event, { ...params, placement: 'article' });
+}

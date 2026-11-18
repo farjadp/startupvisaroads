@@ -10,6 +10,7 @@ import { CONTACT } from '@/content/fa/home';
 import { MAIN_CONTACT } from '@/content/contact';
 import { Link } from '@/navigation';
 import { APP_STORE_LINKS } from '@/lib/app-links';
+import AppleMark from '@/components/AppleMark';
 import { 
   ArrowUpRight, 
   Linkedin, 
@@ -135,22 +136,39 @@ export default async function Footer() {
                  ))}
               </div>
 
-              {/* The app on Google Play (lib/app-links.ts); the App Store badge joins it when that listing is live. */}
-              {APP_STORE_LINKS.googlePlay ? (
-                 <a
-                    href={APP_STORE_LINKS.googlePlay}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={isRtl ? 'دانلود اپ VisaRoads از گوگل پلی' : 'Get the VisaRoads app on Google Play'}
-                    className="mt-6 inline-flex items-center gap-3 rounded-2xl border border-[#F2F0E9]/20 px-5 py-3 hover:bg-[#CCFF00] hover:text-black hover:border-[#CCFF00] transition-all duration-300"
-                 >
-                    <Play size={18} className="fill-current" aria-hidden />
-                    <span className="flex flex-col leading-tight font-sans">
-                       <span className="text-[10px] opacity-60">{isRtl ? 'دانلود از' : 'Get it on'}</span>
-                       <span className="text-sm font-bold">{isRtl ? 'گوگل پلی' : 'Google Play'}</span>
-                    </span>
-                 </a>
-              ) : null}
+              {/* The app in both stores (lib/app-links.ts). */}
+              <div className="mt-6 flex flex-wrap gap-3">
+                 {APP_STORE_LINKS.appStore ? (
+                    <a
+                       href={APP_STORE_LINKS.appStore}
+                       target="_blank"
+                       rel="noopener noreferrer"
+                       aria-label={isRtl ? 'دانلود اپ VisaRoads از اپ استور' : 'Get the VisaRoads app on the App Store'}
+                       className="inline-flex items-center gap-3 rounded-2xl border border-[#F2F0E9]/20 px-5 py-3 hover:bg-[#CCFF00] hover:text-black hover:border-[#CCFF00] transition-all duration-300"
+                    >
+                       <AppleMark className="h-[18px] w-[18px]" />
+                       <span className="flex flex-col leading-tight font-sans">
+                          <span className="text-[10px] opacity-60">{isRtl ? 'دانلود از' : 'Get it on'}</span>
+                          <span className="text-sm font-bold">{isRtl ? 'اپ استور' : 'App Store'}</span>
+                       </span>
+                    </a>
+                 ) : null}
+                 {APP_STORE_LINKS.googlePlay ? (
+                    <a
+                       href={APP_STORE_LINKS.googlePlay}
+                       target="_blank"
+                       rel="noopener noreferrer"
+                       aria-label={isRtl ? 'دانلود اپ VisaRoads از گوگل پلی' : 'Get the VisaRoads app on Google Play'}
+                       className="inline-flex items-center gap-3 rounded-2xl border border-[#F2F0E9]/20 px-5 py-3 hover:bg-[#CCFF00] hover:text-black hover:border-[#CCFF00] transition-all duration-300"
+                    >
+                       <Play size={18} className="fill-current" aria-hidden />
+                       <span className="flex flex-col leading-tight font-sans">
+                          <span className="text-[10px] opacity-60">{isRtl ? 'دانلود از' : 'Get it on'}</span>
+                          <span className="text-sm font-bold">{isRtl ? 'گوگل پلی' : 'Google Play'}</span>
+                       </span>
+                    </a>
+                 ) : null}
+              </div>
            </div>
 
            {/* Navigation Grid */}

@@ -31,6 +31,10 @@ ENV NEXT_PUBLIC_GA_ID=$NEXT_PUBLIC_GA_ID
 # OpenAI Ads pixel id (public; also read server-side by the Conversions API).
 ARG NEXT_PUBLIC_OPENAI_PIXEL_ID=CNvC3s4VfqPbmcicTxeQ9q
 ENV NEXT_PUBLIC_OPENAI_PIXEL_ID=$NEXT_PUBLIC_OPENAI_PIXEL_ID
+
+# Optional: attributes App Store installs from the article app card.
+ARG NEXT_PUBLIC_APP_STORE_PROVIDER_TOKEN=
+ENV NEXT_PUBLIC_APP_STORE_PROVIDER_TOKEN=$NEXT_PUBLIC_APP_STORE_PROVIDER_TOKEN
 # Build with a placeholder DATABASE_URL so Next.js doesn't fail at build time
 ENV DATABASE_URL="postgresql://placeholder:placeholder@localhost/placeholder"
 RUN npm run build
