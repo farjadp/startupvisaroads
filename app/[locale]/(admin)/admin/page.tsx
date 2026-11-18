@@ -1,7 +1,20 @@
 import React from 'react';
-import prisma from '@/lib/prisma';
+import { redirect } from 'next/navigation';
+import { requireAdmin } from '@/lib/admin-guard';
+import { loadDashboard } from '@/lib/admin-dashboard/load';
+import { buildSuggestions } from '@/lib/admin-dashboard/suggestions';
 import { getGa4, getSearchConsole } from '@/lib/site-analytics';
+import { serviceAccountEmail } from '@/lib/site-analytics/google-auth';
 import type { RankedRow, Ga4RankedRow, SiteFilter } from '@/lib/site-analytics/shape';
+import NextActions from '@/components/admin/dashboard/NextActions';
+import {
+  ContentSection,
+  EmailSection,
+  GoogleSetup,
+  NotMeasured,
+  SystemsSection,
+  TrafficSection,
+} from '@/components/admin/dashboard/Sections';
 import {
   DailyChart,
   Delta,
@@ -27,36 +40,41 @@ function ChangeCell({ current, previous }: { current: number; previous: number |
 }
 
 export default async function AdminDashboard({
+  params,
   searchParams,
 }: {
+  params: Promise<{ locale: string }>;
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
+  const { locale } = await params;
+  // Middleware already guards this path; the page checks again before reading any business data.
+  try {
+    await requireAdmin();
+  } catch {
+    redirect(`/${locale}/admin/login`);
+  }
+
   const site = parseSite((await searchParams).site);
+  const adminBase = `/${locale}/admin`;
+  const [gsc, ga4, data] = await Promise.all([getSearchConsole(site), getGa4(site), loadDashboard()]);
+  const { content, traffic, email, systems } = data;
+  const needsSearch = gsc.state === 'not_configured';
+  const needsGa4 = ga4.state === 'not_configured';
+  const serviceAccount = needsSearch || needsGa4 ? await serviceAccountEmail() : null;
 
-  // The site's own page-view log (Prisma) stays as a fallback for when Google is not connected.
-  let totalViews = 0;
-  let topPages: Array<{ path: string; _count: { path: number } }> = [];
-  let dataWarning: string | null = null;
-
-  const [gsc, ga4] = await Promise.all([
-    getSearchConsole(site),
-    getGa4(site),
-    (async () => {
-      try {
-        totalViews = await prisma.pageView.count();
-        const groupedPages = await prisma.pageView.groupBy({
-          by: ['path'],
-          _count: { path: true },
-          orderBy: { _count: { path: 'desc' } },
-          take: 10,
-        });
-        topPages = groupedPages as Array<{ path: string; _count: { path: number } }>;
-      } catch (error) {
-        console.error('Admin dashboard analytics query failed:', error);
-        dataWarning = 'The internal page-view log is temporarily unavailable. Authentication and admin navigation still work.';
-      }
-    })(),
-  ]);
+  const suggestions = buildSuggestions({
+    now: new Date(),
+    adminBase,
+    searchConsole: gsc.state,
+    ga4: ga4.state,
+    opportunities: gsc.state === 'ok' ? gsc.data.opportunities : null,
+    ga4Sessions: ga4.state === 'ok' ? ga4.data.sessions.current : null,
+    ga4Leads: ga4.state === 'ok' ? ga4.data.leads.current : null,
+    content: content.state === 'ok' ? content.data : null,
+    traffic: traffic.state === 'ok' ? traffic.data : null,
+    email: email.state === 'ok' ? email.data : null,
+    systems: systems.state === 'ok' ? systems.data : null,
+  });
 
   const windows = gsc.state === 'ok' ? gsc.data.windows : ga4.state === 'ok' ? ga4.data.windows : null;
   const prevLabel = 'prior 28 days';
@@ -64,115 +82,83 @@ export default async function AdminDashboard({
 
   return (
     <div>
-      <div className="mb-8 flex flex-wrap gap-4 justify-between items-end">
-        <div>
-          <h1 className="font-serif text-4xl mb-2 text-[#1a1a1a]">Dashboard Overview</h1>
-          <p className="font-sans text-[#1a1a1a]/60">
-            Search and traffic for {siteLabel}
-            {windows ? `, ${windowLabel(windows.current)} against ${windowLabel(windows.previous)}.` : '.'}
-            {' '}Search Console runs 2–3 days behind, so both windows end 3 days ago.
-          </p>
-        </div>
-        <SiteSwitch site={site} />
+      <div className="mb-8">
+        <h1 className="mb-2 font-serif text-4xl text-[#1a1a1a]">Dashboard</h1>
+        <p className="font-sans text-[#1a1a1a]/60">What needs you now, then the numbers behind it. Database figures refresh every 10 minutes.</p>
       </div>
 
-      {/* Headline numbers */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6 mb-6">
+      <div className="mb-6 grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-4">
         {gsc.state === 'ok' ? (
-          <>
-            <KpiTile label="Clicks" source="Search" value={fmtInt(gsc.data.totals.current.clicks)} current={gsc.data.totals.current.clicks} previous={gsc.data.totals.previous.clicks} previousLabel={prevLabel} />
-            <KpiTile label="Impressions" source="Search" value={fmtInt(gsc.data.totals.current.impressions)} current={gsc.data.totals.current.impressions} previous={gsc.data.totals.previous.impressions} previousLabel={prevLabel} />
-          </>
+          <KpiTile label="Search clicks" source="Google" value={fmtInt(gsc.data.totals.current.clicks)} current={gsc.data.totals.current.clicks} previous={gsc.data.totals.previous.clicks} previousLabel={prevLabel} />
         ) : (
-          <>
-            <EmptyTile label="Clicks" source="Search" />
-            <EmptyTile label="Impressions" source="Search" />
-          </>
+          <EmptyTile label="Search clicks" source="Not connected" />
         )}
-        {ga4.state === 'ok' ? (
-          <>
-            <KpiTile label="Users" source="GA4" value={fmtInt(ga4.data.users.current)} current={ga4.data.users.current} previous={ga4.data.users.previous} previousLabel={prevLabel} />
-            <KpiTile label="Sessions" source="GA4" value={fmtInt(ga4.data.sessions.current)} current={ga4.data.sessions.current} previous={ga4.data.sessions.previous} previousLabel={prevLabel} />
-          </>
+        {content.state === 'ok' ? (
+          <KpiTile label="Published, 28 days" source="Database" value={fmtInt(content.data.published.current)} current={content.data.published.current} previous={content.data.published.previous} previousLabel={prevLabel} />
         ) : (
-          <>
-            <EmptyTile label="Users" source="GA4" />
-            <EmptyTile label="Sessions" source="GA4" />
-          </>
+          <EmptyTile label="Published, 28 days" source="Unavailable" />
+        )}
+        {email.state === 'ok' ? (
+          <KpiTile label="Emails sent, 28 days" source="Database" value={fmtInt(email.data.sent28.current)} current={email.data.sent28.current} previous={email.data.sent28.previous} previousLabel={prevLabel} />
+        ) : (
+          <EmptyTile label="Emails sent, 28 days" source="Unavailable" />
+        )}
+        {systems.state === 'ok' ? (
+          <KpiTile label="Autopilot runs with errors" source="7 days" value={`${fmtInt(systems.data.autopilot.runsWithErrors.current)} of ${fmtInt(systems.data.autopilot.runs.current)}`} current={systems.data.autopilot.runsWithErrors.current} previous={systems.data.autopilot.runsWithErrors.previous} previousLabel="prior 7 days" lowerIsBetter />
+        ) : (
+          <EmptyTile label="Autopilot runs with errors" source="Unavailable" />
         )}
       </div>
 
-      {/* Secondary numbers */}
-      <div className="bg-white rounded-2xl border border-[#1a1a1a]/5 shadow-sm mb-8 grid grid-cols-2 lg:grid-cols-4 divide-x divide-[#1a1a1a]/5">
-        {[
-          gsc.state === 'ok' && {
-            label: 'CTR',
-            value: fmtPct(gsc.data.totals.current.ctr),
-            delta: <Delta current={gsc.data.totals.current.ctr} previous={gsc.data.totals.previous.ctr} />,
-          },
-          gsc.state === 'ok' && {
-            label: 'Avg position',
-            value: fmtPos(gsc.data.totals.current.position),
-            delta: <Delta current={gsc.data.totals.current.position} previous={gsc.data.totals.previous.position} lowerIsBetter />,
-          },
-          ga4.state === 'ok' && {
-            label: 'Leads (form submits)',
-            value: fmtInt(ga4.data.leads.current),
-            delta: <Delta current={ga4.data.leads.current} previous={ga4.data.leads.previous} />,
-          },
-          ga4.state === 'ok' && {
-            label: 'From AI assistants',
-            value: `${fmtInt(ga4.data.aiAssistants.current)} sessions`,
-            delta: <Delta current={ga4.data.aiAssistants.current} previous={ga4.data.aiAssistants.previous} />,
-            hint: ga4.data.aiAssistants.sources.map((s) => `${s.key} ${s.value}`).join(', ') || 'ChatGPT, Perplexity, Gemini, Copilot, Claude…',
-          },
-        ].map((m, i) =>
-          m ? (
-            <div key={m.label} className="px-6 py-4">
-              <p className="font-sans text-[#1a1a1a]/50 text-[10px] font-bold uppercase tracking-widest mb-1">{m.label}</p>
-              <p className="font-serif text-2xl text-[#1a1a1a]">{m.value}</p>
-              <p className="font-sans text-xs text-[#1a1a1a]/50 flex flex-wrap items-center gap-2">
-                {m.delta}
-                {'hint' in m && m.hint && <span className="truncate" title={m.hint}>{m.hint}</span>}
-              </p>
-            </div>
-          ) : (
-            <div key={i} className="px-6 py-4">
-              <p className="font-sans text-[#1a1a1a]/40 text-[10px] font-bold uppercase tracking-widest mb-1">
-                {['CTR', 'Avg position', 'Leads (form submits)', 'From AI assistants'][i]}
-              </p>
-              <p className="font-serif text-2xl text-[#1a1a1a]/25">–</p>
-            </div>
-          ),
-        )}
-      </div>
+      <NextActions items={suggestions.items} hidden={suggestions.hidden} />
 
-      {/* Search Console */}
-      <section className="mb-10" aria-labelledby="gsc-heading">
-        <div className="flex flex-wrap justify-between items-baseline gap-2 mb-4">
-          <h2 id="gsc-heading" className="font-serif text-3xl text-[#1a1a1a]">Google Search</h2>
-          {gsc.state === 'ok' && <UpdatedAt iso={gsc.fetchedAt} />}
+      <section id="search" aria-labelledby="gsc-heading" className="mb-10 scroll-mt-6">
+        <div className="mb-4 flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <h2 id="gsc-heading" className="font-serif text-3xl text-[#1a1a1a]">Google Search</h2>
+            <p className="mt-1 font-sans text-xs text-[#1a1a1a]/55">
+              Search Console and GA4 for {siteLabel}
+              {windows ? `, ${windowLabel(windows.current)} against ${windowLabel(windows.previous)}.` : '.'} Both windows end 3 days ago because Search Console runs behind.
+            </p>
+          </div>
+          <div className="flex items-center gap-4">
+            {gsc.state === 'ok' && <UpdatedAt iso={gsc.fetchedAt} />}
+            <SiteSwitch site={site} />
+          </div>
         </div>
 
-        {gsc.state !== 'ok' ? (
-          <PanelNotice panel={gsc} name="Search Console" />
-        ) : (
+        {(needsSearch || needsGa4) && <GoogleSetup serviceAccount={serviceAccount} needsSearch={needsSearch} needsGa4={needsGa4} />}
+
+        {gsc.state === 'error' && <PanelNotice panel={gsc} name="Search Console" />}
+        {gsc.state === 'ok' && (
           <>
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-              <div className="lg:col-span-2 bg-white rounded-2xl border border-[#1a1a1a]/5 shadow-sm p-6">
-                <h3 className="font-serif text-2xl text-[#1a1a1a] mb-1">Daily clicks</h3>
-                <p className="font-sans text-xs text-[#1a1a1a]/50 mb-4">Whole site, last 28 days.</p>
+            <dl className="mb-6 grid grid-cols-2 divide-x divide-[#1a1a1a]/5 rounded-2xl border border-[#1a1a1a]/5 bg-white shadow-sm">
+              <div className="px-6 py-4">
+                <dt className="font-sans text-[10px] font-bold uppercase tracking-widest text-[#1a1a1a]/50">Impressions</dt>
+                <dd className="font-serif text-2xl text-[#1a1a1a]">{fmtInt(gsc.data.totals.current.impressions)}</dd>
+                <dd><Delta current={gsc.data.totals.current.impressions} previous={gsc.data.totals.previous.impressions} /></dd>
+              </div>
+              <div className="px-6 py-4">
+                <dt className="font-sans text-[10px] font-bold uppercase tracking-widest text-[#1a1a1a]/50">CTR and average position</dt>
+                <dd className="font-serif text-2xl text-[#1a1a1a]">{fmtPct(gsc.data.totals.current.ctr)} at {fmtPos(gsc.data.totals.current.position)}</dd>
+                <dd><Delta current={gsc.data.totals.current.position} previous={gsc.data.totals.previous.position} lowerIsBetter /></dd>
+              </div>
+            </dl>
+            <div className="mb-6 grid grid-cols-1 gap-6 lg:grid-cols-3">
+              <div className="rounded-2xl border border-[#1a1a1a]/5 bg-white p-6 shadow-sm lg:col-span-2">
+                <h3 className="mb-1 font-serif text-2xl text-[#1a1a1a]">Daily clicks</h3>
+                <p className="mb-4 font-sans text-xs text-[#1a1a1a]/50">Whole site, last 28 days.</p>
                 <DailyChart points={gsc.data.daily} />
               </div>
-              <div className="bg-white rounded-2xl border border-[#1a1a1a]/5 shadow-sm p-6">
-                <h3 className="font-serif text-2xl text-[#1a1a1a] mb-1">English vs Persian</h3>
-                <p className="font-sans text-xs text-[#1a1a1a]/50 mb-4">Summed from each page&apos;s rows.</p>
+              <div className="rounded-2xl border border-[#1a1a1a]/5 bg-white p-6 shadow-sm">
+                <h3 className="mb-1 font-serif text-2xl text-[#1a1a1a]">English vs Persian</h3>
+                <p className="mb-4 font-sans text-xs text-[#1a1a1a]/50">Summed from each page&apos;s rows.</p>
                 <dl className="space-y-4 font-sans text-sm">
                   {(['en', 'fa'] as const).map((loc) => {
                     const t = gsc.data.split[loc];
                     return (
                       <div key={loc} className="border-t border-[#1a1a1a]/5 pt-3 first:border-0 first:pt-0">
-                        <dt className="font-bold text-[#1a1a1a] mb-1">/{loc}</dt>
+                        <dt className="mb-1 font-bold text-[#1a1a1a]">/{loc}</dt>
                         <dd className="grid grid-cols-2 gap-y-1 text-[#1a1a1a]/70">
                           <span>{fmtInt(t.current.clicks)} clicks</span>
                           <Delta current={t.current.clicks} previous={t.previous.clicks} />
@@ -187,8 +173,7 @@ export default async function AdminDashboard({
                 </dl>
               </div>
             </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
               <RankTable<RankedRow>
                 title="Top pages"
                 rows={gsc.data.pages}
@@ -217,60 +202,61 @@ export default async function AdminDashboard({
             </div>
           </>
         )}
-      </section>
 
-      {/* GA4 */}
-      <section className="mb-10" aria-labelledby="ga4-heading">
-        <div className="flex flex-wrap justify-between items-baseline gap-2 mb-4">
-          <h2 id="ga4-heading" className="font-serif text-3xl text-[#1a1a1a]">Traffic (GA4)</h2>
-          {ga4.state === 'ok' && <UpdatedAt iso={ga4.fetchedAt} />}
+        {!needsGa4 && (
+        <div className="mt-8">
+          <h3 className="mb-4 font-serif text-2xl text-[#1a1a1a]">Google Analytics</h3>
+          {ga4.state === 'error' && <PanelNotice panel={ga4} name="Google Analytics" />}
+          {ga4.state === 'ok' && (
+            <>
+              <dl className="mb-6 grid grid-cols-2 divide-x divide-y divide-[#1a1a1a]/5 rounded-2xl border border-[#1a1a1a]/5 bg-white shadow-sm lg:grid-cols-4 lg:divide-y-0">
+                {[
+                  { label: 'Users', v: ga4.data.users },
+                  { label: 'Sessions', v: ga4.data.sessions },
+                  { label: 'Leads (form submits)', v: ga4.data.leads },
+                  { label: 'From AI assistants', v: ga4.data.aiAssistants },
+                ].map((m) => (
+                  <div key={m.label} className="px-6 py-4">
+                    <dt className="font-sans text-[10px] font-bold uppercase tracking-widest text-[#1a1a1a]/50">{m.label}</dt>
+                    <dd className="font-serif text-2xl text-[#1a1a1a]">{fmtInt(m.v.current)}</dd>
+                    <dd><Delta current={m.v.current} previous={m.v.previous} /></dd>
+                  </div>
+                ))}
+              </dl>
+              <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
+                <RankTable<Ga4RankedRow>
+                  title="Top landing pages"
+                  rows={ga4.data.landingPages}
+                  empty="No sessions in this window."
+                  columns={[
+                    { label: 'Landing page', render: (r) => <PathCell value={r.key || '(not set)'} /> },
+                    { label: 'Sessions', align: 'right', render: (r) => fmtInt(r.value) },
+                    { label: 'Change', align: 'right', render: (r) => <ChangeCell current={r.value} previous={r.previous} /> },
+                  ]}
+                />
+                <RankTable<Ga4RankedRow>
+                  title="Traffic sources"
+                  note="GA4's default channel groups. AI assistants are counted inside Referral; their total is above."
+                  rows={ga4.data.channels}
+                  empty="No sessions in this window."
+                  columns={[
+                    { label: 'Channel', render: (r) => <span className="font-bold">{r.key || '(not set)'}</span> },
+                    { label: 'Sessions', align: 'right', render: (r) => fmtInt(r.value) },
+                    { label: 'Change', align: 'right', render: (r) => <ChangeCell current={r.value} previous={r.previous} /> },
+                  ]}
+                />
+              </div>
+            </>
+          )}
         </div>
-
-        {ga4.state !== 'ok' ? (
-          <PanelNotice panel={ga4} name="Google Analytics" />
-        ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <RankTable<Ga4RankedRow>
-              title="Top landing pages"
-              rows={ga4.data.landingPages}
-              empty="No sessions in this window."
-              columns={[
-                { label: 'Landing page', render: (r) => <PathCell value={r.key || '(not set)'} /> },
-                { label: 'Sessions', align: 'right', render: (r) => fmtInt(r.value) },
-                { label: 'Change', align: 'right', render: (r) => <ChangeCell current={r.value} previous={r.previous} /> },
-              ]}
-            />
-            <RankTable<Ga4RankedRow>
-              title="Traffic sources"
-              note="GA4's default channel groups. AI assistants are counted inside Referral; their total is above."
-              rows={ga4.data.channels}
-              empty="No sessions in this window."
-              columns={[
-                { label: 'Channel', render: (r) => <span className="font-bold">{r.key || '(not set)'}</span> },
-                { label: 'Sessions', align: 'right', render: (r) => fmtInt(r.value) },
-                { label: 'Change', align: 'right', render: (r) => <ChangeCell current={r.value} previous={r.previous} /> },
-              ]}
-            />
-          </div>
         )}
       </section>
 
-      {/* The site's own log, kept from the previous dashboard */}
-      <section aria-labelledby="log-heading">
-        {dataWarning && (
-          <div className="mb-6 rounded-2xl border border-amber-300 bg-amber-50 px-5 py-4 text-sm text-amber-900">{dataWarning}</div>
-        )}
-        <RankTable<{ path: string; _count: { path: number } }>
-          title="Internal page-view log"
-          note={`${fmtInt(totalViews)} views recorded by the site itself, all time and both locales. It does not follow the switch above.`}
-          rows={topPages}
-          empty="No views recorded yet."
-          columns={[
-            { label: 'Page path', render: (p) => <PathCell value={p.path} /> },
-            { label: 'Views', align: 'right', render: (p) => fmtInt(p._count.path) },
-          ]}
-        />
-      </section>
+      <ContentSection section={content} />
+      <TrafficSection section={traffic} />
+      <EmailSection section={email} adminBase={adminBase} />
+      <SystemsSection section={systems} adminBase={adminBase} />
+      <NotMeasured adminBase={adminBase} ga4Connected={ga4.state === 'ok'} />
     </div>
   );
 }

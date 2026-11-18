@@ -199,6 +199,45 @@ export function rankRows(
   return ranked.slice(0, limit);
 }
 
+export interface Opportunities {
+  siteCtr: number;
+  /** First-page results earning under half of the site's own CTR. */
+  lowCtrPages: Array<{ path: string; impressions: number; ctr: number; position: number }>;
+  /** Queries just past the first page. */
+  strikingQueries: Array<{ query: string; impressions: number; position: number }>;
+  /** Pages that lost at least half their clicks against the previous window. */
+  decliningPages: Array<{ path: string; clicks: number; previousClicks: number }>;
+}
+
+export const OPPORTUNITY_LIMITS = {
+  minPageImpressions: 50,
+  minQueryImpressions: 30,
+  minPreviousClicks: 5,
+} as const;
+
+/** Where search effort pays next, judged against this site's own averages. Whole site only. */
+export function searchOpportunities(pagesCurrent: GscRow[], pagesPrevious: GscRow[], queriesCurrent: GscRow[]): Opportunities {
+  const siteCtr = sumGscRows(pagesCurrent).ctr;
+  const previous = new Map(pagesPrevious.map((r) => [r.keys?.[0] ?? '', r.clicks]));
+  const currentClicks = new Map(pagesCurrent.map((r) => [r.keys?.[0] ?? '', r.clicks]));
+
+  return {
+    siteCtr,
+    lowCtrPages: pagesCurrent
+      .filter((r) => r.impressions >= OPPORTUNITY_LIMITS.minPageImpressions && r.position <= 10 && siteCtr > 0 && r.ctr < siteCtr / 2)
+      .sort((a, b) => b.impressions - a.impressions)
+      .map((r) => ({ path: displayPath(r.keys?.[0] ?? ''), impressions: r.impressions, ctr: r.ctr, position: r.position })),
+    strikingQueries: queriesCurrent
+      .filter((r) => r.impressions >= OPPORTUNITY_LIMITS.minQueryImpressions && r.position > 10 && r.position <= 20)
+      .sort((a, b) => b.impressions - a.impressions)
+      .map((r) => ({ query: r.keys?.[0] ?? '', impressions: r.impressions, position: r.position })),
+    decliningPages: [...previous.entries()]
+      .filter(([page, clicks]) => clicks >= OPPORTUNITY_LIMITS.minPreviousClicks && (currentClicks.get(page) ?? 0) <= clicks / 2)
+      .sort((a, b) => b[1] - (currentClicks.get(b[0]) ?? 0) - (a[1] - (currentClicks.get(a[0]) ?? 0)))
+      .map(([page, clicks]) => ({ path: displayPath(page), clicks: currentClicks.get(page) ?? 0, previousClicks: clicks })),
+  };
+}
+
 // --------------------------------------------------------------------------
 // GA4
 // --------------------------------------------------------------------------

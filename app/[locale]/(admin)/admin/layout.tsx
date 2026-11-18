@@ -12,9 +12,9 @@ export default function AdminLayout({
   return (
     <div className="min-h-screen bg-[#F2F0E9] flex">
       <AdminSidebar />
-      <div className="flex-grow ml-64 flex flex-col">
+      <div className="flex-grow min-w-0 ml-64 flex flex-col">
         <AdminHeader />
-        <main className="flex-grow p-8">
+        <main className="flex-grow min-w-0 p-8">
           {children}
         </main>
       </div>
