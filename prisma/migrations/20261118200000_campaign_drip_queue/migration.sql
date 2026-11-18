@@ -21,6 +21,12 @@ ALTER TABLE "Campaign"
   ADD COLUMN "leaseId" TEXT,
   ADD COLUMN "leaseUntil" TIMESTAMP(3);
 
+CREATE TABLE "MarketingSuppression" (
+  "key" TEXT NOT NULL,
+  "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT "MarketingSuppression_pkey" PRIMARY KEY ("key")
+);
+
 ALTER TABLE "CampaignLog"
   ADD COLUMN "sendKey" TEXT,
   ADD COLUMN "addressKey" TEXT;
@@ -34,10 +40,10 @@ FROM (
 ) AS earliest
 WHERE log."id" = earliest."id";
 
--- Same normalisation as lib/campaign-queue/recipients.ts. Logs whose contact
+-- Same normalisation and hash as lib/campaign-queue/address.ts. Logs whose contact
 -- has since been deleted have no address to key on and stay NULL.
 UPDATE "CampaignLog" AS log
-SET "addressKey" = log."campaignId" || ':' || log."channel" || ':' || earliest."address"
+SET "addressKey" = log."campaignId" || ':' || log."channel" || ':' || encode(sha256(convert_to(earliest."address", 'UTF8')), 'hex')
 FROM (
   SELECT DISTINCT ON (l."campaignId", l."channel", a."address") l."id", a."address"
   FROM "CampaignLog" AS l

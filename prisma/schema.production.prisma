@@ -105,6 +105,13 @@ model MarketingContact {
   @@index([groupId])
 }
 
+/// Hashed addresses that unsubscribed. Outlives the contact row, so a later
+/// import cannot put someone back in a campaign.
+model MarketingSuppression {
+  key       String   @id // CHANNEL:sha256(normalised address)
+  createdAt DateTime @default(now())
+}
+
 model MarketingGroup {
   id        String               @id @default(cuid())
   name      String
@@ -172,7 +179,7 @@ model CampaignLog {
   clickedUrls String    @default("[]")
 
   // The "never twice" guards. campaignId:channel:contactId and
-  // campaignId:channel:normalised-address. Nullable so that duplicate rows
+  // campaignId:channel:sha256(normalised address). Nullable so that duplicate rows
   // from before the queue can stay; only the first of each set holds the key.
   sendKey     String?   @unique
   addressKey  String?   @unique

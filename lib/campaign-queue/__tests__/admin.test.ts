@@ -33,6 +33,9 @@ import {
 import { GET as queueGet, POST as queuePost } from '@/app/api/marketing/campaigns/[id]/queue/route';
 import { POST as legacySend } from '@/app/api/marketing/campaigns/[id]/send/route';
 import { DELETE as campaignDelete, PATCH as campaignPatch } from '@/app/api/marketing/campaigns/route';
+import { POST as unsubscribe } from '@/app/api/unsubscribe/route';
+import { unsubscribeToken } from '@/lib/signed-links';
+import { suppressionKey } from '@/lib/campaign-queue/address';
 
 const NOW = new Date('2026-11-18T15:00:00Z');
 const input = { dailyLimit: 20, sendDays: [1, 2, 3, 4], windowStart: '09:00', windowEnd: '17:00' };
@@ -176,6 +179,16 @@ describe('summary', () => {
 });
 
 describe('routes', () => {
+  it('a signed unsubscribe leaves a suppression for the email and phone', async () => {
+    h.fake.state.contacts.push({ id: 'a', email: 'a@example.com', phone: '+1 555 111 2222', tags: '[]', groupId: 'g1', createdAt: new Date(0) });
+    const res = await unsubscribe(json({ email: 'a@example.com', token: unsubscribeToken('a@example.com') }));
+    expect(res.status).toBe(200);
+    expect(h.fake.state.contacts).toHaveLength(0);
+    expect(h.fake.state.suppressions.map((r: any) => r.key).sort()).toEqual(
+      [suppressionKey('EMAIL', 'a@example.com'), suppressionKey('SMS', '+15551112222')].sort(),
+    );
+  });
+
   it('every queue action needs an admin session', async () => {
     h.session = null;
     campaign();

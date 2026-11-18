@@ -227,7 +227,7 @@ export default function CampaignQueuePanel({ campaignId, summary }: { campaignId
         <div className="mt-6 pt-6 border-t border-[#1a1a1a]/5 space-y-5">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
             <div>
-              <label htmlFor="queue-limit" className={labelCls}>Emails per day</label>
+              <label htmlFor="queue-limit" className={labelCls}>Sends per day</label>
               <input
                 id="queue-limit"
                 type="number"

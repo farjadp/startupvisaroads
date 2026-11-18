@@ -28,7 +28,14 @@ const SYSTEMIC_NAMES = new Set([
 const SYSTEMIC_STATUS = new Set([401, 403, 429]);
 const DOMAIN_NOT_VERIFIED = /domain.*not verified|not verified.*domain/i;
 
-const clean = (text: string) => text.replace(/\bre_[A-Za-z0-9_]+/g, '[key]').slice(0, 300);
+// These messages are stored, logged and shown in the admin, so they must not
+// carry a key, an address or a phone number the provider echoed back.
+const clean = (text: string) =>
+  text
+    .replace(/\bre_[A-Za-z0-9_]+/g, '[key]')
+    .replace(/[^\s@'"<>]+@[^\s@'"<>,;]+/g, '[email]')
+    .replace(/\+?\d[\d\s().-]{5,}\d/g, '[number]')
+    .slice(0, 300);
 
 export function classifyFailure(error: unknown): SendFailure {
   const e = (error ?? {}) as { name?: unknown; message?: unknown; statusCode?: unknown; status?: unknown };

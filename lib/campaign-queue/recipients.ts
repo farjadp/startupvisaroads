@@ -8,8 +8,9 @@
 // ============================================================================
 import prisma from '@/lib/prisma';
 import { isUnsubscribed } from '@/lib/marketing';
+import { hashAddress, normaliseAddress, suppressionKey, type Channel } from './address';
 
-export type Channel = 'EMAIL' | 'SMS';
+export type { Channel } from './address';
 
 export interface AudienceContact {
   id: string;
@@ -27,15 +28,15 @@ export interface AudienceLog {
 export interface Audience {
   contacts: AudienceContact[];
   logs: AudienceLog[];
+  suppressed: Set<string>;
 }
 
 export interface PendingRecipient {
   contactId: string;
   address: string;
   rawEmail: string | null;
+  rawPhone: string | null;
 }
-
-const EMAIL_SHAPE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export function channelsFor(type: string): Channel[] {
   if (type === 'EMAIL') return ['EMAIL'];
@@ -44,25 +45,15 @@ export function channelsFor(type: string): Channel[] {
   return [];
 }
 
-export function normaliseAddress(channel: Channel, contact: Pick<AudienceContact, 'email' | 'phone'>): string | null {
-  if (channel === 'EMAIL') {
-    const email = contact.email?.trim().toLowerCase();
-    return email && EMAIL_SHAPE.test(email) ? email : null;
-  }
-  // Keep in step with the backfill in the campaign_drip_queue migration.
-  const phone = contact.phone?.replace(/[^0-9+]/g, '');
-  return phone || null;
-}
-
 export const sendKeyFor = (campaignId: string, channel: Channel, contactId: string) =>
   `${campaignId}:${channel}:${contactId}`;
 
 export const addressKeyFor = (campaignId: string, channel: Channel, address: string) =>
-  `${campaignId}:${channel}:${address}`;
+  `${campaignId}:${channel}:${hashAddress(address)}`;
 
 export async function loadAudience(campaignId: string): Promise<Audience> {
   const groups = await prisma.campaignGroup.findMany({ where: { campaignId }, select: { groupId: true } });
-  const [contacts, logs] = await Promise.all([
+  const [contacts, logs, suppressions] = await Promise.all([
     prisma.marketingContact.findMany({
       where: { groupId: { in: groups.map((g) => g.groupId) } },
       select: { id: true, email: true, phone: true, tags: true },
@@ -72,8 +63,9 @@ export async function loadAudience(campaignId: string): Promise<Audience> {
       where: { campaignId },
       select: { contactId: true, channel: true, addressKey: true },
     }),
+    prisma.marketingSuppression.findMany({ select: { key: true } }),
   ]);
-  return { contacts, logs };
+  return { contacts, logs, suppressed: new Set(suppressions.map((s) => s.key)) };
 }
 
 /** Everyone still to receive this channel, one entry per address. */
@@ -94,8 +86,9 @@ export function pendingRecipients(campaignId: string, channel: Channel, audience
   for (const contact of audience.contacts) {
     const address = normaliseAddress(channel, contact);
     if (!address || blocked.has(address) || pending.has(address)) continue;
+    if (audience.suppressed.has(suppressionKey(channel, address))) continue;
     if (doneKeys.has(addressKeyFor(campaignId, channel, address))) continue;
-    pending.set(address, { contactId: contact.id, address, rawEmail: contact.email });
+    pending.set(address, { contactId: contact.id, address, rawEmail: contact.email, rawPhone: contact.phone });
   }
   return [...pending.values()];
 }

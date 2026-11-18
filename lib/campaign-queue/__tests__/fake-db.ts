@@ -34,6 +34,7 @@ export function createFakeDb() {
     campaignGroups: [] as Row[],
     contacts: [] as Row[],
     logs: [] as Row[],
+    suppressions: [] as Row[],
   };
   let nextLog = 1;
 
@@ -77,6 +78,27 @@ export function createFakeDb() {
       findMany: async ({ where, orderBy }: Row = {}) => {
         await tick();
         return sorted(state.contacts.filter((c) => matches(c, where)), orderBy).map((c) => ({ ...c }));
+      },
+      deleteMany: async ({ where }: Row) => {
+        await tick();
+        const before = state.contacts.length;
+        state.contacts = state.contacts.filter((c) => !matches(c, where));
+        return { count: before - state.contacts.length };
+      },
+    },
+    marketingSuppression: {
+      findMany: async () => {
+        await tick();
+        return state.suppressions.map((r) => ({ ...r }));
+      },
+      findUnique: async ({ where }: Row) => {
+        await tick();
+        return state.suppressions.find((r) => r.key === where.key) ?? null;
+      },
+      upsert: async ({ where, create }: Row) => {
+        await tick();
+        if (!state.suppressions.some((r) => r.key === where.key)) state.suppressions.push({ ...create });
+        return { ...create };
       },
     },
     campaignLog: {

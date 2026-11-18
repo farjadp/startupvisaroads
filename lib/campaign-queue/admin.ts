@@ -31,7 +31,7 @@ import {
 export type ActionResult<T = unknown> = ({ ok: true } & T) | { ok: false; status: number; error: string };
 
 const QUEUEABLE = ['DRAFT', 'SCHEDULED', STATUS_PAUSED, 'SENDING'];
-/** While these hold, the content and audience must not change underneath the queue. */
+/** While these hold, the campaign's content and groups cannot be edited or deleted. */
 export const LOCKED_STATUSES = [STATUS_QUEUED, STATUS_PAUSED, 'SENDING'];
 
 const refuse = (status: number, error: string) => ({ ok: false as const, status, error });

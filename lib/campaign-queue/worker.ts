@@ -22,6 +22,7 @@ import prisma from '@/lib/prisma';
 import { getMarketingSettings, isUnsubscribed, sendEmail, sendSms } from '@/lib/marketing';
 import { assertLinkSigningConfigured } from '@/lib/signed-links';
 import { SITE_URL } from '@/lib/seo';
+import { suppressionKey } from './address';
 import { classifyFailure, type SendFailure } from './failures';
 import {
   addressKeyFor,
@@ -141,10 +142,23 @@ async function stillOurs(id: string, leaseId: string): Promise<boolean> {
 }
 
 /** Fresh read just before sending: the audience list may be seconds old. */
-async function mayStillReceive(r: PendingRecipient): Promise<boolean> {
+async function mayStillReceive(channel: Channel, r: PendingRecipient): Promise<boolean> {
+  const suppressed = await prisma.marketingSuppression.findUnique({
+    where: { key: suppressionKey(channel, r.address) },
+    select: { key: true },
+  });
+  if (suppressed) return false;
+
   const emails = r.rawEmail ? [...new Set([r.rawEmail, r.rawEmail.trim().toLowerCase()])] : [];
+  const phones = r.rawPhone ? [...new Set([r.rawPhone, r.address])] : [];
   const rows = await prisma.marketingContact.findMany({
-    where: { OR: [{ id: r.contactId }, ...(emails.length ? [{ email: { in: emails } }] : [])] },
+    where: {
+      OR: [
+        { id: r.contactId },
+        ...(emails.length ? [{ email: { in: emails } }] : []),
+        ...(channel === 'SMS' && phones.length ? [{ phone: { in: phones } }] : []),
+      ],
+    },
     select: { id: true, tags: true },
   });
   return rows.some((row) => row.id === r.contactId) && !rows.some((row) => isUnsubscribed(row.tags));
@@ -232,7 +246,7 @@ async function sendBatch(
     if (attempts > 0 && ctx.sendGapMs > 0) await sleep(ctx.sendGapMs);
     if (!(await stillOurs(c.id, leaseId))) return { handled, stop: true };
 
-    if (!(await mayStillReceive(recipient))) {
+    if (!(await mayStillReceive(channel, recipient))) {
       handled++;
       ctx.result.skipped++;
       continue;

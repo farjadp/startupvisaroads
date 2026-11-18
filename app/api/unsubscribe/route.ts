@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { normaliseEmail, verifyUnsubscribeToken } from '@/lib/signed-links';
-import { markUnsubscribed, maskEmail, UNSUBSCRIBE_GRACE_UNTIL } from '@/lib/marketing';
+import { markUnsubscribed, maskEmail, suppressContactAddresses, UNSUBSCRIBE_GRACE_UNTIL } from '@/lib/marketing';
 import { rateLimit, getClientIp } from '@/lib/rateLimit';
 
 // Removes a marketing contact. The caller must present the token from the
@@ -41,6 +41,8 @@ export async function POST(req: NextRequest) {
 
     if (!tokenless) {
       if (!verifyUnsubscribeToken(cleanEmail, token)) return REFUSED();
+      const contacts = await prisma.marketingContact.findMany({ where: { email: cleanEmail }, select: { phone: true } });
+      await suppressContactAddresses(cleanEmail, contacts.map((c) => c.phone));
       await prisma.marketingContact.deleteMany({ where: { email: cleanEmail } });
       return OK();
     }

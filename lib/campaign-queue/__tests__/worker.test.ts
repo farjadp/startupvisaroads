@@ -22,6 +22,9 @@ vi.mock('@/lib/marketing', async (original) => ({
 
 import { createFakeDb } from './fake-db';
 import { runCampaignQueue } from '@/lib/campaign-queue/worker';
+import { addressKeyFor } from '@/lib/campaign-queue/recipients';
+import { suppressionKey } from '@/lib/campaign-queue/address';
+import { classifyFailure } from '@/lib/campaign-queue/failures';
 
 const WED_1000 = new Date('2026-11-18T15:00:00Z');
 const FRI_1000 = new Date('2026-11-20T15:00:00Z');
@@ -231,7 +234,8 @@ describe('never twice', () => {
       return { data: { id: 'x' }, error: null };
     });
     await run(WED_1000);
-    expect(h.fake.state.logs[0]).toMatchObject({ status: 'SENT', addressKey: 'c1:EMAIL:a@example.com' });
+    expect(h.fake.state.logs[0]).toMatchObject({ status: 'SENT', addressKey: addressKeyFor('c1', 'EMAIL', 'a@example.com') });
+    expect(h.fake.state.logs[0].addressKey).not.toContain('example.com');
   });
 
   it('does not send when another writer already holds the key', async () => {
@@ -305,6 +309,33 @@ describe('re-checks at send time', () => {
     expect(h.sendEmail).not.toHaveBeenCalled();
   });
 
+  it('never mails an unsubscribed address that came back through a re-import', async () => {
+    campaign();
+    contact('reimported', { email: 'gone@example.com' });
+    h.fake.state.suppressions.push({ key: suppressionKey('EMAIL', 'gone@example.com') });
+    await run(WED_1000);
+    expect(h.sendEmail).not.toHaveBeenCalled();
+  });
+
+  it('honours a suppression written while the batch is running', async () => {
+    campaign({ dailyLimit: 500 });
+    contacts(2);
+    h.sendEmail.mockImplementationOnce(async () => {
+      h.fake.state.suppressions.push({ key: suppressionKey('EMAIL', 'p001@example.com') });
+      return { data: { id: 'x' }, error: null };
+    });
+    await run(new Date('2026-11-19T04:45:00Z'));
+    expect(sentTo()).toEqual(['p000@example.com']);
+  });
+
+  it('skips an SMS when a contact outside the audience unsubscribed that number', async () => {
+    campaign({ type: 'SMS' });
+    contact('a', { email: null, phone: '+15551112222' });
+    contact('outside', { email: null, phone: '+15551112222', groupId: 'other', tags: '["unsubscribed"]' });
+    await run(WED_1000);
+    expect(h.sendSms).not.toHaveBeenCalled();
+  });
+
   it('stops the batch as soon as the campaign is paused', async () => {
     campaign({ dailyLimit: 500 });
     contacts(5);
@@ -355,6 +386,11 @@ describe('failures', () => {
     expect(h.fake.state.campaigns[0].status).toBe('PAUSED');
     // A network error may have reached Resend, so these are not retried.
     expect(h.fake.state.logs.map((l: any) => l.status)).toEqual(['FAILED', 'FAILED', 'FAILED']);
+  });
+
+  it('keeps addresses and numbers out of stored failure messages', () => {
+    const { message } = classifyFailure(new Error("The 'To' number +1 (416) 555-1234 is invalid for Jo@Example.com, key re_abc123"));
+    expect(message).not.toMatch(/555|Example\.com|re_abc/);
   });
 
   it('pauses without sending when no API key is configured', async () => {

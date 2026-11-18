@@ -5,7 +5,11 @@ const db = vi.hoisted(() => ({
     findUnique: vi.fn(async (..._a: unknown[]): Promise<any> => ({ id: 'log1', clickedUrls: '[]', clickedAt: null })),
     update: vi.fn(async (..._a: unknown[]): Promise<any> => ({})),
   },
-  marketingContact: { deleteMany: vi.fn(async (..._a: unknown[]): Promise<any> => ({ count: 1 })) },
+  marketingContact: {
+    findMany: vi.fn(async (..._a: unknown[]): Promise<any> => []),
+    deleteMany: vi.fn(async (..._a: unknown[]): Promise<any> => ({ count: 1 })),
+  },
+  marketingSuppression: { upsert: vi.fn(async (..._a: unknown[]): Promise<any> => ({})) },
 }));
 vi.mock('@/lib/prisma', () => ({ default: db }));
 
