@@ -48,7 +48,7 @@ App Store Connect › VisaRoads › نسخه‌ی **1.0.0** (Ready for Distribut
 - فارسی در App Store Connect وجود ندارد.
 
 ## اپ استور — قدم ۲: نسخه‌ی 1.0.1 و Submit for Review
-بیلد iOS 1.0.1 (9) با `eas submit` به App Store Connect فرستاده شده است. پردازشش در TestFlight حدود ۱۰ تا ۳۰ دقیقه طول می‌کشد.
+بیلد iOS 1.0.1 (9) در ۱۷ نوامبر با `eas submit` به App Store Connect فرستاده شد (runtime `7cf56aa4`). پردازشش در TestFlight حدود ۱۰ تا ۳۰ دقیقه طول می‌کشد.
 1. App Store Connect › VisaRoads › کنار **iOS App** دکمه‌ی **+** › شماره‌ی نسخه را **1.0.1** بنویسید.
 2. برای هر زبان (English، French، Chinese Simplified، Arabic) از بخش App Store همان زبان در `listing-v3.md` این فیلدها را پر کنید:
    - **What's New in This Version** ← «What's New, App Store 1.0.1»
@@ -76,4 +76,5 @@ App Store Connect › VisaRoads › نسخه‌ی **1.0.0** (Ready for Distribut
 
 ## لینک‌ها
 - بیلد اندروید ۱۲: https://expo.dev/accounts/ashavid/projects/visaroads/builds/f507aef2-f84e-43be-a40e-85438059cb2b
+- فایل AAB بیلد ۱۲ (دانلود مستقیم): https://expo.dev/artifacts/eas/DfvnBDOtAquQ8qNiaxvCa513lT0UwI7ol56ACbcUwkQ.aab
 - بیلد iOS 1.0.1 (9): https://expo.dev/accounts/ashavid/projects/visaroads/builds/36fd44c8-ee97-46fc-9f79-fb5ed4af4d2e
