@@ -45,3 +45,25 @@ export function trackAppPrompt(
   if (typeof window === 'undefined' || typeof window.gtag !== 'function') return;
   window.gtag('event', event, { ...params, placement: 'article' });
 }
+
+/**
+ * The partner page (/partners). Google's booking iframe is cross-origin, so a
+ * completed booking cannot be seen from here: these events measure intent
+ * (CTA clicks, the calendar opened, the fallbacks used), not bookings.
+ */
+export type PartnerEvent =
+  | 'partner_cta_click'
+  | 'partner_calendar_open'
+  | 'partner_calendar_new_tab'
+  | 'partner_contact_click';
+
+/** Where the click happened. 'cta' = the calendar was opened by a Book button elsewhere on the page. */
+export type PartnerPlacement = 'hero' | 'sticky' | 'final' | 'booking' | 'cta';
+
+export function trackPartner(
+  event: PartnerEvent,
+  params: { locale: string; placement: PartnerPlacement; channel?: 'email' | 'telegram' },
+): void {
+  if (typeof window === 'undefined' || typeof window.gtag !== 'function') return;
+  window.gtag('event', event, { ...params, page_type: 'partners' });
+}

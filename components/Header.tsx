@@ -181,6 +181,7 @@ export default function Header() {
       key: 'firm',
       subLinks: [
         { href: '/about', label: 'درباره ما' },
+        { href: '/partners', label: 'همکاری با مؤسسات مهاجرت' },
         { href: '/webinar', label: 'وبینار' },
         { href: '/contact', label: 'تماس و مشاوره' },
       ],
@@ -244,6 +245,7 @@ export default function Header() {
       key: 'firm',
       subLinks: [
         { href: '/about', label: t('our_story') },
+        { href: '/partners', label: 'For immigration firms' },
         { href: '/webinar', label: 'Webinar' },
         { href: '/contact', label: t('contact') },
         { href: '/book-meeting', label: t('book_consultation') },

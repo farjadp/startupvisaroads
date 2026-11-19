@@ -70,7 +70,7 @@ export default function BookMeetingPage() {
                      </li>
                      <li className="flex items-center gap-3 font-medium bg-[#F2F0E9] p-3 rounded-xl">
                         <Handshake size={20} className="text-[#1a1a1a]/60" />
-                        Companies and partners: use the same calendar, or email {MAIN_CONTACT.b2bEmail}
+                        <span>Immigration firms and partners: book on the <Link href="/partners" className="underline underline-offset-4">partner page</Link>, or email {MAIN_CONTACT.b2bEmail}</span>
                      </li>
                   </ul>
                </section>
