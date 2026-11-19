@@ -426,6 +426,34 @@ describe('content and channels', () => {
     expect(subject).toBe('Hello');
   });
 
+  it('records which version of the content each person got', async () => {
+    campaign({ contentVersion: 3 });
+    contact('a');
+    await run(WED_1000);
+    expect(h.fake.state.logs[0].contentVersion).toBe(3);
+  });
+
+  it('stops a running batch if the content changes underneath it', async () => {
+    campaign({ dailyLimit: 500, contentVersion: 1 });
+    contacts(3);
+    h.sendEmail.mockImplementationOnce(async () => {
+      h.fake.state.campaigns[0].contentVersion = 2;
+      return { data: { id: 'x' }, error: null };
+    });
+    await run(new Date('2026-11-19T04:45:00Z'));
+    expect(h.sendEmail).toHaveBeenCalledTimes(1);
+  });
+
+  it('sends the edited email to the people still left', async () => {
+    campaign({ dailyLimit: 500, body: '<p>New version</p>', subject: 'New subject', contentVersion: 2 });
+    contacts(2);
+    legacyLog('p000');
+    await run(new Date('2026-11-19T04:45:00Z'));
+    expect(sentTo()).toEqual(['p001@example.com']);
+    expect(h.sendEmail.mock.calls[0][0]).toMatchObject({ subject: 'New subject' });
+    expect(h.sendEmail.mock.calls[0][0].html).toContain('New version');
+  });
+
   it('sends SMS through the same queue', async () => {
     campaign({ type: 'SMS' });
     contact('a', { email: null, phone: '+1 (555) 111-2222' });

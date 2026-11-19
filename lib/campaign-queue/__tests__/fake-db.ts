@@ -12,6 +12,7 @@ function matchesValue(value: any, cond: any): boolean {
     if ('in' in cond && !cond.in.includes(value)) return false;
     if ('not' in cond && (cond.not === null ? value === null || value === undefined : value === cond.not)) return false;
     if ('lt' in cond && !(value < cond.lt)) return false;
+    if ('contains' in cond && !String(value ?? '').includes(cond.contains)) return false;
     if ('gt' in cond && !(value > cond.gt)) return false;
     if ('gte' in cond && !(value >= cond.gte)) return false;
     return true;
@@ -35,6 +36,8 @@ export function createFakeDb() {
     contacts: [] as Row[],
     logs: [] as Row[],
     suppressions: [] as Row[],
+    versions: [] as Row[],
+    clicks: [] as Row[],
   };
   let nextLog = 1;
 
@@ -50,7 +53,37 @@ export function createFakeDb() {
     });
   };
 
-  const db = {
+  const db: Row = {
+    $transaction: async (work: (tx: Row) => Promise<unknown>) => work(db),
+    campaignContentVersion: {
+      create: async ({ data }: Row) => {
+        await tick();
+        state.versions.push({ ...data });
+        return { ...data };
+      },
+      findMany: async ({ where, orderBy }: Row = {}) => {
+        await tick();
+        return sorted(state.versions.filter((v) => matches(v, where)), orderBy).map((v) => ({ ...v }));
+      },
+    },
+    campaignLinkClick: {
+      create: async ({ data }: Row) => {
+        await tick();
+        state.clicks.push({ ...data });
+        return { ...data };
+      },
+      groupBy: async ({ where }: Row) => {
+        await tick();
+        const counts = new Map<string, Row>();
+        for (const click of state.clicks.filter((c) => matches(c, where))) {
+          const key = `${click.logId} ${click.url}`;
+          const row = counts.get(key) ?? { logId: click.logId, url: click.url, _count: { _all: 0 } };
+          row._count._all++;
+          counts.set(key, row);
+        }
+        return [...counts.values()];
+      },
+    },
     campaign: {
       findMany: async ({ where, orderBy }: Row = {}) => {
         await tick();
@@ -102,12 +135,17 @@ export function createFakeDb() {
       },
     },
     campaignLog: {
-      findMany: async ({ where, orderBy, take }: Row = {}) => {
+      findMany: async ({ where, orderBy, take, skip = 0 }: Row = {}) => {
         await tick();
         // Newest first must mean newest written when timestamps tie.
         const rows = state.logs.filter((l) => matches(l, where));
-        const ordered = orderBy ? sorted([...rows].reverse(), orderBy) : rows;
+        const ordered = (orderBy ? sorted([...rows].reverse(), orderBy) : rows).slice(skip);
         return (take ? ordered.slice(0, take) : ordered).map((l) => ({ ...l }));
+      },
+      findUnique: async ({ where }: Row) => {
+        await tick();
+        const row = state.logs.find((l) => l.id === where.id);
+        return row ? { ...row } : null;
       },
       count: async ({ where }: Row = {}) => {
         await tick();
@@ -128,7 +166,10 @@ export function createFakeDb() {
         await tick();
         const row = state.logs.find((l) => l.id === where.id);
         if (!row) throw new Error('log not found');
-        Object.assign(row, data);
+        for (const [key, value] of Object.entries(data as Row)) {
+          if (value === undefined) continue;
+          row[key] = (value as Row)?.increment ? (row[key] ?? 0) + (value as Row).increment : value;
+        }
         return { ...row };
       },
       delete: async ({ where }: Row) => {

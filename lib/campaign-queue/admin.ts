@@ -31,7 +31,7 @@ import {
 export type ActionResult<T = unknown> = ({ ok: true } & T) | { ok: false; status: number; error: string };
 
 const QUEUEABLE = ['DRAFT', 'SCHEDULED', STATUS_PAUSED, 'SENDING'];
-/** While these hold, the campaign's content and groups cannot be edited or deleted. */
+/** While these hold, the general PATCH and DELETE are refused; content edits go through content.ts. */
 export const LOCKED_STATUSES = [STATUS_QUEUED, STATUS_PAUSED, 'SENDING'];
 
 const refuse = (status: number, error: string) => ({ ok: false as const, status, error });
@@ -166,6 +166,8 @@ export interface CampaignQueueSummary {
   nextSendAt: Date | null;
   estimatedFinish: string | null;
   pausedReason: string | null;
+  contentVersion: number;
+  onEarlierVersions: number;
   sender: string;
   senderIsFallback: boolean;
   settings: {
@@ -193,6 +195,11 @@ export async function getCampaignQueueSummary(id: string, now = new Date()): Pro
     getMarketingSettings(),
   ]);
 
+  const onEarlierVersions =
+    campaign.contentVersion > 1
+      ? await count({ OR: [{ contentVersion: null }, { contentVersion: { lt: campaign.contentVersion } }] })
+      : 0;
+
   const state = (campaign.status === 'SENDING' ? 'INTERRUPTED' : campaign.status) as QueueState;
   const schedule = state === 'QUEUED' ? scheduleFromCampaign(campaign) : null;
   const sender = senderFrom(settings);
@@ -209,6 +216,8 @@ export async function getCampaignQueueSummary(id: string, now = new Date()): Pro
     nextSendAt: schedule && remaining.total > 0 ? nextSendTime(schedule, now, attempted) : null,
     estimatedFinish: schedule ? estimateFinishDay(schedule, remaining.largestChannel, now, attempted) : null,
     pausedReason: campaign.pausedReason,
+    contentVersion: campaign.contentVersion,
+    onEarlierVersions,
     sender: `${sender.name} <${sender.email}>`,
     senderIsFallback: sender.isFallback,
     settings: {
