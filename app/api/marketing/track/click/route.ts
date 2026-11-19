@@ -37,6 +37,9 @@ export async function GET(req: NextRequest) {
             clickedUrls: JSON.stringify(urls),
           },
         });
+        await prisma.campaignLinkClick.create({
+          data: { campaignId: log.campaignId, logId: log.id, url },
+        });
       }
     } catch (error) {
       console.error('Error tracking link click:', error);

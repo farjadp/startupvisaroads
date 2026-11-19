@@ -136,9 +136,13 @@ async function pause(c: Campaign, reason: string, ctx: RunContext) {
   console.warn(`[campaign-queue] paused ${c.id}: ${reason.slice(0, 200)}`);
 }
 
-async function stillOurs(id: string, leaseId: string): Promise<boolean> {
-  const row = await prisma.campaign.findUnique({ where: { id }, select: { status: true, leaseId: true } });
-  return row?.status === STATUS_QUEUED && row.leaseId === leaseId;
+async function stillOurs(c: Campaign, leaseId: string): Promise<boolean> {
+  const row = await prisma.campaign.findUnique({
+    where: { id: c.id },
+    select: { status: true, leaseId: true, contentVersion: true },
+  });
+  // A changed version means the text held in memory is out of date.
+  return row?.status === STATUS_QUEUED && row.leaseId === leaseId && row.contentVersion === c.contentVersion;
 }
 
 /** Fresh read just before sending: the audience list may be seconds old. */
@@ -173,6 +177,7 @@ async function claim(c: Campaign, channel: Channel, r: PendingRecipient, now: Da
         channel,
         status: LOG_CLAIMED,
         sentAt: now,
+        contentVersion: c.contentVersion,
         sendKey: sendKeyFor(c.id, channel, r.contactId),
         addressKey: addressKeyFor(c.id, channel, r.address),
       },
@@ -244,7 +249,7 @@ async function sendBatch(
     if (attempts >= allowance || Date.now() >= ctx.deadline) break;
     // Wait before the checks, so nothing goes stale between claim and send.
     if (attempts > 0 && ctx.sendGapMs > 0) await sleep(ctx.sendGapMs);
-    if (!(await stillOurs(c.id, leaseId))) return { handled, stop: true };
+    if (!(await stillOurs(c, leaseId))) return { handled, stop: true };
 
     if (!(await mayStillReceive(channel, recipient))) {
       handled++;

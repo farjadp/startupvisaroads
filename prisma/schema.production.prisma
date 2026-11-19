@@ -144,6 +144,8 @@ model Campaign {
   pausedReason    String?
   leaseId         String?   // the worker tick that holds this campaign
   leaseUntil      DateTime?
+  contentVersion  Int       @default(1) // goes up when sent content is edited
+  contentVersions CampaignContentVersion[]
 
   groups      CampaignGroup[]
   logs        CampaignLog[]
@@ -151,6 +153,33 @@ model Campaign {
   updatedAt   DateTime        @updatedAt
 
   @@index([status])
+}
+
+/// The text a campaign had before an edit, kept for the people who received it.
+model CampaignContentVersion {
+  id         String   @id @default(cuid())
+  campaignId String
+  campaign   Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  version    Int
+  subject    String?
+  body       String
+  smsBody    String?
+  replacedAt DateTime @default(now())
+
+  @@unique([campaignId, version])
+}
+
+/// One click on one tracked link, so each link can show its real click count.
+model CampaignLinkClick {
+  id         String      @id @default(cuid())
+  campaignId String
+  logId      String
+  log        CampaignLog @relation(fields: [logId], references: [id], onDelete: Cascade)
+  url        String
+  clickedAt  DateTime    @default(now())
+
+  @@index([campaignId])
+  @@index([logId])
 }
 
 model CampaignGroup {
@@ -183,6 +212,9 @@ model CampaignLog {
   // from before the queue can stay; only the first of each set holds the key.
   sendKey     String?   @unique
   addressKey  String?   @unique
+
+  contentVersion Int?    // version this person got; NULL on older rows means 1
+  linkClicks     CampaignLinkClick[]
 
   @@index([campaignId])
   @@index([campaignId, status])

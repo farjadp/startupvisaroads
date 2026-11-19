@@ -2,23 +2,30 @@ import React from 'react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import prisma from '@/lib/prisma';
-import { ArrowLeft, CheckCircle, XCircle, Mail, MessageSquare, Users, Clock } from 'lucide-react';
+import { ArrowLeft, Mail, MessageSquare, Users } from 'lucide-react';
 import { getCampaignQueueSummary } from '@/lib/campaign-queue/admin';
+import {
+  getCampaignLinkReport,
+  getCampaignRecipientReport,
+  getCampaignVersionReport,
+} from '@/lib/campaign-queue/report';
 import CampaignQueuePanel from './CampaignQueuePanel';
+import { CampaignLinks, CampaignRecipients, CampaignVersions } from './CampaignReport';
 
 interface Props {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ show?: string; q?: string; page?: string }>;
 }
 
-export default async function CampaignDetailPage({ params }: Props) {
+export default async function CampaignDetailPage({ params, searchParams }: Props) {
   const { id } = await params;
+  const { show, q, page } = await searchParams;
 
-  const [campaign, summary, byChannel] = await Promise.all([
+  const [campaign, summary, byChannel, links, recipients, versions] = await Promise.all([
     prisma.campaign.findUnique({
       where: { id },
       include: {
         groups: { include: { group: { select: { id: true, name: true, color: true } } } },
-        logs: { orderBy: { sentAt: 'desc' }, take: 100 },
       },
     }),
     getCampaignQueueSummary(id),
@@ -27,12 +34,18 @@ export default async function CampaignDetailPage({ params }: Props) {
       where: { campaignId: id },
       _count: { _all: true },
     }),
+    getCampaignLinkReport(id),
+    getCampaignRecipientReport(id, {
+      show: typeof show === 'string' ? show : undefined,
+      q: typeof q === 'string' ? q : undefined,
+      page: typeof page === 'string' ? page : undefined,
+    }),
+    getCampaignVersionReport(id),
   ]);
 
   if (!campaign || !summary) notFound();
 
-  // Every figure here comes from database counts; campaign.logs is only the
-  // latest 100 rows for the table below.
+  // Every figure here comes from database counts.
   const countFor = (channel: string, status?: string) =>
     byChannel
       .filter((row) => row.channel === channel && (!status || row.status === status))
@@ -141,73 +154,8 @@ export default async function CampaignDetailPage({ params }: Props) {
             </div>
           )}
 
-          {/* Logs table */}
-          <div className="bg-white rounded-2xl border border-[#1a1a1a]/5 shadow-sm overflow-hidden">
-            <div className="p-6 border-b border-[#1a1a1a]/5">
-              <h3 className="font-serif text-xl">Latest Send Logs</h3>
-              <p className="font-sans text-xs text-[#1a1a1a]/40 mt-1">The most recent 100 rows. The totals above cover the whole campaign.</p>
-            </div>
-            <table className="w-full text-sm font-sans">
-              <thead className="bg-[#1a1a1a]/[0.02] border-b border-[#1a1a1a]/5">
-                <tr>
-                  <th className="px-4 py-3 text-left text-xs font-bold text-[#1a1a1a]/50 uppercase tracking-widest">Contact ID</th>
-                  <th className="px-4 py-3 text-left text-xs font-bold text-[#1a1a1a]/50 uppercase tracking-widest">Channel</th>
-                  <th className="px-4 py-3 text-left text-xs font-bold text-[#1a1a1a]/50 uppercase tracking-widest">Status</th>
-                  <th className="px-4 py-3 text-center text-xs font-bold text-[#1a1a1a]/50 uppercase tracking-widest">Opens</th>
-                  <th className="px-4 py-3 text-center text-xs font-bold text-[#1a1a1a]/50 uppercase tracking-widest">Clicks</th>
-                  <th className="px-4 py-3 text-left text-xs font-bold text-[#1a1a1a]/50 uppercase tracking-widest">Error</th>
-                  <th className="px-4 py-3 text-left text-xs font-bold text-[#1a1a1a]/50 uppercase tracking-widest">Time</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-[#1a1a1a]/5">
-                {campaign.logs.length === 0 ? (
-                  <tr>
-                    <td colSpan={7} className="px-4 py-10 text-center text-[#1a1a1a]/40 italic">
-                      No send logs yet. Campaign has not been sent.
-                    </td>
-                  </tr>
-                ) : campaign.logs.map((log) => (
-                  <tr key={log.id} className="hover:bg-[#1a1a1a]/[0.02]">
-                    <td className="px-4 py-3 text-[#1a1a1a]/50 font-mono text-xs">{log.contactId.slice(0, 8)}…</td>
-                    <td className="px-4 py-3">
-                      <span className="flex items-center gap-1 text-xs">
-                        {log.channel === 'EMAIL' ? <Mail className="w-3 h-3" /> : <MessageSquare className="w-3 h-3" />}
-                        {log.channel}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3">
-                      <span className={`flex items-center gap-1 text-xs font-bold w-fit px-2 py-0.5 rounded-full ${log.status === 'SENT' ? 'bg-green-100 text-green-700' : log.status === 'CLAIMED' ? 'bg-orange-100 text-orange-700' : 'bg-red-100 text-red-600'}`}>
-                        {log.status === 'SENT' ? <CheckCircle className="w-3 h-3" /> : log.status === 'CLAIMED' ? <Clock className="w-3 h-3" /> : <XCircle className="w-3 h-3" />}
-                        {log.status === 'CLAIMED' ? 'UNCONFIRMED' : log.status}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3 text-center">
-                      {log.openCount > 0 ? (
-                        <span className="bg-blue-50 text-blue-700 font-bold px-2 py-0.5 rounded text-xs">
-                          {log.openCount}
-                        </span>
-                      ) : (
-                        <span className="text-[#1a1a1a]/20">—</span>
-                      )}
-                    </td>
-                    <td className="px-4 py-3 text-center">
-                      {log.clickCount > 0 ? (
-                        <span className="bg-purple-50 text-purple-700 font-bold px-2 py-0.5 rounded text-xs" title={log.clickedUrls}>
-                          {log.clickCount}
-                        </span>
-                      ) : (
-                        <span className="text-[#1a1a1a]/20">—</span>
-                      )}
-                    </td>
-                    <td className="px-4 py-3 text-red-500 text-xs max-w-xs truncate">{log.error ?? '—'}</td>
-                    <td className="px-4 py-3 text-[#1a1a1a]/40 text-xs">
-                      <span className="flex items-center gap-1"><Clock className="w-3 h-3" />{new Date(log.sentAt).toLocaleString()}</span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <CampaignVersions versions={versions} />
+          <CampaignLinks links={links} />
         </div>
 
         {/* Sidebar */}
@@ -255,6 +203,8 @@ export default async function CampaignDetailPage({ params }: Props) {
           </div>
         </div>
       </div>
+
+      <CampaignRecipients campaignId={campaign.id} report={recipients} />
     </div>
   );
 }

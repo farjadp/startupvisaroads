@@ -1,8 +1,9 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { AlertTriangle, ArrowLeft, Loader, Pause, Play, Send } from 'lucide-react';
+import { AlertTriangle, ArrowLeft, Loader, Pause, Pencil, Play, Send } from 'lucide-react';
 
 export interface QueuePanelSummary {
   state: string;
@@ -13,6 +14,8 @@ export interface QueuePanelSummary {
   nextSendAt: string | null;
   estimatedFinish: string | null;
   pausedReason: string | null;
+  contentVersion: number;
+  onEarlierVersions: number;
   sender: string;
   senderIsFallback: boolean;
   settings: {
@@ -195,12 +198,28 @@ export default function CampaignQueuePanel({ campaignId, summary }: { campaignId
           </div>
           <p className="font-sans text-sm text-[#1a1a1a]/60">{copy.body}</p>
         </div>
-        {summary.state === 'QUEUED' && (
-          <button type="button" onClick={pause} disabled={busy} className={secondaryCls}>
-            {busy ? <Loader className="w-4 h-4 animate-spin" /> : <Pause className="w-4 h-4" />} Pause
-          </button>
-        )}
+        <div className="flex flex-wrap items-center gap-3">
+          {canQueue && (
+            <Link href={`/en/admin/marketing/campaigns/${campaignId}/edit`} className={secondaryCls}>
+              <Pencil className="w-4 h-4" /> Edit email
+            </Link>
+          )}
+          {summary.state === 'QUEUED' && (
+            <button type="button" onClick={pause} disabled={busy} className={secondaryCls}>
+              {busy ? <Loader className="w-4 h-4 animate-spin" /> : <Pause className="w-4 h-4" />} Pause
+            </button>
+          )}
+        </div>
       </div>
+
+      {summary.state === 'QUEUED' && (
+        <p className="font-sans text-xs text-[#1a1a1a]/50 mt-2">To change the email for the people left, pause first.</p>
+      )}
+      {summary.contentVersion > 1 && (
+        <p className="font-sans text-sm text-[#1a1a1a]/70 mt-2">
+          Version {summary.contentVersion} goes to everyone still in the queue. {summary.onEarlierVersions.toLocaleString('en-CA')} people have an earlier version.
+        </p>
+      )}
 
       <dl className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-4 mt-5">
         {stats.map(([label, value]) => (
