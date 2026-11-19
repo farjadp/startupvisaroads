@@ -52,7 +52,9 @@ export function openedFromApp(referrer: string): boolean {
 
 export type ArticleBlock = { tag: string; top: number };
 
-const TEXT_BLOCKS = new Set(['P', 'UL', 'OL']);
+// Older articles put running text straight into the body, so a link or bold
+// phrase can be the block before a heading. Those count as text too.
+const TEXT_BLOCKS = new Set(['P', 'UL', 'OL', 'A', 'STRONG', 'EM', 'B', 'I', 'SUP', 'SPAN', 'CODE']);
 
 /**
  * Where the card goes: the index of the block to insert before, or -1. It sits
