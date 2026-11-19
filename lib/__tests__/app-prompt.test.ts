@@ -76,6 +76,9 @@ describe('pickInsertIndex', () => {
   it('never separates a heading from its text or sits against another box', () => {
     expect(pickInsertIndex([at('H2', 0), at('H2', 550), at('DIV', 600), at('P', 650), at('DIV', 700)], 1000)).toBe(-1);
   });
+  it('accepts a heading after inline text in older articles', () => {
+    expect(pickInsertIndex([at('H2', 0), at('UL', 100), at('A', 690), at('H2', 710), at('A', 780)], 1000)).toBe(3);
+  });
   it('stays out of the first half and the very end', () => {
     expect(pickInsertIndex([at('P', 0), at('P', 300), at('P', 900)], 1000)).toBe(-1);
   });
