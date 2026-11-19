@@ -13,7 +13,10 @@
   Farjad's 19 Nov draft, rebuilt for the VisaRoads sender and the Brand Book:
     - Mailchimp merge tags removed. The sender has no per-contact fields, so
       the greeting is "Hi,". It replaces {{unsubscribe_url}} with the signed link.
-    - One call to action: /en/partners#book (opens the partner calendar).
+    - Two clear next steps: book a call at /en/partners#book (opens the partner calendar),
+      or WhatsApp the main line with a prefilled first message.
+    - Flags are PNGs at visaroads.com/img/email/flags/ (emoji flags show as letters in Windows
+      Outlook); they load only after this branch is deployed.
     - Routes match the partner page: Netherlands, Finland, Denmark, Flanders.
     - Sender identification and the not-a-representative line are in the footer (CASL, CICC).
   Fill before each send (search for "FILL"): MAILING ADDRESS in the footer.
@@ -131,28 +134,40 @@
     <p class="muted" style="margin:0 0 12px 0;font-family:'Space Grotesk',Helvetica,Arial,sans-serif;font-size:12px;letter-spacing:1.6px;text-transform:uppercase;color:#6B6B66;">Routes we work on</p>
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="font-family:Helvetica,Arial,sans-serif;">
       <tr><td class="rule" style="border-top:1px solid #1A1A1A;padding:14px 0;">
-        <a class="link" href="https://visaroads.com/en/europe/netherlands?utm_source=email&amp;utm_medium=campaign&amp;utm_campaign=rcic-partner-europe" style="text-decoration:none;color:#1A1A1A;">
-          <span class="ink-text" style="font-size:17px;font-weight:700;color:#1A1A1A;">Netherlands</span>
-          <span class="muted" style="font-size:14px;color:#6B6B66;">&nbsp;·&nbsp;Start-up residence permit, with a facilitator and RVO's advice&nbsp;&rarr;</span>
-        </a>
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
+          <td width="48" valign="top" style="width:48px;padding-top:3px;"><a href="https://visaroads.com/en/europe/netherlands?utm_source=email&amp;utm_medium=campaign&amp;utm_campaign=rcic-partner-europe"><img src="https://visaroads.com/img/email/flags/nl.png" width="33" height="22" alt="Flag of Netherlands" style="display:block;width:33px;height:22px;"></a></td>
+          <td valign="top"><a class="link" href="https://visaroads.com/en/europe/netherlands?utm_source=email&amp;utm_medium=campaign&amp;utm_campaign=rcic-partner-europe" style="text-decoration:none;color:#1A1A1A;">
+            <span class="ink-text" style="font-size:17px;font-weight:700;color:#1A1A1A;">Netherlands</span>
+            <span class="muted" style="font-size:14px;color:#6B6B66;">&nbsp;·&nbsp;Start-up residence permit, with a facilitator and RVO's advice&nbsp;&rarr;</span>
+          </a></td>
+        </tr></table>
       </td></tr>
       <tr><td class="rule" style="border-top:1px solid #DDD9CC;padding:14px 0;">
-        <a class="link" href="https://visaroads.com/en/country/finland?utm_source=email&amp;utm_medium=campaign&amp;utm_campaign=rcic-partner-europe" style="text-decoration:none;color:#1A1A1A;">
-          <span class="ink-text" style="font-size:17px;font-weight:700;color:#1A1A1A;">Finland</span>
-          <span class="muted" style="font-size:14px;color:#6B6B66;">&nbsp;·&nbsp;Startup permit, after Business Finland's eligibility statement&nbsp;&rarr;</span>
-        </a>
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
+          <td width="48" valign="top" style="width:48px;padding-top:3px;"><a href="https://visaroads.com/en/country/finland?utm_source=email&amp;utm_medium=campaign&amp;utm_campaign=rcic-partner-europe"><img src="https://visaroads.com/img/email/flags/fi.png" width="36" height="22" alt="Flag of Finland" style="display:block;width:36px;height:22px;"></a></td>
+          <td valign="top"><a class="link" href="https://visaroads.com/en/country/finland?utm_source=email&amp;utm_medium=campaign&amp;utm_campaign=rcic-partner-europe" style="text-decoration:none;color:#1A1A1A;">
+            <span class="ink-text" style="font-size:17px;font-weight:700;color:#1A1A1A;">Finland</span>
+            <span class="muted" style="font-size:14px;color:#6B6B66;">&nbsp;·&nbsp;Startup permit, after Business Finland's eligibility statement&nbsp;&rarr;</span>
+          </a></td>
+        </tr></table>
       </td></tr>
       <tr><td class="rule" style="border-top:1px solid #DDD9CC;padding:14px 0;">
-        <a class="link" href="https://visaroads.com/en/country/denmark?utm_source=email&amp;utm_medium=campaign&amp;utm_campaign=rcic-partner-europe" style="text-decoration:none;color:#1A1A1A;">
-          <span class="ink-text" style="font-size:17px;font-weight:700;color:#1A1A1A;">Denmark</span>
-          <span class="muted" style="font-size:14px;color:#6B6B66;">&nbsp;·&nbsp;Start-up Denmark, approved by an expert panel&nbsp;&rarr;</span>
-        </a>
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
+          <td width="48" valign="top" style="width:48px;padding-top:3px;"><a href="https://visaroads.com/en/country/denmark?utm_source=email&amp;utm_medium=campaign&amp;utm_campaign=rcic-partner-europe"><img src="https://visaroads.com/img/email/flags/dk.png" width="29" height="22" alt="Flag of Denmark" style="display:block;width:29px;height:22px;"></a></td>
+          <td valign="top"><a class="link" href="https://visaroads.com/en/country/denmark?utm_source=email&amp;utm_medium=campaign&amp;utm_campaign=rcic-partner-europe" style="text-decoration:none;color:#1A1A1A;">
+            <span class="ink-text" style="font-size:17px;font-weight:700;color:#1A1A1A;">Denmark</span>
+            <span class="muted" style="font-size:14px;color:#6B6B66;">&nbsp;·&nbsp;Start-up Denmark, approved by an expert panel&nbsp;&rarr;</span>
+          </a></td>
+        </tr></table>
       </td></tr>
       <tr><td class="rule" style="border-top:1px solid #DDD9CC;border-bottom:1px solid #DDD9CC;padding:14px 0;">
-        <a class="link" href="https://visaroads.com/en/europe/belgium?utm_source=email&amp;utm_medium=campaign&amp;utm_campaign=rcic-partner-europe" style="text-decoration:none;color:#1A1A1A;">
-          <span class="ink-text" style="font-size:17px;font-weight:700;color:#1A1A1A;">Belgium (Flanders)</span>
-          <span class="muted" style="font-size:14px;color:#6B6B66;">&nbsp;·&nbsp;Innovation &amp; Startup Permit&nbsp;&rarr;</span>
-        </a>
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
+          <td width="48" valign="top" style="width:48px;padding-top:3px;"><a href="https://visaroads.com/en/europe/belgium?utm_source=email&amp;utm_medium=campaign&amp;utm_campaign=rcic-partner-europe"><img src="https://visaroads.com/img/email/flags/be.png" width="26" height="22" alt="Flag of Belgium" style="display:block;width:26px;height:22px;"></a></td>
+          <td valign="top"><a class="link" href="https://visaroads.com/en/europe/belgium?utm_source=email&amp;utm_medium=campaign&amp;utm_campaign=rcic-partner-europe" style="text-decoration:none;color:#1A1A1A;">
+            <span class="ink-text" style="font-size:17px;font-weight:700;color:#1A1A1A;">Belgium (Flanders)</span>
+            <span class="muted" style="font-size:14px;color:#6B6B66;">&nbsp;·&nbsp;Innovation &amp; Startup Permit&nbsp;&rarr;</span>
+          </a></td>
+        </tr></table>
       </td></tr>
     </table>
     <p class="muted" style="margin:12px 0 0 0;font-family:Helvetica,Arial,sans-serif;font-size:13px;line-height:20px;color:#6B6B66;">
@@ -172,18 +187,42 @@
     </tr></table>
   </td></tr>
 
-  <!-- CTA -->
+  <!-- CTA: two clear next steps -->
   <tr><td class="px paper" style="background:#F2F0E9;padding:36px 40px 8px 40px;font-family:Helvetica,Arial,sans-serif;">
     <p class="ink-text" style="margin:0 0 8px 0;font-family:'DM Serif Display',Georgia,'Times New Roman',serif;font-size:24px;line-height:30px;color:#1A1A1A;">Have a client in mind?</p>
-    <p class="ink-text" style="margin:0 0 20px 0;font-size:16px;line-height:26px;color:#1A1A1A;">
-      Whether you have a founder exploring a European startup route or want to see how we would work together, I'd be glad to talk for twenty minutes.
+    <p class="ink-text" style="margin:0 0 22px 0;font-size:16px;line-height:26px;color:#1A1A1A;">
+      Whether you have a founder exploring a European startup route or want to see how we would work together, pick whichever is easier for you.
     </p>
-    <table role="presentation" class="btn" cellpadding="0" cellspacing="0" border="0"><tr>
-      <td bgcolor="#CCFF00" style="background:#CCFF00;">
-        <a href="https://visaroads.com/en/partners?utm_source=email&amp;utm_medium=campaign&amp;utm_campaign=rcic-partner-europe#book" style="display:inline-block;padding:16px 28px;font-family:'Space Grotesk',Helvetica,Arial,sans-serif;font-size:15px;font-weight:700;letter-spacing:0.2px;color:#1A1A1A;text-decoration:none;">See how it works &amp; book a call&nbsp;&rarr;</a>
+
+    <!-- 1. Book -->
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border:2px solid #1A1A1A;"><tr>
+      <td style="padding:20px 22px 22px 22px;background:#FFFFFF;" class="card">
+        <p class="muted" style="margin:0 0 4px 0;font-size:11px;letter-spacing:1.6px;text-transform:uppercase;color:#6B6B66;">Option 1&nbsp;·&nbsp;Video call</p>
+        <p class="ink-text" style="margin:0 0 6px 0;font-size:18px;line-height:24px;font-weight:700;color:#1A1A1A;">Book a 20-minute partner call with Farjad</p>
+        <p class="muted" style="margin:0 0 16px 0;font-size:14px;line-height:21px;color:#6B6B66;">Pick a time in Farjad’s calendar. Google confirms the booking by email.</p>
+        <table role="presentation" class="btn" cellpadding="0" cellspacing="0" border="0"><tr>
+          <td bgcolor="#CCFF00" style="background:#CCFF00;border:1px solid #1A1A1A;">
+            <a href="https://visaroads.com/en/partners?utm_source=email&amp;utm_medium=campaign&amp;utm_campaign=rcic-partner-europe#book" style="display:inline-block;padding:15px 26px;font-family:'Space Grotesk',Helvetica,Arial,sans-serif;font-size:16px;font-weight:700;color:#1A1A1A;text-decoration:none;">Choose a time&nbsp;&rarr;</a>
+          </td>
+        </tr></table>
       </td>
     </tr></table>
-    <p class="muted" style="margin:14px 0 0 0;font-size:14px;line-height:22px;color:#6B6B66;">Or just reply to this email. It comes straight to me.</p>
+
+    <!-- 2. WhatsApp -->
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:14px;border:1px solid #DDD9CC;"><tr>
+      <td style="padding:20px 22px 22px 22px;background:#FFFFFF;" class="card">
+        <p class="muted" style="margin:0 0 4px 0;font-size:11px;letter-spacing:1.6px;text-transform:uppercase;color:#6B6B66;">Option 2&nbsp;·&nbsp;Message</p>
+        <p class="ink-text" style="margin:0 0 6px 0;font-size:18px;line-height:24px;font-weight:700;color:#1A1A1A;">Ask us a quick question on WhatsApp</p>
+        <p class="muted" style="margin:0 0 16px 0;font-size:14px;line-height:21px;color:#6B6B66;">Opens a chat with our team at +1&nbsp;613&nbsp;515&nbsp;0727, with a first message already written.</p>
+        <table role="presentation" class="btn" cellpadding="0" cellspacing="0" border="0"><tr>
+          <td bgcolor="#1A1A1A" style="background:#1A1A1A;">
+            <a href="https://wa.me/16135150727?text=Hi%20VisaRoads%2C%20I%27m%20an%20immigration%20practitioner%20and%20I%27d%20like%20to%20talk%20about%20the%20partner%20programme." style="display:inline-block;padding:15px 26px;font-family:'Space Grotesk',Helvetica,Arial,sans-serif;font-size:16px;font-weight:700;color:#F2F0E9;text-decoration:none;">Message us on WhatsApp&nbsp;&rarr;</a>
+          </td>
+        </tr></table>
+      </td>
+    </tr></table>
+
+    <p class="muted" style="margin:16px 0 0 0;font-size:14px;line-height:22px;color:#6B6B66;">Or just reply to this email. It comes straight to me.</p>
   </td></tr>
 
   <!-- Signature -->
@@ -192,7 +231,7 @@
     <p class="ink-text" style="margin:0;font-size:16px;line-height:24px;font-weight:700;color:#1A1A1A;">Farjad</p>
     <p class="muted" style="margin:0;font-size:14px;line-height:22px;color:#6B6B66;">Founder, VisaRoads&nbsp;·&nbsp;<a class="link" href="https://visaroads.com/en/partners?utm_source=email&amp;utm_medium=campaign&amp;utm_campaign=rcic-partner-europe" style="color:#1A1A1A;">visaroads.com/partners</a></p>
     <p class="muted" style="margin:0;font-size:14px;line-height:22px;color:#6B6B66;">
-      <a class="link" href="tel:+16135150727" style="color:#1A1A1A;text-decoration:none;">+1 613 515 0727</a>&nbsp;·&nbsp;<a class="link" href="https://wa.me/16135150727" style="color:#1A1A1A;">WhatsApp</a>
+      <a class="link" href="tel:+16135150727" style="color:#1A1A1A;text-decoration:none;">+1 613 515 0727</a>&nbsp;·&nbsp;<a class="link" href="https://wa.me/16135150727?text=Hi%20VisaRoads%2C%20I%27m%20an%20immigration%20practitioner%20and%20I%27d%20like%20to%20talk%20about%20the%20partner%20programme." style="color:#1A1A1A;">WhatsApp</a>
     </p>
   </td></tr>
 
