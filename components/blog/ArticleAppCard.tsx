@@ -3,8 +3,8 @@
 // ============================================================================
 // The "get the app" card inside blog articles, for phones only. Nothing is in
 // the server HTML, so crawlers and the first paint never meet it. After load
-// it is placed in the second half of the article, and only if that spot is a
-// full screen below the reader, so nothing visible moves (no layout shift).
+// it is placed after the first quarter of the article, and only below what the
+// reader can see, so nothing visible moves (no layout shift).
 // The rules are in lib/app-prompt.ts.
 // ============================================================================
 import { useEffect, useRef, useState } from 'react';
@@ -18,20 +18,29 @@ import {
   detectPlatform,
   isInAppBrowser,
   isQuiet,
+  markShownThisVisit,
+  shownThisVisit,
   isSafeToInsert,
   openedFromApp,
   pickInsertIndex,
   rememberOutcome,
+  SAFE_MARGIN_SCREENS,
   storeUrl,
   type AppPlatform,
   type AppPromptOutcome,
   type KeyValueStore,
+  visitMemory,
 } from '@/lib/app-prompt';
 
 const INSERT_DELAY_MS = 2_500;
 
-// Keeps the answer across articles in this visit when localStorage is blocked.
-let answeredThisVisit = false;
+function session(): KeyValueStore | null {
+  try {
+    return window.sessionStorage;
+  } catch {
+    return null;
+  }
+}
 
 function storage(): KeyValueStore | null {
   try {
@@ -50,14 +59,15 @@ function placeCard(article: HTMLElement, locale: string): Placement | null {
     shortestSide: Math.min(window.screen.width, window.screen.height),
     webdriver: navigator.webdriver,
   });
-  if (!platform || openedFromApp(document.referrer) || isQuiet(storage(), Date.now())) return null;
+  if (!platform || openedFromApp(document.referrer) || isQuiet(storage(), Date.now(), shownThisVisit(session()))) return null;
   const href = storeUrl(platform, locale, process.env.NEXT_PUBLIC_APP_STORE_PROVIDER_TOKEN || undefined);
   if (!href) return null;
 
   const articleTop = article.getBoundingClientRect().top;
   const children = Array.from(article.children);
   const blocks = children.map((el) => ({ tag: el.tagName, top: el.getBoundingClientRect().top - articleTop }));
-  const target = children[pickInsertIndex(blocks, article.offsetHeight)];
+  const minTop = window.innerHeight * SAFE_MARGIN_SCREENS - articleTop;
+  const target = children[pickInsertIndex(blocks, article.offsetHeight, minTop)];
   if (!target || !isSafeToInsert(target.getBoundingClientRect().top, window.innerHeight)) return null;
 
   const host = document.createElement('div');
@@ -71,7 +81,7 @@ export default function ArticleAppCard({ articleId, locale, copy }: { articleId:
   const cardRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
-    if (answeredThisVisit) return;
+    if (visitMemory.answered) return;
     let host: HTMLElement | null = null;
     const timer = window.setTimeout(() => {
       const article = document.getElementById(articleId);
@@ -104,7 +114,8 @@ export default function ArticleAppCard({ articleId, locale, copy }: { articleId:
         observer.disconnect();
         trackAppPrompt('app_prompt_shown', { platform, locale, browser });
         rememberOutcome(storage(), 'seen', Date.now());
-        answeredThisVisit = true;
+        markShownThisVisit(session());
+        visitMemory.answered = true;
       },
       { threshold: 0.5 },
     );
@@ -115,7 +126,7 @@ export default function ArticleAppCard({ articleId, locale, copy }: { articleId:
   if (!placement || !analytics) return null;
 
   const answer = (outcome: AppPromptOutcome) => {
-    answeredThisVisit = true;
+    visitMemory.answered = true;
     rememberOutcome(storage(), outcome, Date.now());
   };
 
