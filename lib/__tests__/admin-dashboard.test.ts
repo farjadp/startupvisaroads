@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import {
   classifyRunError,
   completeDayWindows,
+  rollingWindows,
   runErrorKinds,
   summarizeAutopilot,
   summarizeContent,
@@ -25,6 +26,17 @@ describe('completeDayWindows', () => {
     expect(w.end.toISOString()).toBe('2026-11-18T00:00:00.000Z');
     expect(w.start.toISOString()).toBe('2026-10-21T00:00:00.000Z');
     expect(w.previousStart.toISOString()).toBe('2026-09-23T00:00:00.000Z');
+  });
+});
+
+describe('rollingWindows', () => {
+  it('runs up to now, so sends from today are inside the current window', () => {
+    const w = rollingWindows(NOW);
+    expect(w.end).toEqual(NOW);
+    expect(w.start.toISOString()).toBe('2026-10-21T12:00:00.000Z');
+    expect(w.previousStart.toISOString()).toBe('2026-09-23T12:00:00.000Z');
+    const earlierToday = new Date('2026-11-18T09:00:00Z');
+    expect(earlierToday >= w.start && earlierToday <= w.end).toBe(true);
   });
 });
 

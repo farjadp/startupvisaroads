@@ -16,6 +16,7 @@ import {
   DAY_MS,
   HOUR_MS,
   completeDayWindows,
+  rollingWindows,
   summarizeAutopilot,
   summarizeContent,
   summarizeEmail,
@@ -97,7 +98,8 @@ function hasUnsubscribedTag(): Prisma.MarketingContactWhereInput {
 }
 
 async function loadEmail(now: Date): Promise<EmailSummary> {
-  const w = completeDayWindows(now);
+  // Rolling, so a campaign going out today shows up today.
+  const w = rollingWindows(now);
   const hasEmail: Prisma.MarketingContactWhereInput = { AND: [{ email: { not: null } }, { email: { not: '' } }] };
   const unsubscribedWhere = hasUnsubscribedTag();
 
@@ -131,7 +133,7 @@ async function loadEmail(now: Date): Promise<EmailSummary> {
     _count: { _all: true },
   });
   const sentLast28 = await prisma.campaignLog.count({
-    where: { ...email, status: 'SENT', sentAt: { gte: w.start, lt: w.end } },
+    where: { ...email, status: 'SENT', sentAt: { gte: w.start, lte: w.end } },
   });
   const sentPrevious28 = await prisma.campaignLog.count({
     where: { ...email, status: 'SENT', sentAt: { gte: w.previousStart, lt: w.start } },

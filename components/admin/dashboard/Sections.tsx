@@ -165,7 +165,7 @@ export function EmailSection({ section, adminBase }: { section: Section<EmailSum
     <SectionShell
       id="email"
       title="Email"
-      source="From MarketingContact and CampaignLog. Sent means our provider accepted the message, not that it was delivered. Opens and clicks are inflated by mail security scanners, which load images and follow links, so compare campaigns with each other and do not read them as people."
+      source="From MarketingContact and CampaignLog. The 28-day send count runs up to now, today included. Sent means our provider accepted the message, not that it was delivered. Opens and clicks are inflated by mail security scanners, which load images and follow links, so compare campaigns with each other and do not read them as people."
     >
       {section.state === 'error' ? (
         <SectionError message={section.message} />

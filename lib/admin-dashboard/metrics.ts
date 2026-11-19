@@ -36,6 +36,12 @@ export function completeDayWindows(now: Date, days = WINDOW_DAYS) {
   return { previousStart, start, end };
 }
 
+/** The last `days` × 24 hours up to now and the same span before. For live counts that must include today. */
+export function rollingWindows(now: Date, days = WINDOW_DAYS) {
+  const start = new Date(now.getTime() - days * DAY_MS);
+  return { previousStart: new Date(start.getTime() - days * DAY_MS), start, end: now };
+}
+
 function compareIn<T>(rows: T[], at: (row: T) => Date, w: ReturnType<typeof completeDayWindows>): Compare {
   let current = 0;
   let previous = 0;
