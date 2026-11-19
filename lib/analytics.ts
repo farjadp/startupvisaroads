@@ -37,13 +37,13 @@ export function trackLead(form: LeadForm, locale: string, eventId?: string): voi
 
 export type AppPromptEvent = 'app_prompt_shown' | 'app_prompt_click' | 'app_prompt_dismiss';
 
-/** The phone "get the app" card in articles (components/blog/ArticleAppCard.tsx). */
+/** The phone "get the app" prompts: the article card and the bottom bar (lib/app-prompt.ts). */
 export function trackAppPrompt(
   event: AppPromptEvent,
-  params: { platform: 'ios' | 'android'; locale: string; browser: 'in_app' | 'standard' },
+  params: { platform: 'ios' | 'android'; locale: string; browser: 'in_app' | 'standard'; placement?: 'article' | 'bar' },
 ): void {
   if (typeof window === 'undefined' || typeof window.gtag !== 'function') return;
-  window.gtag('event', event, { ...params, placement: 'article' });
+  window.gtag('event', event, { placement: 'article', ...params });
 }
 
 /**

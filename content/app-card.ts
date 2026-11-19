@@ -36,3 +36,28 @@ export function appCardCopy(locale: 'en' | 'fa', routes: number, countries: numb
     name: { ios: 'Get the VisaRoads app on the App Store', android: 'Get the VisaRoads app on Google Play' },
   };
 }
+
+export type AppBarCopy = {
+  line: string;
+  dismiss: string;
+  store: { ios: string; android: string };
+  name: { ios: string; android: string };
+};
+
+/** The slim bar on pages other than articles (components/AppBar.tsx). */
+export function appBarCopy(locale: 'en' | 'fa', routes: number): AppBarCopy {
+  if (locale === 'fa') {
+    return {
+      line: `${toFaDigits(routes)} مسیر مهاجرت در اپ ما`,
+      dismiss: 'بستن',
+      store: { ios: 'اپ استور', android: 'گوگل پلی' },
+      name: { ios: 'دانلود اپ VisaRoads از اپ استور', android: 'دانلود اپ VisaRoads از گوگل پلی' },
+    };
+  }
+  return {
+    line: `${routes} visa routes in our app`,
+    dismiss: 'Dismiss',
+    store: { ios: 'App Store', android: 'Google Play' },
+    name: { ios: 'Get the VisaRoads app on the App Store', android: 'Get the VisaRoads app on Google Play' },
+  };
+}

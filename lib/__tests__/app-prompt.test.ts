@@ -2,8 +2,14 @@ import { describe, expect, it } from 'vitest';
 import {
   STORAGE_KEY,
   detectPlatform,
+  barAllowedOn,
+  hasEngaged,
+  isArticlePath,
   isInAppBrowser,
+  isKeyboardLikelyOpen,
   isQuiet,
+  markShownThisVisit,
+  shownThisVisit,
   isSafeToInsert,
   openedFromApp,
   pickInsertIndex,
@@ -66,31 +72,69 @@ it('recognises a visit that came from our own app', () => {
 describe('pickInsertIndex', () => {
   const at = (tag: string, top: number) => ({ tag, top });
 
-  it('prefers a section heading in the second half', () => {
-    const blocks = [at('H2', 0), at('P', 100), at('P', 550), at('P', 600), at('H2', 700), at('P', 750)];
-    expect(pickInsertIndex(blocks, 1000)).toBe(4);
+  it('takes the first section break after the first quarter', () => {
+    const blocks = [at('H2', 0), at('P', 100), at('P', 280), at('H2', 320), at('P', 400), at('H2', 700)];
+    expect(pickInsertIndex(blocks, 1000)).toBe(3);
   });
-  it('falls back to a paragraph break', () => {
-    expect(pickInsertIndex([at('P', 0), at('P', 400), at('P', 600), at('P', 800)], 1000)).toBe(2);
+  it('falls back to the first paragraph break when no heading comes before mid-article', () => {
+    expect(pickInsertIndex([at('P', 0), at('P', 300), at('P', 600), at('H2', 800)], 1000)).toBe(1);
   });
-  it('never separates a heading from its text or sits against another box', () => {
-    expect(pickInsertIndex([at('H2', 0), at('H2', 550), at('DIV', 600), at('P', 650), at('DIV', 700)], 1000)).toBe(-1);
+  it('keeps below the reader with minTop', () => {
+    const blocks = [at('H2', 0), at('P', 100), at('H2', 300), at('P', 350), at('H2', 600), at('P', 650)];
+    expect(pickInsertIndex(blocks, 1000, 500)).toBe(4);
   });
   it('accepts a heading after inline text in older articles', () => {
-    expect(pickInsertIndex([at('H2', 0), at('UL', 100), at('A', 690), at('H2', 710), at('A', 780)], 1000)).toBe(3);
+    expect(pickInsertIndex([at('H2', 0), at('UL', 100), at('A', 290), at('H2', 310), at('A', 780)], 1000)).toBe(3);
   });
-  it('stays out of the first half and the very end', () => {
-    expect(pickInsertIndex([at('P', 0), at('P', 300), at('P', 900)], 1000)).toBe(-1);
+  it('never separates a heading from its text or sits against another box', () => {
+    expect(pickInsertIndex([at('H2', 0), at('H2', 350), at('DIV', 400), at('P', 650), at('DIV', 700)], 1000)).toBe(-1);
+  });
+  it('stays out of the opening and the very end', () => {
+    expect(pickInsertIndex([at('P', 0), at('P', 200), at('P', 900)], 1000)).toBe(-1);
   });
   it('gives up on an empty article', () => expect(pickInsertIndex([], 0)).toBe(-1));
 });
 
 describe('isSafeToInsert', () => {
-  it('needs a full screen between the slot and the visible area', () => {
-    expect(isSafeToInsert(1700, 844)).toBe(true);
-    expect(isSafeToInsert(1000, 844)).toBe(false);
+  it('needs the slot below the screen with a margin', () => {
+    expect(isSafeToInsert(1100, 844)).toBe(true);
+    expect(isSafeToInsert(900, 844)).toBe(false);
   });
   it('refuses a slot the reader has already passed', () => expect(isSafeToInsert(-200, 844)).toBe(false));
+});
+
+describe('hasEngaged (the bar)', () => {
+  const base = { pagesThisVisit: 1, dwellMs: 0, scrolledPx: 0, viewportPx: 800 };
+  it('is false at first paint', () => expect(hasEngaged(base)).toBe(false));
+  it('needs both time and scroll on the first page', () => {
+    expect(hasEngaged({ ...base, dwellMs: 60_000 })).toBe(false);
+    expect(hasEngaged({ ...base, scrolledPx: 5_000, dwellMs: 3_000 })).toBe(false);
+    expect(hasEngaged({ ...base, scrolledPx: 800, dwellMs: 15_000 })).toBe(true);
+  });
+  it('accepts a second page after a short pause', () => {
+    expect(hasEngaged({ ...base, pagesThisVisit: 2, dwellMs: 1_000 })).toBe(false);
+    expect(hasEngaged({ ...base, pagesThisVisit: 2, dwellMs: 4_000 })).toBe(true);
+  });
+});
+
+describe('where the bar may appear', () => {
+  it.each(['/admin/users', '/login', '/contact', '/book-meeting', '/unsubscribe', '/landing/pnp-landing', '/app', '/webinar', '/which-path', '/startupworkpermit', '/tools/express-entry', '/usa/assessment', '/blog/some-article'])(
+    'not on %s',
+    (p) => expect(barAllowedOn(p)).toBe(false),
+  );
+  it.each(['/', '/blog', '/blog/category/canada', '/country/finland', '/applications', '/contact-us-guide', '/usa/eb1'])('on %s', (p) =>
+    expect(barAllowedOn(p)).toBe(true),
+  );
+  it('tells articles from the blog index and categories', () => {
+    expect(isArticlePath('/blog/x')).toBe(true);
+    expect(isArticlePath('/blog')).toBe(false);
+    expect(isArticlePath('/blog/category/x')).toBe(false);
+  });
+});
+
+it('reads a much shorter visual viewport as an open keyboard', () => {
+  expect(isKeyboardLikelyOpen(400, 800)).toBe(true);
+  expect(isKeyboardLikelyOpen(760, 800)).toBe(false);
 });
 
 describe('dismissal memory', () => {
@@ -114,6 +158,20 @@ describe('dismissal memory', () => {
     rememberOutcome(s, 'seen', now);
     expect(isQuiet(s, now + 6 * day)).toBe(true);
     expect(isQuiet(s, now + 8 * day)).toBe(false);
+  });
+  it('does not let an unanswered view hide the prompt again in the same visit', () => {
+    const s = memoryStore();
+    rememberOutcome(s, 'seen', now);
+    expect(isQuiet(s, now + day, true)).toBe(false);
+    rememberOutcome(s, 'dismissed', now);
+    expect(isQuiet(s, now + day, true)).toBe(true);
+  });
+  it('remembers that a prompt was shown this visit', () => {
+    const s = memoryStore();
+    expect(shownThisVisit(s)).toBe(false);
+    markShownThisVisit(s);
+    expect(shownThisVisit(s)).toBe(true);
+    expect(shownThisVisit(null)).toBe(false);
   });
   it('treats corrupt data as no answer', () => {
     const s = memoryStore();
@@ -140,6 +198,9 @@ describe('storeUrl', () => {
   });
   it('keeps the App Store link plain without a provider token', () => {
     expect(storeUrl('ios', 'en')).toBe('https://apps.apple.com/app/visaroads-immigration-routes/id6823019451');
+  });
+  it('names the bar as its own campaign', () => {
+    expect(new URL(storeUrl('android', 'en', undefined, 'bar')!).searchParams.get('referrer')).toContain('utm_campaign=web_bar_en');
   });
   it('adds Apple campaign fields when a provider token exists', () => {
     const url = new URL(storeUrl('ios', 'en', '12345')!);
