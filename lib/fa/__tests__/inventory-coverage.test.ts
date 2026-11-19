@@ -27,6 +27,9 @@ import { FA_SITE_PAGES } from '@/lib/autopilot/inventory';
  * /app (the VisaRoads app page, en + fa) has never been in either the English
  * or the Persian writer inventory; adding it is likewise an autopilot linking
  * decision, not something this test should force.
+ *
+ * /partners is written for immigration firms, not for the founders who read
+ * the articles, so the writer should not send readers there.
  */
 const NOT_LINK_TARGETS: readonly string[] = [
   '',
@@ -34,6 +37,7 @@ const NOT_LINK_TARGETS: readonly string[] = [
   '/canada-startup-visa/cost',
   '/canada-startup-visa/designated-organizations',
   '/app',
+  '/partners',
 ];
 
 describe('the Persian link inventory', () => {

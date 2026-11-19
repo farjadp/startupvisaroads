@@ -23,6 +23,7 @@ import FaPageLayout from '@/components/fa/FaPageLayout';
 import { page as faPage } from '@/content/fa/mentorship';
 import { faMeta } from '@/lib/fa/content';
 import BookingCTA from '@/components/BookingCTA';
+import PartnerBand from '@/components/partners/PartnerBand';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
@@ -236,6 +237,7 @@ export default async function MentorshipPage({ params }: { params: Promise<{ loc
          </div>
       </section>
 
+      <PartnerBand />
       <BookingCTA />
 
       {/* =========================================

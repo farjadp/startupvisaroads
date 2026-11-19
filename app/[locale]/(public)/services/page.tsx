@@ -22,6 +22,7 @@ import { setRequestLocale } from 'next-intl/server';
 
 import { metaFor } from '@/lib/pageMeta';
 import BookingCTA from '@/components/BookingCTA';
+import PartnerBand from '@/components/partners/PartnerBand';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
@@ -257,6 +258,7 @@ export default async function ServicesPage({ params }: { params: Promise<{ local
          </div>
       </section>
 
+      <PartnerBand />
       <BookingCTA />
 
       {/* =========================================

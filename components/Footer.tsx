@@ -46,6 +46,7 @@ const EN_LINKS = {
     { href: '/which-path', label: 'Which route fits me?' },
     { href: '/services', label: 'Advisory' },
     { href: '/mentorship', label: 'Mentorship' },
+    { href: '/partners', label: 'For immigration firms' },
     { href: '/app', label: 'The App' },
     { href: '/country', label: 'Jurisdictions' },
     { href: '/blog', label: 'Blog' },
@@ -76,6 +77,7 @@ const FA_LINKS = {
   strategy: [
     { href: '/which-path', label: 'ارزیابی رایگان مسیر' },
     { href: '/mentorship', label: 'منتورشیپ' },
+    { href: '/partners', label: 'همکاری با مؤسسات مهاجرت' },
     { href: '/app', label: 'اپلیکیشن' },
     { href: '/faq', label: 'سؤالات متداول' },
     { href: '/blog', label: 'مجله' },

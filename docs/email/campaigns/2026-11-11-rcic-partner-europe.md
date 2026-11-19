@@ -1,6 +1,7 @@
 # RCIC partner outreach: Europe startup routes
 
-- **Template:** `docs/email/templates/rcic-partner-europe.html` (v1, 11 Nov 2026, about 13 KB, so Gmail will not clip it)
+- **Template:** `docs/email/templates/rcic-partner-europe.html` (v1, 11 Nov 2026, about 13 KB, so Gmail will not clip it). Sent to the first 840 firms on 18 Nov.
+- **Template v2:** `docs/email/templates/rcic-partner-europe-v2.html` (19 Nov 2026, about 18 KB). Farjad's B2B draft rebuilt for our sender. Mailchimp tags are removed (the greeting is "Hi,"), there is one CTA to `/en/partners?utm_…#book` that opens the partner calendar, the routes match the partner page, and the footer carries the not-a-representative line and the sender identification. For the remaining firms only: the 840 who got v1 need a short follow-up, not v2. Fill the mailing address before sending.
 - **Goal:** booked partner calls with RCICs and immigration lawyers who have entrepreneur clients. One metric: calls booked per 100 sent. Replies are the second signal; opens are ignored.
 - **Audience:** RCIC firms on a corporate domain, from the Verixa registry export of 11 Nov 2026. One contact per firm, with farjadp.info bounces, unsubscribes and complaints removed. Order: the 216 firms that clicked in September, then the 434 that opened, then the 2,057 new firms. The list lives outside git.
 - **Volume:** at most 20 a day, Mon–Thu, sent by Farjad from the VisaRoads admin.
