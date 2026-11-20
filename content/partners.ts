@@ -36,7 +36,7 @@ export const PARTNER_BOOKING_EMBED_URL = `${PARTNER_BOOKING_URL}?gv=true`;
 export const BOOKING_FRAME_HEIGHT = 600;
 
 export interface PartnerRoute {
-  key: 'nl' | 'fi' | 'dk' | 'be';
+  key: 'nl' | 'fi' | 'dk' | 'be' | 'es';
   name: string;
   permit: string;
   /** What the evaluating body checks first: the reason a partner needs a plan written to it. */
@@ -106,6 +106,8 @@ const SOURCES = {
   fi: 'https://migri.fi/en/start-up-entrepreneur',
   dk: 'https://www.nyidanmark.dk/en-GB/You-want-to-apply/Work/Start-up-Denmark',
   be: 'https://www.vlaanderen.be/en/working-enterprise-and-investment/working/professional-card-for-foreign-entrepreneurs',
+  /** Ley 28/2022 (Startups Law), final provision 5, rewriting arts. 69 and 70 of Ley 14/2013. Read 8 Nov 2026. */
+  es: 'https://www.boe.es/buscar/doc.php?id=BOE-A-2022-21739',
 } as const;
 
 const en: PartnerCopy = {
@@ -113,7 +115,7 @@ const en: PartnerCopy = {
   h1a: 'Your entrepreneur client.',
   h1b: 'Our business plan.',
   lede:
-    'You keep the client and the legal file. We build the startup side of the case: the startup assessment, business plan, financial model, pitch deck and founder mentorship, for startup routes in the Netherlands, Finland, Denmark and Flanders.',
+    'You keep the client and the legal file. We build the startup side of the case: the startup assessment, business plan, financial model, pitch deck and founder mentorship, for startup routes in the Netherlands, Finland, Denmark, Flanders and Spain.',
   ctaBook: 'Book a 20-minute partner call',
   ctaHow: 'How it works',
   heroImageAlt: 'Two empty chairs facing each other across an oak table by a window, set for a working meeting',
@@ -179,9 +181,15 @@ const en: PartnerCopy = {
         sourceLabel: 'vlaanderen.be', sourceUrl: SOURCES.be, href: '/europe/belgium', image: '/fa/img/belgium.webp',
         imageAlt: 'The Antwerp skyline on a sunny day, with the cathedral tower rising above the houses along the Scheldt',
       },
+      {
+        key: 'es', name: 'Spain', permit: 'Entrepreneur residence (Startups Law)',
+        gate: 'ENISA must issue a favourable report on the business plan, which the UGE requests itself. The permit is filed online with the UGE and is valid for 3 years.',
+        sourceLabel: 'boe.es', sourceUrl: SOURCES.es, href: '/europe/spain', image: '/fa/img/spain.webp',
+        imageAlt: 'Gran Vía in Madrid on a sunny day: the Metropolis building with its black and gold dome and winged statue, traffic in the street',
+      },
     ],
     canada: {
-      text: 'Canada’s Start-up Visa was paused on 30 June 2026 and takes no new applications, so we take no new Start-up Visa files. For founders who need a road Canada cannot offer right now, these four are the ones we work on.',
+      text: 'Canada’s Start-up Visa was paused on 30 June 2026 and takes no new applications, so we take no new Start-up Visa files. For founders who need a road Canada cannot offer right now, these five are the ones we work on.',
       sourceLabel: 'canada.ca',
       sourceUrl: SUV_SOURCES.program,
     },
@@ -237,7 +245,7 @@ const en: PartnerCopy = {
       },
       {
         q: 'Which routes do you work on?',
-        a: 'The Netherlands start-up residence permit, Finland’s startup permit, Start-up Denmark and the Flemish Innovation & Startup Permit in Belgium. Canada’s Start-up Visa has been paused since 30 June 2026, so we take no new files for it.',
+        a: 'The Netherlands start-up residence permit, Finland’s startup permit, Start-up Denmark, the Flemish Innovation & Startup Permit in Belgium and Spain’s entrepreneur residence under the Startups Law. Canada’s Start-up Visa has been paused since 30 June 2026, so we take no new files for it.',
       },
       {
         q: 'What if the founder’s idea is not strong enough?',
@@ -265,7 +273,7 @@ const fa: PartnerCopy = {
   h1a: 'پرونده‌ی حقوقی با شما،',
   h1b: 'بخش استارتاپی با ما.',
   lede:
-    'موکل و پرونده‌ی حقوقی دست خودتان می‌ماند. ما بخش استارتاپی پرونده را می‌سازیم: ارزیابی ایده، بیزینس‌پلن، مدل مالی، پیچ‌دک و منتورشیپ بنیان‌گذار، برای مسیرهای استارتاپی هلند، فنلاند، دانمارک و فلاندرِ بلژیک.',
+    'موکل و پرونده‌ی حقوقی دست خودتان می‌ماند. ما بخش استارتاپی پرونده را می‌سازیم: ارزیابی ایده، بیزینس‌پلن، مدل مالی، پیچ‌دک و منتورشیپ بنیان‌گذار، برای مسیرهای استارتاپی هلند، فنلاند، دانمارک، فلاندرِ بلژیک و اسپانیا.',
   ctaBook: 'رزرو تماس ۲۰ دقیقه‌ای همکاری',
   ctaHow: 'همکاری چطور پیش می‌رود',
   heroImageAlt: 'دو صندلی روبه‌روی هم کنار میز بلوط و پنجره، آماده‌ی یک جلسه‌ی کاری',
@@ -303,7 +311,7 @@ const fa: PartnerCopy = {
   },
   routes: {
     title: 'مسیرهایی که برایشان پرونده آماده می‌کنیم',
-    intro: 'در هر چهار مسیر، پیش از اجازه‌ی اقامت یک مرحله‌ی ارزیابی هست و آن مرحله بیزینس‌پلن را می‌خواند.',
+    intro: 'در هر پنج مسیر، پیش از اجازه‌ی اقامت یک مرحله‌ی ارزیابی هست و آن مرحله بیزینس‌پلن را می‌خواند.',
     guide: 'راهنمای کامل',
     source: 'منبع رسمی',
     items: [
@@ -331,9 +339,15 @@ const fa: PartnerCopy = {
         sourceLabel: 'vlaanderen.be', sourceUrl: SOURCES.be, href: '/europe/belgium', image: '/fa/img/belgium.webp',
         imageAlt: 'افق شهر آنتورپ در روزی آفتابی با برج کلیسای جامع بانوی ما بالاتر از خانه‌های کنار رود شلده',
       },
+      {
+        key: 'es', name: 'اسپانیا', permit: 'اقامت کارآفرینی (قانون استارتاپ‌ها)',
+        gate: 'ENISA باید درباره‌ی بیزینس‌پلن گزارش مثبت بدهد و این گزارش را خود UGE درخواست می‌کند. درخواست اقامت به‌صورت آنلاین نزد UGE ثبت می‌شود و اعتبارش ۳ سال است.',
+        sourceLabel: 'boe.es', sourceUrl: SOURCES.es, href: '/europe/spain', image: '/fa/img/spain.webp',
+        imageAlt: 'خیابان گران ویا در مادرید در روزی آفتابی: ساختمان متروپلیس با گنبد سیاه و طلایی و مجسمه‌ی بالدار روی آن، خودروها و موتورسیکلت‌ها در خیابان',
+      },
     ],
     canada: {
-      text: 'استارتاپ ویزای کانادا از ۳۰ ژوئن ۲۰۲۶ متوقف است و درخواست تازه نمی‌پذیرد، پس ما هم پرونده‌ی تازه‌ی استارتاپ ویزا نمی‌گیریم. برای بنیان‌گذاری که مسیر استارتاپی دیگری می‌خواهد، این چهار مسیر همان‌هایی است که رویشان کار می‌کنیم.',
+      text: 'استارتاپ ویزای کانادا از ۳۰ ژوئن ۲۰۲۶ متوقف است و درخواست تازه نمی‌پذیرد، پس ما هم پرونده‌ی تازه‌ی استارتاپ ویزا نمی‌گیریم. برای بنیان‌گذاری که مسیر استارتاپی دیگری می‌خواهد، این پنج مسیر همان‌هایی است که رویشان کار می‌کنیم.',
       sourceLabel: 'canada.ca',
       sourceUrl: SUV_SOURCES.program,
     },
@@ -389,7 +403,7 @@ const fa: PartnerCopy = {
       },
       {
         q: 'روی کدام مسیرها کار می‌کنید؟',
-        a: 'اقامت استارتاپ هلند، اقامت استارتاپ فنلاند، استارتاپ دانمارک و Innovation & Startup Permit فلاندرِ بلژیک. استارتاپ ویزای کانادا از ۳۰ ژوئن ۲۰۲۶ متوقف است و برایش پرونده‌ی تازه نمی‌گیریم.',
+        a: 'اقامت استارتاپ هلند، اقامت استارتاپ فنلاند، استارتاپ دانمارک، Innovation & Startup Permit فلاندرِ بلژیک و اقامت کارآفرینی اسپانیا بر پایه‌ی قانون استارتاپ‌ها. استارتاپ ویزای کانادا از ۳۰ ژوئن ۲۰۲۶ متوقف است و برایش پرونده‌ی تازه نمی‌گیریم.',
       },
       {
         q: 'اگر ایده‌ی موکل به‌اندازه‌ی کافی قوی نباشد چه می‌شود؟',

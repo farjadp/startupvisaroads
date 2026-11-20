@@ -7,13 +7,17 @@ import { FA_PAIRED, isFaPath } from '@/lib/fa/paths';
 const ALL_TEXT = (locale: 'en' | 'fa') => JSON.stringify(PARTNER_COPY[locale]);
 
 describe('partner page copy', () => {
+  it.each(['en', 'fa'] as const)('%s lists the five routes, Spain included', (locale) => {
+    expect(PARTNER_COPY[locale].routes.items.map((r) => r.key)).toEqual(['nl', 'fi', 'dk', 'be', 'es']);
+  });
+
   it.each(['en', 'fa'] as const)('%s publishes no VisaRoads price', (locale) => {
     expect(ALL_TEXT(locale)).not.toMatch(/[$€£]\s?\d|\d\s?(USD|EUR|CAD|دلار|یورو)/);
   });
 
   it.each(['en', 'fa'] as const)('%s cites an official source for every route fact', (locale) => {
     for (const r of PARTNER_COPY[locale].routes.items) {
-      expect(r.sourceUrl).toMatch(/^https:\/\/(www\.)?(ind\.nl|migri\.fi|nyidanmark\.dk|vlaanderen\.be)\//);
+      expect(r.sourceUrl).toMatch(/^https:\/\/(www\.)?(ind\.nl|migri\.fi|nyidanmark\.dk|vlaanderen\.be|boe\.es)\//);
     }
     expect(PARTNER_COPY[locale].routes.canada.sourceUrl).toMatch(/^https:\/\/www\.canada\.ca\//);
   });

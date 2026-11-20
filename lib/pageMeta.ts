@@ -98,8 +98,8 @@ const META: Record<string, Entry> = {
     fa: { title: 'منتورشیپ و آمادگی استارتاپ', description: 'منتورشیپ اختصاصی برای اعتبارسنجی ایده، تقویت مدل کسب‌وکار و آماده‌سازی استارتاپ قابل سرمایه‌گذاری و مهاجرت‌پذیر.' },
   },
   '/partners': {
-    en: { title: 'Partner Programme for RCICs and Immigration Lawyers', description: 'You keep the client and the legal file; we build the business plan, financial model and pitch deck for Netherlands, Finland, Denmark and Flanders startup files.' },
-    fa: { title: 'همکاری با مشاوران و وکلای مهاجرت؛ بیزینس‌پلن پرونده‌های استارتاپی', description: 'موکل و پرونده‌ی حقوقی با شما؛ بیزینس‌پلن، مدل مالی، پیچ‌دک و منتورشیپ بنیان‌گذار برای استارتاپ ویزای هلند، فنلاند، دانمارک و فلاندر با ما.' },
+    en: { title: 'Partner Programme for RCICs and Immigration Lawyers', description: 'You keep the client and legal file; we build the business plan, financial model and pitch deck for Dutch, Finnish, Danish, Flemish and Spanish startup cases.' },
+    fa: { title: 'همکاری با مشاوران و وکلای مهاجرت؛ بیزینس‌پلن پرونده‌های استارتاپی', description: 'موکل و پرونده‌ی حقوقی با شما؛ بیزینس‌پلن، مدل مالی، پیچ‌دک و منتورشیپ بنیان‌گذار برای استارتاپ ویزای هلند، فنلاند، دانمارک، فلاندر و اسپانیا با ما.' },
   },
   '/app': {
     en: { title: 'VisaRoads App — Immigration Routes for iOS & Android', description: 'Ten questions, no sign-up: see how you match the published criteria of startup, entrepreneur, talent and study routes in 17 countries, with an official source on every figure. On Google Play now.' },
