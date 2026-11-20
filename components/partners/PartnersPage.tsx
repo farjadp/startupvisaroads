@@ -97,9 +97,9 @@ export default function PartnersPage({ copy, locale }: { copy: PartnerCopy; loca
             <h2 className={`text-4xl leading-tight md:text-5xl ${display}`}>{copy.routes.title}</h2>
             <p className="mb-10 mt-4 max-w-2xl text-lg leading-relaxed text-[#1a1a1a]/75">{copy.routes.intro}</p>
           </Reveal>
-          <ul className="grid gap-px border border-[#1a1a1a] bg-[#1a1a1a] sm:grid-cols-2 lg:grid-cols-4">
+          <ul className="grid gap-px border border-[#1a1a1a] bg-[#1a1a1a] sm:grid-cols-2 lg:grid-cols-5">
             {copy.routes.items.map((r, i) => (
-              <Reveal as="li" key={r.key} delay={0.08 * i} className="group flex flex-col bg-[#F2F0E9]">
+              <Reveal as="li" key={r.key} delay={0.08 * i} className="group flex flex-col bg-[#F2F0E9] sm:last:col-span-2 lg:last:col-span-1">
                 <div className="relative h-40 overflow-hidden border-b border-[#1a1a1a]">
                   <Image
                     src={r.image}
