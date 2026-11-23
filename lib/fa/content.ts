@@ -134,6 +134,23 @@ export type FaLead =
   | { type: 'whyWatch'; why: { heading: string; items: string[] }; watch: { heading: string; items: string[] } }
   /** Milestones on a true year scale; `at` is the year, `year` the badge text. */
   | { type: 'years'; caption?: string; milestones: { at: number; year: string; label: string; sub?: string }[] }
+  /** A programme's tracks side by side, each with its cost split drawn as a bar. */
+  | {
+      type: 'tracks';
+      caption?: string;
+      /** Names of the two bar segments: funder, applicant. */
+      legend: [string, string];
+      tracks: {
+        name: string;
+        stage: string;
+        figure: string;
+        figureSub?: string;
+        rows: { label: string; value: string }[];
+        split: { funder: number; label?: string };
+        altSplit?: { funder: number; label?: string };
+        note?: string;
+      }[];
+    }
   /** Countries side by side; `code` is a flag code from components/route/flags. */
   | {
       type: 'compare';
@@ -193,7 +210,7 @@ export type FaDownload = {
   /** Basename inside public/fa/downloads/, extension included. */
   file: string;
   /** Drives the icon and the label; nothing else branches on it. */
-  kind: 'pdf' | 'image';
+  kind: 'pdf' | 'image' | 'docx';
   /** Pages, size, language — short chips, in Persian digits. */
   meta: string[];
 };
@@ -231,6 +248,8 @@ export type FaPage = {
   videos?: string[];
   /** Take-away files, rendered as a download rail after the FAQ. */
   downloads?: FaDownload[];
+  /** One line above the download rail; the layout has a generic default. */
+  downloadsIntro?: string;
   /** Key of public/fa/img/<key>.webp used in the hero and as the OG image. */
   image?: string;
   /** Alt text for the hero image. Empty alt carries no SEO value and no meaning. */

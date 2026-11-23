@@ -165,6 +165,7 @@ export default function Header() {
         { href: '/usa-eb2-niw', label: 'آمریکا: EB-2 NIW' },
         { href: '/australia', label: 'استرالیا' },
         { href: '/turkey-tech-visa', label: 'ترکیه' },
+        { href: '/start-up-chile', label: 'شیلی: استارتاپ شیلی' },
         { href: '/israel', label: 'اسرائیل (باز نیست)' },
 
         { header: 'از کجا شروع کنم' },
@@ -228,6 +229,7 @@ export default function Header() {
         { href: '/country/uae', label: t('uae') },
         { href: '/country/australia', label: t('australia') },
         { href: '/country/turkey', label: t('turkey') },
+        { href: '/start-up-chile', label: 'Chile (Start-Up Chile)' },
         { href: '/country/israel', label: t('israel') },
         { href: '/country', label: t('view_all') },
 

@@ -8,7 +8,7 @@
 // ============================================================================
 import React from 'react';
 
-export type FlagCode = 'fi' | 'dk' | 'it' | 'nl' | 'tr' | 'au' | 'ca' | 'ae' | 'ee' | 'es' | 'bg' | 'be';
+export type FlagCode = 'fi' | 'dk' | 'it' | 'nl' | 'tr' | 'au' | 'ca' | 'ae' | 'ee' | 'es' | 'bg' | 'be' | 'cl';
 
 export interface FlagDef {
   name: string;
@@ -181,6 +181,22 @@ export const FLAGS: Record<FlagCode, FlagDef> = {
         <rect width="5" height="13" fill="#000" />
         <rect width="5" height="13" x="5" fill="#FDDA24" />
         <rect width="5" height="13" x="10" fill="#EF3340" />
+      </>
+    ),
+  },
+  // Chile, Decreto 1534 (1967): 3:2; two equal bands, white over red; a
+  // square blue canton as tall as the white band; a white five-pointed star
+  // centred in it whose circumscribed circle is half the canton's side.
+  cl: {
+    name: 'Chile',
+    w: 60,
+    h: 40,
+    draw: () => (
+      <>
+        <rect width="60" height="40" fill="#D52B1E" />
+        <rect width="60" height="20" fill="#fff" />
+        <rect width="20" height="20" fill="#0039A6" />
+        <path fill="#fff" d="M10,5 11.1226,8.4549 14.7553,8.4549 11.8164,10.5902 12.9389,14.0451 10,11.9098 7.0611,14.0451 8.1836,10.5902 5.2447,8.4549 8.8774,8.4549Z" />
       </>
     ),
   },

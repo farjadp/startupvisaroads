@@ -31,6 +31,8 @@ const C = {
   beBlack: '#000000',
   beYellow: '#FDDA24',
   beRed: '#EF3340',
+  clBlue: '#0039A6',
+  clRed: '#D52B1E',
   trRed: '#E30A17',
   caRed: '#D52B1E',
   auBlue: '#012169',
@@ -136,6 +138,19 @@ function Shapes({ code }: { code: FlagCode }) {
           <rect width={5} height={13} fill={C.beBlack} />
           <rect x={5} width={5} height={13} fill={C.beYellow} />
           <rect x={10} width={5} height={13} fill={C.beRed} />
+        </>
+      );
+    // Decreto 1534 (1967): white over red in equal bands, ratio 3:2; a square
+    // blue canton as tall as the white band; a white five-pointed star in its
+    // centre whose circumscribed circle is half the canton's side. Drawn at
+    // 60x40, star points computed from that circle.
+    case 'cl':
+      return (
+        <>
+          <rect width={60} height={40} fill={C.clRed} />
+          <rect width={60} height={20} fill={C.white} />
+          <rect width={20} height={20} fill={C.clBlue} />
+          <path fill={C.white} d="M10,5 11.1226,8.4549 14.7553,8.4549 11.8164,10.5902 12.9389,14.0451 10,11.9098 7.0611,14.0451 8.1836,10.5902 5.2447,8.4549 8.8774,8.4549Z" />
         </>
       );
     // Official artwork (Wikimedia Commons, public domain), authored on a
@@ -267,7 +282,9 @@ export default function Flag({ code, className }: { code: FlagCode; className?: 
             ? { w: 60, h: 30 }
             : code === 'us'
               ? { w: 190, h: 100 }
-              : FLAG_RATIO[code];
+              : code === 'cl'
+                ? { w: 60, h: 40 }
+                : FLAG_RATIO[code];
   const name = FLAG_NAME[code];
   return (
     <svg

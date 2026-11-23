@@ -7,5 +7,6 @@ export { default as CheckRows, type CheckRow } from './CheckRows';
 export { default as WhyWatch } from './WhyWatch';
 export { default as YearsLine, type Milestone } from './YearsLine';
 export { default as CompareCards, type CompareRow } from './CompareCards';
+export { default as TrackCards, type Track } from './TrackCards';
 export { default as Detail } from './Detail';
 export type { Lang, Surface } from './kit';

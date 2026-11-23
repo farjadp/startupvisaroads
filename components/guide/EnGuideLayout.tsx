@@ -18,9 +18,10 @@ import Image from 'next/image';
 import type { FaPage, FaCta, FaSection, FaLead } from '@/lib/fa/content';
 import DataTable from '@/components/fa/DataTable';
 import Checklist from '@/components/fa/motion/Checklist';
+import Downloads from '@/components/fa/motion/Downloads';
 import Visual from '@/components/fa/Visual';
 import { KeyFacts, FigureBlock, Terms, Choice, Timeline } from '@/components/fa/Blocks';
-import { CheckRows, CompareCards, Detail, MoneyBar, NumberTiles, StepLine, WhyWatch, YearsLine } from '@/components/guide/visual';
+import { CheckRows, CompareCards, Detail, MoneyBar, NumberTiles, StepLine, TrackCards, WhyWatch, YearsLine } from '@/components/guide/visual';
 import Flag, { type FlagCode } from '@/components/route/flags';
 import { themeFor } from '@/components/fa/faThemes';
 
@@ -45,7 +46,7 @@ function Cta({ cta, primary, dark }: { cta: FaCta; primary?: boolean; dark?: boo
   );
 }
 
-const FLAG_CODES = new Set<string>(['fi', 'dk', 'it', 'nl', 'tr', 'au', 'ca', 'ae', 'ee', 'es', 'bg', 'be']);
+const FLAG_CODES = new Set<string>(['fi', 'dk', 'it', 'nl', 'tr', 'au', 'ca', 'ae', 'ee', 'es', 'bg', 'be', 'cl']);
 
 /** The visual a section opens with: the English side of components/fa/Blocks.tsx's Lead. */
 function Lead({ lead }: { lead: FaLead }) {
@@ -62,6 +63,8 @@ function Lead({ lead }: { lead: FaLead }) {
       return <WhyWatch why={lead.why} watch={lead.watch} />;
     case 'years':
       return <YearsLine milestones={lead.milestones} caption={lead.caption} />;
+    case 'tracks':
+      return <TrackCards caption={lead.caption} legend={lead.legend} tracks={lead.tracks} />;
     case 'compare':
       return (
         <CompareCards
@@ -345,6 +348,10 @@ export default function EnGuideLayout({
             })}
 
             {extra}
+
+            {page.downloads && page.downloads.length > 0 && (
+              <Downloads lang="en" items={page.downloads} intro={page.downloadsIntro} />
+            )}
 
             {page.faqs.length > 0 && (
               <section id="faq" className="scroll-mt-28">

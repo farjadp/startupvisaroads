@@ -295,6 +295,20 @@ export const ATLAS: AtlasRoute[] = [
 
   // ---------------------------------------------------------------- Beyond
   {
+    key: 'chile',
+    name: 'شیلی',
+    programme: 'استارتاپ شیلی (کورفو)',
+    href: '/start-up-chile',
+    region: 'beyond',
+    status: 'open',
+    figure: '۰٪',
+    figureLabel: 'سهمی که از شرکت می‌گیرند',
+    line: 'کمک بلاعوض تا ۷۵ میلیون پزو با اقامت موقت؛ لیدر تیم باید در شیلی زندگی کند و بخشی از هزینه را خودش بدهد.',
+    image: 'chile',
+    source: 'https://startupchile.org/content/uploads/terms-conditions-big-13.pdf',
+    updated: '2026-11-23',
+  },
+  {
     key: 'turkey',
     name: 'ترکیه',
     programme: 'تک‌ویزا',

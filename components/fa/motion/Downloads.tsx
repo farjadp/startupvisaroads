@@ -21,7 +21,16 @@ import type { FaDownload } from '@/lib/fa/content';
 
 const DIR = '/fa/downloads/';
 
-function Card({ item }: { item: FaDownload }) {
+const L = {
+  fa: { heading: 'دانلود منابع', download: 'دانلود فایل', copy: 'کپی لینک', copied: 'لینک کپی شد', copyOf: (t: string) => `کپی لینک مستقیم ${t}` },
+  en: { heading: 'Downloads', download: 'Download', copy: 'Copy link', copied: 'Link copied', copyOf: (t: string) => `Copy the direct link to ${t}` },
+} as const;
+type Lang = keyof typeof L;
+
+function Card({ item, lang }: { item: FaDownload; lang: Lang }) {
+  const l = L[lang];
+  // A Persian file title on the English rail still gets the Persian face.
+  const display = lang === 'fa' || /[\u0600-\u06FF]/.test(item.title) ? 'font-estedad' : 'font-serif';
   const [copied, setCopied] = useState(false);
   const reduced = useReducedMotion();
   const href = DIR + item.file;
@@ -59,8 +68,8 @@ function Card({ item }: { item: FaDownload }) {
             <ArrowDown className="w-5 h-5" />
           </motion.span>
         </div>
-        <h3 className="font-estedad font-bold text-xl leading-snug [text-wrap:balance]">{item.title}</h3>
-        <p className="text-[#1a1a1a]/70 leading-[1.9] flex-1">{item.description}</p>
+        <h3 dir="auto" className={`${display} font-bold text-xl leading-snug [text-wrap:balance]`}>{item.title}</h3>
+        <p dir="auto" className={`text-[#1a1a1a]/70 flex-1 ${lang === 'fa' ? 'leading-[1.9]' : 'leading-relaxed'}`}>{item.description}</p>
         <ul className="flex flex-wrap gap-2 pt-1">
           {item.meta.map((m) => (
             <li key={m} className="text-sm border border-[#1a1a1a]/25 px-3 py-1 text-[#1a1a1a]/70">{m}</li>
@@ -68,32 +77,32 @@ function Card({ item }: { item: FaDownload }) {
         </ul>
       </a>
       <div className="flex border-t border-[#1a1a1a]/20">
-        <a href={href} download className="flex-1 py-4 text-center font-estedad font-bold bg-[#1a1a1a] text-[#F2F0E9] hover:bg-[#CCFF00] hover:text-[#1a1a1a] transition-colors">
-          دانلود فایل
+        <a href={href} download className={`flex-1 py-4 text-center ${lang === 'fa' ? 'font-estedad' : 'font-sans'} font-bold bg-[#1a1a1a] text-[#F2F0E9] hover:bg-[#CCFF00] hover:text-[#1a1a1a] transition-colors`}>
+          {l.download}
         </a>
         <button
           type="button"
           onClick={copy}
-          aria-label={`کپی لینک مستقیم ${item.title}`}
+          aria-label={l.copyOf(item.title)}
           className="w-16 grid place-items-center border-s border-[#1a1a1a]/20 hover:bg-[#1a1a1a] hover:text-[#CCFF00] transition-colors"
         >
           {copied ? <Check className="w-5 h-5" /> : <Link2 className="w-5 h-5" />}
-          <span className="sr-only">{copied ? 'لینک کپی شد' : 'کپی لینک'}</span>
+          <span className="sr-only">{copied ? l.copied : l.copy}</span>
         </button>
       </div>
-      <span aria-live="polite" className="sr-only">{copied ? 'لینک کپی شد' : ''}</span>
+      <span aria-live="polite" className="sr-only">{copied ? l.copied : ''}</span>
     </motion.div>
   );
 }
 
-export default function Downloads({ items, intro }: { items: FaDownload[]; intro?: string }) {
+export default function Downloads({ items, intro, lang = 'fa' }: { items: FaDownload[]; intro?: string; lang?: Lang }) {
   if (items.length === 0) return null;
   return (
     <section id="downloads" className="scroll-mt-28">
-      <h2 className="font-estedad font-black text-3xl md:text-4xl mb-4">دانلود منابع</h2>
-      {intro && <p className="text-lg leading-[1.9] text-[#1a1a1a]/70 max-w-[70ch] mb-10">{intro}</p>}
+      <h2 className={`${lang === 'fa' ? 'font-estedad font-black' : 'font-serif'} text-3xl md:text-4xl mb-4`}>{L[lang].heading}</h2>
+      {intro && <p className={`text-lg text-[#1a1a1a]/70 max-w-[70ch] mb-10 ${lang === 'fa' ? 'leading-[1.9]' : 'leading-relaxed'}`}>{intro}</p>}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-        {items.map((item) => <Card key={item.file} item={item} />)}
+        {items.map((item) => <Card key={item.file} item={item} lang={lang} />)}
       </div>
     </section>
   );
