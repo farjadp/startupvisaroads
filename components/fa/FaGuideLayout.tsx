@@ -406,7 +406,7 @@ export default function FaGuideLayout({
         {page.downloads && page.downloads.length > 0 && (
           <div className="bg-[#F2F0E9] px-4 py-14 md:px-8">
             <div className="mx-auto max-w-[1200px]">
-              <Downloads items={page.downloads} intro="گزارش‌ها و اینفوگرافیک‌هایی که این راهنما از آن‌ها ساخته شده — برای خواندن آفلاین و فرستادن برای هم‌بنیان‌گذارتان." />
+              <Downloads items={page.downloads} intro={page.downloadsIntro ?? "گزارش‌ها و اینفوگرافیک‌هایی که این راهنما از آن‌ها ساخته شده — برای خواندن آفلاین و فرستادن برای هم‌بنیان‌گذارتان."} />
             </div>
           </div>
         )}

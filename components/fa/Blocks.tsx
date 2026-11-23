@@ -15,7 +15,7 @@ import { ArrowLeft, ArrowRight, Send } from 'lucide-react';
 import { Link } from '@/navigation';
 import type { FaChoice, FaFigure, FaKeyFact, FaLead, FaTerm, FaTimeline } from '@/lib/fa/content';
 import Flag, { FLAGS, type FlagCode } from '@/components/route/flags';
-import { CheckRows, CompareCards, MoneyBar, NumberTiles, StepLine, WhyWatch, YearsLine, type Surface } from '@/components/guide/visual';
+import { CheckRows, CompareCards, MoneyBar, NumberTiles, StepLine, TrackCards, WhyWatch, YearsLine, type Surface } from '@/components/guide/visual';
 
 export function KeyFacts({ facts, lang = 'fa' }: { facts: FaKeyFact[]; lang?: 'fa' | 'en' }) {
   return (
@@ -127,6 +127,8 @@ export function Lead({ lead, surface = 'paper' }: { lead: FaLead; surface?: Surf
       return <WhyWatch lang="fa" why={lead.why} watch={lead.watch} />;
     case 'years':
       return <YearsLine lang="fa" surface={surface} caption={lead.caption} milestones={lead.milestones} />;
+    case 'tracks':
+      return <TrackCards lang="fa" surface={surface} caption={lead.caption} legend={lead.legend} tracks={lead.tracks} />;
     case 'compare':
       return (
         <CompareCards

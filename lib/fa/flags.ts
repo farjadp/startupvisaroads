@@ -37,6 +37,9 @@
 // (colours: Constitution art. 166; ratio: Law on the State Seal and the
 // National Flag, 1998). Pure geometry.
 //
+// Chile is two equal bands and a square canton with one five-pointed star
+// (Decreto 1534, 1967): the star's points are computed, not traced.
+//
 // Australia IS here, and only because the official artwork could be had: the
 // Union Jack canton, the seven-pointed Commonwealth Star and the Southern
 // Cross are none of them geometry to attempt by eye. It is the Wikimedia
@@ -44,7 +47,7 @@
 // ids.
 // ============================================================================
 
-export type FlagCode = 'dk' | 'fi' | 'nl' | 'ee' | 'it' | 'es' | 'bg' | 'be' | 'tr' | 'ca' | 'au' | 'gb' | 'us';
+export type FlagCode = 'dk' | 'fi' | 'nl' | 'ee' | 'it' | 'es' | 'bg' | 'be' | 'cl' | 'tr' | 'ca' | 'au' | 'gb' | 'us';
 
 const BY_PATH: Record<string, FlagCode> = {
   '/europe/denmark': 'dk',
@@ -55,6 +58,7 @@ const BY_PATH: Record<string, FlagCode> = {
   '/europe/spain': 'es',
   '/europe/bulgaria': 'bg',
   '/europe/belgium': 'be',
+  '/start-up-chile': 'cl',
   '/turkey-tech-visa': 'tr',
   '/australia': 'au',
   '/high-impact-startup-pilot': 'ca',
@@ -82,6 +86,7 @@ export const FLAG_NAME: Record<FlagCode, string> = {
   es: 'اسپانیا',
   bg: 'بلغارستان',
   be: 'بلژیک',
+  cl: 'شیلی',
   tr: 'ترکیه',
   au: 'استرالیا',
   ca: 'کانادا',
@@ -102,6 +107,7 @@ export const FLAG_RATIO: Record<FlagCode, { w: number; h: number }> = {
   es: { w: 3, h: 2 }, // Ley 39/1981
   bg: { w: 5, h: 3 }, // Law on the State Seal and National Flag, 1998
   be: { w: 15, h: 13 }, // Constitution art. 193; 13:15 is the civil ratio
+  cl: { w: 3, h: 2 }, // Decreto 1534, 1967
   tr: { w: 3, h: 2 }, // Türk Bayrağı Kanunu
   au: { w: 2, h: 1 }, // Flags Act 1953
   ca: { w: 2, h: 1 },

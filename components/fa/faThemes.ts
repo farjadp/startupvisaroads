@@ -16,6 +16,8 @@ const SPAIN: RouteTheme = { accent: '#FFC400', accentInk: '#1a1a1a', accentText:
 // Belgium has no English twin with a THEME constant: the flag's black, yellow and red (red darkened for AA text on white).
 const BELGIUM: RouteTheme = { accent: '#FDDA24', accentInk: '#1a1a1a', accentText: '#B5162B', primary: '#1a1a1a', deep: '#141414', soft: '#FFF7CC', accentOnDark: '#FDDA24' };
 const BULGARIA: RouteTheme = { accent: '#00966E', accentInk: '#00140E', accentText: '#00704F', primary: '#A51E10', deep: '#0B2A21', soft: '#DCF1E9', accentOnDark: '#2FC594' };
+// Chile: the flag's blue and red, the red darkened for AA text on white.
+const CHILE: RouteTheme = { accent: '#D52B1E', accentInk: '#FFFFFF', accentText: '#B01C12', primary: '#0039A6', deep: '#0A1A3A', soft: '#E3EAF7', accentOnDark: '#FF8A80' };
 const TURKEY: RouteTheme = { accent: '#E30A17', accentInk: '#FFFFFF', accentText: '#B5000F', primary: '#A3000F', deep: '#0A0E1A', soft: '#FCE6E7', accentOnDark: '#FF5A63' };
 const AUSTRALIA: RouteTheme = { accent: '#00843D', accentInk: '#FFFFFF', accentText: '#006B31', primary: '#0d1017', deep: '#0a0e1a', soft: '#E3F2E8', accentOnDark: '#5cb87f' };
 const CANADA: RouteTheme = { accent: '#D80027', accentInk: '#FFFFFF', accentText: '#D80027', primary: '#1a1a1a', deep: '#1a1a1a', soft: '#FBE5E9', accentOnDark: '#FF6B7F' };
@@ -36,6 +38,7 @@ const BY_PATH: Record<string, RouteTheme> = {
   '/europe/spain': SPAIN,
   '/europe/bulgaria': BULGARIA,
   '/europe/belgium': BELGIUM,
+  '/start-up-chile': CHILE,
   '/turkey-tech-visa': TURKEY,
   '/australia': AUSTRALIA,
   '/canada-startup-visa': CANADA_SUV,
