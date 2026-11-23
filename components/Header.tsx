@@ -175,6 +175,7 @@ export default function Header() {
     },
     { href: '/mentorship', label: 'منتورشیپ' },
     { href: '/app', label: 'اپلیکیشن' },
+    { href: '/pricing', label: 'قیمت‌ها' },
     { href: '/faq', label: 'سؤالات متداول' },
     { href: '/blog', label: 'مجله' },
     {
@@ -241,6 +242,7 @@ export default function Header() {
     },
     { href: '/mentorship', label: t('mentorship') },
     { href: '/app', label: 'App' },
+    { href: '/pricing', label: 'Pricing' },
     { href: '/blog', label: t('blog') },
     {
       label: t('firm'),
