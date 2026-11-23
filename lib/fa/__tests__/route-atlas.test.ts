@@ -22,6 +22,7 @@ const ROUTE_GUIDES = [
   '/europe/bulgaria',
   '/europe/belgium',
   '/turkey-tech-visa',
+  '/start-up-chile',
   '/israel',
   '/australia',
   '/uk/innovator-founder',
@@ -71,8 +72,8 @@ describe('route atlas', () => {
     }
   });
 
-  it('counts fourteen countries', () => {
-    expect(countryCount).toBe(14);
+  it('counts fifteen countries', () => {
+    expect(countryCount).toBe(15);
   });
 
   it('only suggests nearby routes that exist and are open or limited', () => {

@@ -502,5 +502,32 @@
     "photographerUrl": "https://www.pexels.com/@bylukemiller",
     "description": "A stunning view of Vancouver's skyline featuring modern high-rise buildings and skyscrapers.",
     "fetched": "2026-11-06"
+  },
+  "chile": {
+    "source": "Pexels",
+    "id": 37309391,
+    "page": "https://www.pexels.com/photo/santiago-skyline-with-andes-mountains-backdrop-37309391/",
+    "photographer": "Nikolai Kolosov",
+    "photographerUrl": "https://www.pexels.com/@nikolai-kolosov",
+    "description": "Panoramic view of Santiago's skyline with Andes mountains in the background.",
+    "fetched": "2026-11-23"
+  },
+  "chile-2": {
+    "source": "Pexels",
+    "id": 37540797,
+    "page": "https://www.pexels.com/photo/modern-urban-landscape-in-santiago-chile-37540797/",
+    "photographer": "Nikolai Kolosov",
+    "photographerUrl": "https://www.pexels.com/@nikolai-kolosov",
+    "description": "Vibrant street view of Santiago, Chile featuring Costanera Center and modern architecture.",
+    "fetched": "2026-11-23"
+  },
+  "chile-3": {
+    "source": "Pexels",
+    "id": 37659461,
+    "page": "https://www.pexels.com/photo/bustling-street-scene-in-santiago-chile-37659461/",
+    "photographer": "Nikolai Kolosov",
+    "photographerUrl": "https://www.pexels.com/@nikolai-kolosov",
+    "description": "People walking on a busy street in Santiago, Chile, surrounded by historic architecture.",
+    "fetched": "2026-11-23"
   }
 }

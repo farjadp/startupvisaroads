@@ -30,6 +30,9 @@ export type OfficialSourceId =
   | 'belgium-flanders-professional-card'
   | 'belgium-startup-flanders'
   | 'belgium-ibz'
+  | 'chile-corfo-start-up-chile'
+  | 'chile-start-up-chile'
+  | 'chile-sermig'
   | 'turkiye-tech-visa'
   | 'israel-innovation-authority'
   | 'israel-piba'
@@ -102,6 +105,9 @@ export const OFFICIAL_SOURCES: readonly OfficialSource[] = [
   { id: 'belgium-startup-flanders', authority: 'Startup.Flanders (Flanders Investment & Trade) — Innovation & Startup Permit', url: 'https://www.startupflanders.com/en/permits', programmePaths: ['/europe/belgium'], keywords: ['belgium', 'startup flanders', 'access point', 'innovation & startup permit'] },
   { id: 'belgium-ibz', authority: 'Belgian Immigration Office (IBZ) — residence, D visa, long-term resident', url: 'https://dofi.ibz.be/en', programmePaths: ['/europe/belgium'], keywords: ['belgium', 'immigration office', 'ibz', 'visa d', 'long-term resident'] },
   { id: 'bulgaria-nims', authority: 'National Investments Management System (NIMS / ISUN 2020) — Startup Visa application portal', url: 'https://enims.egov.bg/en', programmePaths: ['/europe/bulgaria'], keywords: ['bulgaria', 'nims', 'isun', 'startup visa application'] },
+  { id: 'chile-corfo-start-up-chile', authority: 'CORFO (Corporación de Fomento de la Producción) — Start-Up Chile programme and calls', url: 'https://www.corfo.gob.cl/sites/cpp/programa/startup-chile/', programmePaths: ['/start-up-chile'], keywords: ['chile', 'corfo', 'start-up chile', 'startup chile', 'big 13', 'شیلی'] },
+  { id: 'chile-start-up-chile', authority: 'Start-Up Chile — calls, terms and conditions', url: 'https://startupchile.org/', programmePaths: ['/start-up-chile'], keywords: ['chile', 'start-up chile', 'startup chile', 'build', 'ignite', 'growth', 'santiago'] },
+  { id: 'chile-sermig', authority: 'Servicio Nacional de Migraciones (SERMIG), Chile — temporary and permanent residence', url: 'https://serviciomigraciones.cl/', programmePaths: ['/start-up-chile'], keywords: ['chile', 'residencia temporal', 'residencia definitiva', 'sermig', 'santiago', 'شیلی'] },
   { id: 'turkiye-tech-visa', authority: 'Türkiye Tech Visa, Ministry of Industry and Technology', url: 'https://turkiyetechvisa.gov.tr/', programmePaths: ['/turkey-tech-visa', '/country/turkey'], keywords: ['turkey', 'türkiye', 'tech visa', 'technopark'] },
   { id: 'israel-innovation-authority', authority: 'Israel Innovation Authority', url: 'https://innovationisrael.org.il/', programmePaths: ['/country/israel', '/israel'], keywords: ['israel', 'innovation authority', 'innovation visa', 'tnufa'] },
   { id: 'israel-piba', authority: 'Population and Immigration Authority (PIBA), Israel', url: 'https://www.gov.il/', programmePaths: ['/country/israel', '/israel'], keywords: ['israel', 'piba', 'population and immigration'] },
