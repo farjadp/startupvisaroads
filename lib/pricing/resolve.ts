@@ -1,0 +1,156 @@
+// ============================================================================
+// lib/pricing/resolve.ts
+// From the stored document to what a reader may see. This is the safety
+// layer of the pricing page, so it is pure and tested
+// (lib/__tests__/pricing.test.ts):
+//
+//   - A hidden group never renders.
+//   - A group that needs legal review (Canada) renders in production only
+//     once legalReviewed is true.
+//   - A price renders only for an active group with a real number. TBD, empty
+//     or zero means no number at all, never the text "TBD".
+//   - Any text that is empty or carries the TBD marker is dropped in
+//     production; a table row, list item or FAQ with a TBD part goes whole.
+//   - Outside production (`showDrafts`) everything stays, so the gaps are
+//     visible in dev, marked.
+// ============================================================================
+import { READINESS_URL } from './defaults';
+import { TBD, type Currency, type FaqItem, type PricingCopy, type PricingDoc, type PricingLocale, type TitledItem, type ComparisonRow } from './types';
+
+export interface ResolveOptions {
+  /** true outside production: keep TBD text so the gaps are visible. */
+  showDrafts: boolean;
+}
+
+/**
+ * Drafts show outside production only. PRICING_SHOW_DRAFTS=0 lets a local dev
+ * server render exactly what production renders (used for the PR screenshots);
+ * nothing can turn drafts ON in production.
+ */
+export const showDraftsByDefault = (): boolean =>
+  process.env.NODE_ENV !== 'production' && process.env.PRICING_SHOW_DRAFTS !== '0';
+
+export function isTbd(s: string | null | undefined): boolean {
+  return !s || !s.trim() || s.includes(TBD);
+}
+
+function keepText(s: string, o: ResolveOptions): string | null {
+  if (!isTbd(s)) return s;
+  return o.showDrafts ? s || TBD : null;
+}
+
+function keepList(items: string[], o: ResolveOptions): string[] {
+  return o.showDrafts ? items : items.filter((s) => !isTbd(s));
+}
+
+function keepRows<T extends object>(items: T[], o: ResolveOptions): T[] {
+  if (o.showDrafts) return items;
+  return items.filter((r) => Object.values(r).every((v) => typeof v !== 'string' || !isTbd(v)));
+}
+
+export const UTM = { source: 'visaroads.com', medium: 'pricing_page', campaign: 'pricing' } as const;
+
+/** The readiness assessment link with the page's UTM; `content` is the route key or the placement. */
+export function readinessHref(base: string, content: string): string {
+  const b = base || READINESS_URL;
+  const sep = b.includes('?') ? '&' : '?';
+  return `${b}${sep}utm_source=${UTM.source}&utm_medium=${UTM.medium}&utm_campaign=${UTM.campaign}&utm_content=${encodeURIComponent(content)}`;
+}
+
+export interface GroupView {
+  key: string;
+  status: 'active' | 'soon';
+  title: string;
+  summary: string | null;
+  price: { amount: number; currency: Currency } | null;
+  includes: string[];
+  excludes: string[];
+  milestones: string[];
+  duration: string | null;
+  ctaLabel: string;
+  /** External readiness link for active groups; null for "soon" (the card links /contact). */
+  ctaHref: string | null;
+  image: string;
+  imageAlt: string;
+  /** Only ever true in dev: the card would be hidden in production until a lawyer approves it. */
+  awaitingLegalReview: boolean;
+}
+
+export function resolveGroups(doc: PricingDoc, locale: PricingLocale, o: ResolveOptions): GroupView[] {
+  const out: GroupView[] = [];
+  for (const g of doc.groups) {
+    if (g.status === 'hidden') continue;
+    const awaitingLegalReview = g.requiresLegalReview && !g.legalReviewed;
+    if (awaitingLegalReview && !o.showDrafts) continue;
+    const title = keepText(g.title[locale], o);
+    if (!title) continue;
+    const active = g.status === 'active';
+    const amount = g.startingFrom;
+    out.push({
+      key: g.key,
+      status: g.status,
+      title,
+      summary: keepText(g.summary[locale], o),
+      price: active && typeof amount === 'number' && Number.isFinite(amount) && amount > 0 ? { amount, currency: g.currency } : null,
+      includes: active ? keepList(g.includes[locale], o) : [],
+      excludes: active ? keepList(g.excludes[locale], o) : [],
+      milestones: active ? keepList(g.paymentMilestones[locale], o) : [],
+      duration: active ? keepText(g.duration[locale], o) : null,
+      ctaLabel: keepText(g.ctaLabel[locale], o) ?? (locale === 'fa' ? 'ارزیابی آمادگی رایگان' : 'Free readiness assessment'),
+      ctaHref: active ? readinessHref(g.ctaUrl, g.key) : null,
+      image: g.image,
+      imageAlt: g.imageAlt[locale] || '',
+      awaitingLegalReview,
+    });
+  }
+  return out;
+}
+
+export interface CopyView {
+  hero: { eyebrow: string | null; title: string; lede: string | null; cta: string };
+  cards: { title: string; intro: string | null };
+  comparison: { title: string; intro: string | null; usHeading: string; typicalHeading: string; rows: ComparisonRow[] };
+  extras: { title: string; intro: string | null; items: TitledItem[] };
+  payment: { title: string; intro: string | null; steps: TitledItem[] };
+  faq: { title: string; items: FaqItem[] };
+  final: { title: string; body: string | null; cta: string; partnerPrompt: string; partnerLink: string };
+}
+
+export function resolveCopy(c: PricingCopy, locale: PricingLocale, o: ResolveOptions): CopyView {
+  const fa = locale === 'fa';
+  const t = (s: string, fallback: string) => keepText(s, o) ?? fallback;
+  const cta = fa ? 'ارزیابی آمادگی رایگان' : 'Free readiness assessment';
+  return {
+    hero: { eyebrow: keepText(c.hero.eyebrow, o), title: t(c.hero.title, fa ? 'قیمت‌ها' : 'Pricing'), lede: keepText(c.hero.lede, o), cta: t(c.hero.cta, cta) },
+    cards: { title: t(c.cards.title, fa ? 'مسیرها' : 'Routes'), intro: keepText(c.cards.intro, o) },
+    comparison: {
+      title: t(c.comparison.title, ''),
+      intro: keepText(c.comparison.intro, o),
+      usHeading: t(c.comparison.usHeading, 'VisaRoads'),
+      typicalHeading: t(c.comparison.typicalHeading, ''),
+      rows: keepRows(c.comparison.rows, o),
+    },
+    extras: { title: t(c.extras.title, ''), intro: keepText(c.extras.intro, o), items: keepRows(c.extras.items, o) },
+    payment: { title: t(c.payment.title, ''), intro: keepText(c.payment.intro, o), steps: keepRows(c.payment.steps, o) },
+    faq: { title: t(c.faq.title, fa ? 'پرسش‌های رایج' : 'Questions'), items: keepRows(c.faq.items, o) },
+    final: {
+      title: t(c.final.title, cta),
+      body: keepText(c.final.body, o),
+      cta: t(c.final.cta, cta),
+      partnerPrompt: t(c.final.partnerPrompt, fa ? 'شریک تجاری هستید؟' : 'Are you a business partner?'),
+      partnerLink: t(c.final.partnerLink, '/partners'),
+    },
+  };
+}
+
+const NUMBER_LOCALE: Record<PricingLocale, string> = { en: 'en-CA', fa: 'fa-IR' };
+
+/** "3,500" in English, "۳٬۵۰۰" in Persian. No currency conversion, no decimals. */
+export function formatAmount(n: number, locale: PricingLocale): string {
+  return new Intl.NumberFormat(NUMBER_LOCALE[locale], { maximumFractionDigits: 0, useGrouping: true }).format(n);
+}
+
+export const CURRENCY_NAME: Record<PricingLocale, Record<Currency, string>> = {
+  en: { EUR: 'EUR', CAD: 'CAD' },
+  fa: { EUR: 'یورو', CAD: 'دلار کانادا' },
+};
