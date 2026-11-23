@@ -67,3 +67,18 @@ export function trackPartner(
   if (typeof window === 'undefined' || typeof window.gtag !== 'function') return;
   window.gtag('event', event, { ...params, page_type: 'partners' });
 }
+
+/**
+ * The pricing page (/pricing). pricing_cta_click carries the route group's
+ * key as route_key ('hero' / 'final' for the page-level buttons); the
+ * readiness link also carries it as utm_content.
+ */
+export type PricingEvent = 'pricing_cta_click' | 'pricing_faq_open' | 'pricing_partner_click';
+
+export function trackPricing(
+  event: PricingEvent,
+  params: { locale: string; route_key?: string; faq_question?: string },
+): void {
+  if (typeof window === 'undefined' || typeof window.gtag !== 'function') return;
+  window.gtag('event', event, { ...params, page_type: 'pricing' });
+}
