@@ -21,6 +21,7 @@ import {
   useSpring,
   useTransform,
 } from 'motion/react';
+import { useHydratedReducedMotion } from '@/components/fa/motion/useHydratedReducedMotion';
 import { ArrowRight, Check, Circle, Compass, Globe2, Lock, MessageCircle, Newspaper, Play, Scale, ShieldCheck, Home } from 'lucide-react';
 import { Link } from '@/navigation';
 import { appPageCopy, toFaDigits, type ScreenKey } from '@/content/app-page';
@@ -75,6 +76,8 @@ type Typo = { display: string; displaySoft: string; body: string; label: string 
 
 function Hero({ c, T, isFa, num, facts }: { c: Copy; T: Typo; isFa: boolean; num: (n: number) => string; facts: ShowcaseFacts }) {
   const reduced = useReducedMotion();
+  // The scroll-linked phone drift is a style (markup): dropped after hydration.
+  const stillAfterHydration = useHydratedReducedMotion();
   const [i, setI] = useState(0);
   const ref = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] });
@@ -114,9 +117,9 @@ function Hero({ c, T, isFa, num, facts }: { c: Copy; T: Typo; isFa: boolean; num
               <span key={w} className="block overflow-hidden pb-[0.08em]">
                 <motion.span
                   className={`block ${wi === 1 ? (isFa ? 'text-[#1a1a1a]/45' : 'italic text-[#1a1a1a]/45') : ''}`}
-                  initial={reduced ? false : { y: '105%' }}
+                  initial={{ y: '105%' }}
                   animate={{ y: 0 }}
-                  transition={{ duration: 0.9, delay: 0.1 + wi * 0.12, ease: EASE }}
+                  transition={reduced ? { duration: 0 } : { duration: 0.9, delay: 0.1 + wi * 0.12, ease: EASE }}
                 >
                   {w}
                 </motion.span>
@@ -163,14 +166,14 @@ function Hero({ c, T, isFa, num, facts }: { c: Copy; T: Typo; isFa: boolean; num
         </div>
 
         {/* Phone */}
-        <motion.div style={reduced ? undefined : { y: phoneY, rotate: phoneRotate }} className="relative mx-auto w-[min(78vw,330px)]">
+        <motion.div style={stillAfterHydration ? undefined : { y: phoneY, rotate: phoneRotate }} className="relative mx-auto w-[min(78vw,330px)]">
           <Swoosh />
           <motion.div
-            initial={reduced ? false : { opacity: 0, y: 60, rotate: isFa ? 10 : -10 }}
+            initial={{ opacity: 0, y: 60, rotate: isFa ? 10 : -10 }}
             animate={{ opacity: 1, y: 0, rotate: 0 }}
-            transition={{ duration: 1.1, delay: 0.2, ease: EASE }}
+            transition={reduced ? { duration: 0 } : { duration: 1.1, delay: 0.2, ease: EASE }}
           >
-            <motion.div animate={reduced ? undefined : { y: [0, -10, 0] }} transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}>
+            <motion.div animate={{ y: [0, -10, 0] }} transition={reduced ? { duration: 0 } : { duration: 6, repeat: Infinity, ease: 'easeInOut' }}>
               <Phone screen={HERO_CYCLE[i]} copy={c.screens} funds={facts.funds} isFa={isFa} num={num} />
             </motion.div>
           </motion.div>
@@ -235,14 +238,14 @@ function FloatChip({ children, className, delay, T, dark }: { children: React.Re
   const reduced = useReducedMotion();
   return (
     <motion.div
-      initial={reduced ? false : { opacity: 0, scale: 0.85 }}
+      initial={{ opacity: 0, scale: 0.85 }}
       animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.6, delay, ease: EASE }}
+      transition={reduced ? { duration: 0 } : { duration: 0.6, delay, ease: EASE }}
       className={`absolute z-10 hidden sm:block ${className}`}
     >
       <motion.div
-        animate={reduced ? undefined : { y: [0, -8, 0] }}
-        transition={{ duration: 4 + delay, repeat: Infinity, ease: 'easeInOut' }}
+        animate={{ y: [0, -8, 0] }}
+        transition={reduced ? { duration: 0 } : { duration: 4 + delay, repeat: Infinity, ease: 'easeInOut' }}
         className={`flex items-center gap-2 whitespace-nowrap rounded-full px-4 py-2.5 text-[12px] font-bold shadow-[0_12px_30px_-12px_rgba(26,26,26,0.45)] ${T.body} ${dark ? 'bg-[#1a1a1a] text-[#F2F0E9]' : 'border border-[#1a1a1a]/10 bg-[#F2F0E9] text-[#1a1a1a]'}`}
       >
         {children}
@@ -261,9 +264,9 @@ function Swoosh() {
         stroke="#CCFF00"
         strokeWidth="26"
         strokeLinecap="round"
-        initial={reduced ? false : { pathLength: 0 }}
+        initial={{ pathLength: 0 }}
         animate={{ pathLength: 1 }}
-        transition={{ duration: 1.8, delay: 0.3, ease: EASE }}
+        transition={reduced ? { duration: 0 } : { duration: 1.8, delay: 0.3, ease: EASE }}
       />
     </svg>
   );
@@ -297,13 +300,14 @@ function Counter({ to, format }: { to: number; format: (n: number) => string }) 
   const ref = useRef<HTMLSpanElement>(null);
   const inView = useInView(ref, { once: true, margin: '-15% 0px' });
   const reduced = useReducedMotion();
-  const [v, setV] = useState(reduced ? to : 0);
+  const stillAfterHydration = useHydratedReducedMotion();
+  const [v, setV] = useState(0);
   useEffect(() => {
     if (!inView || reduced) return;
     const ctrl = animate(0, to, { duration: 1.6, ease: EASE, onUpdate: (x) => setV(Math.round(x)) });
     return () => ctrl.stop();
   }, [inView, to, reduced]);
-  return <span ref={ref}>{format(v)}</span>;
+  return <span ref={ref}>{format(stillAfterHydration ? to : v)}</span>;
 }
 
 function Stats({ c, T, num, facts }: { c: Copy; T: Typo; num: (n: number) => string; facts: ShowcaseFacts }) {
@@ -436,10 +440,10 @@ function Tile({ children, className, delay, tone = 'paper' }: { children: React.
   const reduced = useReducedMotion();
   return (
     <motion.div
-      initial={reduced ? false : { opacity: 0, y: 24 }}
+      initial={{ opacity: 0, y: 24 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-8% 0px' }}
-      transition={{ duration: 0.7, delay, ease: EASE }}
+      transition={reduced ? { duration: 0 } : { duration: 0.7, delay, ease: EASE }}
       whileHover={reduced ? undefined : { y: -4 }}
       className={`flex flex-col gap-8 rounded-[1.75rem] border p-7 md:p-9 ${TILE_TONE[tone]} ${className ?? ''}`}
     >
@@ -464,13 +468,17 @@ function IconBadge({ children }: { children: React.ReactNode }) {
 function MatchRing({ value, caption, isFa, num }: { value: number; caption: string; isFa: boolean; num: (n: number) => string }) {
   const ref = useRef<SVGSVGElement>(null);
   const inView = useInView(ref, { once: true, margin: '-15% 0px' });
-  const reduced = useReducedMotion();
-  const progress = useMotionValue(reduced ? value / 100 : 0);
+  const stillAfterHydration = useHydratedReducedMotion();
+  const progress = useMotionValue(0);
   const smooth = useSpring(progress, { stiffness: 40, damping: 18 });
-  const [shown, setShown] = useState(reduced ? value : 0);
+  const [shown, setShown] = useState(0);
   useEffect(() => {
-    if (inView) progress.set(value / 100);
-  }, [inView, value, progress]);
+    if (stillAfterHydration) {
+      progress.jump(value / 100);
+      smooth.jump(value / 100);
+      setShown(value);
+    } else if (inView) progress.set(value / 100);
+  }, [inView, stillAfterHydration, value, progress, smooth]);
   useEffect(() => smooth.on('change', (v) => setShown(Math.round(v * 100))), [smooth]);
 
   return (
@@ -496,19 +504,19 @@ function CloseList({ items, legend, isFa }: { items: { label: string; state: 'me
       {items.map((it, i) => (
         <motion.li
           key={it.label}
-          initial={reduced ? false : { opacity: 0, x: isFa ? 16 : -16 }}
+          initial={{ opacity: 0, x: isFa ? 16 : -16 }}
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}
-          transition={{ delay: 0.2 + i * 0.12, duration: 0.5, ease: EASE }}
+          transition={reduced ? { duration: 0 } : { delay: 0.2 + i * 0.12, duration: 0.5, ease: EASE }}
           className="flex items-center justify-between rounded-xl border border-[#1a1a1a]/10 px-4 py-3"
         >
           <span className="flex items-center gap-3">
             {it.state === 'met' ? (
               <motion.span
-                initial={reduced ? false : { scale: 0 }}
+                initial={{ scale: 0 }}
                 whileInView={{ scale: 1 }}
                 viewport={{ once: true }}
-                transition={{ delay: 0.5 + i * 0.12, type: 'spring', stiffness: 300, damping: 20 }}
+                transition={reduced ? { duration: 0 } : { delay: 0.5 + i * 0.12, type: 'spring', stiffness: 300, damping: 20 }}
                 className="grid h-6 w-6 place-items-center rounded-full bg-[#1a1a1a] text-[#CCFF00]"
               >
                 <Check className="h-3.5 w-3.5" strokeWidth={3} />
@@ -690,8 +698,8 @@ function Privacy({ c, T }: { c: Copy; T: Typo }) {
         <motion.div
           aria-hidden
           className="absolute -top-24 grid h-72 w-72 place-items-center rounded-full border border-[#CCFF00]/30 ltr:-right-24 rtl:-left-24"
-          animate={reduced ? undefined : { rotate: 360 }}
-          transition={{ duration: 40, repeat: Infinity, ease: 'linear' }}
+          animate={{ rotate: 360 }}
+          transition={reduced ? { duration: 0 } : { duration: 40, repeat: Infinity, ease: 'linear' }}
         >
           <div className="h-52 w-52 rounded-full border border-dashed border-[#CCFF00]/40" />
         </motion.div>
@@ -707,10 +715,10 @@ function Privacy({ c, T }: { c: Copy; T: Typo }) {
             {c.privacy.points.map((p, i) => (
               <motion.li
                 key={p}
-                initial={reduced ? false : { opacity: 0, scale: 0.9 }}
+                initial={{ opacity: 0, scale: 0.9 }}
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
-                transition={{ delay: i * 0.1, duration: 0.5, ease: EASE }}
+                transition={reduced ? { duration: 0 } : { delay: i * 0.1, duration: 0.5, ease: EASE }}
                 className="flex items-center gap-3 rounded-2xl border border-[#F2F0E9]/15 px-5 py-6"
               >
                 <Check className="h-5 w-5 shrink-0 text-[#CCFF00]" strokeWidth={3} />
@@ -758,10 +766,10 @@ function SectionTitle({ children, T, dark }: { children: React.ReactNode; T: Typ
       <motion.span
         aria-hidden
         className={`mb-6 block h-[3px] w-16 origin-left rtl:origin-right ${dark ? 'bg-[#CCFF00]' : 'bg-[#1a1a1a]'}`}
-        initial={reduced ? false : { scaleX: 0 }}
+        initial={{ scaleX: 0 }}
         whileInView={{ scaleX: 1 }}
         viewport={{ once: true }}
-        transition={{ duration: 0.8, ease: EASE }}
+        transition={reduced ? { duration: 0 } : { duration: 0.8, ease: EASE }}
       />
       <Reveal>
         <h2 className={`${T.display} text-5xl leading-[1.05] md:text-7xl`}>{children}</h2>
@@ -771,15 +779,16 @@ function SectionTitle({ children, T, dark }: { children: React.ReactNode; T: Typ
 }
 
 function Reveal({ children, delay = 0, className }: { children: React.ReactNode; delay?: number; className?: string }) {
+  // Same element and `initial` on server and client; reduced motion only
+  // zeroes the transition (see useHydratedReducedMotion).
   const reduced = useReducedMotion();
-  if (reduced) return <div className={className}>{children}</div>;
   return (
     <motion.div
       className={className}
       initial={{ opacity: 0, y: 22, filter: 'blur(4px)' }}
       whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
       viewport={{ once: true, margin: '-10% 0px' }}
-      transition={{ duration: 0.7, delay, ease: EASE }}
+      transition={reduced ? { duration: 0 } : { duration: 0.7, delay, ease: EASE }}
     >
       {children}
     </motion.div>

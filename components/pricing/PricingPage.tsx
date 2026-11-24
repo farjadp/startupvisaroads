@@ -14,7 +14,7 @@
 // ============================================================================
 import React from 'react';
 import { Building2, Check, Landmark, Languages, Minus, Scale } from 'lucide-react';
-import Reveal, { PricingMotion } from './Motion';
+import Reveal from '@/components/fa/motion/Reveal';
 import BreathingImage from '@/components/partners/BreathingImage';
 import Image from 'next/image';
 import { CHROME, groupMeta } from '@/lib/pricing/chrome';
@@ -40,7 +40,6 @@ export default function PricingPage({ locale, groups, copy, showDrafts }: { loca
   const cmp = copy.comparison;
 
   return (
-    <PricingMotion>
     <div className={`w-full bg-[#F2F0E9] text-[#1a1a1a] ${body}`}>
       {showDrafts && (
         <p className="border-b border-[#1a1a1a] bg-amber-300 px-4 py-2 text-center text-sm font-bold" role="note">
@@ -322,6 +321,5 @@ export default function PricingPage({ locale, groups, copy, showDrafts }: { loca
         </div>
       </section>
     </div>
-    </PricingMotion>
   );
 }

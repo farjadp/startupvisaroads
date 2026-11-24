@@ -137,9 +137,9 @@ export default function Eligibility({ only }: { only?: string }) {
       <AnimatePresence initial={false}>
         {shown && (
           <motion.div
-            initial={reduced ? false : { opacity: 0, y: 12 }}
+            initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+            transition={reduced ? { duration: 0 } : { duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
             className="grid grid-cols-1 lg:grid-cols-2 gap-5"
           >
             {results.map((r) => <Result key={r.rule.key} a={r} />)}
