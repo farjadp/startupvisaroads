@@ -19,6 +19,7 @@ import { Link } from '@/routing';
 import type { QuizAnswers } from '@/lib/fa/path-quiz';
 import { trackLead } from '@/lib/analytics';
 import { sendWhichPathLead } from './actions';
+import { attachLeadSource } from '@/lib/lead-source';
 import { enIntro, enQuestions, enUi, recommendPathEn, type EnRecommendation } from './en-copy';
 
 type Stage = 'intro' | 'quiz' | 'result';
@@ -60,10 +61,11 @@ export default function WhichPathQuizEn() {
   const submitLead = (form: FormData) => {
     for (const [k, v] of Object.entries(answers)) form.set(k, String(v));
     form.set('locale', 'en');
+    const source = attachLeadSource(form);
     startTransition(async () => {
       try {
         const r = await sendWhichPathLead(form);
-        if (r.success) trackLead('path_quiz', 'en', r.eventId);
+        if (r.success) trackLead('path_quiz', 'en', r.eventId, source);
         setLeadState(r.success ? 'done' : 'error');
       } catch {
         setLeadState('error');

@@ -13,6 +13,7 @@
 import { reportLead } from '@/lib/openaiAds';
 import { recommendPath, type QuizAnswers } from '@/lib/fa/path-quiz';
 import { EN_RESULT } from './en-copy';
+import { leadSourceLine } from '@/lib/lead-source';
 
 const KEYS: (keyof QuizAnswers)[] = ['goal', 'team', 'business', 'language', 'capital', 'background', 'horizon'];
 
@@ -44,6 +45,7 @@ export async function sendWhichPathLead(formData: FormData): Promise<{ success: 
   const rec = recommendPath(answers as QuizAnswers);
   const isEn = String(formData.get('locale') ?? '') === 'en';
   const heading = isEn ? '🧭 New English assessment lead (/en/which-path)' : '🧭 New Persian assessment lead (/fa/which-path)';
+  const source = leadSourceLine(formData);
   const recommended = isEn ? `${rec.path} → /en${EN_RESULT[rec.path].href}` : `${rec.path} → ${rec.href}`;
 
   const text = `${heading}
@@ -52,7 +54,7 @@ export async function sendWhichPathLead(formData: FormData): Promise<{ success: 
 📧 Email: ${email || '-'}
 ✈️ Telegram: ${telegram || '-'}
 ----------------------------
-Recommended: ${recommended}
+Recommended: ${recommended}${source ? `\n${source}` : ''}
 ----------------------------
 goal=${answers.goal}
 team=${answers.team}

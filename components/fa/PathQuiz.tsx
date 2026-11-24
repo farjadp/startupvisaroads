@@ -21,6 +21,7 @@ import { toPersianDigits as fa } from '@/lib/fa/format';
 import { questions, ui, intro } from '@/content/fa/which-path';
 import { sendWhichPathLead } from '@/app/[locale]/(public)/which-path/actions';
 import { trackLead } from '@/lib/analytics';
+import { attachLeadSource } from '@/lib/lead-source';
 import Flag from './Flag';
 import { themeFor } from './faThemes';
 import AtlasFlag from './AtlasFlag';
@@ -71,9 +72,10 @@ export default function PathQuiz() {
 
   const submitLead = (form: FormData) => {
     for (const [k, v] of Object.entries(answers)) form.set(k, String(v));
+    const source = attachLeadSource(form);
     startTransition(async () => {
       const r = await sendWhichPathLead(form);
-      if (r.success) trackLead('path_quiz', 'fa', r.eventId);
+      if (r.success) trackLead('path_quiz', 'fa', r.eventId, source);
       setLeadState(r.success ? 'done' : 'error');
     });
   };
