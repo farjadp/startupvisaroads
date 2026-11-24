@@ -8,7 +8,7 @@
 // ============================================================================
 import React from 'react';
 
-export type FlagCode = 'fi' | 'dk' | 'it' | 'nl' | 'tr' | 'au' | 'ca' | 'ae' | 'ee' | 'es' | 'bg' | 'be' | 'cl';
+export type FlagCode = 'fi' | 'dk' | 'it' | 'nl' | 'tr' | 'au' | 'ca' | 'ae' | 'ee' | 'es' | 'bg' | 'be' | 'cl' | 'us';
 
 export interface FlagDef {
   name: string;
@@ -19,6 +19,19 @@ export interface FlagDef {
 
 // Australia: Union Jack canton, Commonwealth Star, Southern Cross.
 const STAR7 = 'M0,-360 69.421398,-144.155019 281.459334,-224.456329 155.988466,-35.603349 350.974048,80.107536 125.093037,99.758368 156.198146,324.348792 0,160 -156.198146,324.348792 -125.093037,99.758368 -350.974048,80.107536 -155.988466,-35.603349 -281.459334,-224.456329 -69.421398,-144.155019z';
+/** A unit five-pointed star (outer radius 1), point up, centred on the origin. */
+const STAR_UNIT = 'M0.0000,-1.0000 0.2245,-0.3090 0.9511,-0.3090 0.3633,0.1180 0.5878,0.8090 0.0000,0.3820 -0.5878,0.8090 -0.3633,0.1180 -0.9511,-0.3090 -0.2245,-0.3090Z';
+
+/**
+ * United States, Executive Order 10834 (1959): hoist 1, fly 1.9; 13 stripes;
+ * canton 7/13 of the hoist high and 0.76 wide; 50 stars of diameter 0.0616
+ * in 9 rows, alternately 6 and 5, spaced 0.054 vertically and 0.063
+ * horizontally. Drawn with the hoist = 1300 units. Old Glory Red and Blue.
+ */
+const US_STARS: [number, number][] = Array.from({ length: 9 }, (_, row) =>
+  Array.from({ length: row % 2 === 0 ? 6 : 5 }, (_, i) => [81.9 * (row % 2 === 0 ? 2 * i + 1 : 2 * i + 2), 70.2 * (row + 1)] as [number, number]),
+).flat();
+
 const STAR5 = 'M0,-210 54.859957,-75.508253 199.721868,-64.893569 88.765275,28.841586 123.434903,169.893569 0,93.333333 -123.434903,169.893569 -88.765275,28.841586 -199.721868,-64.893569 -54.859957,-75.508253z';
 
 export const FLAGS: Record<FlagCode, FlagDef> = {
@@ -187,6 +200,23 @@ export const FLAGS: Record<FlagCode, FlagDef> = {
   // Chile, Decreto 1534 (1967): 3:2; two equal bands, white over red; a
   // square blue canton as tall as the white band; a white five-pointed star
   // centred in it whose circumscribed circle is half the canton's side.
+  us: {
+    name: 'the United States',
+    w: 2470,
+    h: 1300,
+    draw: () => (
+      <>
+        <rect width="2470" height="1300" fill="#B22234" />
+        <path d="M0,150H2470M0,350H2470M0,550H2470M0,750H2470M0,950H2470M0,1150H2470" stroke="#fff" strokeWidth="100" />
+        <rect width="988" height="700" fill="#3C3B6E" />
+        <g fill="#fff">
+          {US_STARS.map(([x, y]) => (
+            <path key={`${x}-${y}`} d={STAR_UNIT} transform={`translate(${x} ${y}) scale(40.04)`} />
+          ))}
+        </g>
+      </>
+    ),
+  },
   cl: {
     name: 'Chile',
     w: 60,
