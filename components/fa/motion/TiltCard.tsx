@@ -3,11 +3,14 @@
 // CSS-3D tilt on pointer: the card leans toward the cursor and the lime
 // highlight follows. Zero bundle cost, off under reduced motion and on touch.
 import React, { useRef } from 'react';
-import { motion, useMotionValue, useSpring, useTransform, useReducedMotion } from 'motion/react';
+import { motion, useMotionValue, useSpring, useTransform } from 'motion/react';
+import { useHydratedReducedMotion } from './useHydratedReducedMotion';
 
 export default function TiltCard({ children, className }: { children: React.ReactNode; className?: string }) {
   const ref = useRef<HTMLDivElement>(null);
-  const reduced = useReducedMotion();
+  // Branches the style and the glow element, so it must agree with the
+  // server during hydration.
+  const reduced = useHydratedReducedMotion();
   const px = useMotionValue(0.5);
   const py = useMotionValue(0.5);
   const rx = useSpring(useTransform(py, [0, 1], [7, -7]), { stiffness: 220, damping: 22 });

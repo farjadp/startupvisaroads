@@ -10,7 +10,8 @@
 // expose an edge of the image.
 // ============================================================================
 import React, { useRef } from 'react';
-import { motion, useReducedMotion, useScroll, useTransform } from 'motion/react';
+import { motion, useScroll, useTransform } from 'motion/react';
+import { useHydratedReducedMotion } from './useHydratedReducedMotion';
 
 export default function Parallax({
   children,
@@ -22,11 +23,13 @@ export default function Parallax({
   className?: string;
 }) {
   const ref = useRef<HTMLDivElement>(null);
-  const reduced = useReducedMotion();
+  // Hydrate with the drifting markup the server sent, then settle to the
+  // still figure for reduced-motion readers.
+  const reduced = useHydratedReducedMotion();
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] });
   const y = useTransform(scrollYProgress, [0, 1], [-distance, distance]);
 
-  if (reduced) return <div className={className}>{children}</div>;
+  if (reduced) return <div ref={ref} className={className}>{children}</div>;
   return (
     <div ref={ref} className={`relative overflow-hidden ${className ?? ''}`}>
       <motion.div

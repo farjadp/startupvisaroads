@@ -12,6 +12,7 @@
 import React, { useRef } from 'react';
 import { motion, useInView, useReducedMotion } from 'motion/react';
 import { FileText } from 'lucide-react';
+import { useHydratedReducedMotion } from '@/components/fa/motion/useHydratedReducedMotion';
 import type { PartnerCopy, PartnerStep } from '@/content/partners';
 
 const EASE = [0.16, 1, 0.3, 1] as const;
@@ -28,7 +29,11 @@ const laneY = (lane: PartnerStep['lane']) => (lane === 'partner' ? 26 : lane ===
 
 export default function HandoffLanes({ copy, locale }: { copy: PartnerCopy['handoff']; locale: string }) {
   const isRtl = locale === 'fa';
+  // `initial` and the rendered elements are the same on the server and the
+  // client; only transitions use the raw preference. The travelling token is
+  // removed after hydration, never during it.
   const reduced = useReducedMotion();
+  const stillAfterHydration = useHydratedReducedMotion();
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: false, margin: '-15% 0px' });
   const steps = copy.steps;
@@ -63,9 +68,9 @@ export default function HandoffLanes({ copy, locale }: { copy: PartnerCopy['hand
             stroke="#1a1a1a"
             strokeWidth={2}
             vectorEffect="non-scaling-stroke"
-            initial={reduced ? false : { pathLength: 0 }}
-            animate={reduced ? undefined : { pathLength: inView ? 1 : 0 }}
-            transition={{ duration: 1.6, ease: EASE }}
+            initial={{ pathLength: 0 }}
+            animate={{ pathLength: reduced || inView ? 1 : 0 }}
+            transition={reduced ? { duration: 0 } : { duration: 1.6, ease: EASE }}
           />
         </svg>
 
@@ -79,7 +84,7 @@ export default function HandoffLanes({ copy, locale }: { copy: PartnerCopy['hand
         ))}
 
         {/* The file token travelling between the two desks. */}
-        {!reduced && (
+        {!stillAfterHydration && (
           <motion.span
             className="absolute z-10 flex h-8 w-8 -translate-x-1/2 -translate-y-1/2 items-center justify-center bg-[#1a1a1a] text-[#CCFF00] shadow-[4px_4px_0_0_#CCFF00]"
             initial={{ left: `${xs[0]}%`, top: `${ys[0]}%`, opacity: 0 }}
@@ -100,10 +105,10 @@ export default function HandoffLanes({ copy, locale }: { copy: PartnerCopy['hand
           <motion.li
             key={s.title}
             className="py-5 md:px-4 md:py-6"
-            initial={reduced ? false : { opacity: 0, y: 14 }}
-            whileInView={reduced ? undefined : { opacity: 1, y: 0 }}
+            initial={{ opacity: 0, y: 14 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-10% 0px' }}
-            transition={{ duration: 0.5, delay: 0.15 * i, ease: EASE }}
+            transition={reduced ? { duration: 0 } : { duration: 0.5, delay: 0.15 * i, ease: EASE }}
           >
             <div className="flex items-center gap-3">
               <span className={`text-3xl text-[#1a1a1a]/30 md:hidden ${display}`}>{num(i)}</span>
