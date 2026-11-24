@@ -11,7 +11,7 @@
 import React, { useMemo, useState, useTransition } from 'react';
 import { AlertCircle, CheckCircle, ExternalLink, Plus, RotateCcw, Save, Trash2 } from 'lucide-react';
 import { savePricing, resetPricing } from '@/app/actions/pricingActions';
-import { TBD, type PricingCopy, type PricingDoc, type PricingGroup, type PricingLocale } from '@/lib/pricing/types';
+import { TBD, type PriceLine, type PricingCopy, type PricingDoc, type PricingGroup, type PricingLocale } from '@/lib/pricing/types';
 
 type Path = (string | number)[];
 
@@ -122,8 +122,50 @@ function Rows<T extends Record<string, string>>({
   );
 }
 
+function PriceLinesEditor({ lines, currency, onChange }: { lines: PriceLine[]; currency: string; onChange: (v: PriceLine[]) => void }) {
+  const update = (i: number, next: PriceLine) => onChange(lines.map((x, j) => (j === i ? next : x)));
+  return (
+    <div className="rounded-xl border border-[#1a1a1a]/10 bg-[#F2F0E9]/50 p-4">
+      <p className={label}>Prices ({currency}) — our fee only, fixed. The first line is shown large.</p>
+      <ol className="space-y-2">
+        {lines.map((ln, i) => (
+          <li key={i} className="grid items-end gap-2 md:grid-cols-[1fr_1fr_10rem_auto]">
+            <Field name="Label (English)" value={ln.label.en} onChange={(v) => update(i, { ...ln, label: { ...ln.label, en: v } })} />
+            <Field name="Label (Persian)" dir="rtl" value={ln.label.fa} onChange={(v) => update(i, { ...ln, label: { ...ln.label, fa: v } })} />
+            <label className="block">
+              <span className={label}>Amount</span>
+              <input
+                inputMode="numeric"
+                value={ln.amount ?? ''}
+                placeholder="empty = hidden"
+                onChange={(e) => {
+                  const digits = e.target.value.replace(/[^\d]/g, '');
+                  update(i, { ...ln, amount: digits ? Number(digits) : null });
+                }}
+                className={input + (ln.amount ? '' : ' bg-amber-50 border-amber-400')}
+              />
+            </label>
+            <div className="flex gap-1 pb-1">
+              <button type="button" aria-label="Move up" disabled={i === 0} onClick={() => onChange(lines.map((x, j) => (j === i - 1 ? lines[i] : j === i ? lines[i - 1] : x)))} className="rounded border border-[#1a1a1a]/15 px-2 py-1 text-xs disabled:opacity-30">
+                ↑
+              </button>
+              <button type="button" aria-label="Remove" onClick={() => onChange(lines.filter((_, j) => j !== i))} className="rounded border border-red-200 px-2 py-1 text-red-600 hover:bg-red-50">
+                <Trash2 className="h-3.5 w-3.5" />
+              </button>
+            </div>
+          </li>
+        ))}
+      </ol>
+      <button type="button" onClick={() => onChange([...lines, { label: { en: '', fa: '' }, amount: null }])} className="mt-2 inline-flex items-center gap-1 rounded-lg border border-[#1a1a1a]/15 bg-white px-3 py-1.5 font-sans text-xs font-bold">
+        <Plus className="h-3.5 w-3.5" /> Add a price line
+      </button>
+      <p className="mt-2 font-sans text-xs text-[#1a1a1a]/50">Whole numbers. A line with an empty amount is not shown. No lines = the card says the price comes after the assessment.</p>
+    </div>
+  );
+}
+
 const STATUS_HELP: Record<PricingGroup['status'], string> = {
-  active: 'Shown with its price (if set), lists and the readiness CTA.',
+  active: 'Shown with its prices, lists and the readiness CTA.',
   soon: 'Shown without any number, with a “contact us” button.',
   hidden: 'Not shown anywhere.',
 };
@@ -138,14 +180,14 @@ function GroupEditor({ g, i, set }: { g: PricingGroup; i: number; set: (path: Pa
           <p className="font-serif text-xl text-[#1a1a1a]">{g.title.en || g.key}</p>
           <p className="font-sans text-xs text-[#1a1a1a]/50">
             {g.key} · {g.status}
-            {g.startingFrom ? ` · from ${g.currency} ${g.startingFrom.toLocaleString('en-CA')}` : ' · no price set'}
+            {g.prices.some((x) => x.amount) ? ` · ${g.prices.filter((x) => x.amount).map((x) => `${g.currency} ${x.amount!.toLocaleString('en-CA')}`).join(' / ')}` : ' · no price set'}
             {g.requiresLegalReview && !g.legalReviewed ? ' · hidden on the live site until legal review' : ''}
           </p>
         </div>
         {tbd > 0 && <span className="rounded-full bg-amber-100 px-3 py-1 font-sans text-xs font-bold text-amber-800">{tbd} TBD</span>}
       </summary>
       <div className="space-y-6 border-t border-[#1a1a1a]/10 p-5">
-        <div className="grid gap-4 md:grid-cols-4">
+        <div className="grid gap-4 md:grid-cols-3">
           <label className="block">
             <span className={label}>Status</span>
             <select value={g.status} onChange={(e) => set(p('status'), e.target.value)} className={input}>
@@ -156,28 +198,17 @@ function GroupEditor({ g, i, set }: { g: PricingGroup; i: number; set: (path: Pa
             <span className="mt-1 block font-sans text-xs text-[#1a1a1a]/50">{STATUS_HELP[g.status]}</span>
           </label>
           <label className="block">
-            <span className={label}>Starting from</span>
-            <input
-              inputMode="numeric"
-              value={g.startingFrom ?? ''}
-              placeholder="empty = no number"
-              onChange={(e) => {
-                const digits = e.target.value.replace(/[^\d]/g, '');
-                set(p('startingFrom'), digits ? Number(digits) : null);
-              }}
-              className={input + (g.startingFrom ? '' : ' bg-amber-50 border-amber-400')}
-            />
-            <span className="mt-1 block font-sans text-xs text-[#1a1a1a]/50">Whole number. Empty shows no price at all.</span>
-          </label>
-          <label className="block">
             <span className={label}>Currency</span>
             <select value={g.currency} onChange={(e) => set(p('currency'), e.target.value)} className={input}>
               <option value="EUR">EUR</option>
               <option value="CAD">CAD</option>
+              <option value="USD">USD</option>
             </select>
           </label>
           <Field name="CTA link (UTM added automatically)" value={g.ctaUrl} onChange={(v) => set(p('ctaUrl'), v)} dir="ltr" hint="Must start with https://" />
         </div>
+
+        <PriceLinesEditor lines={g.prices} currency={g.currency} onChange={(v) => set(p('prices'), v)} />
 
         {g.requiresLegalReview && (
           <label className={`flex items-start gap-3 rounded-xl border p-4 font-sans text-sm ${g.legalReviewed ? 'border-green-300 bg-green-50' : 'border-amber-300 bg-amber-50'}`}>
@@ -200,6 +231,7 @@ function GroupEditor({ g, i, set }: { g: PricingGroup; i: number; set: (path: Pa
                 <Lines key={`exc-${l}`} name="Excludes (billed separately)" dir={dir} value={g.excludes[l]} onChange={(v) => set(p('excludes', l), v)} />
                 <Lines key={`ms-${l}`} name="Payment milestones" dir={dir} value={g.paymentMilestones[l]} onChange={(v) => set(p('paymentMilestones', l), v)} />
                 <Field name="Approximate duration" dir={dir} value={g.duration[l]} onChange={(v) => set(p('duration', l), v)} />
+                <Field name="Note under the price (optional)" dir={dir} value={g.note[l]} onChange={(v) => set(p('note', l), v)} />
                 <Field name="Button label" dir={dir} value={g.ctaLabel[l]} onChange={(v) => set(p('ctaLabel', l), v)} />
                 <Field name="Photo description (alt text)" dir={dir} value={g.imageAlt[l]} onChange={(v) => set(p('imageAlt', l), v)} />
               </div>
@@ -332,7 +364,7 @@ export default function PricingEditor({ initial, saved, updatedAt, updatedBy }: 
       </div>
 
       <div className="rounded-xl border border-amber-300 bg-amber-50 p-4 font-sans text-sm leading-relaxed text-amber-900">
-        Anything that contains <code className="rounded bg-white px-1">{TBD}</code> is highlighted and is <strong>never shown on the live site</strong> (a list item, table row or question with it is left out). Delete the marker when the text is final. An empty price shows no number. Do not write “guarantee” or “immigration consulting”.
+        Anything that contains <code className="rounded bg-white px-1">{TBD}</code> is highlighted and is <strong>never shown on the live site</strong> (a list item, table row or question with it is left out). Delete the marker when the text is final. A price line with an empty amount is not shown. Do not write “guarantee” or “immigration consulting”.
       </div>
 
       <div role="tablist" className="flex flex-wrap gap-2">

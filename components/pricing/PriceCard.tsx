@@ -2,8 +2,9 @@
 
 // ============================================================================
 // components/pricing/PriceCard.tsx
-// One route group. Photo band in the route's own colours, the starting price
-// (or, with no number, "price after the assessment"), the mandatory lines,
+// One route group. Photo band in the route's own colours, the fixed fee (the
+// first tier large, the others listed; with no number, "price after the
+// assessment"), the fixed lines (assessment first, legal line),
 // an Included / Billed-separately toggle and the payment milestones, which
 // expand. Hover lifts the card onto an offset shadow; reduced motion keeps
 // the shadow and drops the movement.
@@ -11,11 +12,12 @@
 import React, { useId, useState } from 'react';
 import Image from 'next/image';
 import { AnimatePresence, motion } from 'motion/react';
-import { ArrowUpRight, Check, ChevronDown, Clock, Minus } from 'lucide-react';
+import { ArrowUpRight, Check, ChevronDown, Clock, Info, Minus } from 'lucide-react';
 import { Link } from '@/navigation';
 import type { GroupView } from '@/lib/pricing/resolve';
 import type { RouteTheme } from '@/components/route/RouteProgress';
-import { CANADA_KEY, type CardChrome } from '@/lib/pricing/chrome';
+import { CANADA_KEYS, legalLine, type CardChrome } from '@/lib/pricing/chrome';
+import { TBD } from '@/lib/pricing/types';
 import { ContactCta, ReadinessCta, Txt } from './Tracked';
 
 export default function PriceCard({
@@ -23,16 +25,18 @@ export default function PriceCard({
   locale,
   chrome,
   theme,
-  guideHref,
-  price,
+  guides,
+  prices,
+  currency,
 }: {
   g: GroupView;
   locale: string;
   chrome: CardChrome;
   theme: RouteTheme;
-  guideHref?: string;
-  /** Pre-formatted on the server: { amount: '3,500', currency: 'EUR' }. */
-  price: { amount: string; currency: string; code: string } | null;
+  guides: { label: string; href: string }[];
+  /** Pre-formatted on the server ('20,000' / '۲۰٬۰۰۰'); null amount = TBD, dev only. */
+  prices: { label: string; amount: string | null }[];
+  currency: { name: string; code: string };
 }) {
   const isRtl = locale === 'fa';
   const display = isRtl ? 'font-estedad font-black' : 'font-serif';
@@ -46,7 +50,9 @@ export default function PriceCard({
   const lists = { in: g.includes, out: g.excludes };
   const hasLists = available.length > 0;
   const single = available.length === 1;
-  const isCanada = g.key === CANADA_KEY;
+  const isCanada = CANADA_KEYS.includes(g.key);
+  const legal = legalLine(g.key, chrome);
+  const [lead, ...rest] = prices;
 
   return (
     <article
@@ -54,6 +60,14 @@ export default function PriceCard({
       className={`group relative flex scroll-mt-28 flex-col border border-[#1a1a1a] bg-[#FBFAF6] shadow-[0_0_0_#1a1a1a] transition-[transform,box-shadow] duration-300 ease-out hover:shadow-[8px_8px_0_#1a1a1a] focus-within:shadow-[8px_8px_0_#1a1a1a] motion-safe:hover:-translate-x-1 motion-safe:hover:-translate-y-1 ${soon ? 'md:col-span-2 xl:col-span-1' : ''}`}
     >
       <div className="relative h-44 overflow-hidden border-b border-[#1a1a1a]" style={{ backgroundColor: theme.primary }}>
+        {!g.image && (
+          // No credited photograph for this route: stripes in its own colours, drawn in code.
+          <span
+            aria-hidden
+            className="absolute inset-0 opacity-40"
+            style={{ backgroundImage: `repeating-linear-gradient(180deg, ${theme.accent} 0 14px, transparent 14px 28px)` }}
+          />
+        )}
         {g.image && (
           <Image
             src={g.image}
@@ -82,33 +96,57 @@ export default function PriceCard({
           </p>
         )}
 
-        {/* Price */}
+        {/* Price: the first tier large, the others as a list */}
         {!soon && (
           <div className="mt-6 border-t border-[#1a1a1a] pt-5">
-            {price ? (
+            {lead ? (
               <>
-                <p className="text-sm text-[#1a1a1a]/70">{chrome.startingFrom}</p>
-                <p className="mt-1 flex flex-wrap items-baseline gap-x-2">
-                  <span className={`text-5xl leading-none tracking-tight ${display}`}>{price.amount}</span>
-                  <span className="text-lg font-bold">{price.currency}</span>
-                  {price.code !== price.currency && <bdi dir="ltr" className="text-sm text-[#1a1a1a]/60">{price.code}</bdi>}
+                <p className="text-sm text-[#1a1a1a]/70">
+                  <Txt s={lead.label} />
                 </p>
+                <p className="mt-1 flex flex-wrap items-baseline gap-x-2">
+                  <span className={`text-5xl leading-none tracking-tight ${display}`}>{lead.amount ?? <Txt s={TBD} />}</span>
+                  <span className="text-lg font-bold">{currency.name}</span>
+                  {currency.code !== currency.name && <bdi dir="ltr" className="text-sm text-[#1a1a1a]/60">{currency.code}</bdi>}
+                </p>
+                {rest.length > 0 && (
+                  <ul className="mt-4 divide-y divide-[#1a1a1a]/15 border-y border-[#1a1a1a]/15">
+                    {rest.map((p, i) => (
+                      <li key={i} className="flex items-baseline justify-between gap-4 py-2.5 text-sm">
+                        <span className="text-[#1a1a1a]/80">
+                          <Txt s={p.label} />
+                        </span>
+                        <span className="shrink-0 whitespace-nowrap">
+                          <span className={`text-xl ${display}`}>{p.amount ?? <Txt s={TBD} />}</span> <span className="font-bold">{currency.name}</span>
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </>
             ) : (
               <p className={`text-2xl leading-snug ${display}`}>{chrome.priceLater}</p>
             )}
+            {g.note && (
+              <p className="mt-4 flex items-start gap-2 border border-[#1a1a1a] bg-[#F2F0E9] px-3 py-2 text-sm font-bold leading-relaxed">
+                <Info className="mt-0.5 h-4 w-4 shrink-0" aria-hidden />
+                <span>
+                  <Txt s={g.note} />
+                </span>
+              </p>
+            )}
             <p className="mt-3 flex items-start gap-2 text-sm leading-relaxed">
               <span className="mt-1.5 h-2.5 w-2.5 shrink-0" style={{ backgroundColor: theme.accent }} aria-hidden />
-              <span>{chrome.exactPriceNote}</span>
+              <span>{chrome.assessmentFirst}</span>
             </p>
             <p className="mt-1 text-sm leading-relaxed text-[#1a1a1a]/65">{chrome.feeOnly}</p>
           </div>
         )}
         {soon && <p className="mt-6 border-t border-[#1a1a1a] pt-5 text-sm font-bold text-[#1a1a1a]/70">{chrome.soonNote}</p>}
 
-        {isCanada && (
+        {legal && (
           <p className="mt-4 border-[#1a1a1a] bg-[#F2F0E9] p-3 text-sm font-bold leading-relaxed ltr:border-l-4 rtl:border-r-4" style={{ borderColor: theme.accent }}>
-            {chrome.canadaLawyer}
+            {legal}
           </p>
         )}
 
@@ -231,11 +269,16 @@ export default function PriceCard({
           ) : (
             <ContactCta label={g.ctaLabel} routeKey={g.key} locale={locale} />
           )}
-          {guideHref && (
-            <Link href={guideHref} className="inline-flex min-h-11 items-center gap-1 text-sm font-bold underline underline-offset-4 hover:no-underline">
-              {chrome.guide}
-              <ArrowUpRight className={`h-4 w-4 ${isRtl ? '-scale-x-100' : ''}`} aria-hidden />
-            </Link>
+          {guides.length > 0 && (
+            <p className="flex flex-wrap items-center gap-x-3 text-sm">
+              <span className="text-[#1a1a1a]/60">{chrome.guide}:</span>
+              {guides.map((gd) => (
+                <Link key={gd.href} href={gd.href} className="inline-flex min-h-11 items-center gap-1 font-bold underline underline-offset-4 hover:no-underline">
+                  {gd.label}
+                  <ArrowUpRight className={`h-3.5 w-3.5 ${isRtl ? '-scale-x-100' : ''}`} aria-hidden />
+                </Link>
+              ))}
+            </p>
           )}
         </div>
       </div>

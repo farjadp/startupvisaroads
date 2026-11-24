@@ -127,7 +127,7 @@ export default function PricingPage({ locale, groups, copy, showDrafts }: { loca
           </Reveal>
           <div className="grid items-start gap-8 md:grid-cols-2 xl:grid-cols-3">
             {groups.map((g) => {
-              const meta = groupMeta(g.key);
+              const meta = groupMeta(g.key, locale);
               return (
                 <PriceCard
                   key={g.key}
@@ -135,8 +135,9 @@ export default function PricingPage({ locale, groups, copy, showDrafts }: { loca
                   locale={locale}
                   chrome={cardChrome}
                   theme={meta.theme}
-                  guideHref={meta.guide[locale]}
-                  price={g.price ? { amount: num(g.price.amount), currency: CURRENCY_NAME[locale][g.price.currency], code: g.price.currency } : null}
+                  guides={meta.guides}
+                  prices={g.prices.map((p) => ({ label: p.label, amount: p.amount ? num(p.amount) : null }))}
+                  currency={{ name: CURRENCY_NAME[locale][g.currency], code: g.currency }}
                 />
               );
             })}
