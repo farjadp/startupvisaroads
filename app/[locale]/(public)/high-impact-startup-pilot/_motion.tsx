@@ -7,6 +7,11 @@
 // motion. The content never depends on an animation having run: every piece
 // renders its final text on the server and only the entrance is animated.
 //
+// Reduced motion never changes the rendered markup (element, `initial`):
+// useReducedMotion() is null on the server, so branching markup on it makes
+// the client disagree with the server HTML and React leaves the server's
+// opacity:0 in place. It only zeroes the transitions, which are not markup.
+//
 //   Stamp       the status stamp pressed onto the hero
 //   RiseWords   a line of text rising into a mask, word by word
 //   Count       a numeral counting up to its value when it scrolls into view
@@ -22,18 +27,18 @@ import { ArrowUpRight } from 'lucide-react';
 import { toPersianDigits } from '@/lib/fa/format';
 
 const EASE = [0.16, 1, 0.3, 1] as const;
+const INSTANT = { duration: 0 } as const;
 
 // ─── Stamp ───────────────────────────────────────────────────────────────────
 
 export function Stamp({ children, className = '' }: { children: React.ReactNode; className?: string }) {
   const reduced = useReducedMotion();
-  if (reduced) return <span className={className}>{children}</span>;
   return (
     <motion.span
       className={className}
       initial={{ opacity: 0, scale: 1.6, rotate: -6 }}
       animate={{ opacity: 1, scale: 1, rotate: -2 }}
-      transition={{ duration: 0.45, delay: 0.9, ease: EASE }}
+      transition={reduced ? INSTANT : { duration: 0.45, delay: 0.9, ease: EASE }}
     >
       {children}
     </motion.span>
@@ -44,7 +49,6 @@ export function Stamp({ children, className = '' }: { children: React.ReactNode;
 
 export function RiseWords({ text, delay = 0, className = '' }: { text: string; delay?: number; className?: string }) {
   const reduced = useReducedMotion();
-  if (reduced) return <span className={className}>{text}</span>;
   const words = text.split(' ');
   return (
     <span className={className}>
@@ -55,7 +59,7 @@ export function RiseWords({ text, delay = 0, className = '' }: { text: string; d
             initial={{ y: '110%' }}
             whileInView={{ y: '0%' }}
             viewport={{ once: true, margin: '-5% 0px' }}
-            transition={{ duration: 0.7, delay: delay + Math.min(i * 0.035, 0.5), ease: EASE }}
+            transition={reduced ? INSTANT : { duration: 0.7, delay: delay + Math.min(i * 0.035, 0.5), ease: EASE }}
           >
             {w}
           </motion.span>
@@ -131,14 +135,6 @@ const sans = (rtl: boolean) => (rtl ? 'font-vazir' : 'font-sans');
 
 function BlankLine({ delay = 0, note, rtl = false }: { delay?: number; note: string; rtl?: boolean }) {
   const reduced = useReducedMotion();
-  if (reduced) {
-    return (
-      <span className="flex items-baseline gap-3">
-        <span aria-hidden="true" className="h-px grow translate-y-[-0.35em] border-b border-dotted border-[#1a1a1a]/50" />
-        <span className={`shrink-0 text-[#B01C12] ${tag(rtl)}`}>{note}</span>
-      </span>
-    );
-  }
   return (
     <span className="flex items-baseline gap-3">
       <motion.span
@@ -147,14 +143,14 @@ function BlankLine({ delay = 0, note, rtl = false }: { delay?: number; note: str
         initial={{ scaleX: 0 }}
         whileInView={{ scaleX: 1 }}
         viewport={{ once: true, margin: '-10% 0px' }}
-        transition={{ duration: 0.8, delay, ease: EASE }}
+        transition={reduced ? INSTANT : { duration: 0.8, delay, ease: EASE }}
       />
       <motion.span
         className={`shrink-0 text-[#B01C12] ${tag(rtl)}`}
         initial={{ opacity: 0, scale: 1.4 }}
         whileInView={{ opacity: 1, scale: 1 }}
         viewport={{ once: true, margin: '-10% 0px' }}
-        transition={{ duration: 0.3, delay: delay + 0.7, ease: EASE }}
+        transition={reduced ? INSTANT : { duration: 0.3, delay: delay + 0.7, ease: EASE }}
       >
         {note}
       </motion.span>
@@ -286,16 +282,16 @@ export function TimelineDraw({ items, labels = EN_LABELS, rtl = false }: { items
       <motion.span
         aria-hidden="true"
         className="absolute start-0 top-0 h-full w-[2px] origin-top bg-[#D52B1E] lg:hidden"
-        initial={reduced ? false : { scaleY: 0 }}
+        initial={{ scaleY: 0 }}
         animate={go ? { scaleY: 1 } : undefined}
-        transition={{ duration: 1.4, ease: EASE }}
+        transition={reduced ? INSTANT : { duration: 1.4, ease: EASE }}
       />
       <motion.span
         aria-hidden="true"
         className={`absolute start-0 top-[9px] hidden h-[2px] w-full bg-[#D52B1E] lg:block ${rtl ? 'origin-right' : 'origin-left'}`}
-        initial={reduced ? false : { scaleX: 0 }}
+        initial={{ scaleX: 0 }}
         animate={go ? { scaleX: 1 } : undefined}
-        transition={{ duration: 1.4, ease: EASE }}
+        transition={reduced ? INSTANT : { duration: 1.4, ease: EASE }}
       />
       {items.map((t, i) => {
         const d = reduced ? 0 : 0.25 + (i / Math.max(1, n - 1)) * 1.1;
@@ -304,14 +300,14 @@ export function TimelineDraw({ items, labels = EN_LABELS, rtl = false }: { items
             <motion.span
               className={`absolute -start-[41px] top-1.5 h-4 w-4 rounded-full border-2 border-[#D52B1E] lg:start-0 lg:top-0.5 lg:h-[18px] lg:w-[18px] ${t.ours ? 'border-dashed bg-white' : 'bg-[#D52B1E]'}`}
               aria-hidden="true"
-              initial={reduced ? false : { scale: 0 }}
+              initial={{ scale: 0 }}
               animate={go ? { scale: 1 } : undefined}
-              transition={{ duration: 0.35, delay: d, ease: EASE }}
+              transition={reduced ? INSTANT : { duration: 0.35, delay: d, ease: EASE }}
             />
             <motion.div
-              initial={reduced ? false : { opacity: 0, y: 10 }}
+              initial={{ opacity: 0, y: 10 }}
               animate={go ? { opacity: 1, y: 0 } : undefined}
-              transition={{ duration: 0.5, delay: d + 0.1, ease: EASE }}
+              transition={reduced ? INSTANT : { duration: 0.5, delay: d + 0.1, ease: EASE }}
             >
               <time dateTime={t.iso} className={`block text-2xl leading-tight lg:text-[1.65rem] ${serif(rtl)} ${t.ours ? 'text-[#B01C12]' : ''}`}>{t.when}</time>
               {t.ours && <span className={`mt-1 block text-[#B01C12] ${tag(rtl)}`}>{labels.ours}</span>}
@@ -330,14 +326,7 @@ export function Stagger({ items, className = '', itemClassName = '', as = 'div',
   const reduced = useReducedMotion();
   const Tag = as;
   const ItemTag = as === 'div' ? 'div' : 'li';
-  if (reduced) {
-    return (
-      <Tag className={className}>
-        {items.map((c, i) => React.createElement(ItemTag, { key: i, className: itemClassName }, c))}
-      </Tag>
-    );
-  }
-  const Item = as === 'div' ? motion.div : motion.li;
+  const Item = ItemTag === 'div' ? motion.div : motion.li;
   return (
     <Tag className={className}>
       {items.map((c, i) => (
@@ -347,7 +336,7 @@ export function Stagger({ items, className = '', itemClassName = '', as = 'div',
           initial={{ opacity: 0, y: 18 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-10% 0px' }}
-          transition={{ duration: 0.6, delay: i * step, ease: EASE }}
+          transition={reduced ? INSTANT : { duration: 0.6, delay: i * step, ease: EASE }}
         >
           {c}
         </Item>

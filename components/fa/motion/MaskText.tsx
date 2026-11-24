@@ -29,9 +29,10 @@ export default function MaskText({
   as?: 'h1' | 'h2' | 'p';
   delay?: number;
 }) {
+  // Same markup on the server and the client; reduced motion only makes the
+  // rise instant (a transition is not part of the markup, so no mismatch).
   const reduced = useReducedMotion();
   const Tag = as;
-  if (reduced) return <Tag className={className}>{text}</Tag>;
 
   const words = text.split(' ');
   return (
@@ -45,7 +46,7 @@ export default function MaskText({
             initial={{ y: '110%' }}
             whileInView={{ y: '0%' }}
             viewport={{ once: true, margin: '-5% 0px' }}
-            transition={{ duration: 0.7, delay: delay + Math.min(i * 0.04, 0.5), ease: EASE }}
+            transition={reduced ? { duration: 0 } : { duration: 0.7, delay: delay + Math.min(i * 0.04, 0.5), ease: EASE }}
           >
             {w}
           </motion.span>

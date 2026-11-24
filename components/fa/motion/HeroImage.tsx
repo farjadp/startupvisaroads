@@ -4,7 +4,8 @@
 // Component: components/fa/motion/HeroImage.tsx
 // The page's authored entrance: the brand photograph wipes in with a
 // clip-path from the reading edge while the routes draw on the globe next
-// to it. Under reduced motion the image is simply there.
+// to it. Under reduced motion the image is simply there: the same markup is
+// rendered on the server and the client, and the transition is instant.
 // ============================================================================
 import React from 'react';
 import Image from 'next/image';
@@ -15,15 +16,15 @@ export default function HeroImage({ src, alt, priority = true, className, sizes 
   return (
     <motion.div
       className={`relative overflow-hidden bg-[#1a1a1a] ${className ?? ''}`}
-      initial={reduced ? false : { clipPath: 'inset(0 0 0 100%)' }}
+      initial={{ clipPath: 'inset(0 0 0 100%)' }}
       animate={{ clipPath: 'inset(0 0 0 0%)' }}
-      transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1] }}
+      transition={reduced ? { duration: 0 } : { duration: 1.1, ease: [0.16, 1, 0.3, 1] }}
     >
       <motion.div
         className="absolute inset-0"
-        initial={reduced ? false : { scale: 1.08 }}
+        initial={{ scale: 1.08 }}
         animate={{ scale: 1 }}
-        transition={{ duration: 1.6, ease: [0.16, 1, 0.3, 1] }}
+        transition={reduced ? { duration: 0 } : { duration: 1.6, ease: [0.16, 1, 0.3, 1] }}
       >
         <Image src={src} alt={alt} fill priority={priority} sizes={sizes} className="object-cover" />
       </motion.div>

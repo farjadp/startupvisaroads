@@ -12,7 +12,6 @@ import { motion, useReducedMotion } from 'motion/react';
 export default function Rule({ className }: { className?: string }) {
   const reduced = useReducedMotion();
   const cls = `block h-[2px] w-16 bg-[#CCFF00] origin-right ${className ?? ''}`;
-  if (reduced) return <span aria-hidden className={cls} />;
   return (
     <motion.span
       aria-hidden
@@ -20,7 +19,9 @@ export default function Rule({ className }: { className?: string }) {
       initial={{ scaleX: 0 }}
       whileInView={{ scaleX: 1 }}
       viewport={{ once: true, margin: '-10% 0px' }}
-      transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+      // Same markup on the server and the client; reduced motion only makes
+      // the draw instant (see useHydratedReducedMotion).
+      transition={reduced ? { duration: 0 } : { duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
     />
   );
 }

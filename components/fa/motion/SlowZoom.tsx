@@ -4,7 +4,8 @@
 // Component: components/fa/motion/SlowZoom.tsx
 // A full-bleed photograph that settles in, then breathes: a very slow scale
 // back and forth, the way a landscape hero holds the eye without anything
-// on the page actually moving. Reduced motion gets the still photograph.
+// on the page actually moving. Reduced motion gets the still photograph,
+// set instantly from the same server markup (no hydration mismatch).
 // ============================================================================
 import React from 'react';
 import Image from 'next/image';
@@ -16,9 +17,9 @@ export default function SlowZoom({ src, alt, className }: { src: string; alt: st
     <div className={`relative overflow-hidden ${className ?? ''}`}>
       <motion.div
         className="absolute inset-0"
-        initial={reduced ? false : { scale: 1.12, opacity: 0 }}
-        animate={reduced ? undefined : { scale: [1.12, 1, 1.05], opacity: 1 }}
-        transition={reduced ? undefined : {
+        initial={{ scale: 1.12, opacity: 0 }}
+        animate={reduced ? { scale: 1, opacity: 1 } : { scale: [1.12, 1, 1.05], opacity: 1 }}
+        transition={reduced ? { duration: 0 } : {
           scale: { duration: 26, times: [0, 0.08, 1], ease: 'easeOut', repeat: Infinity, repeatType: 'mirror' },
           opacity: { duration: 1.2, ease: 'easeOut' },
         }}
