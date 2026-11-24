@@ -10,6 +10,7 @@ import React, { useState } from 'react';
 import { Link } from '@/routing';
 import BookingCTA from '@/components/BookingCTA';
 import { sendContactForm } from './actions';
+import { attachLeadSource } from '@/lib/lead-source';
 import { TEAM_MEMBERS, hasDirectLine } from '@/content/team';
 import TeamContactLinks from '@/components/TeamContactLinks';
 import { MAIN_CONTACT } from '@/content/contact';
@@ -52,10 +53,11 @@ export default function ContactPage() {
       setIsSubmitting(true);
 
       const formData = new FormData(e.currentTarget);
+      const source = attachLeadSource(formData);
       const result = await sendContactForm(formData);
 
       if (result.success) {
-         trackLead('contact', 'en', result.eventId);
+         trackLead('contact', 'en', result.eventId, source);
          alert("Application Received. Reference ID: #ASH-2025-X9");
       } else {
          alert("Error: " + result.message);
