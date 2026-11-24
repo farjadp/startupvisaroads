@@ -25,10 +25,10 @@ export type LeadForm =
  * lead_created with the event id the server action already sent through the
  * Conversions API (lib/openaiAds.ts), so OpenAI counts it once.
  */
-export function trackLead(form: LeadForm, locale: string, eventId?: string): void {
+export function trackLead(form: LeadForm, locale: string, eventId?: string, source?: { from: string; route: string } | null): void {
   if (typeof window === 'undefined') return;
   if (typeof window.gtag === 'function') {
-    window.gtag('event', 'generate_lead', { form_name: form, locale });
+    window.gtag('event', 'generate_lead', { form_name: form, locale, ...(source ? { lead_from: source.from, lead_route: source.route } : {}) });
   }
   if (typeof window.oaiq === 'function' && eventId) {
     window.oaiq('measure', 'lead_created', { type: 'customer_action' }, { event_id: eventId });

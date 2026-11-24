@@ -205,7 +205,7 @@ function GroupEditor({ g, i, set }: { g: PricingGroup; i: number; set: (path: Pa
               <option value="USD">USD</option>
             </select>
           </label>
-          <Field name="CTA link (UTM added automatically)" value={g.ctaUrl} onChange={(v) => set(p('ctaUrl'), v)} dir="ltr" hint="Must start with https://" />
+          <Field name="Button link" value={g.ctaUrl} onChange={(v) => set(p('ctaUrl'), v)} dir="ltr" hint="An on-site path such as /which-path, or an https:// link. Tracking (from=pricing&route=…, or UTM for https) is added automatically." />
         </div>
 
         <PriceLinesEditor lines={g.prices} currency={g.currency} onChange={(v) => set(p('prices'), v)} />

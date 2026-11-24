@@ -32,7 +32,7 @@ export function pricingJsonLd(doc: PricingDoc, locale: PricingLocale, meta: { ti
       .map((p) => ({
         '@type': 'Offer',
         name: p.label,
-        url: g.ctaHref ?? url,
+        url: `${url}#${g.key}`,
         price: p.amount,
         priceCurrency: g.currency,
         priceSpecification: { '@type': 'PriceSpecification', price: p.amount, priceCurrency: g.currency },

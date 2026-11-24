@@ -1,6 +1,7 @@
 'use server';
 
 import { reportLead } from '@/lib/openaiAds';
+import { leadSourceLine } from '@/lib/lead-source';
 
 export async function sendContactForm(formData: FormData) {
     const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
@@ -25,13 +26,14 @@ export async function sendContactForm(formData: FormData) {
     }
 
     // Plain text (no parse_mode) so user input can never inject Telegram markup.
+    const source = leadSourceLine(formData);
     const text = `📩 New Contact Form Submission
 ----------------------------
 👤 Name: ${name}
 🏢 Company: ${company}
 📧 Email: ${email}
 📱 Phone: ${phone}
-🎯 Objective: ${objective}
+🎯 Objective: ${objective}${source ? `\n${source}` : ''}
 📝 Brief:
 ${brief}`;
 

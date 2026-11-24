@@ -18,13 +18,13 @@ import Reveal from '@/components/fa/motion/Reveal';
 import BreathingImage from '@/components/partners/BreathingImage';
 import Image from 'next/image';
 import { CHROME, groupMeta } from '@/lib/pricing/chrome';
-import { CURRENCY_NAME, formatAmount, readinessHref, type CopyView, type GroupView } from '@/lib/pricing/resolve';
-import { READINESS_URL } from '@/lib/pricing/defaults';
+import { CURRENCY_NAME, ctaHref, formatAmount, type CopyView, type GroupView } from '@/lib/pricing/resolve';
+import { ASSESSMENT_PATH } from '@/lib/pricing/defaults';
 import type { PricingLocale } from '@/lib/pricing/types';
 import PriceCard from './PriceCard';
 import PaymentTimeline from './PaymentTimeline';
 import PricingFaq from './PricingFaq';
-import { PartnerLink, ReadinessCta, Txt } from './Tracked';
+import { PartnerLink, PricingCta, Txt } from './Tracked';
 
 const EXTRA_ICONS = [Landmark, Scale, Languages, Building2];
 
@@ -66,7 +66,7 @@ export default function PricingPage({ locale, groups, copy, showDrafts }: { loca
               </p>
             )}
             <div className="mt-8 flex flex-wrap gap-3">
-              <ReadinessCta href={readinessHref(READINESS_URL, 'hero')} label={copy.hero.cta} routeKey="hero" locale={locale} />
+              <PricingCta href={ctaHref(ASSESSMENT_PATH, 'hero', locale)} label={copy.hero.cta} routeKey="hero" locale={locale} />
               <a href="#routes" className="inline-flex min-h-12 items-center justify-center border border-[#1a1a1a] px-6 py-3 font-bold transition-colors duration-200 hover:bg-[#1a1a1a] hover:text-[#F2F0E9]">
                 {chrome.seeRoutes}
               </a>
@@ -310,7 +310,7 @@ export default function PricingPage({ locale, groups, copy, showDrafts }: { loca
               </p>
             )}
             <div className="mt-8">
-              <ReadinessCta href={readinessHref(READINESS_URL, 'final')} label={copy.final.cta} routeKey="final" locale={locale} variant="acid" />
+              <PricingCta href={ctaHref(ASSESSMENT_PATH, 'final', locale)} label={copy.final.cta} routeKey="final" locale={locale} variant="acid" />
             </div>
           </Reveal>
           <div className="border-t border-[#F2F0E9]/25 pt-6 text-sm lg:col-span-4 lg:border-t-0 lg:pt-0">

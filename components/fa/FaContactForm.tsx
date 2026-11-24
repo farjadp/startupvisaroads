@@ -10,18 +10,21 @@ import { Send } from 'lucide-react';
 import { sendContactForm } from '@/app/[locale]/(public)/contact/actions';
 import { contact } from '@/content/fa/contact';
 import { trackLead } from '@/lib/analytics';
+import { attachLeadSource } from '@/lib/lead-source';
 
 export default function FaContactForm() {
   const f = contact.form;
   const [state, setState] = useState<'idle' | 'done' | 'error'>('idle');
   const [pending, start] = useTransition();
 
-  const submit = (data: FormData) =>
+  const submit = (data: FormData) => {
+    const source = attachLeadSource(data);
     start(async () => {
       const r = await sendContactForm(data);
-      if (r.success) trackLead('contact', 'fa', r.eventId);
+      if (r.success) trackLead('contact', 'fa', r.eventId, source);
       setState(r.success ? 'done' : 'error');
     });
+  };
 
   if (state === 'done') {
     return <p className="border-s-4 border-[#CCFF00] ps-6 py-4 font-bold">{f.done}</p>;

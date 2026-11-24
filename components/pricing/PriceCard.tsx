@@ -18,7 +18,7 @@ import type { GroupView } from '@/lib/pricing/resolve';
 import type { RouteTheme } from '@/components/route/RouteProgress';
 import { CANADA_KEYS, legalLine, type CardChrome } from '@/lib/pricing/chrome';
 import { TBD } from '@/lib/pricing/types';
-import { ContactCta, ReadinessCta, Txt } from './Tracked';
+import { PricingCta, Txt } from './Tracked';
 
 export default function PriceCard({
   g,
@@ -266,11 +266,7 @@ export default function PriceCard({
         )}
 
         <div className="mt-auto flex flex-wrap items-center gap-x-6 gap-y-3 pt-6">
-          {g.ctaHref ? (
-            <ReadinessCta href={g.ctaHref} label={g.ctaLabel} routeKey={g.key} locale={locale} className="w-full sm:w-auto" />
-          ) : (
-            <ContactCta label={g.ctaLabel} routeKey={g.key} locale={locale} />
-          )}
+          <PricingCta href={g.ctaHref} label={g.ctaLabel} routeKey={g.key} locale={locale} variant={soon ? 'outline' : 'ink'} className={soon ? '' : 'w-full sm:w-auto'} />
           {guides.length > 0 && (
             <p className="flex flex-wrap items-center gap-x-3 text-sm">
               <span className="text-[#1a1a1a]/60">{chrome.guide}:</span>
