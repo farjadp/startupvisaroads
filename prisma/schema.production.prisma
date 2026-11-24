@@ -453,3 +453,14 @@ model ConsentRecord {
   updatedAt     DateTime    @updatedAt
   caseStudies   CaseStudy[]
 }
+
+// ─── Pricing page ────────────────────────────────────────────────────────────
+// The /pricing page's content: one row (id "main") holding a JSON document,
+// shaped and validated by lib/pricing (types.ts, validate.ts). Absent row =
+// the page renders lib/pricing/defaults.ts. Edited at /en/admin/pricing.
+model PricingContent {
+  id        String   @id
+  data      String
+  updatedAt DateTime @updatedAt
+  updatedBy String?
+}

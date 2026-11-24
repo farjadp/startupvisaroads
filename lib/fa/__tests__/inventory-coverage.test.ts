@@ -30,6 +30,10 @@ import { FA_SITE_PAGES } from '@/lib/autopilot/inventory';
  *
  * /partners is written for immigration firms, not for the founders who read
  * the articles, so the writer should not send readers there.
+ *
+ * /pricing (23 Nov 2026) is the only page with VisaRoads prices. Keeping it
+ * out of the writer's inventory keeps prices out of autopilot articles, which
+ * could restate or date them; linking articles to it is Farjad's call.
  */
 const NOT_LINK_TARGETS: readonly string[] = [
   '',
@@ -38,6 +42,7 @@ const NOT_LINK_TARGETS: readonly string[] = [
   '/canada-startup-visa/designated-organizations',
   '/app',
   '/partners',
+  '/pricing',
 ];
 
 describe('the Persian link inventory', () => {

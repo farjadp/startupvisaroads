@@ -37,6 +37,11 @@ const config: Config = {
         flutter: "flutter 2.6s ease-in-out infinite",
       },
       keyframes: {
+        // The pricing page's cost-layers bars grow in once (components/pricing/PricingPage.tsx).
+        pricingGrow: {
+          "0%": { transform: "scaleX(0)" },
+          "100%": { transform: "scaleX(1)" },
+        },
         marquee: {
           "0%": { transform: "translateX(0)" },
           "100%": { transform: "translateX(-100%)" },
