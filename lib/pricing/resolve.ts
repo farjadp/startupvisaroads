@@ -14,7 +14,8 @@
 //   - Outside production (`showDrafts`) everything stays, so the gaps are
 //     visible in dev, marked.
 // ============================================================================
-import { READINESS_URL } from './defaults';
+import { ASSESSMENT_PATH } from './defaults';
+import { withLeadSource } from '@/lib/lead-source';
 import { TBD, type Currency, type FaqItem, type PricingCopy, type PricingDoc, type PricingLocale, type TitledItem, type ComparisonRow } from './types';
 
 export interface ResolveOptions {
@@ -50,12 +51,24 @@ function keepRows<T extends object>(items: T[], o: ResolveOptions): T[] {
 
 export const UTM = { source: 'visaroads.com', medium: 'pricing_page', campaign: 'pricing' } as const;
 
-/** The readiness assessment link with the page's UTM; `content` is the route key or the placement. */
-export function readinessHref(base: string, content: string): string {
-  const b = base || READINESS_URL;
+/**
+ * Where a pricing button goes, tagged with which button it was (`link` = the
+ * route key, or 'hero' / 'final').
+ *   - On-site path: /<locale>/which-path?from=pricing&route=<link>. Not UTM:
+ *     an internal UTM would overwrite the visitor's real source in GA4 (see
+ *     lib/lead-source.ts). The quiz and contact forms carry from/route into
+ *     the lead message.
+ *   - https link (if a card is ever pointed off-site): the page's UTM, with
+ *     utm_content=<link>.
+ */
+export function ctaHref(base: string, link: string, locale: string): string {
+  const b = base || ASSESSMENT_PATH;
+  if (b.startsWith('/')) return withLeadSource(`/${locale}${b}`, 'pricing', link);
   const sep = b.includes('?') ? '&' : '?';
-  return `${b}${sep}utm_source=${UTM.source}&utm_medium=${UTM.medium}&utm_campaign=${UTM.campaign}&utm_content=${encodeURIComponent(content)}`;
+  return `${b}${sep}utm_source=${UTM.source}&utm_medium=${UTM.medium}&utm_campaign=${UTM.campaign}&utm_content=${encodeURIComponent(link)}`;
 }
+
+export const isExternal = (href: string): boolean => href.startsWith('https://');
 
 export interface GroupView {
   key: string;
@@ -71,8 +84,8 @@ export interface GroupView {
   milestones: string[];
   duration: string | null;
   ctaLabel: string;
-  /** External readiness link for active groups; null for "soon" (the card links /contact). */
-  ctaHref: string | null;
+  /** The button's link, tagged with the group's key ("soon" groups go to /contact). */
+  ctaHref: string;
   image: string;
   imageAlt: string;
   /** Only ever true in dev: the card would be hidden in production until a lawyer approves it. */
@@ -105,8 +118,8 @@ export function resolveGroups(doc: PricingDoc, locale: PricingLocale, o: Resolve
       excludes: active ? keepList(g.excludes[locale], o) : [],
       milestones: active ? keepList(g.paymentMilestones[locale], o) : [],
       duration: active ? keepText(g.duration[locale], o) : null,
-      ctaLabel: keepText(g.ctaLabel[locale], o) ?? (locale === 'fa' ? 'ارزیابی آمادگی رایگان' : 'Free readiness assessment'),
-      ctaHref: active ? readinessHref(g.ctaUrl, g.key) : null,
+      ctaLabel: keepText(g.ctaLabel[locale], o) ?? (locale === 'fa' ? 'ارزیابی رایگان مسیر' : 'Free route assessment'),
+      ctaHref: active ? ctaHref(g.ctaUrl, g.key, locale) : ctaHref('/contact', g.key, locale),
       image: g.image,
       imageAlt: g.imageAlt[locale] || '',
       awaitingLegalReview,
@@ -128,7 +141,7 @@ export interface CopyView {
 export function resolveCopy(c: PricingCopy, locale: PricingLocale, o: ResolveOptions): CopyView {
   const fa = locale === 'fa';
   const t = (s: string, fallback: string) => keepText(s, o) ?? fallback;
-  const cta = fa ? 'ارزیابی آمادگی رایگان' : 'Free readiness assessment';
+  const cta = fa ? 'ارزیابی رایگان مسیر' : 'Free route assessment';
   return {
     hero: { eyebrow: keepText(c.hero.eyebrow, o), title: t(c.hero.title, fa ? 'قیمت‌ها' : 'Pricing'), lede: keepText(c.hero.lede, o), cta: t(c.hero.cta, cta) },
     cards: { title: t(c.cards.title, fa ? 'مسیرها' : 'Routes'), intro: keepText(c.cards.intro, o) },

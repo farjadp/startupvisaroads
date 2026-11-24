@@ -15,9 +15,9 @@ export const US_KEY = 'us-founder';
 
 export const CHROME = {
   en: {
-    priceLater: 'Price set after the free readiness assessment',
+    priceLater: 'Price set after the free route assessment',
     /** Under every price: the assessment comes before any payment. */
-    assessmentFirst: 'The free readiness assessment comes first. You pay only once the route fits your team.',
+    assessmentFirst: 'The free route assessment comes first. You pay only once the route fits your team.',
     feeOnly: 'Our fee only. Government fees and third-party costs are separate.',
     /** Mandatory on the Canada card (brief §5). */
     canadaLawyer: 'A licensed lawyer handles the immigration part of the file. The lawyer’s fee is separate.',
@@ -40,8 +40,8 @@ export const CHROME = {
     partnerArrow: '→',
   },
   fa: {
-    priceLater: 'قیمت بعد از ارزیابی آمادگی رایگان',
-    assessmentFirst: 'اول ارزیابی آمادگی رایگان است. فقط وقتی پرداخت می‌کنید که مسیر به تیم شما بخورد.',
+    priceLater: 'قیمت بعد از ارزیابی رایگان مسیر',
+    assessmentFirst: 'اول ارزیابی رایگان مسیر است. فقط وقتی پرداخت می‌کنید که مسیر به تیم شما بخورد.',
     feeOnly: 'فقط هزینه‌ی ما. هزینه‌های دولتی و هزینه‌ی دیگران جداست.',
     canadaLawyer: 'بخش مهاجرتی پرونده را وکیل دارای مجوز انجام می‌دهد. هزینه‌ی وکیل جداست.',
     canadaMilestones: 'هر پرداخت به کار بیزنسی‌ای که تحویل می‌دهیم بسته است، نه به تصمیم IRCC.',
