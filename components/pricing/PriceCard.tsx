@@ -11,7 +11,7 @@
 // ============================================================================
 import React, { useId, useState } from 'react';
 import Image from 'next/image';
-import { AnimatePresence, motion } from 'motion/react';
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import { ArrowUpRight, Check, ChevronDown, Clock, Info, Minus } from 'lucide-react';
 import { Link } from '@/navigation';
 import type { GroupView } from '@/lib/pricing/resolve';
@@ -41,6 +41,8 @@ export default function PriceCard({
   const isRtl = locale === 'fa';
   const display = isRtl ? 'font-estedad font-black' : 'font-serif';
   const available = (['in', 'out'] as const).filter((t) => (t === 'in' ? g.includes : g.excludes).length > 0);
+  // Only timing depends on the preference; `initial` stays identical (see useHydratedReducedMotion).
+  const reduced = useReducedMotion();
   const [picked, setPicked] = useState<'in' | 'out'>('in');
   const tab = available.includes(picked) ? picked : available[0];
   const setTab = setPicked;
@@ -189,7 +191,7 @@ export default function PriceCard({
                   initial={{ opacity: 0, y: 6 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -6 }}
-                  transition={{ duration: 0.18 }}
+                  transition={reduced ? { duration: 0 } : { duration: 0.18 }}
                   className="space-y-2 text-sm leading-relaxed"
                 >
                   {lists[tab].map((item, i) => (
@@ -240,7 +242,7 @@ export default function PriceCard({
                   initial={{ height: 0, opacity: 0 }}
                   animate={{ height: 'auto', opacity: 1 }}
                   exit={{ height: 0, opacity: 0 }}
-                  transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+                  transition={reduced ? { duration: 0 } : { duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
                   className="overflow-hidden"
                 >
                   <ol className="relative space-y-3 pb-2 pt-1 ltr:pl-6 rtl:pr-6">
