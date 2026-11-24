@@ -29,7 +29,9 @@ export default function Parallax({
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] });
   const y = useTransform(scrollYProgress, [0, 1], [-distance, distance]);
 
-  if (reduced) return <div ref={ref} className={className}>{children}</div>;
+  // Same positioned, clipped frame as the moving version, so fill images
+  // keep their box; only the scroll-linked offset is dropped.
+  if (reduced) return <div ref={ref} className={`relative overflow-hidden ${className ?? ''}`}>{children}</div>;
   return (
     <div ref={ref} className={`relative overflow-hidden ${className ?? ''}`}>
       <motion.div

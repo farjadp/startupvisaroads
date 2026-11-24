@@ -91,8 +91,8 @@ export default function Checklist({ list, storageKey, lang = 'fa' }: { list: FaC
                 <motion.span
                   aria-hidden
                   className={`mt-1 grid h-6 w-6 shrink-0 place-items-center border border-[#1a1a1a] peer-focus-visible:ring-2 peer-focus-visible:ring-[#1a1a1a] peer-focus-visible:ring-offset-2 ${checked ? 'bg-[var(--rd,#1a1a1a)] text-[var(--ra,#CCFF00)] border-transparent' : 'bg-white'}`}
-                  animate={reduced ? undefined : { scale: checked ? [1, 1.15, 1] : 1 }}
-                  transition={{ duration: 0.25 }}
+                  animate={{ scale: checked ? [1, 1.15, 1] : 1 }}
+                  transition={reduced ? { duration: 0 } : { duration: 0.25 }}
                 >
                   {checked && <Check className="w-4 h-4" strokeWidth={3} />}
                 </motion.span>

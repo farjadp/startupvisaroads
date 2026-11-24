@@ -28,8 +28,8 @@ export default function BreathingImage({
     <div className={`relative overflow-hidden ${className}`}>
       <motion.div
         className="absolute inset-0"
-        animate={reduced ? undefined : { scale: [1, 1.07] }}
-        transition={reduced ? undefined : { duration: 24, ease: 'easeInOut', repeat: Infinity, repeatType: 'mirror' }}
+        animate={{ scale: [1, 1.07] }}
+        transition={reduced ? { duration: 0 } : { duration: 24, ease: 'easeInOut', repeat: Infinity, repeatType: 'mirror' }}
       >
         <Image src={src} alt={alt} fill priority={priority} sizes={sizes} className="object-cover" />
       </motion.div>

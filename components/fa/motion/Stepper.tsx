@@ -75,10 +75,10 @@ export default function Stepper({ steps }: { steps: Step[] }) {
         <AnimatePresence mode="wait" initial={false}>
           <motion.div
             key={i}
-            initial={reduced ? false : { opacity: 0, x: -12 }}
+            initial={{ opacity: 0, x: -12 }}
             animate={{ opacity: 1, x: 0 }}
             exit={reduced ? undefined : { opacity: 0, x: 12, transition: { duration: 0.15 } }}
-            transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+            transition={reduced ? { duration: 0 } : { duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
           >
             <h3 className={`font-estedad font-black leading-snug ${s.title.length > 70 ? 'text-xl md:text-2xl' : 'text-2xl md:text-3xl'} ${s.body ? 'mb-4' : ''}`}>{s.title}</h3>
             {s.body && <p className="text-lg leading-[1.9] text-[#1a1a1a]/80 max-w-3xl">{s.body}</p>}
