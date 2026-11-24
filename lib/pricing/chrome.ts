@@ -7,6 +7,7 @@
 // ============================================================================
 import { themeFor } from '@/components/fa/faThemes';
 import type { RouteTheme } from '@/components/route/RouteProgress';
+import type { FlagCode } from '@/components/route/flags';
 import type { PricingLocale } from './types';
 
 /** Canada's cards carry the lawyer line and the deliverable-only milestones note. */
@@ -70,7 +71,7 @@ export type CardChrome = Omit<Chrome, 'tbdBanner'>;
 
 type Guide = { label: string; href: string };
 
-const META: Record<string, { theme: RouteTheme; guides: Record<PricingLocale, Guide[]> }> = {
+const META: Record<string, { theme: RouteTheme; guides: Record<PricingLocale, Guide[]>; flag?: FlagCode }> = {
   'eu-nordic': {
     theme: themeFor('/europe/finland'),
     guides: {
@@ -98,13 +99,13 @@ const META: Record<string, { theme: RouteTheme; guides: Record<PricingLocale, Gu
     theme: themeFor('/canada-startup-visa'),
     guides: { en: [{ label: 'The pilot', href: '/high-impact-startup-pilot' }], fa: [{ label: 'پایلوت', href: '/high-impact-startup-pilot' }] },
   },
-  'us-founder': { theme: themeFor('/usa'), guides: { en: [{ label: 'USA', href: '/country/usa' }], fa: [{ label: 'آمریکا', href: '/usa' }] } },
+  'us-founder': { theme: themeFor('/usa'), flag: 'us', guides: { en: [{ label: 'USA', href: '/country/usa' }], fa: [{ label: 'آمریکا', href: '/usa' }] } },
   'other-routes': { theme: themeFor('/europe/estonia'), guides: { en: [{ label: 'Which route fits me?', href: '/which-path' }], fa: [{ label: 'کدام مسیر برای من؟', href: '/which-path' }] } },
 };
 
-export function groupMeta(key: string, locale: PricingLocale): { theme: RouteTheme; guides: Guide[] } {
+export function groupMeta(key: string, locale: PricingLocale): { theme: RouteTheme; guides: Guide[]; flag?: FlagCode } {
   const m = META[key];
-  return m ? { theme: m.theme, guides: m.guides[locale] } : { theme: themeFor(''), guides: [] };
+  return m ? { theme: m.theme, guides: m.guides[locale], flag: m.flag } : { theme: themeFor(''), guides: [] };
 }
 
 /** The fixed legal line a card must carry, if any. */

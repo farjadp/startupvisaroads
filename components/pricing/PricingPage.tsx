@@ -135,6 +135,7 @@ export default function PricingPage({ locale, groups, copy, showDrafts }: { loca
                   chrome={cardChrome}
                   theme={meta.theme}
                   guides={meta.guides}
+                  flag={meta.flag}
                   prices={g.prices.map((p) => ({ label: p.label, amount: p.amount ? num(p.amount) : null }))}
                   currency={{ name: CURRENCY_NAME[locale][g.currency], code: g.currency }}
                 />

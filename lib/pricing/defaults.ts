@@ -208,7 +208,7 @@ export const DEFAULT_PRICING: PricingDoc = {
       duration: { en: TBD, fa: TBD },
       note: { en: '', fa: '' },
       ctaLabel: { en: 'Free route assessment', fa: 'ارزیابی رایگان مسیر' },
-      imageAlt: { en: '', fa: '' },
+      imageAlt: { en: 'Flag of the United States', fa: 'پرچم ایالات متحده' },
     },
     {
       key: 'other-routes',

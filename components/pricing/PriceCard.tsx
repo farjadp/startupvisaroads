@@ -18,6 +18,7 @@ import type { GroupView } from '@/lib/pricing/resolve';
 import type { RouteTheme } from '@/components/route/RouteProgress';
 import { CANADA_KEYS, legalLine, type CardChrome } from '@/lib/pricing/chrome';
 import { TBD } from '@/lib/pricing/types';
+import { FLAGS, FlagShapes, type FlagCode } from '@/components/route/flags';
 import { PricingCta, Txt } from './Tracked';
 
 export default function PriceCard({
@@ -28,6 +29,7 @@ export default function PriceCard({
   guides,
   prices,
   currency,
+  flag,
 }: {
   g: GroupView;
   locale: string;
@@ -37,6 +39,8 @@ export default function PriceCard({
   /** Pre-formatted on the server ('20,000' / '۲۰٬۰۰۰'); null amount = TBD, dev only. */
   prices: { label: string; amount: string | null }[];
   currency: { name: string; code: string };
+  /** Drawn as the header when the group has no photograph. */
+  flag?: FlagCode;
 }) {
   const isRtl = locale === 'fa';
   const display = isRtl ? 'font-estedad font-black' : 'font-serif';
@@ -62,13 +66,12 @@ export default function PriceCard({
       className={`group relative flex scroll-mt-28 flex-col border border-[#1a1a1a] bg-[#FBFAF6] shadow-[0_0_0_#1a1a1a] transition-[transform,box-shadow] duration-300 ease-out hover:shadow-[8px_8px_0_#1a1a1a] focus-within:shadow-[8px_8px_0_#1a1a1a] motion-safe:hover:-translate-x-1 motion-safe:hover:-translate-y-1 ${soon ? 'md:col-span-2 xl:col-span-1' : ''}`}
     >
       <div className="relative h-44 overflow-hidden border-b border-[#1a1a1a]" style={{ backgroundColor: theme.primary }}>
-        {!g.image && (
-          // No credited photograph for this route: stripes in its own colours, drawn in code.
-          <span
-            aria-hidden
-            className="absolute inset-0 opacity-40"
-            style={{ backgroundImage: `repeating-linear-gradient(180deg, ${theme.accent} 0 14px, transparent 14px 28px)` }}
-          />
+        {!g.image && flag && (
+          // No credited photograph for this route: its flag, drawn in code to the official spec.
+          // Anchored top-left so the canton is never cropped; the extra fly is cut on the right.
+          <svg viewBox={`0 0 ${FLAGS[flag].w} ${FLAGS[flag].h}`} preserveAspectRatio="xMinYMin slice" className="absolute inset-0 h-full w-full" role="img" aria-label={g.imageAlt || `Flag of ${FLAGS[flag].name}`}>
+            <FlagShapes code={flag} uid={`card-${g.key}`} />
+          </svg>
         )}
         {g.image && (
           <Image
