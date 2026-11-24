@@ -82,3 +82,22 @@ export function trackPricing(
   if (typeof window === 'undefined' || typeof window.gtag !== 'function') return;
   window.gtag('event', event, { ...params, page_type: 'pricing' });
 }
+
+/**
+ * A click on a header, drawer or footer link. GA4 enhanced measurement only
+ * sees outbound links, so internal menu use was invisible before this.
+ */
+export function trackNav(params: {
+  locale: string;
+  area: 'header' | 'mega' | 'drawer' | 'footer' | 'cta';
+  label: string;
+  href: string;
+}): void {
+  if (typeof window === 'undefined' || typeof window.gtag !== 'function') return;
+  window.gtag('event', 'nav_click', {
+    locale: params.locale,
+    nav_area: params.area,
+    link_text: params.label,
+    link_url: params.href,
+  });
+}

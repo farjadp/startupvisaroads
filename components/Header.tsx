@@ -1,556 +1,303 @@
 // ============================================================================
 // Component: components/Header.tsx
-// Style: Editorial / Art Gallery
-// Structure: Full Navigation Map matched to File System
+// Option A (chosen 23 Nov 2026): five top items, a Destinations panel grouped
+// by region, one CTA to the route quiz. The link lists live in lib/nav.ts,
+// shared with the drawer and the footer.
+//
+// Menus follow the disclosure pattern, not role="menu": a real button with
+// aria-expanded opens each panel on click or Enter (hover too, for a mouse),
+// Escape closes it and returns focus to the button, and focus leaving the
+// item closes it.
 // ============================================================================
 
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
-import { Link, usePathname, useRouter } from '@/navigation'; // Use internationalized navigation
-import { Menu, X, ArrowRight, ChevronDown, User, Globe } from 'lucide-react';
-import { useTranslations, useLocale } from 'next-intl';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { ArrowRight, ChevronDown, Menu } from 'lucide-react';
+import { useLocale } from 'next-intl';
+import { Link, usePathname } from '@/navigation';
 import { localeSwitchTarget } from '@/lib/fa/paths';
-import { flagFor } from '@/lib/fa/flags';
-import Flag from '@/components/fa/Flag';
+import { NAV, type NavLocale } from '@/lib/nav';
+import { trackNav } from '@/lib/analytics';
+import DestinationsPanel from '@/components/nav/DestinationsPanel';
+import MobileDrawer from '@/components/nav/MobileDrawer';
 
-type SubLink = { header?: string; href?: string; label?: string };
-
-/**
- * Turn the flat nav list — a stream of headers followed by their links — into
- * real groups, so the dropdown can lay them out as columns.
- *
- * The flat shape stays the source of truth because two renderers read it, but
- * a single column of 7 headings and 13 links made a panel taller than the
- * viewport that had to scroll. Columns are the fix, and they only need the
- * grouping the data already implies.
- */
-function groupSubLinks(subLinks: SubLink[]): { header: string; items: SubLink[] }[] {
-  const groups: { header: string; items: SubLink[] }[] = [];
-  for (const sub of subLinks) {
-    if (sub.header) groups.push({ header: sub.header, items: [] });
-    else if (groups.length) groups[groups.length - 1].items.push(sub);
-    else groups.push({ header: '', items: [sub] });
-  }
-  return groups;
-}
-
-/** The one flag every link in a group shares, or null when they differ. */
-function sharedFlag(items: SubLink[]) {
-  if (items.length < 2) return null;
-  const first = flagFor(items[0].href ?? '');
-  return first && items.every((i) => flagFor(i.href ?? '') === first) ? first : null;
-}
+const HOVER_CLOSE_MS = 160;
 
 export default function Header() {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-  const [langMenuOpen, setLangMenuOpen] = useState(false); // State for language dropdown
-
-  const t = useTranslations('Navigation');
-  const locale = useLocale();
-  const router = useRouter();
+  const locale = (useLocale() === 'fa' ? 'fa' : 'en') as NavLocale;
+  const isFa = locale === 'fa';
+  const nav = NAV[locale];
   const pathname = usePathname();
 
-  // State for mobile sub-menu toggles
-  const [expandedMobileMenu, setExpandedMobileMenu] = useState<string | null>(null);
+  const [scrolled, setScrolled] = useState(false);
+  const [openMenu, setOpenMenu] = useState<string | null>(null);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const triggers = useRef<Record<string, HTMLButtonElement | null>>({});
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
+  const hoverTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // A mouse that hovers a panel open and then clicks must not close it.
+  const openedByHover = useRef<string | null>(null);
+  const barRef = useRef<HTMLElement>(null);
 
-  // Close dropdown when clicking outside
-  const langMenuRef = useRef<HTMLDivElement>(null);
+  // /fa and /en are different sites: the switch goes to the paired page, or
+  // to the other home, never to a path that 301s.
+  const otherLocale: NavLocale = isFa ? 'en' : 'fa';
+  const langHref = localeSwitchTarget(pathname, otherLocale) || '/';
+
   useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (langMenuRef.current && !langMenuRef.current.contains(event.target as Node)) {
-        setLangMenuOpen(false);
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
+    const onScroll = () => setScrolled(window.scrollY > 40);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  // Handle Scroll Effect
+  // A new page closes everything.
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 40);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  // Close mobile menu on route change
-  useEffect(() => {
-    setMobileMenuOpen(false);
-    setExpandedMobileMenu(null);
-    setLangMenuOpen(false);
+    setOpenMenu(null);
+    setDrawerOpen(false);
   }, [pathname]);
 
-  // Lock body scroll when mobile menu is open
+  // Escape closes an open panel and puts focus back on its button; a click
+  // outside the bar closes it too.
   useEffect(() => {
-    if (mobileMenuOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'unset';
+    if (!openMenu) {
+      openedByHover.current = null;
+      return;
     }
-  }, [mobileMenuOpen]);
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== 'Escape') return;
+      const key = openMenu;
+      setOpenMenu(null);
+      triggers.current[key]?.focus();
+    };
+    const onDown = (e: MouseEvent) => {
+      if (barRef.current && !barRef.current.contains(e.target as Node)) setOpenMenu(null);
+    };
+    document.addEventListener('keydown', onKey);
+    document.addEventListener('mousedown', onDown);
+    return () => {
+      document.removeEventListener('keydown', onKey);
+      document.removeEventListener('mousedown', onDown);
+    };
+  }, [openMenu]);
 
-  // /fa and /en are different sites, so the switcher maps to the paired page
-  // (or the other home) instead of assuming the same path exists in both.
-  const switchLocale = (newLocale: string) => {
-    const to = newLocale === 'fa' ? 'fa' : 'en';
-    const target = localeSwitchTarget(pathname, to) || '/';
-    router.replace(target as any, { locale: newLocale });
-    setLangMenuOpen(false);
+  const cancelHoverClose = () => {
+    if (hoverTimer.current) clearTimeout(hoverTimer.current);
+    hoverTimer.current = null;
+  };
+  const hoverOpen = (key: string) => (e: React.PointerEvent) => {
+    if (e.pointerType !== 'mouse') return;
+    cancelHoverClose();
+    setOpenMenu((m) => {
+      if (m !== key) openedByHover.current = key;
+      return key;
+    });
+  };
+  const hoverClose = (e: React.PointerEvent) => {
+    if (e.pointerType !== 'mouse') return;
+    cancelHoverClose();
+    hoverTimer.current = setTimeout(() => setOpenMenu(null), HOVER_CLOSE_MS);
+  };
+  const blurClose = (key: string) => (e: React.FocusEvent<HTMLElement>) => {
+    // Safari does not focus a link on click, so relatedTarget is null there;
+    // outside clicks are handled by the mousedown listener instead.
+    if (e.relatedTarget && !e.currentTarget.contains(e.relatedTarget as Node)) {
+      setOpenMenu((m) => (m === key ? null : m));
+    }
   };
 
-  // ==========================================
-  // NAVIGATION DATA STRUCTURE
-  // ==========================================
-  const isFa = locale === 'fa';
+  const closeDrawer = useCallback(() => {
+    setDrawerOpen(false);
+    // The bar is inert while the drawer is open; focus it once the drawer's
+    // cleanup has lifted that, or the call is silently ignored.
+    setTimeout(() => menuButtonRef.current?.focus(), 0);
+  }, []);
 
-  // Persian must not borrow the Latin display faces. DM Serif Display and
-  // Space Grotesk carry no Arabic-script glyphs, so every Persian menu label
-  // fell back to whatever the OS offered — which is why the menu never
-  // matched the rest of the Persian site. Uppercase and wide tracking are
-  // the English nav's voice; in Persian `uppercase` is a no-op and the
-  // tracking pulls apart letters that are meant to join.
-  const navDisplay = isFa ? 'font-estedad font-bold' : 'font-serif';
+  // On the paper background the bar is ink on paper; once scrolled it turns ink.
+  const onDark = scrolled;
+  const text = onDark ? 'text-paper' : 'text-ink';
   const navLabel = isFa
-    ? 'font-vazir text-[13px] font-bold tracking-normal'
+    ? 'font-vazir text-[13.5px] font-bold'
     : 'font-sans text-xs font-bold uppercase tracking-[0.15em]';
-  const navMicro = isFa
-    ? 'font-vazir text-[11px] tracking-normal'
-    : 'font-sans text-[10px] uppercase tracking-widest';
-  const navAction = isFa
-    ? 'font-vazir text-[13px] font-bold tracking-normal'
+  const action = isFa
+    ? 'font-vazir text-[13.5px] font-bold'
     : 'font-sans text-xs font-bold uppercase tracking-widest';
+  // Acid on paper is ~1:1, so before the bar turns dark the accent for
+  // hover, open and focus is ink: an underline, not a colour change.
+  const focusRing = `focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 ${
+    onDark ? 'focus-visible:outline-acid' : 'focus-visible:outline-ink'
+  }`;
+  const hoverAccent = onDark ? 'hover:text-acid' : 'hover:underline hover:decoration-2 hover:underline-offset-8';
+  const openAccent = onDark ? 'text-acid' : `${text} underline decoration-2 underline-offset-8`;
+  const barAccent = onDark ? 'bg-acid' : 'bg-ink';
 
-  // The Persian nav is a different menu, not a translated one: /fa has its
-  // own IA and most English targets 301 out of it.
-  const faNavLinks = [
-    { href: '/', label: 'خانه' },
-    {
-      label: 'مسیرها',
-      key: 'jurisdictions',
-      // Four groups of roughly equal weight. Canada leads: Entrepreneur PNP
-      // is the specialty, and every province now has a Persian guide. A group
-      // whose links share one flag shows it once, on its heading, instead of
-      // repeating it on every row.
-      subLinks: [
-        { header: 'کانادا · کارآفرینی استانی' },
-        { href: '/pnp', label: 'مقایسه‌ی همه‌ی استان‌ها' },
-        { href: '/pnp/bc', label: 'بریتیش کلمبیا' },
-        { href: '/pnp/alberta', label: 'آلبرتا' },
-        { href: '/pnp/manitoba', label: 'منیتوبا' },
-        { href: '/pnp/nova-scotia', label: 'نوااسکوشیا' },
-        { href: '/pnp/new-brunswick', label: 'نیوبرانزویک' },
-        { href: '/pnp/pei', label: 'جزیره‌ی پرنس ادوارد' },
-        { href: '/canada-startup-visa', label: 'استارتاپ ویزا (متوقف)' },
-        { href: '/high-impact-startup-pilot', label: 'پایلوت High Impact (اعلام‌شده)' },
-
-        { header: 'اروپا' },
-        { href: '/europe/denmark', label: 'دانمارک' },
-        { href: '/europe/netherlands', label: 'هلند' },
-        { href: '/europe/finland', label: 'فنلاند' },
-        { href: '/europe/italy', label: 'ایتالیا' },
-        { href: '/europe/spain', label: 'اسپانیا' },
-        { href: '/europe/bulgaria', label: 'بلغارستان' },
-        { href: '/europe/belgium', label: 'بلژیک' },
-        { href: '/europe/estonia', label: 'استونی' },
-        { href: '/uk/innovator-founder', label: 'انگلیس' },
-
-        { header: 'آمریکا و مقصدهای دیگر' },
-        { href: '/usa', label: 'آمریکا: مسیرهای فاندر' },
-        { href: '/usa/o-1a', label: 'آمریکا: O-1A' },
-        { href: '/usa-eb2-niw', label: 'آمریکا: EB-2 NIW' },
-        { href: '/australia', label: 'استرالیا' },
-        { href: '/turkey-tech-visa', label: 'ترکیه' },
-        { href: '/start-up-chile', label: 'شیلی: استارتاپ شیلی' },
-        { href: '/israel', label: 'اسرائیل (باز نیست)' },
-
-        { header: 'از کجا شروع کنم' },
-        { href: '/which-path', label: 'کدام مسیر برای من؟' },
-        { href: '/mentorship', label: 'منتورشیپ' },
-      ],
-    },
-    { href: '/mentorship', label: 'منتورشیپ' },
-    { href: '/app', label: 'اپلیکیشن' },
-    { href: '/pricing', label: 'قیمت‌ها' },
-    { href: '/faq', label: 'سؤالات متداول' },
-    { href: '/blog', label: 'مجله' },
-    {
-      label: 'ما',
-      key: 'firm',
-      subLinks: [
-        { href: '/about', label: 'درباره ما' },
-        { href: '/partners', label: 'همکاری با مؤسسات مهاجرت' },
-        { href: '/webinar', label: 'وبینار' },
-        { href: '/contact', label: 'تماس و مشاوره' },
-      ],
-    },
-  ];
-
-  const enNavLinks = [
-    { href: '/', label: t('home') },
-    { href: '/services', label: t('advisory') },
-    {
-      label: t('jurisdictions'),
-      key: 'jurisdictions',
-      subLinks: [
-        { header: t('canada') },
-        { href: '/country/canada', label: t('canada_profile') },
-        { href: '/startup-visa-canada', label: t('suv') },
-        { href: '/high-impact-startup-pilot', label: 'High Impact Start-up Pilot' },
-        { href: '/pnp', label: t('pnp') },
-        { href: '/pnp/bc', label: 'British Columbia' },
-        { href: '/pnp/alberta', label: 'Alberta' },
-        { href: '/pnp/manitoba', label: 'Manitoba' },
-        { href: '/pnp/nova-scotia', label: 'Nova Scotia' },
-        { href: '/pnp/new-brunswick', label: 'New Brunswick' },
-        { href: '/pnp/pei', label: 'Prince Edward Island' },
-
-        { header: t('usa') },
-        { href: '/country/usa', label: t('usa_profile') },
-        { href: '/usa/o-1a', label: 'O-1A for founders' },
-        { href: '/usa/eb2-niw', label: t('eb2') },
-        { href: '/usa/eb1', label: t('eb1') },
-
-        { header: t('europe') },
-        { href: '/country/denmark', label: t('denmark') },
-        { href: '/country/finland', label: t('finland') },
-        { href: '/europe/netherlands', label: t('netherlands') },
-        { href: '/country/italy', label: t('italy') },
-        { href: '/europe/spain', label: 'Spain' },
-        { href: '/europe/bulgaria', label: 'Bulgaria' },
-        { href: '/europe/belgium', label: 'Belgium' },
-        { href: '/europe/estonia', label: 'Estonia' },
-        { href: '/uk/innovator-founder', label: 'UK Innovator Founder' },
-
-        { header: t('global') },
-        { href: '/country/uae', label: t('uae') },
-        { href: '/country/australia', label: t('australia') },
-        { href: '/country/turkey', label: t('turkey') },
-        { href: '/start-up-chile', label: 'Chile (Start-Up Chile)' },
-        { href: '/country/israel', label: t('israel') },
-        { href: '/country', label: t('view_all') },
-
-        { header: 'Where to start' },
-        { href: '/which-path', label: 'Which route fits me?' },
-        { href: '/tools', label: 'Self-assessment tools' },
-        { href: '/faq', label: 'FAQ' },
-      ]
-    },
-    { href: '/mentorship', label: t('mentorship') },
-    { href: '/app', label: 'App' },
-    { href: '/pricing', label: 'Pricing' },
-    { href: '/blog', label: t('blog') },
-    {
-      label: t('firm'),
-      key: 'firm',
-      subLinks: [
-        { href: '/about', label: t('our_story') },
-        { href: '/partners', label: 'For immigration firms' },
-        { href: '/webinar', label: 'Webinar' },
-        { href: '/contact', label: t('contact') },
-        { href: '/book-meeting', label: t('book_consultation') },
-      ]
-    },
-  ];
-
-  const navLinks = isFa ? faNavLinks : enNavLinks;
-  // Persian has no client portal or booking page; both CTAs go to /contact.
-  const bookHref = isFa ? '/contact' : '/book-meeting';
-  const loginHref = isFa ? '/contact' : '/login';
-
-  // Colors Helper
-  const getTextColor = () => {
-    if (mobileMenuOpen) return 'text-[#F2F0E9]';
-    if (scrolled) return 'text-[#F2F0E9]';
-    return 'text-[#1a1a1a]';
-  };
-
-  const getBorderColor = () => {
-    if (mobileMenuOpen) return 'border-[#F2F0E9]/20';
-    if (scrolled) return 'border-[#F2F0E9]/20';
-    return 'border-[#1a1a1a]/20';
-  };
-
-  const isActive = (href: string) => pathname === href;
-
-  const toggleMobileSubMenu = (key: string) => {
-    if (expandedMobileMenu === key) {
-      setExpandedMobileMenu(null);
-    } else {
-      setExpandedMobileMenu(key);
-    }
-  };
+  const click = (label: string, href: string, area: 'header' | 'cta' = 'header') =>
+    trackNav({ locale, area, label, href });
 
   return (
     <>
       <header
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ease-[cubic-bezier(0.76,0,0.24,1)] ${scrolled
-            ? 'dir-ltr bg-[#1a1a1a] py-4 shadow-2xl border-b border-[#CCFF00]/20'
-            : 'dir-ltr bg-transparent py-8 md:py-10'
-          }`}
+        ref={barRef}
+        className={`fixed inset-x-0 top-0 z-50 transition-[background-color,padding] duration-500 ease-[cubic-bezier(0.76,0,0.24,1)] motion-reduce:transition-none ${
+          scrolled ? 'border-b border-acid/20 bg-ink py-4 shadow-2xl' : 'bg-transparent py-8 md:py-10'
+        }`}
       >
-        <nav className="container mx-auto px-6 lg:px-12 flex items-center justify-between">
-
-          {/* 1. BRAND LOGO */}
-          <Link href="/" className="relative z-50 group">
-            <span className={`font-serif text-3xl font-bold tracking-tight transition-colors duration-300 ${getTextColor()}`}>
-              VisaRoads
-              <span className={`text-[#CCFF00] ${scrolled ? 'opacity-100' : 'opacity-0'} transition-opacity`}>.</span>
-            </span>
+        <div className="container relative mx-auto flex items-center justify-between gap-6 px-6 lg:px-12">
+          <Link
+            href="/"
+            onClick={() => click('VisaRoads', '/')}
+            className={`relative z-10 shrink-0 font-serif text-3xl font-bold tracking-tight transition-colors ${text} ${focusRing}`}
+          >
+            VisaRoads
+            <span className={`text-acid transition-opacity ${scrolled ? 'opacity-100' : 'opacity-0'}`}>.</span>
           </Link>
 
-          {/* 2. DESKTOP NAVIGATION */}
-          <div className="hidden lg:flex items-center gap-10">
-            {navLinks.map((link) => (
-              <div key={link.label} className="relative group">
-                {link.subLinks ? (
-                  // Dropdown Trigger
-                  <button className={`flex items-center gap-1 ${navLabel} transition-colors duration-300 cursor-pointer ${getTextColor()} hover:text-[#CCFF00]`}>
-                    {link.label}
-                    <ChevronDown className="w-3 h-3 opacity-50 group-hover:rotate-180 transition-transform" />
-                  </button>
-                ) : (
-                  // Normal Link
-                  <Link
-                    href={link.href!}
-                    className={`relative ${navLabel} transition-colors duration-300 ${getTextColor()} hover:text-[#CCFF00]`}
+          {/* Desktop */}
+          <nav aria-label={nav.ui.primaryNav} className="hidden lg:block">
+            <ul className="flex items-center gap-8 xl:gap-10">
+              {nav.top.map((item) => {
+                if (item.kind === 'link') {
+                  const current = pathname === item.href || pathname.startsWith(`${item.href}/`);
+                  return (
+                    <li key={item.href}>
+                      <Link
+                        href={item.href as any}
+                        aria-current={pathname === item.href ? 'page' : undefined}
+                        onClick={() => click(item.label, item.href)}
+                        className={`relative py-2 ${navLabel} transition-colors ${hoverAccent} ${text} ${focusRing}`}
+                      >
+                        {item.label}
+                        {current && <span className={`absolute -bottom-1 start-0 h-[2px] w-full ${barAccent}`} aria-hidden="true" />}
+                      </Link>
+                    </li>
+                  );
+                }
+                const key = item.kind === 'destinations' ? 'destinations' : item.key;
+                const panelId = `nav-panel-${key}`;
+                const expanded = openMenu === key;
+                const wide = item.kind === 'destinations';
+                return (
+                  <li
+                    key={key}
+                    className={wide ? '' : 'relative'}
+                    onPointerEnter={hoverOpen(key)}
+                    onPointerLeave={hoverClose}
+                    onBlur={blurClose(key)}
                   >
-                    {link.label}
-                    {isActive(link.href!) && (
-                      <span className="absolute -bottom-2 left-0 w-full h-[2px] bg-[#CCFF00]"></span>
-                    )}
-                  </Link>
-                )}
-
-                {/* Dropdown Menu (Desktop).
-                    A wide panel cannot be centred on its trigger: the trigger
-                    sits near the edge of the bar, so a centred panel is capped
-                    at twice its distance from that edge — about 680px at 1024.
-                    Wide menus anchor to the trigger and grow inward instead;
-                    narrow ones stay centred. */}
-                {link.subLinks && (
-                  <div className={`absolute top-full pt-8 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform translate-y-2 group-hover:translate-y-0 text-start ${
-                    groupSubLinks(link.subLinks).length > 1
-                      ? 'rtl:right-0 ltr:left-0'
-                      : 'rtl:right-1/2 rtl:translate-x-1/2 ltr:left-1/2 ltr:-translate-x-1/2'
-                  }`}>
-                    <div className={`bg-[#1a1a1a] border-t-2 border-[#CCFF00] p-7 shadow-[0_20px_50px_rgba(0,0,0,0.5)] relative max-h-[80vh] overflow-y-auto ${
-                      groupSubLinks(link.subLinks).length > 1
-                        ? 'w-[min(92vw,600px)] 2xl:w-[min(92vw,940px)]'
-                        : 'w-max min-w-[240px] max-w-[92vw]'
-                    }`}>
-                      {/* Columns, not one long list. Two below lg, three above.
-                          The panel needs an EXPLICIT width: Tailwind's
-                          grid-cols-* is repeat(n, minmax(0,1fr)), and inside a
-                          shrink-to-fit absolutely positioned box those tracks
-                          resolve to 0 and the panel collapses. 92vw keeps it
-                          on screen at any width. */}
-                      <div className={`grid gap-x-7 gap-y-7 ${
-                        groupSubLinks(link.subLinks).length > 1 ? 'grid-cols-2 2xl:grid-cols-4' : 'grid-cols-1'
-                      }`}>
-                        {groupSubLinks(link.subLinks).map((group, gi) => (
-                          <div key={gi} className="min-w-[150px]">
-                            {group.header && (
-                              <span className={`${navMicro} text-[#CCFF00] flex items-center gap-2 select-none pb-2 mb-3 border-b border-[#F2F0E9]/10`}>
-                                {isFa && sharedFlag(group.items) && <Flag code={sharedFlag(group.items)!} className="h-3 w-auto shrink-0 text-[#F2F0E9]" />}
-                                {group.header}
-                              </span>
-                            )}
-                            <div className="flex flex-col gap-2.5">
-                              {group.items.map((sub) => (
-                                <Link
-                                  key={sub.href}
-                                  href={sub.href!}
-                                  className={`${isFa ? 'font-vazir text-[15px]' : 'font-serif text-base'} text-[#F2F0E9] hover:text-[#CCFF00] hover:translate-x-1.5 rtl:hover:-translate-x-1.5 transition-all flex items-start gap-2.5 leading-snug opacity-80 hover:opacity-100`}
-                                >
-                                  {/* The menu is the densest list of routes on
-                                      the site, so the flag does the work the
-                                      label needs three words for. */}
-                                  {isFa && !sharedFlag(group.items) && flagFor(sub.href!) && <Flag code={flagFor(sub.href!)!} className="h-4 w-auto shrink-0 mt-[0.2em] text-[#F2F0E9]" />}
-                                  {sub.label}
-                                </Link>
-                              ))}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-
-          {/* 3. CTA & ACTIONS */}
-          <div className="flex items-center gap-6">
-
-            {/* Language / Globe Dropdown - Replaces previous LanguageSwitcher and Map Link */}
-            <div className="hidden lg:block relative" ref={langMenuRef}>
-              <button
-                onClick={() => setLangMenuOpen(!langMenuOpen)}
-                className={`p-2 rounded-full border transition-all hover:bg-[#CCFF00] hover:text-[#1a1a1a] hover:border-[#CCFF00] ${getBorderColor()} ${getTextColor()} ${langMenuOpen ? 'bg-[#CCFF00] text-[#1a1a1a] border-[#CCFF00]' : ''}`}
-              >
-                <Globe className="w-4 h-4" />
-              </button>
-
-              {/* Dropdown Box */}
-              <div className={`absolute top-full right-0 mt-4 min-w-[140px] bg-[#1a1a1a] border-t-2 border-[#CCFF00] shadow-2xl p-4 transition-all duration-300 ${langMenuOpen ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible translate-y-2'}`}>
-                <div className="flex flex-col gap-2">
-                  <button
-                    onClick={() => switchLocale('en')}
-                    className={`text-start ${navAction} py-2 px-2 transition-colors ${locale === 'en' ? 'text-[#CCFF00]' : 'text-[#F2F0E9] hover:text-[#CCFF00]/70'}`}
-                  >
-                    English
-                  </button>
-                  <button
-                    onClick={() => switchLocale('fa')}
-                    className={`text-start ${navAction} py-2 px-2 transition-colors ${locale === 'fa' ? 'text-[#CCFF00]' : 'text-[#F2F0E9] hover:text-[#CCFF00]/70'}`}
-                  >
-                    Farsi (فارسی)
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* Login Icon */}
-            <Link href={loginHref as any} className={`hidden lg:block p-2 rounded-full border transition-all hover:bg-[#CCFF00] hover:text-[#1a1a1a] hover:border-[#CCFF00] ${getBorderColor()} ${getTextColor()}`}>
-              <User className="w-4 h-4" />
-            </Link>
-
-            {/* Desktop CTA */}
-            <Link
-              href={bookHref as any}
-              className={`hidden lg:flex items-center gap-3 ${navAction} px-6 py-3 border transition-all duration-300 group
-                    ${scrolled
-                  ? 'border-[#CCFF00] text-[#1a1a1a] bg-[#CCFF00] hover:bg-white hover:border-white'
-                  : 'border-[#1a1a1a] text-[#1a1a1a] hover:bg-[#1a1a1a] hover:text-[#CCFF00]'
-                }`}
-            >
-              {t('contact')}
-              <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1 rtl:rotate-180 rtl:group-hover:-translate-x-1" />
-            </Link>
-
-            {/* Mobile Hamburger */}
-            <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className={`relative z-50 p-1 transition-colors duration-300 ${getTextColor()}`}
-              aria-label="Toggle menu"
-            >
-              {mobileMenuOpen ? (
-                <X className="w-8 h-8 text-[#F2F0E9] hover:text-[#CCFF00] transition-colors" />
-              ) : (
-                <Menu className={`w-8 h-8 hover:scale-110 transition-transform`} />
-              )}
-            </button>
-          </div>
-        </nav>
-      </header>
-
-      {/* 4. MOBILE MENU OVERLAY */}
-      <div
-        className={`fixed inset-0 z-40 bg-[#1a1a1a] transition-all duration-700 cubic-bezier(0.76, 0, 0.24, 1) ${mobileMenuOpen ? 'clip-path-open' : 'clip-path-closed'
-          }`}
-        style={{
-          clipPath: mobileMenuOpen
-            ? 'polygon(0 0, 100% 0, 100% 100%, 0% 100%)'
-            : 'polygon(0 0, 100% 0, 100% 0, 0 0)'
-        }}
-      >
-        <div className="flex flex-col h-full px-6 pt-32 pb-12 container mx-auto overflow-y-auto">
-
-          {/* Links */}
-          <nav className="flex flex-col space-y-6 mb-auto">
-            {navLinks.map((link, idx) => (
-              <div key={link.label} className="border-b border-[#F2F0E9]/10 pb-4">
-                {link.subLinks ? (
-                  // Mobile Dropdown Item
-                  <div>
                     <button
-                      onClick={() => toggleMobileSubMenu(link.key!)}
-                      className="w-full flex items-baseline justify-between gap-4 group text-start"
+                      ref={(el) => {
+                        triggers.current[key] = el;
+                      }}
+                      type="button"
+                      aria-expanded={expanded}
+                      aria-controls={panelId}
+                      onClick={() => {
+                        if (openedByHover.current === key) {
+                          openedByHover.current = null;
+                          return;
+                        }
+                        setOpenMenu(expanded ? null : key);
+                      }}
+                      className={`flex items-center gap-1 py-2 ${navLabel} transition-colors ${hoverAccent} ${expanded ? openAccent : text} ${focusRing}`}
                     >
-                      <span className="flex items-baseline gap-4">
-                        <span className={`${navMicro} font-bold text-[#CCFF00]`}>0{idx + 1}</span>
-                        <span className={`${navDisplay} text-4xl md:text-5xl transition-colors ${expandedMobileMenu === link.key ? 'text-[#CCFF00]' : 'text-[#F2F0E9]'}`}>
-                          {link.label}
-                        </span>
-                      </span>
-                      <ChevronDown className={`w-6 h-6 text-[#F2F0E9] transition-transform duration-300 ${expandedMobileMenu === link.key ? 'rotate-180 text-[#CCFF00]' : ''}`} />
+                      {item.label}
+                      <ChevronDown
+                        className={`h-3 w-3 opacity-60 transition-transform motion-reduce:transition-none ${expanded ? 'rotate-180' : ''}`}
+                        aria-hidden="true"
+                      />
                     </button>
-
-                    {/* Sub-menu Links */}
-                    <div className={`overflow-hidden transition-all duration-500 ${expandedMobileMenu === link.key ? 'max-h-[900px] opacity-100 mt-6' : 'max-h-0 opacity-0'}`}>
-                      <div className={`pl-6 grid gap-x-5 gap-y-6 border-l border-[#F2F0E9]/10 ml-2 border-s border-e-0 rtl:mr-2 rtl:ml-0 rtl:border-r rtl:border-l-0 rtl:pr-6 rtl:pl-0 ${
-                        groupSubLinks(link.subLinks).length > 1 ? 'grid-cols-2' : 'grid-cols-1'
-                      }`}>
-                        {groupSubLinks(link.subLinks).map((group, gi) => (
-                          <div key={gi}>
-                            {group.header && (
-                              <span className={`${navMicro} text-[#CCFF00]/70 flex items-center gap-2 mb-2.5`}>
-                                {isFa && sharedFlag(group.items) && <Flag code={sharedFlag(group.items)!} className="h-3 w-auto shrink-0 text-[#F2F0E9]" />}
-                                {group.header}
-                              </span>
-                            )}
-                            <div className="flex flex-col gap-2.5">
-                              {group.items.map((sub) => (
-                                <Link
-                                  key={sub.href}
-                                  href={sub.href!}
-                                  className={`${isFa ? 'font-vazir text-[15px]' : 'font-serif text-base'} text-[#F2F0E9] hover:text-[#CCFF00] transition-colors flex items-center gap-2`}
-                                >
-                                  {isFa && !sharedFlag(group.items) && flagFor(sub.href!) && <Flag code={flagFor(sub.href!)!} className="h-4 w-auto shrink-0 text-[#F2F0E9]" />}
-                                  {sub.label}
-                                </Link>
-                              ))}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
+                    {/* The panel hangs from the bar, not the button: the
+                        Destinations panel spans the container width; About
+                        is a short list under its own button. pt bridges the
+                        gap so the pointer can travel into it. */}
+                    <div
+                      className={`absolute top-full z-20 pt-4 ${expanded ? 'block' : 'hidden'} ${
+                        wide ? 'inset-x-6 lg:inset-x-12' : 'end-0 w-max min-w-[240px]'
+                      }`}
+                    >
+                      {item.kind === 'destinations' ? (
+                        <DestinationsPanel id={panelId} nav={nav} locale={locale} pathname={pathname} onNavigate={() => setOpenMenu(null)} />
+                      ) : (
+                        <ul id={panelId} className="flex flex-col gap-1 border-t-2 border-acid bg-ink p-5 shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
+                          {item.links.map((l) => (
+                            <li key={l.href}>
+                              <Link
+                                href={l.href as any}
+                                aria-current={pathname === l.href ? 'page' : undefined}
+                                onClick={() => {
+                                  trackNav({ locale, area: 'header', label: l.label, href: l.href });
+                                  setOpenMenu(null);
+                                }}
+                                className={`block py-1.5 ${isFa ? 'font-vazir text-[15px]' : 'font-serif text-base'} transition-colors hover:text-acid focus-visible:text-acid focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-acid ${
+                                  pathname === l.href ? 'text-acid' : 'text-paper/85'
+                                }`}
+                              >
+                                {l.label}
+                              </Link>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
                     </div>
-                  </div>
-                ) : (
-                  // Normal Mobile Link
-                  <Link
-                    href={link.href!}
-                    className="group flex items-baseline gap-4"
-                  >
-                    <span className={`${navMicro} font-bold text-[#CCFF00]`}>0{idx + 1}</span>
-                    <span className={`${navDisplay} text-4xl md:text-5xl text-[#F2F0E9] group-hover:text-[#CCFF00] ${isFa ? '' : 'group-hover:italic'} transition-all duration-300`}>
-                      {link.label}
-                    </span>
-                  </Link>
-                )}
-              </div>
-            ))}
+                  </li>
+                );
+              })}
+            </ul>
           </nav>
 
-          {/* Bottom Info */}
-          <div className="flex flex-col md:flex-row justify-between items-end gap-8 mt-12">
-            <div className="flex gap-4 items-center">
-              <Link href={loginHref as any} className={`text-[#F2F0E9] ${navAction} font-normal border border-[#F2F0E9]/30 px-6 py-3 hover:bg-[#F2F0E9] hover:text-[#1a1a1a] transition-colors`}>
-                {t('client_login')}
-              </Link>
-            </div>
-            {/* Mobile Language Switcher (Simple) */}
-            <div className="lg:hidden flex gap-4">
-              <button onClick={() => switchLocale('en')} className={`${locale === 'en' ? 'text-[#CCFF00]' : 'text-[#F2F0E9]'}`}>EN</button>
-              <span className="text-[#F2F0E9]/20">/</span>
-              <button onClick={() => switchLocale('fa')} className={`${locale === 'fa' ? 'text-[#CCFF00]' : 'text-[#F2F0E9]'}`}>FA</button>
-            </div>
+          <div className="flex items-center gap-4">
+            <Link
+              href={langHref as any}
+              locale={otherLocale}
+              hrefLang={otherLocale}
+              lang={otherLocale}
+              onClick={() => click(nav.ui.otherLanguage, langHref)}
+              className={`hidden border px-3 py-2 lg:inline-block ${
+                otherLocale === 'fa' ? 'font-vazir text-[13px] font-bold' : 'font-sans text-xs font-bold tracking-widest'
+              } transition-colors hover:border-acid hover:bg-acid hover:text-ink ${
+                onDark ? 'border-paper/25 text-paper' : 'border-ink/25 text-ink'
+              } ${focusRing}`}
+            >
+              {nav.ui.otherLanguage}
+            </Link>
 
             <Link
-              href={bookHref as any}
-              className={`w-full md:w-auto bg-[#CCFF00] text-[#1a1a1a] ${navAction} px-8 py-4 hover:bg-white transition-colors text-center`}
+              href={nav.cta.href as any}
+              onClick={() => click(nav.cta.label, nav.cta.href, 'cta')}
+              className={`group hidden items-center gap-3 bg-acid px-6 py-3 text-ink transition-colors lg:flex ${action} ${
+                onDark ? 'hover:bg-paper' : 'hover:bg-ink hover:text-acid'
+              } ${focusRing}`}
             >
-              {t('book_consultation')}
+              {nav.cta.label}
+              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1 rtl:rotate-180 rtl:group-hover:-translate-x-1 motion-reduce:transition-none" aria-hidden="true" />
             </Link>
+
+            <button
+              ref={menuButtonRef}
+              type="button"
+              onClick={() => setDrawerOpen(true)}
+              aria-expanded={drawerOpen}
+              aria-controls="mobile-drawer"
+              aria-label={nav.ui.menu}
+              className={`flex h-11 w-11 items-center justify-center transition-colors lg:hidden ${text} ${focusRing}`}
+            >
+              <Menu className="h-8 w-8" aria-hidden="true" />
+            </button>
           </div>
         </div>
-      </div>
+      </header>
+
+      <MobileDrawer
+        id="mobile-drawer"
+        open={drawerOpen}
+        onClose={closeDrawer}
+        nav={nav}
+        locale={locale}
+        pathname={pathname}
+        langHref={langHref}
+        otherLocale={otherLocale}
+      />
     </>
   );
 }
