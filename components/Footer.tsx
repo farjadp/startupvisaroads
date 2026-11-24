@@ -10,6 +10,8 @@ import { CONTACT } from '@/content/fa/home';
 import { MAIN_CONTACT } from '@/content/contact';
 import { Link } from '@/navigation';
 import { APP_STORE_LINKS } from '@/lib/app-links';
+import { footerColumns } from '@/lib/nav';
+import FooterLink from '@/components/nav/FooterLink';
 import AppleMark from '@/components/AppleMark';
 import { 
   ArrowUpRight, 
@@ -18,86 +20,22 @@ import {
   Instagram,
   Youtube,
   MessageCircle,
-  Globe,
   Play,
 } from 'lucide-react';
 
-// The footer's link set is locale-specific, not just locale-translated: /fa
-// has its own IA, and most of the English footer's targets (denmark,
-// netherlands, finland, services, country, book-meeting, login) now 301 out
-// of Persian. A translated label pointing at a redirect is still a dead end.
-const EN_LINKS = {
-  access: [
-    { href: '/pnp', label: 'Canada (PNP)' },
-    { href: '/country/denmark', label: 'Denmark (SUV)' },
-    { href: '/europe/netherlands', label: 'Netherlands (SUV)' },
-    { href: '/country/finland', label: 'Finland (SUV)' },
-    { href: '/country/italy', label: 'Italy (Startup Visa)' },
-    { href: '/country/usa', label: 'USA (founder routes)' },
-    { href: '/uk/innovator-founder', label: 'UK (Innovator Founder)' },
-    { href: '/europe/spain', label: 'Spain (Entrepreneur)' },
-    { href: '/europe/bulgaria', label: 'Bulgaria (Startup Visa)' },
-    { href: '/europe/belgium', label: 'Belgium (Startup Permit)' },
-    { href: '/europe/estonia', label: 'Estonia (Startup Visa)' },
-    { href: '/country/turkey', label: 'Türkiye (Tech Visa)' },
-    { href: '/start-up-chile', label: 'Chile (Start-Up Chile)' },
-    { href: '/country/australia', label: 'Australia (NIV 858)' },
-  ],
-  strategy: [
-    { href: '/which-path', label: 'Which route fits me?' },
-    { href: '/services', label: 'Advisory' },
-    { href: '/mentorship', label: 'Mentorship' },
-    { href: '/pricing', label: 'Pricing' },
-    { href: '/partners', label: 'For immigration firms' },
-    { href: '/app', label: 'The App' },
-    { href: '/country', label: 'Jurisdictions' },
-    { href: '/blog', label: 'Blog' },
-    { href: '/data-reports', label: 'Data reports' },
-    { href: '/faq', label: 'FAQ' },
-    { href: '/about', label: 'The Firm' },
-  ],
-  audit: '/book-meeting',
-  portal: '/login',
-};
-
-const FA_LINKS = {
-  access: [
-    { href: '/europe/denmark', label: 'دانمارک' },
-    { href: '/europe/netherlands', label: 'هلند' },
-    { href: '/europe/finland', label: 'فنلاند' },
-    { href: '/pnp', label: 'کارآفرینی استانی کانادا' },
-    { href: '/europe/estonia', label: 'استونی' },
-    { href: '/europe/italy', label: 'ایتالیا' },
-    { href: '/europe/spain', label: 'اسپانیا' },
-    { href: '/europe/bulgaria', label: 'بلغارستان' },
-    { href: '/europe/belgium', label: 'بلژیک' },
-    { href: '/turkey-tech-visa', label: 'تک‌ویزای ترکیه' },
-    { href: '/start-up-chile', label: 'استارتاپ شیلی' },
-    { href: '/usa', label: 'آمریکا برای فاندرها' },
-    { href: '/uk/innovator-founder', label: 'استارتاپ ویزای انگلیس' },
-    { href: '/australia', label: 'استرالیا (NIV 858)' },
-  ],
-  strategy: [
-    { href: '/which-path', label: 'ارزیابی رایگان مسیر' },
-    { href: '/mentorship', label: 'منتورشیپ' },
-    { href: '/pricing', label: 'قیمت‌ها' },
-    { href: '/partners', label: 'همکاری با مؤسسات مهاجرت' },
-    { href: '/app', label: 'اپلیکیشن' },
-    { href: '/faq', label: 'سؤالات متداول' },
-    { href: '/blog', label: 'مجله' },
-    { href: '/data-reports', label: 'گزارش‌های آماری' },
-    { href: '/about', label: 'درباره ما' },
-  ],
-  audit: '/contact',
-  portal: '/contact',
-};
+// The link lists live in lib/nav.ts (footerColumns), shared with the header.
+// /fa has its own IA, so each locale has its own set, not a translation.
+// The footer is the sitemap of record: every route and company page is here,
+// which is what lets the header stay at five items.
+const AUDIT = { en: '/book-meeting', fa: '/contact' } as const;
 
 export default async function Footer() {
   const currentYear = new Date().getFullYear();
   const locale = await getLocale();
   const t = await getTranslations('Footer');
   const isRtl = locale === 'fa';
-  const links = isRtl ? FA_LINKS : EN_LINKS;
+  const navLocale = isRtl ? 'fa' : 'en';
+  const columns = footerColumns(navLocale);
   const display = isRtl ? 'font-estedad' : 'font-serif';
 
   return (
@@ -105,23 +43,21 @@ export default async function Footer() {
       
       <div className="container mx-auto px-6 md:px-12 relative z-10">
         
-        {/* Top Section: Brand & Strategy */}
-        <div className="flex flex-col lg:flex-row justify-between items-start mb-24 gap-16">
-           
+        {/* Top: brand, contact and the sitemap grid */}
+        <div className="mb-16 grid grid-cols-2 gap-x-8 gap-y-12 md:grid-cols-3 lg:grid-cols-6">
+
            {/* Brand Column */}
-           <div className="lg:w-1/3">
-              <Link href="/" className="inline-block mb-8 group">
-                 <h2 className={`${display} text-6xl md:text-8xl leading-none tracking-tighter group-hover:text-[#CCFF00] transition-colors duration-500`}>
+           <div className="col-span-2 md:col-span-3 lg:col-span-1">
+              <Link href="/" className="inline-block mb-6 group">
+                 <h2 className={`${display} text-5xl leading-none tracking-tighter group-hover:text-[#CCFF00] transition-colors duration-500`}>
                     Visa Roads
                  </h2>
               </Link>
-              <p className="font-sans text-lg text-[#F2F0E9]/60 leading-relaxed max-w-sm">
-                 {t('tagline_1')} <br/>
-                 {t('tagline_2')}
+              <p className="font-sans text-sm text-[#F2F0E9]/70 leading-relaxed max-w-sm">
+                 {t('tagline_1')} {t('tagline_2')}
               </p>
-              
               {/* Socials: Ashavid's company profiles in English; Farjad's own channels in Persian */}
-              <div className="flex gap-4 mt-12">
+              <div className="flex gap-4 mt-8">
                  {(isRtl
                     ? [
                         { Icon: Youtube, href: MAIN_CONTACT.youtube, label: 'YouTube' },
@@ -175,63 +111,53 @@ export default async function Footer() {
                     </a>
                  ) : null}
               </div>
+
+              <address className="not-italic font-sans text-[#F2F0E9]/70 mt-8 text-sm leading-relaxed">
+                 <strong className="text-[#F2F0E9]">{t('entity')}</strong><br/>
+                 <span className="text-xs">{t('subsidiary')}</span><br/>
+                 {t('address_1')}, {t('address_2')}<br/>
+                 <a href={MAIN_CONTACT.tel} className="hover:text-white transition-colors" dir="ltr">{MAIN_CONTACT.phone}</a>
+                 {' · '}
+                 <a href={MAIN_CONTACT.whatsapp} target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">{isRtl ? 'واتساپ' : 'WhatsApp'}</a><br/>
+                 {MAIN_CONTACT.emails.map((email) => (
+                    <React.Fragment key={email}>
+                       <a href={`mailto:${email}`} className="hover:text-white transition-colors break-all" dir="ltr">{email}</a><br/>
+                    </React.Fragment>
+                 ))}
+              </address>
+              <FooterLink href={AUDIT[navLocale]} locale={navLocale} label={t('schedule_audit')} className="mt-6 inline-flex items-center gap-2 font-sans font-bold border-b border-[#CCFF00] pb-1 hover:text-[#CCFF00] transition-colors text-sm tracking-widest uppercase">
+                 {t('schedule_audit')} <ArrowUpRight size={14} aria-hidden />
+              </FooterLink>
            </div>
 
-           {/* Navigation Grid */}
-           <div className="lg:w-2/3 grid grid-cols-1 md:grid-cols-3 gap-12">
-              
-              {/* Column 1: Global Access */}
-              <div>
-                 <h4 className="font-sans text-xs font-bold text-[#CCFF00] mb-8 uppercase tracking-widest flex items-center gap-2">
-                    <Globe size={12}/> {t('col_access')}
-                 </h4>
-                 <ul className={`space-y-4 ${display} text-2xl text-[#F2F0E9]/80`}>
-                    {links.access.map((l) => (
-                       <li key={l.href}><Link href={l.href} className="hover:text-[#CCFF00] hover:pl-2 transition-all">{l.label}</Link></li>
-                    ))}
-                 </ul>
-              </div>
-
-              {/* Column 2: Strategy */}
-              <div>
-                 <h4 className="font-sans text-xs font-bold text-[#CCFF00] mb-8 uppercase tracking-widest">{t('col_strategy')}</h4>
-                 <ul className={`space-y-4 ${display} text-2xl text-[#F2F0E9]/80`}>
-                    {links.strategy.map((l) => (
-                       <li key={l.href}><Link href={l.href} className="hover:text-[#CCFF00] hover:pl-2 transition-all">{l.label}</Link></li>
-                    ))}
-                 </ul>
-              </div>
-
-              {/* Column 3: Headquarters */}
-              <div>
-                 <h4 className="font-sans text-xs font-bold text-[#CCFF00] mb-8 uppercase tracking-widest">{t('col_hq')}</h4>
-                 <address className="not-italic font-sans text-[#F2F0E9]/60 space-y-2 mb-8 text-sm leading-relaxed">
-                    <strong>{t('entity')}</strong><br/>
-                    <span className="text-xs text-[#F2F0E9]/50">{t('subsidiary')}</span><br/>
-                    {t('address_1')}<br/>
-                    {t('address_2')}<br/>
-                    <a href={MAIN_CONTACT.tel} className="hover:text-white transition-colors" dir="ltr">{MAIN_CONTACT.phone}</a>
-                    {' · '}
-                    <a href={MAIN_CONTACT.whatsapp} target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">{isRtl ? 'واتساپ' : 'WhatsApp'}</a><br/>
-                    {MAIN_CONTACT.emails.map((email) => (
-                       <React.Fragment key={email}>
-                          <a href={`mailto:${email}`} className="hover:text-white transition-colors" dir="ltr">{email}</a><br/>
-                       </React.Fragment>
-                    ))}
-                 </address>
-                 
-                 <Link href={links.audit} className="inline-flex items-center gap-2 font-sans font-bold border-b border-[#CCFF00] pb-1 hover:text-[#CCFF00] transition-colors text-sm tracking-widest uppercase">
-                    {t('schedule_audit')} <ArrowUpRight size={14} />
-                 </Link>
-                 
-                 <div className="mt-8 pt-8 border-t border-[#F2F0E9]/10">
-                    <Link href={links.portal} className="text-[10px] font-sans text-[#F2F0E9]/30 hover:text-[#CCFF00] transition-colors uppercase tracking-widest">
-                       {t('client_portal')}
-                    </Link>
-                 </div>
-              </div>
-
-           </div>
+           {/* Sitemap columns (lib/nav.ts) */}
+           {columns.map((col) => (
+              <nav key={col.title} aria-label={col.title} className="min-w-0">
+                 <h3 className={`${isRtl ? 'font-vazir text-sm' : 'font-sans text-xs uppercase tracking-widest'} font-bold text-[#CCFF00] mb-5`}>
+                    {col.title}
+                 </h3>
+                 {col.groups.map((g, gi) => (
+                    <div key={gi} className={gi > 0 ? 'mt-6' : ''}>
+                       {g.title && (
+                          <p className={`${isRtl ? 'font-vazir text-xs' : 'font-sans text-[11px] uppercase tracking-widest'} text-[#F2F0E9]/60 mb-3`}>{g.title}</p>
+                       )}
+                       <ul className="flex flex-col gap-2.5">
+                          {g.links.map((l) => (
+                             <li key={l.href}>
+                                <FooterLink
+                                   href={l.href}
+                                   locale={navLocale}
+                                   className={`${isRtl ? 'font-vazir text-[15px]' : 'font-sans text-sm'} text-[#F2F0E9]/80 hover:text-[#CCFF00] transition-colors leading-snug`}
+                                >
+                                   {l.status ? `${l.label} (${l.status})` : l.label}
+                                </FooterLink>
+                             </li>
+                          ))}
+                       </ul>
+                    </div>
+                 ))}
+              </nav>
+           ))}
         </div>
 
         {/* Legal Disclaimer */}
