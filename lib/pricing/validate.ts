@@ -7,7 +7,7 @@
 // be changed from admin: a group's key, image and requiresLegalReview (so a
 // legal-review gate set in code cannot be switched off by an edit).
 // ============================================================================
-import { DEFAULT_PRICING, READINESS_URL } from './defaults';
+import { DEFAULT_PRICING, ASSESSMENT_PATH } from './defaults';
 import {
   CURRENCIES,
   GROUP_STATUSES,
@@ -58,9 +58,14 @@ export function parsePrice(v: unknown): number | null {
   return Number.isSafeInteger(n) && n > 0 && n <= MAX_PRICE ? n : null;
 }
 
-/** Only https links leave the site from a pricing CTA. */
-export function safeHttpsUrl(v: unknown, fallback = READINESS_URL): string {
+/**
+ * A CTA is either an on-site path ("/which-path", "/contact") or an https link.
+ * Nothing else: no javascript:, no protocol-relative "//host".
+ */
+export function safeCtaUrl(v: unknown, fallback = ASSESSMENT_PATH): string {
   if (typeof v !== 'string') return fallback;
+  const t = v.trim();
+  if (/^\/(?!\/)[a-z0-9\-/]*$/i.test(t)) return t;
   try {
     const u = new URL(v.trim());
     return u.protocol === 'https:' ? v.trim() : fallback;
@@ -92,7 +97,7 @@ function group(v: unknown, d: PricingGroup): PricingGroup {
     currency,
     prices: priceLines(o.prices, d.prices),
     legalReviewed: typeof o.legalReviewed === 'boolean' ? o.legalReviewed : d.legalReviewed,
-    ctaUrl: safeHttpsUrl(o.ctaUrl, d.ctaUrl),
+    ctaUrl: safeCtaUrl(o.ctaUrl, d.ctaUrl),
     title: localized(o.title, d.title, text),
     summary: localized(o.summary, d.summary, text),
     includes: localized(o.includes, d.includes, list),

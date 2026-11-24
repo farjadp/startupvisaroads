@@ -20,7 +20,8 @@
 // ============================================================================
 import { TBD, type PricingDoc } from './types';
 
-export const READINESS_URL = 'https://readiness.visaroads.com';
+/** Where the buttons go: the site's own route assessment (/which-path), which records the lead. */
+export const ASSESSMENT_PATH = '/which-path';
 
 const draft = (s: string) => `${s} ${TBD}`;
 
@@ -43,7 +44,7 @@ export const DEFAULT_PRICING: PricingDoc = {
       ],
       requiresLegalReview: false,
       legalReviewed: false,
-      ctaUrl: READINESS_URL,
+      ctaUrl: ASSESSMENT_PATH,
       image: '/fa/img/finland.webp',
       title: { en: 'Finland, Denmark and the Netherlands', fa: 'فنلاند، دانمارک و هلند' },
       summary: {
@@ -55,7 +56,7 @@ export const DEFAULT_PRICING: PricingDoc = {
       paymentMilestones: { en: [TBD], fa: [TBD] },
       duration: { en: TBD, fa: TBD },
       note: { en: '', fa: '' },
-      ctaLabel: { en: 'Free readiness assessment', fa: 'ارزیابی آمادگی رایگان' },
+      ctaLabel: { en: 'Free route assessment', fa: 'ارزیابی رایگان مسیر' },
       imageAlt: { en: 'Helsinki Cathedral under a clear sky', fa: 'کلیسای جامع هلسینکی زیر آسمان صاف' },
     },
     {
@@ -65,7 +66,7 @@ export const DEFAULT_PRICING: PricingDoc = {
       prices: [{ label: { en: 'Our fee', fa: 'هزینه‌ی ما' }, amount: 15000 }],
       requiresLegalReview: false,
       legalReviewed: false,
-      ctaUrl: READINESS_URL,
+      ctaUrl: ASSESSMENT_PATH,
       image: '/fa/img/spain.webp',
       title: { en: 'Spain and Italy', fa: 'اسپانیا و ایتالیا' },
       summary: {
@@ -77,7 +78,7 @@ export const DEFAULT_PRICING: PricingDoc = {
       paymentMilestones: { en: [TBD], fa: [TBD] },
       duration: { en: TBD, fa: TBD },
       note: { en: '', fa: '' },
-      ctaLabel: { en: 'Free readiness assessment', fa: 'ارزیابی آمادگی رایگان' },
+      ctaLabel: { en: 'Free route assessment', fa: 'ارزیابی رایگان مسیر' },
       imageAlt: { en: 'Gran Vía and the Metropolis Building in Madrid', fa: 'خیابان گران‌ویا و ساختمان متروپلیس در مادرید' },
     },
     {
@@ -87,7 +88,7 @@ export const DEFAULT_PRICING: PricingDoc = {
       prices: [{ label: { en: 'Our fee', fa: 'هزینه‌ی ما' }, amount: 12000 }],
       requiresLegalReview: false,
       legalReviewed: false,
-      ctaUrl: READINESS_URL,
+      ctaUrl: ASSESSMENT_PATH,
       image: '/fa/img/belgium.webp',
       title: { en: 'Belgium and Bulgaria', fa: 'بلژیک و بلغارستان' },
       summary: {
@@ -99,7 +100,7 @@ export const DEFAULT_PRICING: PricingDoc = {
       paymentMilestones: { en: [TBD], fa: [TBD] },
       duration: { en: TBD, fa: TBD },
       note: { en: '', fa: '' },
-      ctaLabel: { en: 'Free readiness assessment', fa: 'ارزیابی آمادگی رایگان' },
+      ctaLabel: { en: 'Free route assessment', fa: 'ارزیابی رایگان مسیر' },
       imageAlt: { en: 'Antwerp skyline with the Cathedral of Our Lady', fa: 'نمای آنتورپ با کلیسای جامع بانوی ما' },
     },
     {
@@ -112,7 +113,7 @@ export const DEFAULT_PRICING: PricingDoc = {
       ],
       requiresLegalReview: false,
       legalReviewed: false,
-      ctaUrl: READINESS_URL,
+      ctaUrl: ASSESSMENT_PATH,
       image: '/fa/img/turkey.webp',
       title: { en: 'Türkiye Tech Visa', fa: 'تک‌ویزای ترکیه' },
       summary: {
@@ -124,7 +125,7 @@ export const DEFAULT_PRICING: PricingDoc = {
       paymentMilestones: { en: [TBD], fa: [TBD] },
       duration: { en: TBD, fa: TBD },
       note: { en: '', fa: '' },
-      ctaLabel: { en: 'Free readiness assessment', fa: 'ارزیابی آمادگی رایگان' },
+      ctaLabel: { en: 'Free route assessment', fa: 'ارزیابی رایگان مسیر' },
       imageAlt: { en: 'Istanbul skyline, old and new', fa: 'خط آسمان استانبول، قدیم و جدید' },
     },
     {
@@ -138,7 +139,7 @@ export const DEFAULT_PRICING: PricingDoc = {
       ],
       requiresLegalReview: false,
       legalReviewed: false,
-      ctaUrl: READINESS_URL,
+      ctaUrl: ASSESSMENT_PATH,
       image: '/fa/img/bc.webp',
       title: { en: 'Business readiness for Canada’s provincial entrepreneur streams', fa: 'آمادگی بیزنسی برای مسیرهای کارآفرینی استانی کانادا' },
       summary: {
@@ -153,7 +154,7 @@ export const DEFAULT_PRICING: PricingDoc = {
       },
       duration: { en: TBD, fa: TBD },
       note: { en: '', fa: '' },
-      ctaLabel: { en: 'Free readiness assessment', fa: 'ارزیابی آمادگی رایگان' },
+      ctaLabel: { en: 'Free route assessment', fa: 'ارزیابی رایگان مسیر' },
       imageAlt: { en: 'Vancouver skyline between the water and the mountains', fa: 'خط آسمان ونکوور میان دریا و کوه' },
     },
     {
@@ -166,7 +167,7 @@ export const DEFAULT_PRICING: PricingDoc = {
       ],
       requiresLegalReview: false,
       legalReviewed: false,
-      ctaUrl: READINESS_URL,
+      ctaUrl: ASSESSMENT_PATH,
       image: '/fa/img/high-impact.webp',
       title: { en: 'Business readiness for the High Impact Start-up Pilot', fa: 'آمادگی بیزنسی برای پایلوت High Impact Start-up' },
       summary: {
@@ -181,7 +182,7 @@ export const DEFAULT_PRICING: PricingDoc = {
       },
       duration: { en: TBD, fa: TBD },
       note: { en: 'IRCC has announced this pilot but has not opened it yet.', fa: 'IRCC این پایلوت را اعلام کرده ولی هنوز باز نشده است.' },
-      ctaLabel: { en: 'Free readiness assessment', fa: 'ارزیابی آمادگی رایگان' },
+      ctaLabel: { en: 'Free route assessment', fa: 'ارزیابی رایگان مسیر' },
       imageAlt: { en: 'The Peace Tower on Parliament Hill, Ottawa', fa: 'برج صلح در پارلمان کانادا، اتاوا' },
     },
     {
@@ -191,7 +192,7 @@ export const DEFAULT_PRICING: PricingDoc = {
       prices: [{ label: { en: 'Our fee', fa: 'هزینه‌ی ما' }, amount: 55000 }],
       requiresLegalReview: false,
       legalReviewed: false,
-      ctaUrl: READINESS_URL,
+      ctaUrl: ASSESSMENT_PATH,
       image: '',
       title: { en: 'US founder routes', fa: 'مسیرهای فاندر آمریکا' },
       summary: {
@@ -206,7 +207,7 @@ export const DEFAULT_PRICING: PricingDoc = {
       paymentMilestones: { en: [TBD], fa: [TBD] },
       duration: { en: TBD, fa: TBD },
       note: { en: '', fa: '' },
-      ctaLabel: { en: 'Free readiness assessment', fa: 'ارزیابی آمادگی رایگان' },
+      ctaLabel: { en: 'Free route assessment', fa: 'ارزیابی رایگان مسیر' },
       imageAlt: { en: '', fa: '' },
     },
     {
@@ -216,7 +217,7 @@ export const DEFAULT_PRICING: PricingDoc = {
       prices: [],
       requiresLegalReview: false,
       legalReviewed: false,
-      ctaUrl: READINESS_URL,
+      ctaUrl: ASSESSMENT_PATH,
       image: '/fa/img/estonia.webp',
       title: { en: 'Other routes', fa: 'مسیرهای دیگر' },
       summary: {
@@ -238,7 +239,7 @@ export const DEFAULT_PRICING: PricingDoc = {
         eyebrow: 'Pricing',
         title: 'What preparing your team costs, before you call us',
         lede: 'Each route shows our fee, per family and per team. Government fees and third-party costs are listed apart from it, so you can see the whole picture before any call.',
-        cta: 'Free readiness assessment',
+        cta: 'Free route assessment',
       },
       cards: {
         title: 'Routes and prices',
@@ -269,9 +270,9 @@ export const DEFAULT_PRICING: PricingDoc = {
       },
       payment: {
         title: 'How payment works',
-        intro: 'Nothing is paid on this website. The free readiness assessment comes first; you pay only once we agree the route fits your team.',
+        intro: 'Nothing is paid on this website. The free route assessment comes first; you pay only once we agree the route fits your team.',
         steps: [
-          { title: 'Free readiness assessment', body: 'You tell us about your team and your idea. We tell you honestly whether the route fits.' },
+          { title: 'Free route assessment', body: 'You tell us about your team and your idea. We tell you honestly whether the route fits.' },
           { title: 'Our fee, in stages', body: 'The fee on the route’s card is paid in stages, each tied to a piece of work we deliver.' },
           { title: 'Fees for others stay separate', body: 'Government fees, the lawyer and translators are paid to them directly, at the time they ask for it.' },
         ],
@@ -279,7 +280,7 @@ export const DEFAULT_PRICING: PricingDoc = {
       faq: {
         title: 'Questions about price',
         items: [
-          { q: 'Why do you publish your prices?', a: 'So you can decide before any call whether our fee fits your budget. The free readiness assessment then tells you whether the route fits your team, before you pay anything.' },
+          { q: 'Why do you publish your prices?', a: 'So you can decide before any call whether our fee fits your budget. The free route assessment then tells you whether the route fits your team, before you pay anything.' },
           { q: 'How do the family and team prices work?', a: 'Where a card shows more than one price, the fee depends on how many families apply together: one family, two families at the same time, or a full team. Each card lists its own tiers.' },
           { q: 'Are government and lawyer fees included?', a: 'No. Our fee covers business work only. Government fees, the lawyer, translation and company registration are paid separately, to them.' },
           { q: 'In Canada, who does the immigration work?', a: 'A licensed lawyer handles the immigration part of the file, and the lawyer’s fee is separate. We prepare the business: mentoring, market research and the business plan.' },
@@ -288,9 +289,9 @@ export const DEFAULT_PRICING: PricingDoc = {
         ],
       },
       final: {
-        title: 'Start with the free readiness assessment',
+        title: 'Start with the free route assessment',
         body: 'A few questions about your team. You get an honest read on whether the route fits, before you pay anything.',
-        cta: 'Free readiness assessment',
+        cta: 'Free route assessment',
         partnerPrompt: 'Are you a business partner?',
         partnerLink: 'The partner page',
       },
@@ -300,7 +301,7 @@ export const DEFAULT_PRICING: PricingDoc = {
         eyebrow: 'قیمت‌ها',
         title: 'هزینه‌ی آماده‌سازی تیم، پیش از هر تماس',
         lede: 'برای هر مسیر هزینه‌ی ما را نوشته‌ایم، برای هر خانواده و برای تیم. هزینه‌های دولتی و هزینه‌ی دیگران جدا آمده تا قبل از هر تماسی تصویر کامل را ببینید.',
-        cta: 'ارزیابی آمادگی رایگان',
+        cta: 'ارزیابی رایگان مسیر',
       },
       cards: {
         title: 'مسیرها و قیمت‌ها',
@@ -331,9 +332,9 @@ export const DEFAULT_PRICING: PricingDoc = {
       },
       payment: {
         title: 'پرداخت چطور انجام می‌شود',
-        intro: 'در این سایت هیچ پرداختی انجام نمی‌شود. اول ارزیابی آمادگی رایگان است؛ فقط وقتی پرداخت می‌کنید که هر دو مطمئن باشیم مسیر به تیم شما می‌خورد.',
+        intro: 'در این سایت هیچ پرداختی انجام نمی‌شود. اول ارزیابی رایگان مسیر است؛ فقط وقتی پرداخت می‌کنید که هر دو مطمئن باشیم مسیر به تیم شما می‌خورد.',
         steps: [
-          { title: 'ارزیابی آمادگی رایگان', body: 'از تیم و ایده‌تان می‌گویید. ما صادقانه می‌گوییم این مسیر به شما می‌خورد یا نه.' },
+          { title: 'ارزیابی رایگان مسیر', body: 'از تیم و ایده‌تان می‌گویید. ما صادقانه می‌گوییم این مسیر به شما می‌خورد یا نه.' },
           { title: 'هزینه‌ی ما، مرحله‌به‌مرحله', body: 'هزینه‌ای که روی کارت هر مسیر آمده در چند مرحله پرداخت می‌شود و هر مرحله به بخشی از کاری که تحویل می‌دهیم بسته است.' },
           { title: 'هزینه‌ی دیگران جداست', body: 'هزینه‌های دولتی، وکیل و مترجم مستقیم به خودشان و هر وقت خودشان بخواهند پرداخت می‌شود.' },
         ],
@@ -341,7 +342,7 @@ export const DEFAULT_PRICING: PricingDoc = {
       faq: {
         title: 'پرسش‌های رایج درباره‌ی قیمت',
         items: [
-          { q: 'چرا قیمت‌ها را منتشر می‌کنید؟', a: 'تا پیش از هر تماسی خودتان ببینید هزینه‌ی ما با بودجه‌تان جور است یا نه. بعد ارزیابی آمادگی رایگان، پیش از هر پرداختی، می‌گوید این مسیر به تیم شما می‌خورد یا نه.' },
+          { q: 'چرا قیمت‌ها را منتشر می‌کنید؟', a: 'تا پیش از هر تماسی خودتان ببینید هزینه‌ی ما با بودجه‌تان جور است یا نه. بعد ارزیابی رایگان مسیر، پیش از هر پرداختی، می‌گوید این مسیر به تیم شما می‌خورد یا نه.' },
           { q: 'قیمت خانواده و تیم چطور حساب می‌شود؟', a: 'هر جا روی کارت بیش از یک قیمت آمده، هزینه به تعداد خانواده‌هایی بستگی دارد که با هم اقدام می‌کنند: یک خانواده، دو خانواده‌ی هم‌زمان یا یک تیم کامل. هر کارت پله‌های خودش را دارد.' },
           { q: 'هزینه‌های دولتی و وکیل جزو قیمت است؟', a: 'نه. هزینه‌ی ما فقط برای کار بیزنسی است. هزینه‌های دولتی، وکیل، ترجمه و ثبت شرکت جدا و مستقیم به خودشان پرداخت می‌شود.' },
           { q: 'در کانادا کار مهاجرتی را چه کسی انجام می‌دهد؟', a: 'بخش مهاجرتی پرونده را وکیل دارای مجوز انجام می‌دهد و هزینه‌ی وکیل جداست. کار ما آماده‌سازی بیزنس است: منتورینگ، تحقیق بازار و بیزینس‌پلن.' },
@@ -350,9 +351,9 @@ export const DEFAULT_PRICING: PricingDoc = {
         ],
       },
       final: {
-        title: 'از ارزیابی آمادگی رایگان شروع کنید',
+        title: 'از ارزیابی رایگان مسیر شروع کنید',
         body: 'چند سؤال درباره‌ی تیم‌تان. پیش از هر پرداختی، یک ارزیابی صادقانه می‌گیرید که مسیر به شما می‌خورد یا نه.',
-        cta: 'ارزیابی آمادگی رایگان',
+        cta: 'ارزیابی رایگان مسیر',
         partnerPrompt: 'شریک تجاری هستید؟',
         partnerLink: 'صفحه‌ی همکاری',
       },

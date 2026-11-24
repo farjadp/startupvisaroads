@@ -15,7 +15,8 @@ vi.mock('@/lib/prisma', () => ({ default: db }));
 vi.mock('next/cache', () => ({ revalidatePath: vi.fn() }));
 
 import { DEFAULT_PRICING } from '@/lib/pricing/defaults';
-import { formatAmount, readinessHref, resolveCopy, resolveGroups } from '@/lib/pricing/resolve';
+import { ctaHref, formatAmount, resolveCopy, resolveGroups } from '@/lib/pricing/resolve';
+import { leadSourceLine, withLeadSource } from '@/lib/lead-source';
 import { normalizePricing, parsePrice } from '@/lib/pricing/validate';
 import { pricingJsonLd } from '@/lib/pricing/json-ld';
 import { CHROME, CANADA_KEYS, legalLine } from '@/lib/pricing/chrome';
@@ -74,7 +75,7 @@ describe('production visibility', () => {
     const g = resolveGroups(d, 'en', LIVE).find((x) => x.key === 'other-routes')!;
     expect(g.prices).toEqual([]);
     expect(g.includes).toEqual([]);
-    expect(g.ctaHref).toBeNull();
+    expect(g.ctaHref).toBe('/en/contact?from=pricing&route=other-routes');
   });
 
   it('drops a price line with no amount in production, keeps it marked in dev', () => {
@@ -122,12 +123,36 @@ describe('schema', () => {
 });
 
 describe('links and numbers', () => {
-  it('builds the readiness link with the exact UTM', () => {
-    expect(readinessHref('https://readiness.visaroads.com', 'eu-finland')).toBe(
-      'https://readiness.visaroads.com?utm_source=visaroads.com&utm_medium=pricing_page&utm_campaign=pricing&utm_content=eu-finland',
+  it('sends every button to the on-site assessment, tagged with which button it was', () => {
+    expect(ctaHref('/which-path', 'ca-high-impact', 'fa')).toBe('/fa/which-path?from=pricing&route=ca-high-impact');
+    expect(ctaHref('/which-path', 'hero', 'en')).toBe('/en/which-path?from=pricing&route=hero');
+    for (const l of ['en', 'fa'] as const) {
+      const links = resolveGroups(DEFAULT_PRICING, l, LIVE).map((g) => g.ctaHref);
+      expect(new Set(links).size).toBe(links.length);
+      for (const h of links) {
+        expect(h).toMatch(new RegExp(`^/${l}/(which-path|contact)\\?from=pricing&route=[a-z-]+$`));
+        expect(h).not.toContain('utm_');
+      }
+    }
+    expect(resolveGroups(DEFAULT_PRICING, 'en', LIVE).find((g) => g.key === 'other-routes')!.ctaHref).toBe('/en/contact?from=pricing&route=other-routes');
+  });
+
+  it('uses UTM only for a link that leaves the site', () => {
+    expect(ctaHref('https://example.com/x', 'eu-nordic', 'en')).toBe(
+      'https://example.com/x?utm_source=visaroads.com&utm_medium=pricing_page&utm_campaign=pricing&utm_content=eu-nordic',
     );
-    const g = resolveGroups(DEFAULT_PRICING, 'en', LIVE).find((x) => x.key === 'tr-tech-visa')!;
-    expect(g.ctaHref).toContain('utm_content=tr-tech-visa');
+  });
+
+  it('puts the source in the lead message, and only a safe one', () => {
+    const f = new FormData();
+    f.set('src_from', 'pricing');
+    f.set('src_route', 'ca-pnp');
+    expect(leadSourceLine(f)).toBe('📍 Came from: pricing · ca-pnp');
+    const bad = new FormData();
+    bad.set('src_from', '<b>x</b>');
+    expect(leadSourceLine(bad)).toBe('');
+    expect(leadSourceLine(new FormData())).toBe('');
+    expect(withLeadSource('/en/contact', 'pricing', 'hero')).toBe('/en/contact?from=pricing&route=hero');
   });
 
   it('formats Persian numbers with Persian digits and separators', () => {
@@ -153,7 +178,12 @@ describe('normalisation', () => {
     evil.groups.push({ ...evil.groups[0], key: 'b2b-canreach' });
     const d = normalizePricing(evil);
     expect(d.groups.find((g) => g.key === 'ca-pnp')!.requiresLegalReview).toBe(false);
-    expect(d.groups.find((g) => g.key === 'eu-nordic')!.ctaUrl).toBe('https://readiness.visaroads.com');
+    expect(d.groups.find((g) => g.key === 'eu-nordic')!.ctaUrl).toBe('/which-path');
+    const relative = clone() as any;
+    relative.groups[0].ctaUrl = '//evil.example';
+    expect(normalizePricing(relative).groups[0].ctaUrl).toBe('/which-path');
+    relative.groups[0].ctaUrl = '/contact';
+    expect(normalizePricing(relative).groups[0].ctaUrl).toBe('/contact');
     expect(d.groups.find((g) => g.key === 'eu-nordic')!.prices[0].amount).toBeNull();
     expect(d.groups.map((g) => g.key)).toEqual(DEFAULT_PRICING.groups.map((g) => g.key));
   });
