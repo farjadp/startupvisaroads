@@ -19,18 +19,26 @@ export const GROUP_STATUSES = ['active', 'soon', 'hidden'] as const;
 export type GroupStatus = (typeof GROUP_STATUSES)[number];
 
 /** Every amount names its currency. No conversion, ever. */
-export const CURRENCIES = ['EUR', 'CAD'] as const;
+export const CURRENCIES = ['EUR', 'CAD', 'USD'] as const;
 export type Currency = (typeof CURRENCIES)[number];
 
 /** The placeholder for anything Farjad has not decided. Never rendered in production. */
 export const TBD = '[[TBD]]';
 
+/** One price on a card: "Per family 20,000", "British Columbia 75,000". */
+export interface PriceLine {
+  label: Localized<string>;
+  /** Whole units of the group's currency. null = not decided: the line is not shown in production. */
+  amount: number | null;
+}
+
 export interface PricingGroup {
   /** Stable id: analytics route_key, the CTA's utm_content, and the image. Not editable. */
   key: string;
   status: GroupStatus;
-  /** Whole units of `currency`. null = not decided: the card shows no number. */
-  startingFrom: number | null;
+  /** VisaRoads' own fee, fixed (not "starting from"), one line per tier. Empty = no number on the card. */
+  prices: PriceLine[];
+  /** Shared by every line of the group. */
   currency: Currency;
   /**
    * When true the group is not shown in production until `legalReviewed` is
@@ -48,6 +56,8 @@ export interface PricingGroup {
   excludes: Localized<string[]>;
   paymentMilestones: Localized<string[]>;
   duration: Localized<string>;
+  /** A short line under the price, e.g. a programme's status. Empty = none. */
+  note: Localized<string>;
   ctaLabel: Localized<string>;
   imageAlt: Localized<string>;
 }
