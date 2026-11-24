@@ -15,6 +15,7 @@
 import { useEffect, useRef, useState, useTransition } from 'react';
 import Image from 'next/image';
 import { AnimatePresence, motion, useReducedMotion, type Variants } from 'motion/react';
+import { useHydratedReducedMotion } from '@/components/fa/motion/useHydratedReducedMotion';
 import { ArrowLeft, ArrowRight, Check, Clock, Instagram, Linkedin, Play, Radio, Send, Video, Youtube } from 'lucide-react';
 import { registerWebinar } from '@/app/[locale]/(public)/webinar/actions';
 import {
@@ -76,10 +77,10 @@ function Reveal({ children, className, delay = 0 }: { children: React.ReactNode;
   return (
     <motion.div
       className={className}
-      initial={reduced ? false : { opacity: 0, y: 28 }}
+      initial={{ opacity: 0, y: 28 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-80px' }}
-      transition={{ duration: 0.7, ease: EASE, delay }}
+      transition={reduced ? { duration: 0 } : { duration: 0.7, ease: EASE, delay }}
     >
       {children}
     </motion.div>
@@ -95,10 +96,10 @@ function Digit({ value, label }: { value: number; label: string }) {
         <AnimatePresence initial={false} mode="popLayout">
           <motion.span
             key={text}
-            initial={reduced ? false : { y: '-100%', opacity: 0 }}
+            initial={{ y: '-100%', opacity: 0 }}
             animate={{ y: '0%', opacity: 1 }}
-            exit={reduced ? undefined : { y: '100%', opacity: 0 }}
-            transition={{ duration: 0.45, ease: EASE }}
+            exit={{ y: '100%', opacity: 0 }}
+            transition={reduced ? { duration: 0 } : { duration: 0.45, ease: EASE }}
             className="absolute inset-0 grid place-items-center font-estedad font-black text-3xl md:text-5xl tabular-nums"
           >
             {text}
@@ -134,7 +135,10 @@ function Countdown({ now }: { now: number }) {
  * local start time once the browser has mounted.
  */
 function RouteMap({ mounted }: { mounted: boolean }) {
+  // Transitions read the raw preference (not part of the markup); the pulse
+  // rings are elements, so they wait for hydration before being dropped.
   const reduced = useReducedMotion();
+  const noPulse = useHydratedReducedMotion();
   const nodes = [
     { x: 70, y: 150, city: 'تورنتو', tz: 'America/Toronto' },
     { x: 300, y: 70, city: 'اروپا', tz: 'Europe/Berlin' },
@@ -149,9 +153,9 @@ function RouteMap({ mounted }: { mounted: boolean }) {
         stroke="#F2F0E9"
         strokeOpacity={0.18}
         strokeWidth={2}
-        initial={reduced ? false : { pathLength: 0 }}
+        initial={{ pathLength: 0 }}
         animate={{ pathLength: 1 }}
-        transition={{ duration: 1.6, ease: EASE, delay: 0.4 }}
+        transition={reduced ? { duration: 0 } : { duration: 1.6, ease: EASE, delay: 0.4 }}
       />
       <motion.path
         d={arc}
@@ -167,11 +171,11 @@ function RouteMap({ mounted }: { mounted: boolean }) {
         <motion.g
           key={n.city}
           className="[transform-box:fill-box] origin-center"
-          initial={reduced ? false : { opacity: 0, scale: 0.6 }}
+          initial={{ opacity: 0, scale: 0.6 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.6, ease: EASE, delay: 0.7 + i * 0.35 }}
+          transition={reduced ? { duration: 0 } : { duration: 0.6, ease: EASE, delay: 0.7 + i * 0.35 }}
         >
-          {!reduced && (
+          {!noPulse && (
             <motion.circle
               className="[transform-box:fill-box] origin-center"
               cx={n.x}
@@ -290,7 +294,7 @@ export default function FaWebinar() {
 
   const word: Variants = {
     hidden: { opacity: 0, y: '0.6em' },
-    show: (i: number) => ({ opacity: 1, y: 0, transition: { duration: 0.8, ease: EASE, delay: 0.15 + i * 0.09 } }),
+    show: (i: number) => ({ opacity: 1, y: 0, transition: reduced ? { duration: 0 } : { duration: 0.8, ease: EASE, delay: 0.15 + i * 0.09 } }),
   };
   const words = w.hero.headline.flatMap((line, li) => line.split(' ').map((t) => ({ t, li })));
 
@@ -304,8 +308,8 @@ export default function FaWebinar() {
         <motion.span
           aria-hidden
           className="pointer-events-none absolute -top-10 end-[-4%] select-none font-estedad font-black leading-none text-transparent text-[16rem] md:text-[26rem] [-webkit-text-stroke:2px_rgba(204,255,0,0.35)]"
-          initial={reduced ? false : { opacity: 0, y: 40 }}
-          animate={reduced ? { opacity: 1 } : { opacity: 1, y: [0, -14, 0] }}
+          initial={{ opacity: 0, y: 40 }}
+          animate={reduced ? { opacity: 1, y: 0 } : { opacity: 1, y: [0, -14, 0] }}
           transition={reduced ? { duration: 0 } : { opacity: { duration: 1.2 }, y: { duration: 9, repeat: Infinity, ease: 'easeInOut' } }}
         >
           {toPersianDigits(w.number)}
@@ -315,9 +319,9 @@ export default function FaWebinar() {
           <div className="lg:col-span-7">
             <motion.div
               className="flex flex-wrap items-center gap-3 mb-8"
-              initial={reduced ? false : { opacity: 0, y: 12 }}
+              initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, ease: EASE }}
+              transition={reduced ? { duration: 0 } : { duration: 0.6, ease: EASE }}
             >
               <span className="text-[11px] font-bold text-black bg-[#CCFF00] px-2 py-1">دورهمی شماره‌ی {toPersianDigits(w.number)}</span>
               <span className="text-xs text-[#F2F0E9]/60">{w.hero.eyebrow}</span>
@@ -330,7 +334,7 @@ export default function FaWebinar() {
                     const i = words.findIndex((x) => x.t === t && x.li === li);
                     return (
                       <span key={t} className="inline-block overflow-hidden align-bottom pb-[0.12em] me-[0.25em]">
-                        <motion.span className="inline-block" variants={word} initial={reduced ? false : 'hidden'} animate="show" custom={i}>
+                        <motion.span className="inline-block" variants={word} initial="hidden" animate="show" custom={i}>
                           {t}
                         </motion.span>
                       </span>
@@ -341,17 +345,17 @@ export default function FaWebinar() {
             </h1>
             <motion.p
               className="text-lg md:text-xl leading-loose text-[#F2F0E9]/75 max-w-2xl mb-10"
-              initial={reduced ? false : { opacity: 0 }}
+              initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ duration: 0.8, delay: 0.7 }}
+              transition={reduced ? { duration: 0 } : { duration: 0.8, delay: 0.7 }}
             >
               {w.hero.sub}
             </motion.p>
             <motion.div
               className="flex flex-wrap gap-3"
-              initial={reduced ? false : { opacity: 0, y: 12 }}
+              initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, ease: EASE, delay: 0.9 }}
+              transition={reduced ? { duration: 0 } : { duration: 0.6, ease: EASE, delay: 0.9 }}
             >
               <a href="#register" className="group inline-flex items-center gap-3 bg-[#CCFF00] text-black px-7 py-4 font-bold transition-colors hover:bg-[#F2F0E9]">
                 {w.hero.cta}
@@ -488,9 +492,9 @@ export default function FaWebinar() {
                   {state === 'done' ? (
                     <motion.div
                       key="done"
-                      initial={reduced ? false : { opacity: 0, y: 12 }}
+                      initial={{ opacity: 0, y: 12 }}
                       animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.5, ease: EASE }}
+                      transition={reduced ? { duration: 0 } : { duration: 0.5, ease: EASE }}
                       className="py-6"
                       aria-live="polite"
                     >
@@ -502,9 +506,9 @@ export default function FaWebinar() {
                           stroke="#1a1a1a"
                           strokeWidth={4}
                           strokeLinecap="square"
-                          initial={reduced ? false : { pathLength: 0 }}
+                          initial={{ pathLength: 0 }}
                           animate={{ pathLength: 1 }}
-                          transition={{ duration: 0.6, ease: EASE, delay: 0.2 }}
+                          transition={reduced ? { duration: 0 } : { duration: 0.6, ease: EASE, delay: 0.2 }}
                         />
                       </svg>
                       <h2 className="font-estedad font-black text-2xl mb-3">{w.form.doneTitle}</h2>
@@ -673,10 +677,10 @@ function Archive() {
             target="_blank"
             rel="noopener noreferrer"
             className="group snap-start shrink-0 w-[78vw] sm:w-[340px] border border-[#F2F0E9]/15 bg-[#F2F0E9]/[0.03] transition-colors hover:border-[#CCFF00]"
-            initial={reduced ? false : { opacity: 0, x: -24 }}
+            initial={{ opacity: 0, x: -24 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true, margin: '-40px' }}
-            transition={{ duration: 0.6, ease: EASE, delay: Math.min(i, 5) * 0.06 }}
+            transition={reduced ? { duration: 0 } : { duration: 0.6, ease: EASE, delay: Math.min(i, 5) * 0.06 }}
           >
             <div className="relative aspect-video overflow-hidden">
               <Image

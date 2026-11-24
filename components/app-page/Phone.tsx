@@ -54,10 +54,10 @@ export default function Phone({ screen, copy, funds, isFa, num, className }: Pro
               <motion.div
                 key={screen}
                 className="absolute inset-x-4 top-4 bottom-0"
-                initial={reduced ? { opacity: 0 } : { opacity: 0, x: isFa ? -24 : 24, filter: 'blur(6px)' }}
+                initial={{ opacity: 0, x: isFa ? -24 : 24, filter: 'blur(6px)' }}
                 animate={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
-                exit={reduced ? { opacity: 0 } : { opacity: 0, x: isFa ? 24 : -24, filter: 'blur(6px)' }}
-                transition={{ duration: 0.45, ease: EASE }}
+                exit={{ opacity: 0, x: isFa ? 24 : -24, filter: 'blur(6px)' }}
+                transition={reduced ? { duration: 0.3, x: { duration: 0 }, filter: { duration: 0 } } : { duration: 0.45, ease: EASE }}
               >
                 {screen === 'start' && <StartScreen copy={copy} isFa={isFa} />}
                 {screen === 'assess' && <AssessScreen copy={copy} isFa={isFa} />}
