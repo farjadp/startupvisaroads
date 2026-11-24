@@ -104,8 +104,8 @@ const META: Record<string, Entry> = {
     fa: { title: 'همکاری با مشاوران و وکلای مهاجرت؛ بیزینس‌پلن پرونده‌های استارتاپی', description: 'موکل و پرونده‌ی حقوقی با شما؛ بیزینس‌پلن، مدل مالی، پیچ‌دک و منتورشیپ بنیان‌گذار برای استارتاپ ویزای هلند، فنلاند، دانمارک، فلاندر و اسپانیا با ما.' },
   },
   '/pricing': {
-    en: { title: 'Pricing — Finland, Denmark and Canada Startup Preparation', description: 'Where our fee starts for the Finland startup permit, Startup Denmark and business readiness for Canada, with government and third-party costs listed separately. Exact price after a free readiness assessment.' },
-    fa: { title: 'قیمت‌ها؛ هزینه‌ی استارتاپ ویزای فنلاند، دانمارک و آمادگی بیزنسی کانادا', description: 'هزینه‌ی ما برای ویزای استارتاپ فنلاند، استارتاپ دانمارک و آمادگی بیزنسی کانادا از کجا شروع می‌شود؛ هزینه‌های دولتی و هزینه‌ی دیگران جدا آمده است. قیمت دقیق بعد از ارزیابی آمادگی رایگان.' },
+    en: { title: 'Pricing — Startup Visa and Entrepreneur Route Fees', description: 'Our fees for Finland, Denmark, the Netherlands, Spain, Italy, Belgium, Bulgaria, Türkiye, Canada’s PNP and High Impact pilot and US founder routes, per family and per team. Government and third-party costs are listed separately.' },
+    fa: { title: 'قیمت‌ها؛ هزینه‌ی استارتاپ ویزای فنلاند، دانمارک، هلند و مسیرهای کارآفرینی', description: 'هزینه‌ی ما برای فنلاند، دانمارک، هلند، اسپانیا، ایتالیا، بلژیک، بلغارستان، ترکیه، PNP کانادا، پایلوت High Impact و آمریکا؛ برای هر خانواده و برای تیم. هزینه‌های دولتی و هزینه‌ی دیگران جدا آمده است.' },
   },
   '/app': {
     en: { title: 'VisaRoads App — Immigration Routes for iOS & Android', description: 'Ten questions, no sign-up: see how you match the published criteria of startup, entrepreneur, talent and study routes in 17 countries, with an official source on every figure. On Google Play now.' },

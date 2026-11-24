@@ -7,8 +7,8 @@
 //   - A hidden group never renders.
 //   - A group that needs legal review (Canada) renders in production only
 //     once legalReviewed is true.
-//   - A price renders only for an active group with a real number. TBD, empty
-//     or zero means no number at all, never the text "TBD".
+//   - A price line renders only for an active group, with a real amount and
+//     a label. A missing amount means no line at all, never the text "TBD".
 //   - Any text that is empty or carries the TBD marker is dropped in
 //     production; a table row, list item or FAQ with a TBD part goes whole.
 //   - Outside production (`showDrafts`) everything stays, so the gaps are
@@ -62,7 +62,10 @@ export interface GroupView {
   status: 'active' | 'soon';
   title: string;
   summary: string | null;
-  price: { amount: number; currency: Currency } | null;
+  /** Fixed fees, one per tier; empty = the card says the price comes after the assessment. */
+  prices: { label: string; amount: number | null }[];
+  currency: Currency;
+  note: string | null;
   includes: string[];
   excludes: string[];
   milestones: string[];
@@ -85,13 +88,19 @@ export function resolveGroups(doc: PricingDoc, locale: PricingLocale, o: Resolve
     const title = keepText(g.title[locale], o);
     if (!title) continue;
     const active = g.status === 'active';
-    const amount = g.startingFrom;
+    const prices = active
+      ? g.prices
+          .map((p) => ({ label: keepText(p.label[locale], o), amount: p.amount && p.amount > 0 && Number.isFinite(p.amount) ? p.amount : null }))
+          .filter((p): p is { label: string; amount: number | null } => p.label !== null && (o.showDrafts || p.amount !== null))
+      : [];
     out.push({
       key: g.key,
       status: g.status,
       title,
       summary: keepText(g.summary[locale], o),
-      price: active && typeof amount === 'number' && Number.isFinite(amount) && amount > 0 ? { amount, currency: g.currency } : null,
+      prices,
+      currency: g.currency,
+      note: g.note[locale]?.trim() ? keepText(g.note[locale], o) : null,
       includes: active ? keepList(g.includes[locale], o) : [],
       excludes: active ? keepList(g.excludes[locale], o) : [],
       milestones: active ? keepList(g.paymentMilestones[locale], o) : [],
@@ -151,6 +160,6 @@ export function formatAmount(n: number, locale: PricingLocale): string {
 }
 
 export const CURRENCY_NAME: Record<PricingLocale, Record<Currency, string>> = {
-  en: { EUR: 'EUR', CAD: 'CAD' },
-  fa: { EUR: 'یورو', CAD: 'دلار کانادا' },
+  en: { EUR: 'EUR', CAD: 'CAD', USD: 'USD' },
+  fa: { EUR: 'یورو', CAD: 'دلار کانادا', USD: 'دلار آمریکا' },
 };

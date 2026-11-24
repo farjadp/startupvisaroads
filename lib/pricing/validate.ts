@@ -4,8 +4,8 @@
 // The shape of DEFAULT_PRICING is the template: unknown keys are dropped,
 // missing or wrong-typed values fall back to the default, strings are trimmed
 // and capped. A few fields are locked to the defaults on purpose and cannot
-// be changed from admin: a group's key, image and requiresLegalReview (so the
-// Canada card's lawyer gate cannot be switched off by an edit).
+// be changed from admin: a group's key, image and requiresLegalReview (so a
+// legal-review gate set in code cannot be switched off by an edit).
 // ============================================================================
 import { DEFAULT_PRICING, READINESS_URL } from './defaults';
 import {
@@ -18,6 +18,7 @@ import {
   type PricingCopy,
   type PricingDoc,
   type PricingGroup,
+  type PriceLine,
 } from './types';
 
 const MAX_TEXT = 2000;
@@ -68,6 +69,17 @@ export function safeHttpsUrl(v: unknown, fallback = READINESS_URL): string {
   }
 }
 
+function priceLines(v: unknown, fallback: PriceLine[]): PriceLine[] {
+  if (!Array.isArray(v)) return fallback;
+  return v
+    .map((r) => {
+      const o = obj(r);
+      return { label: localized(o.label, { en: '', fa: '' }, text), amount: parsePrice(o.amount) };
+    })
+    .filter((r) => r.label.en || r.label.fa || r.amount !== null)
+    .slice(0, 8);
+}
+
 function group(v: unknown, d: PricingGroup): PricingGroup {
   const o = obj(v);
   const status = GROUP_STATUSES.includes(o.status as GroupStatus) ? (o.status as GroupStatus) : d.status;
@@ -78,7 +90,7 @@ function group(v: unknown, d: PricingGroup): PricingGroup {
     requiresLegalReview: d.requiresLegalReview,
     status,
     currency,
-    startingFrom: 'startingFrom' in o ? parsePrice(o.startingFrom) : d.startingFrom,
+    prices: priceLines(o.prices, d.prices),
     legalReviewed: typeof o.legalReviewed === 'boolean' ? o.legalReviewed : d.legalReviewed,
     ctaUrl: safeHttpsUrl(o.ctaUrl, d.ctaUrl),
     title: localized(o.title, d.title, text),
@@ -87,6 +99,7 @@ function group(v: unknown, d: PricingGroup): PricingGroup {
     excludes: localized(o.excludes, d.excludes, list),
     paymentMilestones: localized(o.paymentMilestones, d.paymentMilestones, list),
     duration: localized(o.duration, d.duration, text),
+    note: localized(o.note, d.note, text),
     ctaLabel: localized(o.ctaLabel, d.ctaLabel, text),
     imageAlt: localized(o.imageAlt, d.imageAlt, text),
   };

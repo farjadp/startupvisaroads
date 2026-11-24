@@ -7,7 +7,7 @@
 // phone. Reduced motion: the finished line, no movement.
 // ============================================================================
 import React from 'react';
-import { motion } from 'motion/react';
+import { motion, useReducedMotion } from 'motion/react';
 import type { TitledItem } from '@/lib/pricing/types';
 import { Txt } from './Tracked';
 
@@ -17,6 +17,9 @@ export default function PaymentTimeline({ steps, numbers, locale }: { steps: Tit
   const isRtl = locale === 'fa';
   const display = isRtl ? 'font-estedad font-black' : 'font-serif';
   const view = { once: true, margin: '-15% 0px' } as const;
+  // Markup (`initial`) is identical either way; only the timing changes (see useHydratedReducedMotion).
+  const reduced = useReducedMotion();
+  const instant = { duration: 0 };
 
   return (
     <div className="relative">
@@ -28,7 +31,7 @@ export default function PaymentTimeline({ steps, numbers, locale }: { steps: Tit
         initial={{ scaleY: 0 }}
         whileInView={{ scaleY: 1 }}
         viewport={view}
-        transition={{ duration: 1.2, ease: EASE }}
+        transition={reduced ? instant : { duration: 1.2, ease: EASE }}
       />
       <motion.span
         aria-hidden
@@ -38,7 +41,7 @@ export default function PaymentTimeline({ steps, numbers, locale }: { steps: Tit
         initial={{ scaleX: 0 }}
         whileInView={{ scaleX: 1 }}
         viewport={view}
-        transition={{ duration: 1.2, ease: EASE }}
+        transition={reduced ? instant : { duration: 1.2, ease: EASE }}
       />
       <ol className="relative grid gap-10 md:auto-cols-fr md:grid-flow-col md:gap-6">
         {steps.map((s, i) => (
@@ -48,7 +51,7 @@ export default function PaymentTimeline({ steps, numbers, locale }: { steps: Tit
             initial={{ opacity: 0, y: 14 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={view}
-            transition={{ duration: 0.5, delay: 0.35 + i * 0.3, ease: EASE }}
+            transition={reduced ? instant : { duration: 0.5, delay: 0.35 + i * 0.3, ease: EASE }}
           >
             <span className={`relative z-10 flex h-12 w-12 shrink-0 items-center justify-center border-2 border-[#1a1a1a] text-xl ${i === steps.length - 1 ? 'bg-[#1a1a1a] text-[#CCFF00]' : 'bg-[#CCFF00] text-[#1a1a1a]'} ${display}`}>
               {numbers[i]}
