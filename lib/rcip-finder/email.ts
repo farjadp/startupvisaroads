@@ -12,7 +12,7 @@ export function loginEmailHtml(link: string, locale: 'en' | 'fa'): { subject: st
   if (locale === 'fa') {
     return {
       subject: 'لینک ورود به جست‌وجوی کارفرمایان RCIP',
-      html: `<div dir="rtl" style="font-family:Tahoma,sans-serif;line-height:1.9;color:#1a1a1a"><p>برای ورود روی لینک زیر بزنید. این لینک ۳۰ دقیقه اعتبار دارد.</p><p><a href="${esc(link)}" style="display:inline-block;padding:12px 20px;background:#1a1a1a;color:#F2F0E9;text-decoration:none">ورود به VisaRoads</a></p><p style="color:#555">اگر شما درخواست نکرده‌اید، این ایمیل را نادیده بگیرید.</p><p style="color:#555">VisaRoads Inc.، انتاریو، کانادا</p></div>`,
+      html: `<div dir="rtl" style="font-family:Tahoma,sans-serif;line-height:1.9;color:#1a1a1a"><p>برای ورود روی لینک زیر بزنید. این لینک ۳۰ دقیقه اعتبار دارد.</p><p><a href="${esc(link)}" style="display:inline-block;padding:12px 20px;background:#1a1a1a;color:#F2F0E9;text-decoration:none">ورود به VisaRoads</a></p><p style="color:#555">اگر شما درخواست نکرده‌اید، این ایمیل را نادیده بگیرید.</p><p style="color:#555"><bdi dir="ltr">VisaRoads Inc.</bdi> · انتاریو، کانادا</p></div>`,
     };
   }
   return {
