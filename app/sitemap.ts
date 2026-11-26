@@ -144,5 +144,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     });
   }
 
+  // The RCIP employer finder: a static page in both languages.
+  for (const locale of ['en', 'fa'] as const) {
+    entries.push({
+      url: `${SITE_URL}/${locale}/data-reports/rcip-employers`,
+      changeFrequency: 'monthly',
+      priority: 0.7,
+      alternates: { languages: { en: `${SITE_URL}/en/data-reports/rcip-employers`, fa: `${SITE_URL}/fa/data-reports/rcip-employers` } },
+    });
+  }
+
   return entries;
 }

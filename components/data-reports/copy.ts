@@ -32,6 +32,9 @@ export const COPY = {
     casesLink: 'Read the case studies',
     home: 'Home',
     title: 'Data reports',
+    toolKicker: 'Tool · RCIP',
+    toolTitle: 'Which designated employers are closest to your job?',
+    toolCta: 'Open the employer finder',
   },
   fa: {
     metaTitle: 'گزارش‌های آماری: بازار کار مسیرهای مهاجرت',
@@ -57,5 +60,8 @@ export const COPY = {
     casesLink: 'پرونده‌ها را بخوانید',
     home: 'خانه',
     title: 'گزارش‌های آماری',
+    toolKicker: 'ابزار · RCIP',
+    toolTitle: 'کدام کارفرمای تأییدشده به شغل شما نزدیک‌تر است؟',
+    toolCta: 'جست‌وجوی کارفرما را باز کنید',
   },
 } as const;

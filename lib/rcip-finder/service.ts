@@ -60,7 +60,7 @@ export type ListItem = {
   contact: Contact | null;
 };
 
-export type ListResult = { total: number; page: number; pages: number; items: ListItem[]; capped: boolean };
+export type ListResult = { total: number; coreTotal: number; page: number; pages: number; items: ListItem[]; capped: boolean };
 
 export async function listEmployers(opts: { noc: string; province?: string | null; page: number; userId?: string | null }): Promise<ListResult> {
   const rule = matchRule(opts.noc);
@@ -68,7 +68,7 @@ export async function listEmployers(opts: { noc: string; province?: string | nul
     ...rule.core.map((k) => ({ businessTypeNorm: { contains: k } })),
     ...(rule.sectors.length ? [{ sector: { in: rule.sectors } }] : []),
   ];
-  if (or.length === 0) return { total: 0, page: 1, pages: 0, items: [], capped: false };
+  if (or.length === 0) return { total: 0, coreTotal: 0, page: 1, pages: 0, items: [], capped: false };
 
   const cands = await prisma.rcipEmployer.findMany({
     where: { OR: or, ...(opts.province ? { province: opts.province } : {}) },
@@ -106,7 +106,7 @@ export async function listEmployers(opts: { noc: string; province?: string | nul
       contact: revealed.has(r.id) ? contact : null,
     });
   }
-  return { total: ranked.length, page, pages, items, capped: ranked.length > reachable };
+  return { total: ranked.length, coreTotal: ranked.filter((r) => r.tier === 'core').length, page, pages, items, capped: ranked.length > reachable };
 }
 
 // ── Account, steps, quota ───────────────────────────────────────────────────
