@@ -49,6 +49,15 @@ export default function ReportIndex({ lang, editions, showCaseStudies }: Props) 
         </div>
       </header>
 
+      <a
+        href={`/${lang}/data-reports/rcip-employers`}
+        className="mt-6 flex flex-col gap-1 bg-[#121417] p-5 text-paper transition-colors duration-150 hover:bg-[#2a2c2f] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
+      >
+        <span className={fa ? 'text-xs text-[#b9b7b1]' : 'text-[11px] uppercase tracking-[0.15em] text-[#b9b7b1]'}>{t.toolKicker}</span>
+        <span className={fa ? 'font-estedad text-xl font-extrabold' : 'font-serif text-2xl'}>{t.toolTitle}</span>
+        <span className="text-sm text-acid">{t.toolCta}</span>
+      </a>
+
       {total === 0 ? (
         <p className="py-10 text-base">{t.empty}</p>
       ) : (

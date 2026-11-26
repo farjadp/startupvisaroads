@@ -465,3 +465,88 @@ model PricingContent {
   updatedAt DateTime @updatedAt
   updatedBy String?
 }
+
+// ─── RCIP employer finder ───────────────────────────────────────────────────
+// One row per listing on the 14 RCIP communities' designated-employer lists,
+// loaded through POST /api/agent-data/rcip-employers. Contact fields are only
+// ever sent to a browser after that visitor reveals the row
+// (lib/rcip-finder/reveal.ts); public queries select the other columns.
+model RcipEmployer {
+  id               String          @id @default(cuid())
+  key              String          @unique // sha256(community|name|address): stable across imports
+  edition          String // list snapshot loaded, e.g. 2026-11
+  community        String
+  province         String
+  name             String
+  nameNorm         String
+  businessType     String
+  businessTypeNorm String
+  sector           String? // NAICS sector code: 23, 31-33, 44-45 …
+  listedSector     String? // the community's own priority-sector label, when its list gives one
+  listAsOf         String?
+  sourceUrl        String
+  closedNote       String? // excluded | not_accepting: what the community's list says
+  website          String?
+  phone            String?
+  emails           String          @default("[]") // JSON array
+  contactSource    String          @default("none") // source_list | ai_verify | ai_low | none
+  updatedAt        DateTime        @updatedAt
+  reveals          ContactReveal[]
+  reports          ContactReport[]
+
+  @@index([community])
+  @@index([sector])
+}
+
+// A visitor who signed in with an emailed link. No password.
+model FinderUser {
+  id             String          @id @default(cuid())
+  email          String          @unique
+  createdAt      DateTime        @default(now())
+  verifiedAt     DateTime?
+  lastSeenAt     DateTime?
+  consentAt      DateTime? // privacy notice accepted
+  marketingOptIn Boolean         @default(false)
+  noc            String?
+  experience     String? // lt1 | 1to2 | 3plus
+  clb            Int?
+  steps          FinderStep[]
+  reveals        ContactReveal[]
+}
+
+// One completed unlock step; each opens one of the five monthly reveals.
+model FinderStep {
+  id        String     @id @default(cuid())
+  userId    String
+  step      String // account | profile | guide | quiz | pledge
+  createdAt DateTime   @default(now())
+  user      FinderUser @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, step])
+}
+
+model ContactReveal {
+  id         String       @id @default(cuid())
+  userId     String
+  employerId String
+  createdAt  DateTime     @default(now())
+  user       FinderUser   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  employer   RcipEmployer @relation(fields: [employerId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, employerId])
+  @@index([userId, createdAt])
+}
+
+// "This contact is wrong" and employer removal requests.
+model ContactReport {
+  id         String       @id @default(cuid())
+  employerId String
+  userId     String?
+  reason     String // wrong | removal | other
+  note       String?
+  createdAt  DateTime     @default(now())
+  resolvedAt DateTime?
+  employer   RcipEmployer @relation(fields: [employerId], references: [id], onDelete: Cascade)
+
+  @@index([resolvedAt, createdAt])
+}
